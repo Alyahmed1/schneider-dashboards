@@ -1218,6 +1218,77 @@ button {
   .panel {
     height: auto;
   }
+
+  .workspace.overview .picture-wrap {
+    height: auto;
+    min-height: 0;
+  }
+
+  .workspace.overview .frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1280 / 853;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .topbar-meta {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand h1 {
+    font-size: 18px;
+  }
+
+  .topbar {
+    padding: 12px;
+  }
+
+  .topbar h2 {
+    font-size: 22px;
+  }
+
+  .glance {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kpi-value {
+    font-size: 28px;
+  }
+
+  .spark {
+    width: 56px;
+  }
+
+  .sidebar nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .util-row {
+    width: auto;
+    flex-wrap: nowrap;
+  }
+
+  .nav {
+    min-height: 40px;
+  }
+
+  .workspace,
+  .workspace.split,
+  .workspace.overview {
+    padding: 10px;
+  }
+
+  .clock-time {
+    font-size: 16px;
+  }
 }
 
 .shell.light {

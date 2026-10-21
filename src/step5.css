@@ -1,0 +1,46 @@
+/* ================= step 5: top strip, compact quality rows, living cover ================= */
+
+/* live refresh pill, sits beside the time-range filter */
+.live-pill { display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); animation: ping 2s infinite; flex: none; }
+.countdown { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .2px; }
+.countdown b { color: var(--teal-d); font-weight: 500; min-width: 3ch; text-align: right; }
+.countdown-bar { width: 46px; height: 3px; border-radius: 2px; background: rgba(11, 42, 51, .12); overflow: hidden; }
+.countdown-bar i { display: block; height: 100%; background: var(--teal); transition: width .25s linear; }
+@media (max-width: 720px) { .countdown > span:first-child, .countdown-bar { display: none; } }
+
+/* drinking-water quality: measure-by-measure rows, compact for a half-width card */
+.bench.qual li { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "n v c" "t t t"; gap: 6px 14px; padding: 12px 0; }
+.bench.qual .b-name { grid-area: n; }
+.bench.qual .b-val { grid-area: v; }
+.bench.qual .chip { grid-area: c; }
+.bench.qual .b-track { grid-area: t; height: 30px; }
+.bench.qual .b-val b { font-size: 19px; }
+
+/* living cover: everything sits in a stage that keeps the photo's proportions, so lights line up */
+.cover-stage { position: absolute; left: 50%; top: 50%; width: max(100vw, calc(100vh * 1.7768)); aspect-ratio: 1672 / 941; transform: translate(-50%, -50%); overflow: hidden; }
+.cover-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mist { position: absolute; left: -25%; right: -25%; top: 28%; bottom: 0; pointer-events: none; mix-blend-mode: screen; filter: blur(26px); opacity: .55; background: radial-gradient(ellipse 28% 30% at 20% 55%, rgba(150, 190, 235, .5), transparent 70%), radial-gradient(ellipse 30% 26% at 62% 62%, rgba(150, 190, 235, .4), transparent 70%), radial-gradient(ellipse 22% 22% at 85% 50%, rgba(170, 200, 240, .35), transparent 70%); animation: mist-drift 46s ease-in-out infinite alternate; }
+.mist.two { top: 52%; opacity: .4; animation-duration: 62s; animation-direction: alternate-reverse; }
+@keyframes mist-drift { from { transform: translateX(-6%) scaleY(1); } to { transform: translateX(8%) scaleY(1.12); } }
+.sea-shimmer { position: absolute; left: 0; top: 40%; width: 60%; height: 60%; pointer-events: none; mix-blend-mode: screen; -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 20%); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000 45%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 20%); mask-composite: intersect; }
+.sea-shimmer i { position: absolute; inset: -10% -10%; background: repeating-linear-gradient(172deg, transparent 0 22px, rgba(140, 205, 255, .14) 22px 24px, transparent 24px 46px); animation: ripple 9s linear infinite; }
+.sea-shimmer i:nth-child(2) { background: repeating-linear-gradient(168deg, transparent 0 34px, rgba(120, 220, 230, .11) 34px 36px, transparent 36px 70px); animation-duration: 14s; animation-direction: reverse; }
+@keyframes ripple { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-46px, 46px, 0); } }
+.lt { position: absolute; width: calc(var(--s, 14) * 1px); height: calc(var(--s, 14) * 1px); margin: calc(var(--s, 14) * -0.5px) 0 0 calc(var(--s, 14) * -0.5px); border-radius: 50%; pointer-events: none; mix-blend-mode: screen; background: radial-gradient(circle, rgba(255, 232, 180, .95) 0%, rgba(255, 196, 110, .5) 30%, transparent 70%); animation: twinkle var(--d, 3.4s) ease-in-out var(--l, 0s) infinite; }
+.lt.cool { background: radial-gradient(circle, rgba(200, 230, 255, .95) 0%, rgba(120, 190, 255, .5) 30%, transparent 70%); }
+@keyframes twinkle { 0%, 100% { opacity: .25; transform: scale(.8); } 45% { opacity: 1; transform: scale(1.15); } 70% { opacity: .6; transform: scale(.95); } }
+.moon-glow { position: absolute; left: 16%; top: 14.7%; width: 14%; aspect-ratio: 1; margin: -7% 0 0 -7%; border-radius: 50%; pointer-events: none; mix-blend-mode: screen; background: radial-gradient(circle, rgba(220, 235, 255, .5), rgba(150, 190, 255, .16) 38%, transparent 70%); animation: moon 7s ease-in-out infinite; }
+@keyframes moon { 0%, 100% { opacity: .55; transform: scale(.95); } 50% { opacity: 1; transform: scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .mist, .sea-shimmer i, .lt, .moon-glow { animation: none !important; } }
+.stage-in { position: absolute; inset: 0; }
+
+.bench.qual li { padding: 7px 0; row-gap: 2px; }
+.bench.qual .b-track { height: 26px; }
+.bench.qual .b-zone { top: 9px; }
+.bench.qual .b-us { top: 5px; }
+.bench.qual .q-end { top: 18px; }
+
+/* when a cover video is present: brighten it and use a lighter shade so the scene is visible */
+.cover-video { filter: brightness(1.35) contrast(1.08) saturate(1.1); }
+.cover.has-video .cover-shade { background: linear-gradient(90deg, rgba(6, 24, 39, .8) 0%, rgba(6, 24, 39, .45) 42%, rgba(6, 24, 39, 0) 100%), linear-gradient(0deg, rgba(6, 24, 39, .55) 0%, transparent 38%); }

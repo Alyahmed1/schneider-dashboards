@@ -1,0 +1,54 @@
+/* ================= step 8: one-screen Production page, bigger banner photo ================= */
+
+/* Production fits in one screen: strip on top, picture fills the rest */
+.page.prod { --chrome: 340px; padding-top: 14px; padding-bottom: 14px; }
+.page.prod .journey-card { position: relative; padding: 14px 18px 12px; margin-bottom: 12px; }
+.journey-card.compact .card-h { margin-bottom: 8px; }
+.journey-card.compact .card-h h3 { font-size: 17px; }
+.journey-card.compact .card-h p { font-size: 12px; max-width: 62ch; }
+.journey-card.compact .step { padding: 8px 4px; }
+.journey-card.compact .step small { display: none; }
+.journey-card.compact .node { margin-bottom: 4px; }
+.journey-card.compact .rail { top: 27px; }
+.journey-card.compact .step strong { margin-top: 2px; }
+.tour-bar.pin { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; margin: 0; border-radius: 0 0 20px 20px; }
+.page.prod .scene-card { padding: 10px; }
+.page.prod .scene-wrap { max-width: none; overflow: visible; border-radius: 14px; }
+.page.prod .scene { width: 100%; height: calc(100vh - var(--chrome)); min-height: 300px; aspect-ratio: auto; min-width: 0; border-radius: 14px; }
+.page.prod .scene-art { overflow: visible; }
+.page.prod .tag { font-size: var(--tagfs, 11px); padding: 3px 7px 3px 6px; }
+.scene-title { position: absolute; top: 12px; left: 14px; z-index: 4; display: inline-flex; align-items: center; gap: 10px; padding: 5px 8px 5px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 8px 18px -12px rgba(11, 42, 51, .5); }
+.scene-title b { font-family: var(--display); font-weight: 500; font-size: 16px; letter-spacing: -.01em; }
+.scene-tools { position: absolute; top: 12px; right: 12px; z-index: 4; display: flex; gap: 8px; }
+.scene-tools .kpi-btn { position: static; }
+.scene-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-size: 13px; box-shadow: 0 8px 18px -12px rgba(11, 42, 51, .5); }
+.scene-btn:hover { border-color: var(--teal); }
+@media (max-width: 1400px) { .page.prod { --chrome: 396px; } }
+@media (max-width: 900px) {
+  .page.prod .scene-wrap { overflow-x: auto; }
+  .page.prod .scene { height: auto; aspect-ratio: 16 / 9; min-width: 680px; }
+}
+
+/* Overview banner: more of the photo, a shorter white fade */
+@media (min-width: 721px) {
+  .banner:not(.slim) { min-height: 240px; }
+  .banner:not(.slim)::after { background: linear-gradient(90deg, rgba(255, 255, 255, .96) 0%, rgba(255, 255, 255, .86) 20%, rgba(255, 255, 255, 0) 44%); }
+  html[data-theme="dark"] .banner:not(.slim)::after { background: linear-gradient(90deg, rgba(15, 37, 48, .96) 0%, rgba(15, 37, 48, .84) 20%, rgba(15, 37, 48, 0) 44%); }
+  .banner:not(.slim) .banner-text { max-width: 380px; padding: 24px 26px; }
+}
+
+/* smaller brand name in the top bar, and a headline that fits the longer cover title */
+.brand b { font-size: 14px; letter-spacing: -.005em; white-space: nowrap; }
+.brand > div > span { font-size: 11px; }
+.brand-mark { width: 34px; height: 34px; border-radius: 11px; }
+.cover h1 { font-size: clamp(38px, 5.6vw, 80px); line-height: 1; max-width: 12ch; }
+.cover h1 { font-size: clamp(34px, 4.2vw, 64px); }
+.cover-body { gap: 14px; }
+
+/* keep the top bar on one row with the longer brand name */
+.brand-sep { display: none; }
+.brand { gap: 10px; }
+.topbar { gap: 14px; }
+.tabs button { padding: 8px 10px; font-size: 13.5px; gap: 6px; }
+.tabs { gap: 2px; }
+.top-actions { gap: 10px; }

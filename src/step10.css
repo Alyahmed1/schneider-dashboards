@@ -1,0 +1,113 @@
+/* ================= step 10: full Alarms page ================= */
+.al-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mini-kpi { display: grid; gap: 4px; padding: 16px 20px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-left: 4px solid var(--aqua); }
+.mini-kpi > span { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.mini-kpi b { font-family: var(--display); font-weight: 500; font-size: 36px; letter-spacing: -.03em; line-height: 1.05; }
+.mini-kpi em { font-style: normal; font-size: 12px; color: var(--muted); }
+.mini-kpi.tone-bad { border-left-color: var(--bad); }
+.mini-kpi.tone-warn { border-left-color: var(--warn); }
+.mini-kpi.tone-good { border-left-color: var(--good); }
+.mini-kpi.tone-info { border-left-color: var(--blue); }
+
+.al-card { padding: 18px 20px 12px; }
+.al-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 14px; }
+.al-filters .chips { margin: 0; }
+.al-filters .search { margin-left: auto; }
+.al-table { display: grid; }
+.al-row { display: grid; grid-template-columns: 92px minmax(0, 2.6fr) minmax(0, 1.1fr) 170px 118px 200px; gap: 16px; align-items: start; padding: 16px 12px; border-top: 1px solid var(--line-2); border-radius: 0; position: relative; }
+.al-row.al-head { padding: 8px 12px; border-top: 0; font-size: 11.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); align-items: center; }
+.al-row:not(.al-head)::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 3px; background: var(--aqua); }
+.al-row.sev-Critical:not(.al-head)::before { background: var(--bad); }
+.al-row.sev-Warning:not(.al-head)::before { background: var(--warn); }
+.al-row.sev-Info:not(.al-head)::before { background: var(--blue); }
+.al-row.is-done::before { opacity: .35; }
+.al-row.is-done .al-desc, .al-row.is-done .al-where, .al-row.is-done .al-when, .al-row.is-done .al-type, .al-row.is-done .al-sev { opacity: .55; }
+.al-row.flash { animation: alflash 3s ease-out; }
+@keyframes alflash { 0%, 55% { background: var(--tint); } 100% { background: transparent; } }
+.al-desc b { display: block; font-size: 14px; line-height: 1.35; }
+.al-desc p { color: var(--text-2); font-size: 13px; margin-top: 4px; max-width: 68ch; }
+.al-desc .wo-link { margin-top: 8px; display: inline-block; }
+.al-where b, .al-when b { display: block; font-size: 13px; font-weight: 600; }
+.al-where b { font-family: var(--mono); font-weight: 500; }
+.al-where span, .al-when span { font-size: 12px; color: var(--muted); }
+.al-act { display: grid; gap: 8px; justify-items: start; }
+.al-act .btn { padding: 8px 14px; }
+.al-by { display: inline-flex; flex-direction: column; gap: 2px; font-size: 12.5px; font-weight: 600; color: var(--good); }
+.al-by svg { vertical-align: -2px; }
+.al-by small { font-size: 11.5px; font-weight: 500; color: var(--muted); }
+.al-empty { text-align: center; padding: 46px 0; color: var(--muted); }
+.bell-panel li > button { grid-template-columns: 32px 1fr auto; }
+.b-go { color: var(--muted); }
+
+@media (max-width: 1180px) {
+  .al-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .al-row { grid-template-columns: 84px minmax(0, 1fr) 190px; }
+  .al-row.al-head { display: none; }
+  .al-where, .al-when, .al-type { grid-column: 2; }
+  .al-act { grid-column: 3; grid-row: 1 / span 4; }
+}
+@media (max-width: 720px) {
+  .al-row { grid-template-columns: 1fr; }
+  .al-where, .al-when, .al-type, .al-act { grid-column: 1; grid-row: auto; }
+}
+
+/* Overview: labels get a thin leader line to their equipment, and the drawing fills the whole panel */
+.leaders { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; overflow: visible; }
+.leaders line { stroke: var(--tag-edge); stroke-width: 1; opacity: .75; }
+.leaders circle { fill: var(--tag-edge); stroke: var(--surface); stroke-width: 1; }
+.page.flow .scene-art { overflow: visible; }
+.page.flow .sc-cap { font-size: 24px; }
+.page.flow .conn .sc-cap { font-size: 13px; }
+@media (max-width: 900px) { .page.prod.flow .scene { min-width: 1100px; height: auto; aspect-ratio: 2.45 / 1; } }
+
+/* Overview uses the whole width and height of the screen */
+.page.prod.flow { --chrome: 108px; max-width: none; padding-left: 12px; padding-right: 12px; padding-top: 10px; padding-bottom: 8px; }
+@media (max-width: 1400px) { .page.prod.flow { --chrome: 164px; } }
+.page.flow .scene-card { padding: 6px; }
+.page.flow .scene { border-radius: 14px; }
+
+/* Overview: slightly smaller words, bigger symbols, icons and lines */
+.page.flow .sc-cap { font-size: 20px; }
+.page.flow .conn .sc-cap { font-size: 11px; }
+.page.flow .eq, .page.flow .eq-line, .page.flow .eq-valve { stroke-width: 3.2; }
+.page.flow .eq-band { stroke-width: 2.4; }
+.page.flow .eq-zig, .page.flow .eq-arc { stroke-width: 3.6; }
+.page.flow .spin { stroke-width: 3; }
+.page.flow .wave-line { stroke-width: 3; }
+.page.flow .cell-edge { stroke-width: 4; }
+.page.flow .tag { padding: 3px 9px 3px 7px; gap: 6px; border-width: 1.5px; }
+.page.flow .tag-dot { width: 9px; height: 9px; }
+.page.flow .stage-chip { gap: 8px; }
+.page.flow .stage-chip .dot { width: 10px; height: 10px; }
+.leaders line { stroke-width: 1.8; opacity: .85; }
+.leaders circle { r: 4.2px; stroke-width: 1.5; }
+.page.flow .pp-icon { width: 18px; height: 18px; }
+.page.flow .pp-icon svg { width: 18px; height: 18px; }
+.page.flow .flow-legend { gap: 6px 22px; padding: 8px 16px; }
+.page.flow .flow-legend i { width: 26px; height: 7px; border-radius: 4px; }
+.page.flow .scene-btn { padding: 10px 18px; font-size: 14px; }
+
+/* the "A" avatar opens a profile card */
+.user { background: none; border: 0; text-align: left; cursor: pointer; border-radius: 999px; padding: 4px 10px 4px 4px; margin: -4px -10px -4px -4px; transition: background .2s; }
+.user:hover, .user.on { background: var(--surface-3); }
+.user:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.user-wrap { position: relative; }
+.me-panel { position: absolute; top: calc(100% + 12px); right: 0; width: min(340px, 92vw); z-index: 50; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 30px 60px -24px rgba(11, 42, 51, .45); overflow: hidden; transform-origin: top right; }
+.me-top { display: flex; align-items: center; gap: 14px; padding: 18px 18px 14px; background: linear-gradient(160deg, var(--tint), transparent); }
+.me-av { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 600; font-size: 26px; color: #fff; background: linear-gradient(150deg, var(--aqua), var(--teal-d)); flex: none; }
+.me-top b { display: block; font-family: var(--display); font-weight: 500; font-size: 20px; line-height: 1.15; }
+.me-top > div > span { font-size: 12.5px; color: var(--muted); }
+.me-top .chip { margin-left: auto; }
+.me-info { display: grid; gap: 8px; padding: 4px 18px 12px; font-size: 13px; }
+.me-info div { display: flex; justify-content: space-between; gap: 12px; }
+.me-info span { color: var(--muted); }
+.me-info b { font-weight: 600; text-align: right; }
+.me-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 18px 14px; }
+.me-stats button { display: grid; gap: 2px; padding: 10px 8px; border-radius: 14px; background: var(--surface-2); text-align: center; transition: background .15s, transform .15s; }
+.me-stats button:hover { background: var(--tint); transform: translateY(-1px); }
+.me-stats b { font-family: var(--display); font-weight: 500; font-size: 24px; line-height: 1; }
+.me-stats button > span { font-size: 11px; color: var(--muted); }
+.me-actions { display: grid; gap: 4px; padding: 6px 8px 10px; border-top: 1px solid var(--line-2); }
+.me-actions button { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; font-weight: 600; font-size: 13.5px; text-align: left; transition: background .15s; }
+.me-actions button:hover { background: var(--surface-2); }
+.me-actions svg { color: var(--teal-d); flex: none; }

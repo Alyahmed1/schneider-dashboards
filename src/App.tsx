@@ -131,7 +131,7 @@ export default function App() {
       <aside className="sidebar">
         <div className="brand">
           <div className="logo-plate">
-            <img src="/logos/we.png" alt="WE" />
+            <img src="/logos/udio.png" alt="UDIO Technology" />
           </div>
           <h1>Smart Airport City</h1>
         </div>

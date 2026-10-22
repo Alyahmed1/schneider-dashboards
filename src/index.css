@@ -84,8 +84,9 @@ button {
 
 .logo-plate img {
   display: block;
-  height: 42px;
+  height: 72px;
   width: auto;
+  background: #ffffff;
 }
 
 .topbar-meta {

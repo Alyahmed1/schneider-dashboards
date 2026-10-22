@@ -33,7 +33,21 @@ export default function Production({ f, start }: { f: Filters; start?: string })
   const [flowOn, setFlowOn] = useState(true); // play / pause for the moving water in the picture
   const left = useRef(secs * 1000);
   const startedAt = useRef(0);
-  const startTour = () => { setTour({ on: true, paused: false, idx: 0, done: false }); setSel(list[0].id); };
+  const sceneRef = useRef<HTMLElement>(null);
+  const startTour = () => { setTour({ on: true, paused: false, idx: 0, done: false }); setSel(list[0].id); setJump((n) => n + 1); };
+  // on a phone the picture sits below the step grid: once the tour has started, bring it into view just under the sticky top bar
+  const [jump, setJump] = useState(0);
+  useEffect(() => {
+    const el = sceneRef.current;
+    if (!jump || !el || !window.matchMedia("(max-width: 720px)").matches) return;
+    const id = requestAnimationFrame(() => {
+      const bar = document.querySelector(".topbar")?.getBoundingClientRect().height ?? 0;
+      el.querySelector(".scene-wrap")?.scrollTo({ left: 0 });
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - bar - 8, behavior: reduce ? "auto" : "smooth" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [jump]);
   const stopTour = () => setTour((x) => (x.on ? { on: false, paused: false, idx: 0, done: false } : x));
   const toggleTour = () => setTour((x) => ({ ...x, paused: !x.paused }));
   useEffect(() => { left.current = secs * 1000; }, [tour.idx, secs, tour.on]);
@@ -86,7 +100,7 @@ export default function Production({ f, start }: { f: Filters; start?: string })
         {tour.on && <div className="tour-bar pin"><i key={`${tour.idx}-${secs}`} className="tour-fill" style={{ animationDuration: `${secs}s`, animationPlayState: tour.paused ? "paused" : "running" }} /></div>}
       </Card>
 
-      <Card i={1} className="scene-card">
+      <Card i={1} className="scene-card" sectionRef={sceneRef}>
         <StageView stage={cur} f={f} t={t} paused={!flowOn} onTogglePaused={() => setFlowOn((v) => !v)} />
       </Card>
     </>

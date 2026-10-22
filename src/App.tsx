@@ -10,6 +10,7 @@ import AlarmsPage from "./AlarmsPage";
 import Electrical from "./Electrical";
 import Maintenance from "./Maintenance";
 import Insights from "./Insights";
+import ErrorBoundary from "./ErrorBoundary";
 import AvevaMark from "./Aveva";
 import Cover from "./Cover";
 import { useTick } from "./live";
@@ -51,6 +52,9 @@ export default function App() {
   const [f, setF] = useState<Filters>({ range: "7D", area: "All plant" });
   const [wos, setWos] = useState<WorkOrder[]>(WORK_ORDERS);
   const [stageTarget, setStageTarget] = useState<string | undefined>(undefined);
+  // the page layout class follows the tab that is on screen: the old tab keeps its own styles while it fades out
+  const [shown, setShown] = useState<TabId>("overview");
+  useEffect(() => { if (!ready) setShown(tab); }, [ready, tab]); // no tab is on screen behind the cover, so nothing is fading out
   const go: Go = (to, stage) => { setStageTarget(stage); setTab(to); };
   const tick = useTick();
   const cur = TABS.find((t) => t.id === tab)!;
@@ -85,7 +89,7 @@ export default function App() {
         </div>
       </motion.header>
 
-      <main className={`page ${tab === "production" ? "prod" : ""} ${tab === "flow" ? "prod flow" : ""} ${tab === "electrical" ? "prod flow elec" : ""} ${tab === "insights" ? "prod flow ins-page" : ""} ${tab === "overview" ? "prod flow cc-page" : ""} ${tab === "alarms" ? "prod flow al-page" : ""} ${tab === "maintenance" ? "prod flow mt-page" : ""}`}>
+      <main className={`page ${shown === "production" ? "prod" : ""} ${shown === "flow" ? "prod flow" : ""} ${shown === "electrical" ? "prod flow elec" : ""} ${shown === "insights" ? "prod flow ins-page" : ""} ${shown === "overview" ? "prod flow cc-page" : ""} ${shown === "alarms" ? "prod flow al-page" : ""} ${shown === "maintenance" ? "prod flow mt-page" : ""}`}>
         {tab !== "production" && tab !== "flow" && tab !== "electrical" && tab !== "insights" && tab !== "overview" && tab !== "maintenance" && tab !== "alarms" && <div className="page-head">
           <div>
             <h1>{cur.label}</h1>
@@ -102,15 +106,17 @@ export default function App() {
           </div>
         </div>}
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" onExitComplete={() => setShown(tab)}>
           <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-            {tab === "overview" && <Overview f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} wos={wos} />}
-            {tab === "alarms" && <AlarmsPage go={go} focus={stageTarget} />}
-            {tab === "flow" && <PlantFlow f={{ ...f, area: "All plant" }} go={go} t={tick} />}
-            {tab === "production" && <Production f={{ ...f, area: "All plant" }} start={stageTarget} />}
-            {tab === "electrical" && <Electrical f={{ ...f, area: "All plant" }} />}
-            {tab === "insights" && <Insights f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} />}
-            {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} setWos={setWos} />}
+            <ErrorBoundary key={tab}>
+              {tab === "overview" && <Overview f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} wos={wos} />}
+              {tab === "alarms" && <AlarmsPage go={go} focus={stageTarget} />}
+              {tab === "flow" && <PlantFlow f={{ ...f, area: "All plant" }} go={go} t={tick} />}
+              {tab === "production" && <Production f={{ ...f, area: "All plant" }} start={stageTarget} />}
+              {tab === "electrical" && <Electrical f={{ ...f, area: "All plant" }} />}
+              {tab === "insights" && <Insights f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} />}
+              {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} setWos={setWos} />}
+            </ErrorBoundary>
           </motion.div>
         </AnimatePresence>
       </main>

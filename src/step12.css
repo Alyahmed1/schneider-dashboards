@@ -187,3 +187,26 @@ html[data-theme="dark"] .ins-res .pill.good { color: #6fe0ae; }
 .ins-head { padding-top: 2px; }
 
 .ins .sl-top em { white-space: nowrap; }
+
+/* open animation: plays once when the tab mounts. Fill mode "backwards" keeps the hover lift working afterwards, and nothing loops */
+@keyframes insIn { from { opacity: 0; transform: translateY(14px); } }
+@keyframes insGrow { from { transform: scaleX(0); } }
+.ins-head, .ins-tiles .it, .ins-mid > .card, .ins-bot > .card { animation: insIn .5s cubic-bezier(.22, 1, .36, 1) backwards; }
+.ins-tiles .it:nth-child(2) { animation-delay: .05s; }
+.ins-tiles .it:nth-child(3) { animation-delay: .1s; }
+.ins-tiles .it:nth-child(4) { animation-delay: .15s; }
+.ins-tiles .it:nth-child(5) { animation-delay: .2s; }
+.ins-tiles .it:nth-child(6) { animation-delay: .25s; }
+.ins-mid > .card:nth-child(1) { animation-delay: .2s; }
+.ins-mid > .card:nth-child(2) { animation-delay: .3s; }
+.ins-mid > .card:nth-child(3) { animation-delay: .4s; }
+.ins-bot > .card:nth-child(1) { animation-delay: .5s; }
+.ins-bot > .card:nth-child(2) { animation-delay: .6s; }
+.it-bar i, .ins-rows .bar i, .op-bar i { transform-origin: left; animation: insGrow .8s cubic-bezier(.22, 1, .36, 1) .3s backwards; }
+@media (prefers-reduced-motion: reduce) { .ins-head, .ins-tiles .it, .ins-mid > .card, .ins-bot > .card, .it-bar i, .ins-rows .bar i, .op-bar i { animation: none; } }
+
+/* a counting number keeps the width of its final value (the final text is laid out invisibly under it), so nothing around it reflows while it counts */
+.cu { position: relative; display: inline-block; font-variant-numeric: tabular-nums; }
+.cu > u { text-decoration: none; font: inherit; color: inherit; }
+.cu > u:first-child { visibility: hidden; }
+.cu > u:last-child { position: absolute; top: 0; right: 0; white-space: nowrap; }

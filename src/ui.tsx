@@ -75,9 +75,9 @@ export function Replay({ children, className, style }: { children: ReactNode; cl
   return <div ref={ref} className={className} style={style}>{n > 0 && <Fragment key={n}>{children}</Fragment>}</div>;
 }
 
-export function Card({ title, sub, right, children, i = 0, className = "", style }: { title?: string; sub?: string; right?: ReactNode; children: ReactNode; i?: number; className?: string; style?: CSSProperties }) {
+export function Card({ title, sub, right, children, i = 0, className = "", style, sectionRef }: { title?: string; sub?: string; right?: ReactNode; children: ReactNode; i?: number; className?: string; style?: CSSProperties; sectionRef?: RefObject<HTMLElement | null> }) {
   return (
-    <motion.section className={`card ${className}`} style={style} {...rise(i)}>
+    <motion.section ref={sectionRef} className={`card ${className}`} style={style} {...rise(i)}>
       {(title || right) && (
         <header className="card-h">
           <div>

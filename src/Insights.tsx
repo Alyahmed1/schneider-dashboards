@@ -1,5 +1,5 @@
-import { useDeferredValue, useMemo, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { animate, AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { Area, AreaChart, CartesianGrid, ComposedChart, Line, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle, ArrowDownRight, ArrowRight, ArrowUpRight, Award, CheckCircle2, Cloud, Coins, Droplets, FlaskConical, RotateCcw, Sparkles, Star, Sun, Waves, Wrench, X, Zap, type LucideIcon } from "lucide-react";
 import { BUCKET, compact, qualityOk, QUALITY, rng, RANGES, RANGE_LABEL, type Filters, type Range } from "./data";
@@ -7,12 +7,36 @@ import { ANNUAL_M3, BASE_COST, benchmarks, benchScore, benchTone, CHEMICALS, co2
 import { axis, C, Chip, gridProps, Segmented, Tip, TONE_COLOR } from "./ui";
 import { fmt } from "./data";
 
-// Insights has no animation: numbers, charts and cards show their final state at once
-const CountUp = ({ value, decimals = 0 }: { value: number; decimals?: number }) => <span className="num">{fmt(value, decimals)}</span>;
-const Replay = ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>;
-const rise = (_i = 0) => ({});
 import { useTick, wobble } from "./live";
 import type { Go } from "./App";
+
+// Everything animates once when the tab (or a popup) opens. After that, live updates only change the numbers: nothing replays.
+const REDUCE = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** counts up once, then follows live values straight away; the text is written into the node, so counting never re-renders React.
+ *  The final value sits invisibly underneath, so the number keeps its final width while it counts and the text around it never reflows. */
+function CountUp({ value, decimals = 0 }: { value: number; decimals?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const shown = useRef(0);
+  const played = useRef(false);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const write = (v: number) => { shown.current = v; el.textContent = fmt(v, decimals); };
+    if (played.current || REDUCE) { write(value); return; }
+    const c = animate(shown.current, value, { duration: 0.9, ease: [0.22, 1, 0.36, 1], onUpdate: write, onComplete: () => { played.current = true; } });
+    return () => c.stop();
+  }, [value, decimals]);
+  return <span className="num cu"><u aria-hidden>{fmt(value, decimals)}</u><u ref={ref} /></span>;
+}
+const Replay = ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>;
+/** fades and lifts a row once, the first time it is on screen */
+const rise = (i = 0) => ({
+  initial: { opacity: 0, y: 12 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 0.4, delay: Math.min(i, 6) * 0.05, ease: [0.22, 1, 0.36, 1] as const },
+});
 
 const SOLAR_LCOE = 0.9;
 const COLORS = [C.teal, C.blue, C.aqua, "#7fa8d6", "#c2cdd0", "#e0b66a"];
@@ -62,7 +86,7 @@ function Ring({ pct, size = 66, stroke = 7, color, children }: { pct: number; si
     <div className="ins-ring" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={stroke} />
-        <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} initial={false} animate={{ strokeDashoffset: c * (1 - pct / 100) }} transition={{ duration: 0 }} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+        <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - pct / 100) }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
       </svg>
       <span>{children}</span>
     </div>
@@ -85,6 +109,18 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
   const [draft, setW] = useState<WhatIf>(WHATIF_BASE);
   const w = useDeferredValue(draft);
   const [pop, setPop] = useState<Pop>(null);
+  // the charts draw in once when the tab opens, then stop animating so a live update never redraws them
+  const [chartsDraw, setChartsDraw] = useState(!REDUCE);
+  useEffect(() => { const id = window.setTimeout(() => setChartsDraw(false), 1400); return () => window.clearTimeout(id); }, []);
+  // a popup's chart draws once while the popup is new
+  const popKey = pop ? `${pop.k}${"id" in pop ? pop.id : ""}` : "";
+  const [popDraw, setPopDraw] = useState(false);
+  useEffect(() => {
+    if (!popKey || REDUCE) return;
+    setPopDraw(true);
+    const id = window.setTimeout(() => setPopDraw(false), 1200);
+    return () => window.clearTimeout(id);
+  }, [popKey]);
   const changed = w.recovery !== WHATIF_BASE.recovery || w.tariff !== WHATIF_BASE.tariff || w.solar !== WHATIF_BASE.solar;
   const model = useMemo(() => costModel(w), [w]);
   const rows = useMemo(() => benchmarks(f), [f]);
@@ -150,12 +186,12 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                   <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={24} />
                   <YAxis {...axis} width={40} tickCount={4} tickFormatter={(v: number) => compact(v)} />
                   <Tooltip content={<Tip unit="t" />} cursor={{ stroke: C.teal, strokeOpacity: 0.25 }} />
-                  <Area type="monotone" stackId="c" dataKey="grid" name="From grid" stroke="#8aa1a8" strokeWidth={2} fill="url(#insG)" isAnimationActive={false} />
-                  <Area type="monotone" stackId="c" dataKey="avoided" name="Saved by solar" stroke={C.sun} strokeWidth={2} fill="url(#insS)" isAnimationActive={false} />
+                  <Area type="monotone" stackId="c" dataKey="grid" name="From grid" stroke="#8aa1a8" strokeWidth={2} fill="url(#insG)" isAnimationActive={chartsDraw} animationDuration={800} />
+                  <Area type="monotone" stackId="c" dataKey="avoided" name="Saved by solar" stroke={C.sun} strokeWidth={2} fill="url(#insS)" isAnimationActive={chartsDraw} animationDuration={800} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-  ), [series]);
+  ), [series, chartsDraw]);
   const goalsBlock = useMemo(() => (
             <button className="ins-goals" onClick={() => setPop({ k: "goals" })} aria-label="Our goals, open details">
               {GOALS.map((g, i) => (
@@ -173,12 +209,12 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                     <PolarGrid stroke="var(--line)" />
                     <PolarAngleAxis dataKey="name" tick={{ fontSize: 10, fill: "#6b8089" }} />
                     <Radar dataKey="best" stroke="none" fill="none" />
-                    <Radar dataKey="avg" name="Average" stroke="#b9c4c7" fill="#c2cdd0" fillOpacity={0.35} isAnimationActive={false} />
-                    <Radar dataKey="us" name="Us" stroke={C.teal} strokeWidth={2.2} fill={C.teal} fillOpacity={0.3} isAnimationActive={false} />
+                    <Radar dataKey="avg" name="Average" stroke="#b9c4c7" fill="#c2cdd0" fillOpacity={0.35} isAnimationActive={chartsDraw} animationDuration={800} />
+                    <Radar dataKey="us" name="Us" stroke={C.teal} strokeWidth={2.2} fill={C.teal} fillOpacity={0.3} isAnimationActive={chartsDraw} animationDuration={800} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
-  ), [radar]);
+  ), [radar, chartsDraw]);
   const benchRows = useMemo(() => (
               <button className="ins-rows" onClick={() => setPop({ k: "bench" })} aria-label="Benchmarks, open the full list">
                 {[...rows].sort((a, b) => benchScore(a) - benchScore(b)).map((b) => {
@@ -229,6 +265,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
   const popOpp = pop?.k === "opp" ? OPPS.find((o) => o.id === pop.id) : undefined;
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="ins-wrap">
       <div className="ins">
         <header className="ins-head">
@@ -309,9 +346,9 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
 
       <AnimatePresence>
         {pop && (
-          <motion.div className="pop-bg" initial={false} exit={{ opacity: 1 }} transition={{ duration: 0 }} onClick={() => setPop(null)}>
+          <motion.div className="pop-bg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }} onClick={() => setPop(null)}>
             <motion.div className={`pop ${pop.k === "bench" || pop.k === "permit" || pop.k === "cost" ? "xwide" : ""}`} role="dialog" aria-modal="true" aria-label="Details"
-              initial={false} transition={{ duration: 0 }}
+              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}>
               <button className="pop-x" onClick={() => setPop(null)} aria-label="Close"><X size={16} /> Close</button>
 
@@ -325,7 +362,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                         <defs><linearGradient id="tpG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={popTile.ac} stopOpacity={0.4} /><stop offset="100%" stopColor={popTile.ac} stopOpacity={0.02} /></linearGradient></defs>
                         <XAxis dataKey="n" hide />
                         <YAxis {...axis} width={38} domain={["auto", "auto"]} tickCount={3} />
-                        <Area type="monotone" dataKey="v" stroke={popTile.ac} strokeWidth={2} fill="url(#tpG)" isAnimationActive={false} />
+                        <Area type="monotone" dataKey="v" stroke={popTile.ac} strokeWidth={2} fill="url(#tpG)" isAnimationActive={popDraw} animationDuration={700} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Replay>
@@ -350,8 +387,8 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                         <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={22} />
                         <YAxis {...axis} width={36} domain={["auto", "auto"]} />
                         <Tooltip content={<Tip unit="LE/m³" />} cursor={{ stroke: C.teal, strokeOpacity: 0.25 }} />
-                        <Area type="monotone" dataKey="actual" name="Actual" stroke={C.teal} strokeWidth={2.4} fill="url(#lnG)" isAnimationActive={false} />
-                        <Line type="monotone" dataKey="budget" name="Budget" stroke="#9aa9ae" strokeDasharray="5 5" dot={false} strokeWidth={1.8} isAnimationActive={false} />
+                        <Area type="monotone" dataKey="actual" name="Actual" stroke={C.teal} strokeWidth={2.4} fill="url(#lnG)" isAnimationActive={popDraw} animationDuration={700} />
+                        <Line type="monotone" dataKey="budget" name="Budget" stroke="#9aa9ae" strokeDasharray="5 5" dot={false} strokeWidth={1.8} isAnimationActive={popDraw} animationDuration={700} />
                       </ComposedChart>
                     </ResponsiveContainer>
                   </Replay>
@@ -386,7 +423,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                             <span className="b-zone" style={{ background: "linear-gradient(90deg, #fde6e9, #fbf0c2 50%, #dcf1e4)" }} />
                             <span className="b-mark avg" style={{ left: `${place(b, b.avg)}%` }}><small>{b.avg}</small></span>
                             <span className="b-mark best" style={{ left: `${place(b, b.best)}%` }}><Star size={11} fill="currentColor" /></span>
-                            <motion.span className="b-us" initial={false} animate={{ left: `${place(b, b.us)}%` }} transition={{ duration: 0 }} style={{ borderColor: TONE_COLOR[tone === "info" ? "info" : tone] }} />
+                            <motion.span className="b-us" initial={{ left: "50%" }} animate={{ left: `${place(b, b.us)}%` }} transition={{ duration: 0.6, delay: 0.1 + n * 0.04, ease: [0.22, 1, 0.36, 1] }} style={{ borderColor: TONE_COLOR[tone === "info" ? "info" : tone] }} />
                           </div>
                           <div className="b-val"><b><CountUp value={b.us} decimals={b.digits} /></b><small>{b.unit}</small></div>
                           <Chip tone={tone === "good" ? "good" : tone === "info" ? "info" : "warn"}>{VERDICT[tone]}</Chip>
@@ -414,7 +451,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                               <span className="b-zone" style={{ background: oneSided ? "linear-gradient(90deg, #dcf1e4 0%, #dcf1e4 68%, #fbf0c2 88%, #fde6e9 100%)" : "linear-gradient(90deg, #fde6e9, #fbf0c2 16%, #dcf1e4 34%, #dcf1e4 66%, #fbf0c2 84%, #fde6e9)" }} />
                               <span className="q-end l">{q.min}</span>
                               <span className="q-end r">{q.max}</span>
-                              <motion.span className="b-us" initial={false} animate={{ left: `${pos}%` }} transition={{ duration: 0 }} style={{ borderColor: ok ? C.good : C.bad }} />
+                              <motion.span className="b-us" initial={{ left: "50%" }} animate={{ left: `${pos}%` }} transition={{ duration: 0.6, delay: 0.1 + n * 0.04, ease: [0.22, 1, 0.36, 1] }} style={{ borderColor: ok ? C.good : C.bad }} />
                             </div>
                             <div className="b-val"><b><CountUp value={v} decimals={q.digits} /></b><small>{q.unit}</small></div>
                             <Chip tone={ok ? "good" : "bad"}>{ok ? "Within limit" : "Out of limit"}</Chip>
@@ -429,7 +466,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                         return (
                           <motion.li key={c.name} {...rise(n)}>
                             <span>{c.name}</span>
-                            <div className="bar"><motion.i initial={false} animate={{ width: `${Math.min(100, (used / (c.target * 1.25)) * 100)}%` }} transition={{ duration: 0 }} style={{ background: over ? C.warn : C.teal }} /><s style={{ left: `${(1 / 1.25) * 100}%` }} title={`Target ${c.target}`} /></div>
+                            <div className="bar"><motion.i initial={{ width: "0%" }} animate={{ width: `${Math.min(100, (used / (c.target * 1.25)) * 100)}%` }} transition={{ duration: 0.6, delay: 0.1 + n * 0.04, ease: [0.22, 1, 0.36, 1] }} style={{ background: over ? C.warn : C.teal }} /><s style={{ left: `${(1 / 1.25) * 100}%` }} title={`Target ${c.target}`} /></div>
                             <b><CountUp value={used} decimals={1} /> <em>g</em></b>
                           </motion.li>
                         );
@@ -460,5 +497,6 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
         )}
       </AnimatePresence>
     </div>
+    </MotionConfig>
   );
 }

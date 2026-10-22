@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
 import { fmt, stages, type Filters } from "./data";
 import { Chip } from "./ui";
-import { LivePill, wobble } from "./live";
+import { wobble } from "./live";
 import { PlayPauseIcon, StageKpis, TagInfo, tagShow } from "./StageView";
 import { Cap, effective, Pipe, ScaleCtx, SCENES, type TagDef } from "./Scenes";
 import { useEquip } from "./Equip";
@@ -235,7 +235,6 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
 
         <div className="scene-title"><b>Full process, sea to network</b><Chip tone={attention ? "bad" : "good"}>{attention ? "Action needed" : "Normal"}</Chip></div>
         <div className="scene-tools">
-          <LivePill />
           <button className="scene-btn" onClick={() => setFlowOn((v) => !v)} aria-pressed={!flowOn} aria-label={flowOn ? "Pause the moving water" : "Play the moving water"}><PlayPauseIcon playing={flowOn} /> {flowOn ? "Pause" : "Play"}</button>
         </div>
 

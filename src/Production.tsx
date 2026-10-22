@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Anchor, Beaker, Container, Filter, Gauge, Pause, Play, Recycle, Send, Square, Waves, type LucideIcon } from "lucide-react";
 import { stages, type Filters, type Stage } from "./data";
 import { Card, CountUp, rise } from "./ui";
-import { LivePill, useTick, wobble } from "./live";
+import { useTick, wobble } from "./live";
 import StageView from "./StageView";
 
 /** play and pause icons that turn into each other */
@@ -53,7 +53,6 @@ export default function Production({ f, start }: { f: Filters; start?: string })
       <Card title="The water journey" sub={tour.on ? `Step ${tour.idx + 1} of ${list.length} · ${list[tour.idx].name}${tour.paused ? " (paused)" : ""} — ${list[tour.idx].note}` : "Tap a step to see its picture, or take the tour."} i={0} className="journey-card compact"
         right={
           <div className="tour-ctl">
-            <LivePill />
             <span className="tour-lab">Time per step</span>
             <div className="seg" role="group" aria-label="Seconds per step">
               {[3, 5, 8].map((s) => <button key={s} className={secs === s ? "on" : ""} onClick={() => setSecs(s)} aria-pressed={secs === s}>{s}s</button>)}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Droplets, Hammer, Leaf, Moon, Sun, Wallet, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
+import { Droplets, Hammer, Leaf, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
 import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Overview from "./Overview";
@@ -9,17 +9,15 @@ import PlantFlow from "./PlantFlow";
 import AlarmsPage from "./AlarmsPage";
 import Electrical from "./Electrical";
 import Maintenance from "./Maintenance";
-import Sustainability from "./Sustainability";
-import Benchmarks from "./Benchmarks";
-import Financials from "./Financials";
+import Insights from "./Insights";
 import AvevaMark from "./Aveva";
 import Cover from "./Cover";
-import { LivePill, useTick } from "./live";
+import { useTick } from "./live";
 import AlertsBell from "./AlertsBell";
 import UserMenu from "./UserMenu";
 import { WORK_ORDERS, type WorkOrder } from "./cmms";
 
-export type TabId = "overview" | "flow" | "alarms" | "production" | "electrical" | "sustainability" | "benchmarks" | "financials" | "maintenance";
+export type TabId = "overview" | "flow" | "alarms" | "production" | "electrical" | "insights" | "maintenance";
 export type Go = (tab: TabId, target?: string) => void;
 export type Theme = "light" | "dark";
 
@@ -28,13 +26,11 @@ const readTheme = (): Theme => {
 };
 
 const TABS: { id: TabId; label: string; icon: LucideIcon; sub: string }[] = [
-  { id: "overview", label: "Command Center", icon: Gauge, sub: "The whole plant at a glance" },
-  { id: "flow", label: "Overview", icon: Workflow, sub: "The whole process, sea to network" },
+  { id: "overview", label: "Overview", icon: Gauge, sub: "The whole plant at a glance" },
+  { id: "flow", label: "Operations", icon: Workflow, sub: "The whole process, sea to network" },
   { id: "production", label: "Production", icon: Waves, sub: "Follow the water from sea to network" },
   { id: "electrical", label: "Electrical", icon: Zap, sub: "Single-line diagram and power use" },
-  { id: "sustainability", label: "Sustainability", icon: Leaf, sub: "CO₂, solar share, brine and chemicals" },
-  { id: "benchmarks", label: "Benchmarks", icon: Droplets, sub: "Our plant against best-in-class" },
-  { id: "financials", label: "Financials", icon: Wallet, sub: "What one cubic metre costs, in LE" },
+  { id: "insights", label: "Insights", icon: Leaf, sub: "Sustainability, benchmarks and the cost of water" },
   { id: "maintenance", label: "Maintenance", icon: Hammer, sub: "Work orders and asset health (CMMS)" },
 ];
 
@@ -89,14 +85,13 @@ export default function App() {
         </div>
       </motion.header>
 
-      <main className={`page ${tab === "production" ? "prod" : ""} ${tab === "flow" ? "prod flow" : ""}`}>
-        {tab !== "production" && tab !== "flow" && tab !== "alarms" && <div className="page-head">
+      <main className={`page ${tab === "production" ? "prod" : ""} ${tab === "flow" ? "prod flow" : ""} ${tab === "electrical" ? "prod flow elec" : ""} ${tab === "insights" ? "prod flow ins-page" : ""} ${tab === "overview" ? "prod flow cc-page" : ""} ${tab === "alarms" ? "prod flow al-page" : ""} ${tab === "maintenance" ? "prod flow mt-page" : ""}`}>
+        {tab !== "production" && tab !== "flow" && tab !== "electrical" && tab !== "insights" && tab !== "overview" && tab !== "maintenance" && tab !== "alarms" && <div className="page-head">
           <div>
             <h1>{cur.label}</h1>
             <p>{cur.sub}</p>
           </div>
           <div className="filters">
-            <LivePill />
             <Segmented<Range> label="Time range" value={f.range} options={RANGES} onChange={(range) => setF({ ...f, range })} />
             <label className="select">
               <span className="sr">Area</span>
@@ -109,15 +104,13 @@ export default function App() {
 
         <AnimatePresence mode="wait">
           <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-            {tab === "overview" && <Overview f={f} go={go} wos={wos} />}
+            {tab === "overview" && <Overview f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} wos={wos} />}
             {tab === "alarms" && <AlarmsPage go={go} focus={stageTarget} />}
             {tab === "flow" && <PlantFlow f={{ ...f, area: "All plant" }} go={go} t={tick} />}
             {tab === "production" && <Production f={{ ...f, area: "All plant" }} start={stageTarget} />}
-            {tab === "electrical" && <Electrical f={f} />}
-            {tab === "sustainability" && <Sustainability f={f} />}
-            {tab === "benchmarks" && <Benchmarks f={f} />}
-            {tab === "financials" && <Financials f={f} />}
-            {tab === "maintenance" && <Maintenance f={f} wos={wos} setWos={setWos} />}
+            {tab === "electrical" && <Electrical f={{ ...f, area: "All plant" }} />}
+            {tab === "insights" && <Insights f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} />}
+            {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} setWos={setWos} />}
           </motion.div>
         </AnimatePresence>
       </main>

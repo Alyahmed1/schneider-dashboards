@@ -111,3 +111,55 @@
 .me-actions button { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; font-weight: 600; font-size: 13.5px; text-align: left; transition: background .15s; }
 .me-actions button:hover { background: var(--surface-2); }
 .me-actions svg { color: var(--teal-d); flex: none; }
+
+/* ================= alarm grid, laid out like the AVEVA alarm client ================= */
+.ax-wrap { border: 1px solid #8e9aa0; background: var(--surface); overflow: auto; max-height: min(52vh, 470px); min-height: 220px; }
+html[data-theme="dark"] .ax-wrap { border-color: #3a5360; }
+table.ax { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; }
+.ax th { position: sticky; top: 0; z-index: 2; padding: 4px 8px; text-align: left; font-weight: 500; white-space: nowrap; user-select: none; cursor: pointer; color: #111;
+  background: linear-gradient(#fbfbfb, #dfe1e3); border-right: 1px solid #b4babd; border-bottom: 1px solid #9aa2a6; }
+.ax th span { margin-right: 6px; }
+.ax th svg { vertical-align: -1px; opacity: .65; }
+.ax th:hover { background: linear-gradient(#ffffff, #e9eef2); }
+html[data-theme="dark"] .ax th { color: #e1ecef; background: linear-gradient(#2c424d, #1e313b); border-color: #3a5360; }
+html[data-theme="dark"] .ax th:hover { background: linear-gradient(#35505d, #243a46); }
+.ax td { padding: 3px 8px; height: 26px; white-space: nowrap; cursor: default; border-bottom: 1px solid transparent; }
+.ax td.cm { max-width: 360px; overflow: hidden; text-overflow: ellipsis; }
+.ax tr.unack td { color: #d40000; }
+.ax tr.ack td { color: #0b2bd6; }
+html[data-theme="dark"] .ax tr.unack td { color: #ff6b6b; }
+html[data-theme="dark"] .ax tr.ack td { color: #8aa8ff; }
+.ax tbody tr:hover td { background: rgba(31, 111, 209, .09); }
+.ax tbody tr.sel td { background: #cfe1fb; }
+html[data-theme="dark"] .ax tbody tr.sel td { background: #1f4163; }
+.ax tbody tr.flash td { animation: axflash 3s ease-out; }
+@keyframes axflash { 0%, 60% { background: #fff3b0; } 100% { background: transparent; } }
+.ax tr.none td { text-align: center; padding: 40px 0; color: var(--muted); cursor: default; }
+.ax .ax-act { position: sticky; left: 0; z-index: 1; background: var(--surface); border-right: 1px solid #b4babd; padding: 2px 6px; text-align: center; }
+.ax th.ax-act { z-index: 3; cursor: default; text-align: center; background: linear-gradient(#fbfbfb, #dfe1e3); }
+html[data-theme="dark"] .ax th.ax-act { background: linear-gradient(#2c424d, #1e313b); }
+html[data-theme="dark"] .ax .ax-act { border-color: #3a5360; }
+.ax tbody tr.sel .ax-act { background: #cfe1fb; }
+html[data-theme="dark"] .ax tbody tr.sel .ax-act { background: #1f4163; }
+.ax tbody tr:hover .ax-act { background: #e8f0fb; }
+html[data-theme="dark"] .ax tbody tr:hover .ax-act { background: #1b3548; }
+.ax-btn { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; font-size: 12px; font-weight: 600; color: #1d2a30; border: 1px solid #8e9aa0; border-radius: 3px; background: linear-gradient(#fdfdfd, #dde1e4); }
+.ax-btn:hover { background: linear-gradient(#ffffff, #e8edf1); border-color: #5b6a72; }
+.ax-btn.go { color: #0b2bd6; }
+html[data-theme="dark"] .ax-btn { color: #e1ecef; border-color: #4c6672; background: linear-gradient(#2f4651, #243842); }
+html[data-theme="dark"] .ax-btn.go { color: #9db6ff; }
+
+.ax-detail { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; padding: 12px 14px; border: 1px solid var(--line); border-top: 0; background: var(--surface-2); font-size: 13px; }
+.ax-detail.empty { color: var(--muted); align-items: center; min-height: 58px; }
+.ax-d-main b { font-size: 14px; }
+.ax-d-main p { color: var(--text-2); margin: 3px 0 8px; max-width: 90ch; }
+.ax-d-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; }
+.ax-d-meta span { display: inline-flex; gap: 7px; font-weight: 600; }
+.ax-d-meta i { font-style: normal; font-weight: 500; color: var(--muted); }
+.ax-status { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); border-top: 0; background: var(--surface-3); font-size: 12px; color: var(--text-2); }
+.ax-status span { padding: 5px 14px; border-right: 1px solid var(--line); }
+.ax-status span:last-child { border-right: 0; margin-left: auto; }
+@media (max-width: 720px) { .ax-detail { flex-direction: column; } .ax-wrap { max-height: 60vh; } }
+
+.ax-btn.icon { padding: 2px 7px; }
+.ax-btn.icon svg { display: block; }

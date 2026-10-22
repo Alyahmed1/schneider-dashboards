@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertTriangle, CalendarClock, Check, Clock, RotateCcw, Search, Undo2, User, Wrench, X } from "lucide-react";
-import { BUCKET, RANGE_LABEL, rng, type Filters, type Kpi } from "./data";
-import { assetsIn, maintenanceHours, woInArea, type WorkOrder, type WoStatus } from "./cmms";
-import { axis, C, Card, Chip, CountUp, gridProps, KpiCard, Replay, Tip } from "./ui";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, CalendarClock, Check, Clock, Minus, RotateCcw, Search, Sparkles, Undo2, User, X } from "lucide-react";
+import type { Filters } from "./data";
+import { predictive, woInArea, type PredRow, type WorkOrder, type WoStatus } from "./cmms";
+import { C, Chip, CountUp, rise } from "./ui";
 
 
 const COLS: { id: WoStatus; label: string; hint: string }[] = [
@@ -13,19 +12,20 @@ const COLS: { id: WoStatus; label: string; hint: string }[] = [
   { id: "Done", label: "Done", hint: "Completed" },
 ];
 const initials = (s: string) => s.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-type WoKind = WorkOrder["type"];
-const KINDS: WoKind[] = ["Planned", "Unplanned"];
-const HEALTH_FILTERS =["All", "Needs attention", "Healthy"] as const;
-type HealthFilter = (typeof HEALTH_FILTERS)[number];
-const healthTone = (h: number) => (h >= 80 ? C.good : h >= 65 ? C.warn : C.bad);
+const RISK_FILTERS = ["All", "High risk", "Watch", "Healthy"] as const;
+type RiskFilter = (typeof RISK_FILTERS)[number];
+const riskTone = (r: number) => (r >= 50 ? C.bad : r >= 25 ? C.warn : C.good);
+const riskBand = (r: number): Exclude<RiskFilter, "All"> => (r >= 50 ? "High risk" : r >= 25 ? "Watch" : "Healthy");
+const TREND = { up: ArrowUpRight, down: ArrowDownRight, flat: Minus } as const;
 
 export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkOrder[]; setWos: (fn: (w: WorkOrder[]) => WorkOrder[]) => void }) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [over, setOver] = useState<WoStatus | null>(null);
   const [selId, setSelId] = useState<string | null>(null);
   const [q, setQ] = useState("");
-  const [hf, setHf] = useState<HealthFilter>("All");
-  const [kind, setKind] = useState<WoKind>("Planned");
+  const [hf, setHf] = useState<RiskFilter>("All");
+  const [pick, setPick] = useState<string | null>(null);
+  const [made, setMade] = useState<Record<string, string>>({});
 
   const list = useMemo(() => wos.filter((w) => woInArea(w, f)), [wos, f]);
   const sel = wos.find((w) => w.id === selId) ?? null;
@@ -42,30 +42,43 @@ export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkO
   const late = open.filter((w) => w.late).length;
   const done = list.filter((w) => w.status === "Done").length;
   const planned = list.filter((w) => w.type === "Planned").length;
-  const sp = (seed: number, base: number) => { const r = rng(seed); return Array.from({ length: 14 }, () => base * (0.88 + r() * 0.24)); };
-  const kpis: Kpi[] = [
-    { id: "open", label: "Open work orders", value: open.length, decimals: 0, unit: "", delta: -3, goodWhenDown: true, note: `${list.filter((w) => w.status === "In progress").length} in progress`, spark: sp(1, 10) },
-    { id: "late", label: "Overdue", value: late, decimals: 0, unit: "", delta: late ? 50 : -100, goodWhenDown: true, note: "need action today", spark: sp(2, 2) },
-    { id: "pm", label: "PM compliance", value: 94.2, decimals: 1, unit: "%", delta: 1.3, note: "target 95%", spark: sp(3, 94) },
-    { id: "mttr", label: "Repair time (MTTR)", value: 3.4, decimals: 1, unit: "hours", delta: -6.2, goodWhenDown: true, note: "per breakdown", spark: sp(4, 3.4) },
-    { id: "plan", label: "Planned work", value: list.length ? (planned / list.length) * 100 : 0, decimals: 0, unit: "%", delta: 4.0, note: `${done} finished`, spark: sp(5, 70) },
-  ];
+  const tiles = [
+    { label: "Open work orders", value: open.length, dec: 0, unit: "", note: `${list.filter((w) => w.status === "In progress").length} in progress`, tone: "info" },
+    { label: "Overdue", value: late, dec: 0, unit: "", note: "need action today", tone: late ? "bad" : "good" },
+    { label: "PM compliance", value: 94.2, dec: 1, unit: "%", note: "target 95%", tone: "warn" },
+    { label: "Repair time (MTTR)", value: 3.4, dec: 1, unit: "h", note: "per breakdown", tone: "good" },
+    { label: "Planned work", value: list.length ? (planned / list.length) * 100 : 0, dec: 0, unit: "%", note: `${done} finished`, tone: "info" },
+  ] as const;
 
-  const hours = useMemo(() => maintenanceHours(f), [f]);
-  const kindKey = kind === "Planned" ? "planned" : "unplanned";
-  const kindHours = hours.reduce((s, h) => s + h[kindKey], 0);
-  const kindOrders = list.filter((w) => w.type === kind).length;
-  const assets = useMemo(() => assetsIn(f).filter((a) => (hf === "All" || (hf === "Healthy" ? a.health >= 80 : a.health < 80)) && (!q || a.name.toLowerCase().includes(q.toLowerCase()))), [f, hf, q]);
+  const all = useMemo(() => predictive(f).sort((a, b) => b.risk - a.risk), [f]);
+  const rows = useMemo(() => all.filter((a) => (hf === "All" || riskBand(a.risk) === hf) && (!q || a.name.toLowerCase().includes(q.toLowerCase()))), [all, hf, q]);
+  const atRisk = all.filter((a) => a.risk >= 50).length;
+  const soon = [...all].sort((a, b) => a.failIn - b.failIn)[0];
+  const sel2: PredRow | undefined = rows.find((a) => a.name === pick) ?? rows[0];
+  const createWo = (a: PredRow) => {
+    const id = `WO-${2450 + Object.keys(made).length}`;
+    setMade((m) => ({ ...m, [a.name]: id }));
+    setWos((w) => [...w, { id, title: a.pred.action.split(".")[0], asset: a.name, area: a.area === "All plant" ? "All plant" : a.area, prio: a.risk >= 50 ? "High" : "Medium", due: `by ${a.failDate}`, status: "Open", type: "Planned", crew: "Predictive team", hours: 4, note: `Created from predictive maintenance. ${a.pred.signal} is ${a.pred.value} and rising. Estimated failure in ${a.failIn} days (${a.pred.confidence}% confidence).` }]);
+  };
 
   return (
-    <>
-      <div className="grid g-kpi">
-        {kpis.map((k, i) => <KpiCard key={k.id} k={k} i={i} hero={i === 0} />)}
+    <div className="mt">
+      <div className="mt-head"><h1>Maintenance</h1><p>Work orders and predictive maintenance. Drag a card to another column, or use its buttons.</p></div>
+
+      <div className="mt-tiles">
+        {tiles.map((x, i) => (
+          <motion.div key={x.label} className={`mini-kpi tone-${x.tone}`} {...rise(i)}>
+            <span>{x.label}</span>
+            <b><CountUp value={x.value} decimals={x.dec} />{x.unit && <small>{x.unit}</small>}</b>
+            <em>{x.note}</em>
+          </motion.div>
+        ))}
       </div>
 
-      <Card title="Work order board" sub="Drag a card to another column, or use the buttons on the card. Everything updates the Command Center too." i={1}
-        right={<span className="hint-pill"><Wrench size={13} /> {RANGE_LABEL[f.range]} · {f.area}</span>}>
-        <div className="board">
+      <div className="mt-main">
+        <motion.section className="card ins-card mt-board" {...rise(1)}>
+          <header className="ins-ch"><div><h3>Work order board</h3><p>Updates the Overview too</p></div></header>
+          <div className="board">
           {COLS.map((c) => {
             const items = list.filter((w) => w.status === c.id);
             return (
@@ -103,59 +116,57 @@ export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkO
               </div>
             );
           })}
+          </div>
+        </motion.section>
+
+        <div className="mt-side">
+          <motion.section className="card ins-card mt-assets" {...rise(3)}>
+            <header className="ins-ch">
+              <div><h3>Predictive maintenance</h3><p>Which assets will fail next, and what to do about it</p></div>
+              <label className="search"><Search size={14} /><span className="sr">Search assets</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search assets" /></label>
+            </header>
+            <div className="pm-stats">
+              <div className="bad"><span>Assets at risk</span><b><CountUp value={atRisk} /></b></div>
+              <div><span>Next predicted failure</span><b>{soon.name}</b><small>in {soon.failIn} days</small></div>
+              <div className="good"><span>Downtime avoided</span><b><CountUp value={46} /><em> h</em></b><small>this quarter</small></div>
+            </div>
+            <div className="chips">
+              {RISK_FILTERS.map((x) => <button key={x} className={`fchip ${hf === x ? "on" : ""}`} onClick={() => setHf(x)}>{x}</button>)}
+            </div>
+            <div className="mt-assets-scroll">
+              <table className="tbl assets">
+                <thead><tr><th>Asset</th><th>Failure risk, 30 d</th><th>Fails in</th><th>Signal</th></tr></thead>
+                <tbody>
+                  <AnimatePresence initial={false}>
+                    {rows.map((a, n) => {
+                      const T = TREND[a.pred.trend];
+                      return (
+                        <motion.tr key={a.name} layout className={sel2?.name === a.name ? "sel" : ""} onClick={() => setPick(a.name)} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ delay: n * 0.02 }}>
+                          <td><b>{a.name}</b><small>{a.area} · class {a.crit}</small></td>
+                          <td className="hcell"><div className="bar"><motion.i initial={{ width: 0 }} animate={{ width: `${a.risk}%` }} transition={{ duration: 0.8 }} style={{ background: riskTone(a.risk) }} /></div><span>{a.risk}%</span></td>
+                          <td className={a.risk >= 50 ? "late" : ""}>{a.failIn} d<small>{a.failDate}</small></td>
+                          <td><b className="sg">{a.pred.value}<T size={12} className={`tr-${a.pred.trend}`} /></b><small>{a.pred.signal}</small></td>
+                        </motion.tr>
+                      );
+                    })}
+                  </AnimatePresence>
+                  {!rows.length && <tr><td colSpan={4} className="col-empty">No assets match</td></tr>}
+                </tbody>
+              </table>
+            </div>
+            {sel2 && (
+              <div className="pm-detail">
+                <div>
+                  <b><Sparkles size={13} /> {sel2.name}<em>{riskBand(sel2.risk)} · {sel2.pred.confidence}% confidence</em></b>
+                  <p>{sel2.pred.action}</p>
+                </div>
+                {made[sel2.name]
+                  ? <span className="pm-made"><Check size={13} /> {made[sel2.name]} created</span>
+                  : <button className="btn on" onClick={() => createWo(sel2)}>Create work order <ArrowRight size={13} /></button>}
+              </div>
+            )}
+          </motion.section>
         </div>
-      </Card>
-
-      <div className="grid g-12">
-        <Card title="Maintenance hours" sub={`Hours ${BUCKET[f.range]} · ${kind === "Planned" ? "scheduled work, done on a calendar" : "breakdowns and faults, done as they happen"}`} i={2}>
-          <div className="kind-tabs" role="tablist" aria-label="Maintenance type">
-            {KINDS.map((k) => (
-              <button key={k} role="tab" aria-selected={kind === k} className={kind === k ? "on" : ""} onClick={() => setKind(k)}>
-                {k === "Planned" ? <CalendarClock size={15} /> : <AlertTriangle size={15} />}{k}
-                {kind === k && <motion.i layoutId="kind-pill" className="kind-pill" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
-              </button>
-            ))}
-          </div>
-          <div className="kind-stats">
-            <div><span>Total hours</span><b><CountUp value={kindHours} /></b></div>
-            <div><span>Work orders</span><b><CountUp value={kindOrders} /></b></div>
-            <div><span>Average per order</span><b><CountUp value={kindOrders ? kindHours / kindOrders : 0} decimals={1} /> h</b></div>
-          </div>
-          <Replay className="chart-h" key={kind}>
-            <ResponsiveContainer>
-              <BarChart data={hours} margin={{ left: -10, right: 6, top: 8 }}>
-                <CartesianGrid {...gridProps} />
-                <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={18} />
-                <YAxis {...axis} width={40} />
-                <Tooltip content={<Tip unit="h" />} cursor={{ fill: "rgba(14,143,138,.06)" }} />
-                <Bar dataKey={kind === "Planned" ? "planned" : "unplanned"} name={kind} fill={kind === "Planned" ? C.teal : C.warn} radius={[6, 6, 0, 0]} animationDuration={1000} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Replay>
-        </Card>
-
-        <Card title="Asset health" sub="Lowest health needs attention first" i={3} className="scroll-x"
-          right={<label className="search"><Search size={14} /><span className="sr">Search assets</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search assets" /></label>}>
-          <div className="chips">
-            {HEALTH_FILTERS.map((x) => <button key={x} className={`fchip ${hf === x ? "on" : ""}`} onClick={() => setHf(x)}>{x}</button>)}
-          </div>
-          <table className="tbl assets">
-            <thead><tr><th>Asset</th><th>Health</th><th>Life left</th><th>Next PM</th></tr></thead>
-            <tbody>
-              <AnimatePresence initial={false}>
-                {[...assets].sort((a, b) => a.health - b.health).map((a, n) => (
-                  <motion.tr key={a.name} layout initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ delay: n * 0.02 }}>
-                    <td><b>{a.name}</b><small>{a.area} · class {a.crit}</small></td>
-                    <td className="hcell"><div className="bar"><motion.i initial={{ width: 0 }} whileInView={{ width: `${a.health}%` }} viewport={{ once: false }} transition={{ duration: 0.8 }} style={{ background: healthTone(a.health) }} /></div><span>{a.health}</span></td>
-                    <td>{a.rul} d</td>
-                    <td className={a.nextPm === "Overdue" ? "late" : ""}>{a.nextPm === "Overdue" ? <><AlertTriangle size={12} /> Overdue</> : a.nextPm}</td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-              {!assets.length && <tr><td colSpan={4} className="col-empty">No assets match</td></tr>}
-            </tbody>
-          </table>
-        </Card>
       </div>
 
       <AnimatePresence>
@@ -190,6 +201,6 @@ export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkO
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }

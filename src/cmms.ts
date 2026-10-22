@@ -69,3 +69,31 @@ export function powerSeries(f: Filters): PowerPoint[] {
     return row;
   });
 }
+
+/* ---------- predictive maintenance ---------- */
+export interface Pred { signal: string; value: string; trend: "up" | "flat" | "down"; confidence: number; action: string }
+const PRED: Record<string, Pred> = {
+  "HP pump A": { signal: "Vibration", value: "2.4 mm/s", trend: "flat", confidence: 90, action: "Keep the routine PM. No fault is developing." },
+  "HP pump B": { signal: "Vibration", value: "3.1 mm/s", trend: "up", confidence: 84, action: "Re-check the alignment at the next PM." },
+  "HP pump C": { signal: "Vibration", value: "7.4 mm/s", trend: "up", confidence: 91, action: "Inspect the drive-end bearing and coupling within 2 weeks." },
+  "RO membranes · Train B": { signal: "Differential pressure", value: "2.4 bar", trend: "up", confidence: 93, action: "Run a membrane clean (CIP) before the pressure drop passes 2.6 bar." },
+  "RO membranes · Train A": { signal: "Differential pressure", value: "1.7 bar", trend: "up", confidence: 82, action: "Plan the next clean in about 6 weeks." },
+  "RO membranes · Train C": { signal: "Differential pressure", value: "1.6 bar", trend: "flat", confidence: 80, action: "No action. Keep monitoring." },
+  "Energy recovery bank A": { signal: "Efficiency", value: "96 %", trend: "flat", confidence: 88, action: "No action. Inspect the rotor at the yearly shutdown." },
+  "Intake pump 2": { signal: "Seal temperature", value: "61 °C", trend: "flat", confidence: 76, action: "New seal fitted. Check again after 30 days of running." },
+  "Main transformer TR-1": { signal: "Winding temperature", value: "82 °C", trend: "up", confidence: 74, action: "Check the cooling fans and oil level before the summer peak." },
+  "Gravity filter 3": { signal: "Filter pressure drop", value: "0.84 bar", trend: "up", confidence: 87, action: "Backwash now, then re-check the media level." },
+  "Dosing pump 2": { signal: "Stroke error", value: "4.2 %", trend: "up", confidence: 89, action: "Replace the stroke sensor and recalibrate the pump." },
+  "Transfer pump 1": { signal: "Motor current", value: "77 A", trend: "flat", confidence: 85, action: "No action. Routine lubrication is enough." },
+};
+export interface PredRow extends Asset { risk: number; failIn: number; failDate: string; pred: Pred }
+/** chance of failure in the next 30 days, and when the model expects it, from each asset's health and remaining life */
+export function predictive(f: Filters): PredRow[] {
+  return assetsIn(f).map((a) => {
+    const byHealth = Math.round((100 - a.health) * 1.7 - 6);
+    const byLife = a.rul <= 40 ? Math.round(100 - a.rul * 2.2) : 0;
+    const risk = Math.max(3, Math.min(97, Math.max(byHealth, byLife)));
+    const failDate = new Date(Date.now() + a.rul * 86400000).toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+    return { ...a, risk, failIn: a.rul, failDate, pred: PRED[a.name] ?? { signal: "Condition", value: "-", trend: "flat", confidence: 70, action: "Keep the routine PM." } };
+  });
+}

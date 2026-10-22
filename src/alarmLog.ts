@@ -5,13 +5,14 @@ export const ALARM_TYPES: AlarmType[] = ["Process", "Equipment", "Water quality"
 export interface LogAlarm {
   id: string; sev: AlarmSev; text: string; detail: string; where: string; stage: string; type: AlarmType;
   minsAgo: number; wo?: string; doneDefault?: { minsAgo: number; by: string };
+  limit?: string; value?: string; quality?: "Good" | "Bad";
 }
 
 const H = 60;
 const D = 24 * 60;
 
 /** sample alarm history for the last week (the first five are the ones shown on the Command Center) */
-export const ALARM_LOG: LogAlarm[] = [
+const RAW: LogAlarm[] = [
   { id: "a1", sev: "Critical", text: "Train B differential pressure above 2.3 bar", detail: "Membranes in train B are fouling. Output is dropping and energy use is rising. Schedule a membrane clean (CIP) within 6 days.", where: "TRAIN-B", stage: "RO membranes", type: "Process", minsAgo: 12, wo: "WO-2417" },
   { id: "a2", sev: "Warning", text: "Gravity filter 3 needs a backwash", detail: "Filter 3 is 95% clogged. Water will bypass to the other filters if it is not backwashed soon.", where: "FLT-3", stage: "Pre-treatment", type: "Process", minsAgo: 41, wo: "WO-2421" },
   { id: "a3", sev: "Warning", text: "HP pump C vibration trending up", detail: "Drive-end bearing vibration reached 7.4 mm/s (limit 7.1). Take a spectrum reading and inspect the coupling.", where: "P-301C", stage: "HP pumps", type: "Equipment", minsAgo: 2 * H, wo: "WO-2409" },
@@ -34,6 +35,18 @@ export const ALARM_LOG: LogAlarm[] = [
   { id: "a20", sev: "Info", text: "Brine dilution ratio 31:1, close to the 30:1 minimum", detail: "The outfall mixing is still within the permit but with little margin. Watch it during low tide.", where: "OUT-1", stage: "Brine outfall", type: "Water quality", minsAgo: 6 * D + 5 * H },
 ];
 
+/** the limit that was crossed, the value at that moment and the signal quality, for the alarm grid */
+const EXTRA: Record<string, Pick<LogAlarm, "limit" | "value" | "quality">> = {
+  a1: { limit: "2.3 bar", value: "2.4 bar" }, a2: { limit: "90 %", value: "95 %" }, a3: { limit: "7.1 mm/s", value: "7.4 mm/s" },
+  a4: { limit: "30 %", value: "28 %" }, a5: { limit: "", value: "4.1 MW" }, a6: { limit: "1.5 mg/L", value: "1.3 mg/L" },
+  a7: { limit: "28.0 °C", value: "29.1 °C" }, a8: { limit: "", value: "No signal", quality: "Bad" }, a9: { limit: "1200 A", value: "1480 A" },
+  a10: { limit: "0.4 bar", value: "0.4 bar" }, a11: { limit: "", value: "Run" }, a12: { limit: "1.0 mg/L", value: "0.9 mg/L" },
+  a13: { limit: "Leak", value: "True" }, a14: { limit: "1.2 bar", value: "0.7 bar" }, a15: { limit: "", value: "Start" },
+  a16: { limit: "35 %", value: "32 %" }, a17: { limit: "5000 ppm", value: "Fault", quality: "Bad" }, a18: { limit: "5.5 bar", value: "5.4 bar" },
+  a19: { limit: "80 °C", value: "82 °C" }, a20: { limit: "30 : 1", value: "31 : 1" },
+};
+export const ALARM_LOG: LogAlarm[] = RAW.map((a) => ({ quality: "Good", ...a, ...EXTRA[a.id] }));
+
 export const NOW = Date.now();
 export const atOf = (a: LogAlarm) => NOW - a.minsAgo * 60000;
 
@@ -46,4 +59,19 @@ export function ago(ms: number, now = Date.now()) {
   if (m < 60) return `${m} min ago`;
   if (m < 48 * 60) return `${Math.round(m / 60)} h ago`;
   return `${Math.round(m / 1440)} days ago`;
+}
+
+const pad = (n: number) => String(n).padStart(2, "0");
+/** MM/DD/YYYY HH:MM:SS, the way the alarm client shows time */
+export function fmtGrid(ms: number, utc = false) {
+  const d = new Date(ms);
+  const g = utc
+    ? { mo: d.getUTCMonth() + 1, da: d.getUTCDate(), y: d.getUTCFullYear(), h: d.getUTCHours(), mi: d.getUTCMinutes(), s: d.getUTCSeconds() }
+    : { mo: d.getMonth() + 1, da: d.getDate(), y: d.getFullYear(), h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds() };
+  return `${pad(g.mo)}/${pad(g.da)}/${g.y} ${pad(g.h)}:${pad(g.mi)}:${pad(g.s)}`;
+}
+/** "DDD HH:MM:SS" duration */
+export function fmtDur(ms: number) {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  return `${String(Math.floor(t / 86400)).padStart(3, "0")} ${pad(Math.floor((t % 86400) / 3600))}:${pad(Math.floor((t % 3600) / 60))}:${pad(t % 60)}`;
 }

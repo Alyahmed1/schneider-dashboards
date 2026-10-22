@@ -104,7 +104,6 @@ button { cursor: pointer; }
 .util-row button svg { color: var(--cyan); }
 .side-logos { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 20px 14px; padding: 2px 0 14px; border-bottom: 1px solid var(--line-soft); }
 .side-logos img { height: 34px; width: auto; max-width: 40%; object-fit: contain; }
-.side-logos img + img { height: 17px; max-width: 58%; }
 
 .main { grid-area: main; position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 16px 20px 14px; overflow: hidden; }
 .sweep { position: absolute; top: 0; left: 0; width: 100%; height: 3px; z-index: 5; pointer-events: none; background: linear-gradient(90deg, transparent, #6fe3ff 40%, #2f9bff 60%, transparent); box-shadow: 0 0 16px 2px rgba(80, 200, 255, 0.9); }
@@ -641,7 +640,6 @@ button { cursor: pointer; }
   }
   .side-logos { margin: 0 12px 8px; padding-bottom: 8px; }
   .side-logos img { height: 26px; }
-  .side-logos img + img { height: 14px; }
   .logo-plate { margin: 0 12px 8px; }
   .nav {
     flex-direction: row;

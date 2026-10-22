@@ -86,7 +86,10 @@ button {
   display: block;
   height: 72px;
   width: auto;
-  background: #ffffff;
+}
+
+.shell.light .logo-plate img {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 .topbar-meta {

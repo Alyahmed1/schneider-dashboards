@@ -84,12 +84,12 @@ button {
 
 .logo-plate img {
   display: block;
-  height: 72px;
+  height: 42px;
   width: auto;
 }
 
-.shell.light .logo-plate img {
-  filter: invert(1) hue-rotate(180deg);
+.logo-plate .logo-aveva {
+  height: 26px;
 }
 
 .topbar-meta {

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { animate, motion, useInView, useMotionValue } from "framer-motion";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
@@ -17,6 +17,9 @@ export const rise = (i = 0) => ({
   viewport: { once: false, amount: 0.12 },
   transition: { duration: 0.55, delay: Math.min(i, 6) * 0.06, ease: [0.22, 1, 0.36, 1] as const },
 });
+
+/** one timing for items that pop in one after another (labels, boxes): starts at 0.15 s, 0.03 s apart, ending by about 0.75 s */
+export const popDelay = (n: number) => 0.15 + Math.min(n * 0.03, 0.6);
 
 /** number that counts up when it scrolls into view and glides to each new live value */
 export function useCount(value: number, decimals = 0, ref?: RefObject<Element | null>) {
@@ -37,8 +40,22 @@ export function useCount(value: number, decimals = 0, ref?: RefObject<Element | 
 }
 export function CountUp({ value, decimals = 0 }: { value: number; decimals?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const txt = useCount(value, decimals, ref);
-  return <span ref={ref} className="num">{txt}</span>;
+  const seen = useInView(ref, { amount: 0.2 });
+  const mv = useMotionValue(0);
+  const first = useRef(true);
+  // the text is written directly into the element, so a counting number never re-renders React
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (el) el.textContent = fmt(mv.get(), decimals);
+    return mv.on("change", (v) => { if (el) el.textContent = fmt(v, decimals); });
+  }, [mv, decimals]);
+  useEffect(() => {
+    if (!seen) { mv.jump(0); first.current = true; return; }
+    const c = animate(mv, value, { duration: first.current ? 1.2 : 1.6, ease: [0.22, 1, 0.36, 1] });
+    first.current = false;
+    return () => c.stop();
+  }, [seen, value, mv]);
+  return <span ref={ref} className="num" />;
 }
 /** number-looking text ("45.2", "38,000") becomes a live count-up, anything else stays text */
 export function LiveText({ value, wob = 1 }: { value: string; wob?: number }) {

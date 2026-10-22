@@ -4,7 +4,7 @@ import { Area, AreaChart, CartesianGrid, Cell, ComposedChart, Line, Pie, PieChar
 import { Activity, AlertTriangle, Anchor, Building2, Cpu, Filter, Fuel, Gauge, Gauge as Meter, PlugZap, Power, PowerOff, RotateCcw, Send, Sun, X, type LucideIcon } from "lucide-react";
 import { compact, rng, type Filters } from "./data";
 import { GEN_KW, LOADS, PRODUCT_FLOW, powerSeries, SOLAR_KW } from "./cmms";
-import { axis, C, Chip, CountUp, gridProps, Replay, Tip, useCount } from "./ui";
+import { axis, C, Chip, CountUp, gridProps, popDelay, Replay, rise, Tip, useCount } from "./ui";
 import { useTick, wobble } from "./live";
 import { PlayPauseIcon } from "./StageView";
 
@@ -142,13 +142,16 @@ export default function Electrical({ f }: { f: Filters }) {
   );
 
   /** one box of the diagram */
+  // boxes and breakers pop in one after another, with the same timing as the labels on the other tabs
+  let seq = 0;
+  const nextDelay = () => `${popDelay(seq++)}s`;
   const boxAt = (n: NodeDef, cx: number, y: number, h: number) => {
     const kw = kwOf(n.id);
     const off = isOpen(n.feeder);
     const sk = SYM[n.id];
     const sz = Math.min(g.f * 3.1, h * 0.56);
     return (
-      <g key={n.id} className={`nd nd-${n.kind} ${pop?.kind === "node" && pop.id === n.id ? "sel" : ""} ${off ? "off" : ""}`} transform={`translate(${cx - g.bw / 2} ${y})`}
+      <g key={n.id} className={`sld-in nd nd-${n.kind} ${pop?.kind === "node" && pop.id === n.id ? "sel" : ""} ${off ? "off" : ""}`} style={{ animationDelay: nextDelay() }} transform={`translate(${cx - g.bw / 2} ${y})`}
         onClick={() => setPop({ kind: "node", id: n.id })} role="button" tabIndex={0} aria-label={`${n.name}, ${Math.round(kw)} kilowatts. Press for its KPIs.`}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPop({ kind: "node", id: n.id }); } }}>
         <rect width={g.bw} height={h} rx={Math.min(16, h * 0.2)} className="nd-box" />
@@ -165,7 +168,7 @@ export default function Electrical({ f }: { f: Filters }) {
   const brk = (id: FeederId, x: number, y: number) => {
     const o = isOpen(id);
     return (
-      <g key={`b-${id}`} className={`brk ${o ? "open" : "closed"}`} onClick={() => setPop({ kind: "brk", id })} role="button" tabIndex={0} aria-label={`${FEEDER_NAME[id]} breaker ${BRK_TAG[id]}, ${o ? "open" : "closed"}. Press for its KPIs.`}
+      <g key={`b-${id}`} className={`sld-in brk ${o ? "open" : "closed"}`} style={{ animationDelay: nextDelay() }} onClick={() => setPop({ kind: "brk", id })} role="button" tabIndex={0} aria-label={`${FEEDER_NAME[id]} breaker ${BRK_TAG[id]}, ${o ? "open" : "closed"}. Press for its KPIs.`}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPop({ kind: "brk", id }); } }}>
         <rect x={x - 24} y={y - 20} width="48" height="40" fill="transparent" />
         <rect x={x - 12} y={y - 12} width="24" height="24" rx="5" />
@@ -180,7 +183,7 @@ export default function Electrical({ f }: { f: Filters }) {
   const shown = pop?.kind === "node" ? nodeOf(pop.id) : null;
 
   return (
-    <div className="scene-wrap">
+    <motion.div className="scene-wrap" {...rise(0)}>
       <div ref={box} className={`scene ${flowOn ? "" : "paused"}`}>
         <svg className="scene-art sld2" width={size.w} height={size.h} viewBox={`0 0 ${size.w} ${size.h}`} role="group" aria-label="Single-line diagram of the plant power system">
           {/* main bus */}
@@ -297,7 +300,7 @@ export default function Electrical({ f }: { f: Filters }) {
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

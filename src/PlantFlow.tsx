@@ -2,7 +2,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
 import { fmt, stages, type Filters } from "./data";
-import { Chip } from "./ui";
+import { Chip, popDelay, rise } from "./ui";
 import { wobble } from "./live";
 import { PlayPauseIcon, StageKpis, TagInfo, tagShow } from "./StageView";
 import { Cap, effective, Pipe, ScaleCtx, SCENES, type TagDef } from "./Scenes";
@@ -217,7 +217,7 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
   const stageNo = (id: string) => ORDER.findIndex((o) => o.id === id) + 1;
 
   return (
-    <div className="scene-wrap">
+    <motion.div className="scene-wrap" {...rise(0)}>
       <div ref={box} className={`scene ${flowOn ? "" : "paused"}`} style={{ ["--tagfs" as string]: `${fs}px` }}>
         <svg className="scene-art" width={size.w} height={size.h} viewBox={`0 0 ${size.w} ${size.h}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="The whole plant from sea intake to the network">
           <PlantArt g={g} />
@@ -263,7 +263,7 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
           return (
             <div key={p.key} className="tag-pos" style={{ left: p.x, top: p.y }}>
               <motion.button className={`tag st-${ef.state}`}
-                initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 + n * 0.01, type: "spring", stiffness: 420, damping: 26 }}
+                initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: popDelay(n), type: "spring", stiffness: 420, damping: 26 }}
                 onClick={() => setOpen({ kind: "tag", stageId: p.stageId, tag: p.tag })} aria-label={`${p.tag.name}, ${p.tag.tag}`}>
                 <i className="tag-dot" />
                 <b>{p.tag.tag}</b>
@@ -300,6 +300,6 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
           )}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }

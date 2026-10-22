@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Gauge, Pause, Play, Power, PowerOff, Square, X } from "lucide-react";
 import { fmt, stageTrend, type Filters, type Stage } from "./data";
-import { axis, C, Chip, CountUp, gridProps, LiveText, Replay, Tip } from "./ui";
+import { axis, C, Chip, CountUp, gridProps, LiveText, popDelay, Replay, Tip } from "./ui";
 import { wobble, wobbleCapped } from "./live";
 import { QualityRows, TrainsTable } from "./Panels";
 import { effective, SCENES, type TagDef, type TagState } from "./Scenes";
@@ -167,7 +167,7 @@ export default function StageView({ stage, f, t, paused = false, onTogglePaused 
           return (
             <div key={`${stage.id}-${x.id}`} className="tag-pos" style={{ left: offX + x.x * k, top: offY + x.y * k }}>
               <motion.button className={`tag st-${ef.state}`}
-                initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25 + n * 0.05, type: "spring", stiffness: 420, damping: 26 }}
+                initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: popDelay(n), type: "spring", stiffness: 420, damping: 26 }}
                 onClick={() => setOpen(x.id)} aria-label={`${x.name}, ${x.tag}`}>
                 <i className="tag-dot" />
                 <b>{x.tag}</b>

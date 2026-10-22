@@ -1,10 +1,16 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useDeferredValue, useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Area, AreaChart, CartesianGrid, ComposedChart, Line, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle, ArrowDownRight, ArrowRight, ArrowUpRight, Award, CheckCircle2, Cloud, Coins, Droplets, FlaskConical, RotateCcw, Sparkles, Star, Sun, Waves, Wrench, X, Zap, type LucideIcon } from "lucide-react";
 import { BUCKET, compact, qualityOk, QUALITY, rng, RANGES, RANGE_LABEL, type Filters, type Range } from "./data";
 import { ANNUAL_M3, BASE_COST, benchmarks, benchScore, benchTone, CHEMICALS, co2Series, costModel, GOALS, goalProgress, GRID_CO2, itemSeries, MARINE, PRICE, WHATIF_BASE, type Bench, type WhatIf } from "./step3";
-import { axis, C, Chip, CountUp, gridProps, Replay, rise, Segmented, Tip, TONE_COLOR } from "./ui";
+import { axis, C, Chip, gridProps, Segmented, Tip, TONE_COLOR } from "./ui";
+import { fmt } from "./data";
+
+// Insights has no animation: numbers, charts and cards show their final state at once
+const CountUp = ({ value, decimals = 0 }: { value: number; decimals?: number }) => <span className="num">{fmt(value, decimals)}</span>;
+const Replay = ({ children, className }: { children: ReactNode; className?: string }) => <div className={className}>{children}</div>;
+const rise = (_i = 0) => ({});
 import { useTick, wobble } from "./live";
 import type { Go } from "./App";
 
@@ -56,7 +62,7 @@ function Ring({ pct, size = 66, stroke = 7, color, children }: { pct: number; si
     <div className="ins-ring" style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={stroke} />
-        <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: c * (1 - pct / 100) }} transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+        <motion.circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} initial={false} animate={{ strokeDashoffset: c * (1 - pct / 100) }} transition={{ duration: 0 }} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
       </svg>
       <span>{children}</span>
     </div>
@@ -75,7 +81,9 @@ const VERDICT = { good: "Near best", info: "Better than average", warn: "Below a
 /** Insights: sustainability, benchmarks and the cost of water on one screen; every card opens its details over the picture */
 export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r: Range) => void; go: Go }) {
   const t = useTick();
-  const [w, setW] = useState<WhatIf>(WHATIF_BASE);
+  // the sliders move at once; the heavy numbers follow a moment later, so dragging stays smooth
+  const [draft, setW] = useState<WhatIf>(WHATIF_BASE);
+  const w = useDeferredValue(draft);
   const [pop, setPop] = useState<Pop>(null);
   const changed = w.recovery !== WHATIF_BASE.recovery || w.tariff !== WHATIF_BASE.tariff || w.solar !== WHATIF_BASE.solar;
   const model = useMemo(() => costModel(w), [w]);
@@ -118,7 +126,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
   ];
 
   const goalPct = [goalProgress(GOALS[0]), goalProgress(GOALS[1]), goalProgress(GOALS[2])];
-  const radar = rows.map((b, i) => ({ name: SHORT[b.id] ?? b.name, us: Math.round(scores[i]), avg: 50, best: 100 }));
+  const radar = useMemo(() => rows.map((b) => ({ name: SHORT[b.id] ?? b.name, us: Math.round(benchScore(b)), avg: 50, best: 100 })), [rows]);
   const marineOk = MARINE.filter(qualityOk).length;
   const chemOk = CHEMICALS.filter((c) => c.use <= c.target).length;
   const waterOk = QUALITY.filter(qualityOk).length;
@@ -128,6 +136,92 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
     { icon: FlaskConical, label: "Chemicals", text: `${chemOk} of ${CHEMICALS.length} under target`, ok: chemOk === CHEMICALS.length },
     { icon: Cloud, label: "Brine dilution", text: "38 : 1, minimum 30", ok: true },
   ];
+
+  // the heavy cards below do not depend on the sliders, so they are built once and not redrawn on every move
+  const co2Chart = useMemo(() => (
+            <div className="ins-chart">
+              <ResponsiveContainer>
+                <AreaChart data={series} margin={{ left: -8, right: 6, top: 6 }}>
+                  <defs>
+                    <linearGradient id="insG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#8aa1a8" stopOpacity={0.55} /><stop offset="100%" stopColor="#8aa1a8" stopOpacity={0.08} /></linearGradient>
+                    <linearGradient id="insS" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={C.sun} stopOpacity={0.65} /><stop offset="100%" stopColor={C.sun} stopOpacity={0.1} /></linearGradient>
+                  </defs>
+                  <CartesianGrid {...gridProps} />
+                  <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={24} />
+                  <YAxis {...axis} width={40} tickCount={4} tickFormatter={(v: number) => compact(v)} />
+                  <Tooltip content={<Tip unit="t" />} cursor={{ stroke: C.teal, strokeOpacity: 0.25 }} />
+                  <Area type="monotone" stackId="c" dataKey="grid" name="From grid" stroke="#8aa1a8" strokeWidth={2} fill="url(#insG)" isAnimationActive={false} />
+                  <Area type="monotone" stackId="c" dataKey="avoided" name="Saved by solar" stroke={C.sun} strokeWidth={2} fill="url(#insS)" isAnimationActive={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+  ), [series]);
+  const goalsBlock = useMemo(() => (
+            <button className="ins-goals" onClick={() => setPop({ k: "goals" })} aria-label="Our goals, open details">
+              {GOALS.map((g, i) => (
+                <div key={g.name}>
+                  <Ring pct={goalPct[i]} color={[C.sun, "#5a7a8a", C.teal][i]}><b>{Math.round(goalPct[i])}%</b></Ring>
+                  <span>{["Solar share", "CO₂ per m³", "Recovery"][i]}<small>{g.target} {g.unit} by {g.year}</small></span>
+                </div>
+              ))}
+            </button>
+  ), []);
+  const radarChart = useMemo(() => (
+              <div className="ins-radar">
+                <ResponsiveContainer>
+                  <RadarChart data={radar} outerRadius="60%">
+                    <PolarGrid stroke="var(--line)" />
+                    <PolarAngleAxis dataKey="name" tick={{ fontSize: 10, fill: "#6b8089" }} />
+                    <Radar dataKey="best" stroke="none" fill="none" />
+                    <Radar dataKey="avg" name="Average" stroke="#b9c4c7" fill="#c2cdd0" fillOpacity={0.35} isAnimationActive={false} />
+                    <Radar dataKey="us" name="Us" stroke={C.teal} strokeWidth={2.2} fill={C.teal} fillOpacity={0.3} isAnimationActive={false} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+  ), [radar]);
+  const benchRows = useMemo(() => (
+              <button className="ins-rows" onClick={() => setPop({ k: "bench" })} aria-label="Benchmarks, open the full list">
+                {[...rows].sort((a, b) => benchScore(a) - benchScore(b)).map((b) => {
+                  const s = benchScore(b);
+                  return (
+                    <div key={b.id}>
+                      <span>{SHORT[b.id]}</span>
+                      <div className="bar"><i style={{ width: `${s}%`, background: TONE_COLOR[benchTone(b)] }} /></div>
+                      <b>{Math.round(s)}</b>
+                    </div>
+                  );
+                })}
+              </button>
+  ), [rows]);
+  const oppsBlock = useMemo(() => (
+            <div className="ins-opps">
+              {OPPS.map((o, n) => {
+                const Icon = o.icon;
+                const share = (o.save / Math.max(...OPPS.map((x) => x.save))) * 100;
+                return (
+                  <button key={o.id} className="opp" onClick={() => setPop({ k: "opp", id: o.id })} aria-label={`${o.title}, open details`}>
+                    <span className="op-rank">{n + 1}</span>
+                    <span className="op-ico"><Icon size={20} /></span>
+                    <div className="op-t"><b>{o.title}</b><small>{o.from} → {o.to}</small></div>
+                    <div className="op-n"><b><CountUp value={o.save} decimals={1} /><em> M LE</em></b><small>−{o.co2.toFixed(1)} kt CO₂</small></div>
+                    <span className="op-bar" aria-hidden><i style={{ width: `${share}%` }} /></span>
+                  </button>
+                );
+              })}
+            </div>
+  ), []);
+  const permitsBlock = useMemo(() => (
+            <div className="ins-permits">
+              {permits.map((p) => {
+                const Icon = p.icon;
+                return (
+                  <button key={p.label} className={p.ok ? "" : "bad"} onClick={() => setPop({ k: "permit" })} aria-label={`${p.label}, open details`}>
+                    <Icon size={16} /><span>{p.label}<small>{p.text}</small></span>{!p.ok && <AlertTriangle size={16} />}
+                  </button>
+                );
+              })}
+            </div>
+  ), []);
 
   const tileOf = (id: string) => tiles.find((x) => x.id === id);
   const popTile = pop?.k === "tile" ? tileOf(pop.id) : undefined;
@@ -143,13 +237,13 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
         </header>
 
         <div className="ins-tiles">
-          {tiles.map((x, i) => {
+          {tiles.map((x) => {
             const Icon = x.icon;
             const good = x.goodDown ? x.delta <= 0 : x.delta >= 0;
             const Arrow = x.delta >= 0 ? ArrowUpRight : ArrowDownRight;
             const warn = x.fill < 70;
             return (
-              <motion.button key={x.id} className={`it ${x.id === "score" ? "it-hero" : ""}`} style={{ ["--ac" as string]: x.ac }} onClick={() => setPop({ k: "tile", id: x.id })} aria-label={`${x.label}, open details`} {...rise(i)}>
+              <button key={x.id} className={`it ${x.id === "score" ? "it-hero" : ""}`} style={{ ["--ac" as string]: x.ac }} onClick={() => setPop({ k: "tile", id: x.id })} aria-label={`${x.label}, open details`}>
                 <span className="it-line" aria-hidden />
                 <div className="it-head">
                   <span className="it-ico"><Icon size={19} strokeWidth={2} /></span>
@@ -157,15 +251,15 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                   <span className={`delta ${good ? "up" : "down"}`}><Arrow size={12} /><CountUp value={Math.abs(x.delta)} decimals={1} />%</span>
                 </div>
                 <div className="it-val"><b><CountUp value={x.value} decimals={x.dec} /></b><span>{x.unit}</span>{x.id === "score" && <em className="grade">{grade}</em>}</div>
-                <div className="it-bar"><motion.i className={warn ? "off" : ""} initial={{ width: 0 }} animate={{ width: `${x.fill}%` }} transition={{ duration: 0.9, delay: 0.1 + i * 0.05, ease: [0.22, 1, 0.36, 1] }} /></div>
+                <div className="it-bar"><i className={warn ? "off" : ""} style={{ width: `${x.fill}%` }} /></div>
                 <div className={`it-status ${warn ? "warn" : ""}`}>{x.ok ? <CheckCircle2 size={13} /> : <AlertTriangle size={13} />}<b>{x.text}</b><em>{x.goal}</em></div>
-              </motion.button>
+              </button>
             );
           })}
         </div>
 
         <div className="ins-mid">
-          <motion.section className="card ins-card" {...rise(2)}>
+          <section className="card ins-card">
             <header className="ins-ch">
               <div><h3>Cost of 1 m³ and what-if</h3><p>Move a slider, watch the cost</p></div>
               <div className="ins-res">
@@ -174,7 +268,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
               </div>
             </header>
             <div className="stack" aria-hidden>
-              {model.lines.map((l, i) => <motion.i key={l.id} layout animate={{ flexGrow: l.value }} transition={{ type: "spring", stiffness: 160, damping: 22 }} style={{ background: COLORS[i], flexBasis: 0 }} />)}
+              {model.lines.map((l, i) => <i key={l.id} style={{ background: COLORS[i], flexBasis: 0, flexGrow: l.value }} />)}
             </div>
             <div className="ins-lines">
               {model.lines.map((l, i) => (
@@ -184,113 +278,40 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
               ))}
             </div>
             <div className="ins-sliders">
-              <Slider label="Water recovery" unit="%" value={w.recovery} min={40} max={50} step={0.1} base={WHATIF_BASE.recovery} onChange={(recovery) => setW({ ...w, recovery })} />
-              <Slider label="Electricity price" unit="LE/kWh" value={w.tariff} min={1.2} max={3.5} step={0.1} base={WHATIF_BASE.tariff} onChange={(tariff) => setW({ ...w, tariff })} />
-              <Slider label="Solar share of power" unit="%" value={w.solar} min={0} max={60} step={1} base={WHATIF_BASE.solar} onChange={(solar) => setW({ ...w, solar })} />
+              <Slider label="Water recovery" unit="%" value={draft.recovery} min={40} max={50} step={0.1} base={WHATIF_BASE.recovery} onChange={(recovery) => setW({ ...draft, recovery })} />
+              <Slider label="Electricity price" unit="LE/kWh" value={draft.tariff} min={1.2} max={3.5} step={0.1} base={WHATIF_BASE.tariff} onChange={(tariff) => setW({ ...draft, tariff })} />
+              <Slider label="Solar share of power" unit="%" value={draft.solar} min={0} max={60} step={1} base={WHATIF_BASE.solar} onChange={(solar) => setW({ ...draft, solar })} />
             </div>
-          </motion.section>
+          </section>
 
-          <motion.section className="card ins-card" {...rise(3)}>
+          <section className="card ins-card">
             <header className="ins-ch"><div><h3>CO₂ and our goals</h3><p>{`Tonnes ${BUCKET[f.range]} · ${RANGE_LABEL[f.range]}`}</p></div>
               <div className="legend"><span><i style={{ background: "#8aa1a8" }} />Grid</span><span><i style={{ background: C.sun }} />Saved by solar</span></div></header>
-            <Replay className="ins-chart">
-              <ResponsiveContainer>
-                <AreaChart data={series} margin={{ left: -8, right: 6, top: 6 }}>
-                  <defs>
-                    <linearGradient id="insG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#8aa1a8" stopOpacity={0.55} /><stop offset="100%" stopColor="#8aa1a8" stopOpacity={0.08} /></linearGradient>
-                    <linearGradient id="insS" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={C.sun} stopOpacity={0.65} /><stop offset="100%" stopColor={C.sun} stopOpacity={0.1} /></linearGradient>
-                  </defs>
-                  <CartesianGrid {...gridProps} />
-                  <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={24} />
-                  <YAxis {...axis} width={40} tickCount={4} tickFormatter={(v: number) => compact(v)} />
-                  <Tooltip content={<Tip unit="t" />} cursor={{ stroke: C.teal, strokeOpacity: 0.25 }} />
-                  <Area type="monotone" stackId="c" dataKey="grid" name="From grid" stroke="#8aa1a8" strokeWidth={2} fill="url(#insG)" animationDuration={1100} />
-                  <Area type="monotone" stackId="c" dataKey="avoided" name="Saved by solar" stroke={C.sun} strokeWidth={2} fill="url(#insS)" animationDuration={1200} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Replay>
-            <button className="ins-goals" onClick={() => setPop({ k: "goals" })} aria-label="Our goals, open details">
-              {GOALS.map((g, i) => (
-                <div key={g.name}>
-                  <Ring pct={goalPct[i]} color={[C.sun, "#5a7a8a", C.teal][i]}><b>{Math.round(goalPct[i])}%</b></Ring>
-                  <span>{["Solar share", "CO₂ per m³", "Recovery"][i]}<small>{g.target} {g.unit} by {g.year}</small></span>
-                </div>
-              ))}
-            </button>
-          </motion.section>
+{co2Chart}{goalsBlock}          </section>
 
-          <motion.section className="card ins-card" {...rise(4)}>
+          <section className="card ins-card">
             <header className="ins-ch"><div><h3>How we compare</h3><p>Biggest gap: <b>{gap.name.toLowerCase()}</b></p></div><button className="link" onClick={() => setPop({ k: "bench" })}>All measures <ArrowRight size={13} /></button></header>
             <div className="ins-bench">
-              <Replay className="ins-radar">
-                <ResponsiveContainer>
-                  <RadarChart data={radar} outerRadius="60%">
-                    <PolarGrid stroke="var(--line)" />
-                    <PolarAngleAxis dataKey="name" tick={{ fontSize: 10, fill: "#6b8089" }} />
-                    <Radar dataKey="best" stroke="none" fill="none" />
-                    <Radar dataKey="avg" name="Average" stroke="#b9c4c7" fill="#c2cdd0" fillOpacity={0.35} animationDuration={900} />
-                    <Radar dataKey="us" name="Us" stroke={C.teal} strokeWidth={2.2} fill={C.teal} fillOpacity={0.3} animationDuration={1200} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </Replay>
-              <button className="ins-rows" onClick={() => setPop({ k: "bench" })} aria-label="Benchmarks, open the full list">
-                {[...rows].sort((a, b) => benchScore(a) - benchScore(b)).map((b) => {
-                  const s = benchScore(b);
-                  return (
-                    <div key={b.id}>
-                      <span>{SHORT[b.id]}</span>
-                      <div className="bar"><motion.i initial={{ width: 0 }} animate={{ width: `${s}%` }} transition={{ duration: 0.9 }} style={{ background: TONE_COLOR[benchTone(b)] }} /></div>
-                      <b>{Math.round(s)}</b>
-                    </div>
-                  );
-                })}
-              </button>
-            </div>
-          </motion.section>
+{radarChart}{benchRows}            </div>
+          </section>
         </div>
 
         <div className="ins-bot">
-          <motion.section className="card ins-card" {...rise(5)}>
+          <section className="card ins-card">
             <header className="ins-ch"><div><h3>Top 3 savings opportunities</h3><p>Sample estimates, per year</p></div></header>
-            <div className="ins-opps">
-              {OPPS.map((o, n) => {
-                const Icon = o.icon;
-                const share = (o.save / Math.max(...OPPS.map((x) => x.save))) * 100;
-                return (
-                  <motion.button key={o.id} className="opp" onClick={() => setPop({ k: "opp", id: o.id })} aria-label={`${o.title}, open details`}
-                    initial={{ opacity: 0, y: 22, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.25 + n * 0.14, type: "spring", stiffness: 260, damping: 22 }}>
-                    <span className="op-rank">{n + 1}</span>
-                    <span className="op-ico"><Icon size={20} /></span>
-                    <div className="op-t"><b>{o.title}</b><small>{o.from} → {o.to}</small></div>
-                    <div className="op-n"><b><CountUp value={o.save} decimals={1} /><em> M LE</em></b><small>−{o.co2.toFixed(1)} kt CO₂</small></div>
-                    <span className="op-bar" aria-hidden><motion.i initial={{ width: 0 }} animate={{ width: `${share}%` }} transition={{ duration: 1.2, delay: 0.5 + n * 0.14, ease: [0.22, 1, 0.36, 1] }} /></span>
-                  </motion.button>
-                );
-              })}
-            </div>
-          </motion.section>
+{oppsBlock}          </section>
 
-          <motion.section className="card ins-card" {...rise(6)}>
+          <section className="card ins-card">
             <header className="ins-ch"><div><h3>Permits and quality</h3><p>Today against the allowed limits</p></div></header>
-            <div className="ins-permits">
-              {permits.map((p) => {
-                const Icon = p.icon;
-                return (
-                  <button key={p.label} className={p.ok ? "" : "bad"} onClick={() => setPop({ k: "permit" })} aria-label={`${p.label}, open details`}>
-                    <Icon size={16} /><span>{p.label}<small>{p.text}</small></span>{!p.ok && <AlertTriangle size={16} />}
-                  </button>
-                );
-              })}
-            </div>
-          </motion.section>
+{permitsBlock}          </section>
         </div>
       </div>
 
       <AnimatePresence>
         {pop && (
-          <motion.div className="pop-bg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPop(null)}>
+          <motion.div className="pop-bg" initial={false} exit={{ opacity: 1 }} transition={{ duration: 0 }} onClick={() => setPop(null)}>
             <motion.div className={`pop ${pop.k === "bench" || pop.k === "permit" || pop.k === "cost" ? "xwide" : ""}`} role="dialog" aria-modal="true" aria-label="Details"
-              initial={{ opacity: 0, y: 22, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 14, scale: 0.98 }} transition={{ type: "spring", stiffness: 360, damping: 30 }}
+              initial={false} transition={{ duration: 0 }}
               onClick={(e) => e.stopPropagation()}>
               <button className="pop-x" onClick={() => setPop(null)} aria-label="Close"><X size={16} /> Close</button>
 
@@ -304,7 +325,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                         <defs><linearGradient id="tpG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={popTile.ac} stopOpacity={0.4} /><stop offset="100%" stopColor={popTile.ac} stopOpacity={0.02} /></linearGradient></defs>
                         <XAxis dataKey="n" hide />
                         <YAxis {...axis} width={38} domain={["auto", "auto"]} tickCount={3} />
-                        <Area type="monotone" dataKey="v" stroke={popTile.ac} strokeWidth={2} fill="url(#tpG)" animationDuration={900} />
+                        <Area type="monotone" dataKey="v" stroke={popTile.ac} strokeWidth={2} fill="url(#tpG)" isAnimationActive={false} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </Replay>
@@ -329,8 +350,8 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                         <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={22} />
                         <YAxis {...axis} width={36} domain={["auto", "auto"]} />
                         <Tooltip content={<Tip unit="LE/m³" />} cursor={{ stroke: C.teal, strokeOpacity: 0.25 }} />
-                        <Area type="monotone" dataKey="actual" name="Actual" stroke={C.teal} strokeWidth={2.4} fill="url(#lnG)" animationDuration={1000} />
-                        <Line type="monotone" dataKey="budget" name="Budget" stroke="#9aa9ae" strokeDasharray="5 5" dot={false} strokeWidth={1.8} animationDuration={1000} />
+                        <Area type="monotone" dataKey="actual" name="Actual" stroke={C.teal} strokeWidth={2.4} fill="url(#lnG)" isAnimationActive={false} />
+                        <Line type="monotone" dataKey="budget" name="Budget" stroke="#9aa9ae" strokeDasharray="5 5" dot={false} strokeWidth={1.8} isAnimationActive={false} />
                       </ComposedChart>
                     </ResponsiveContainer>
                   </Replay>
@@ -365,7 +386,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                             <span className="b-zone" style={{ background: "linear-gradient(90deg, #fde6e9, #fbf0c2 50%, #dcf1e4)" }} />
                             <span className="b-mark avg" style={{ left: `${place(b, b.avg)}%` }}><small>{b.avg}</small></span>
                             <span className="b-mark best" style={{ left: `${place(b, b.best)}%` }}><Star size={11} fill="currentColor" /></span>
-                            <motion.span className="b-us" initial={{ left: "2%" }} animate={{ left: `${place(b, b.us)}%` }} transition={{ duration: 1.1, delay: n * 0.06, ease: [0.22, 1, 0.36, 1] }} style={{ borderColor: TONE_COLOR[tone === "info" ? "info" : tone] }} />
+                            <motion.span className="b-us" initial={false} animate={{ left: `${place(b, b.us)}%` }} transition={{ duration: 0 }} style={{ borderColor: TONE_COLOR[tone === "info" ? "info" : tone] }} />
                           </div>
                           <div className="b-val"><b><CountUp value={b.us} decimals={b.digits} /></b><small>{b.unit}</small></div>
                           <Chip tone={tone === "good" ? "good" : tone === "info" ? "info" : "warn"}>{VERDICT[tone]}</Chip>
@@ -393,7 +414,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                               <span className="b-zone" style={{ background: oneSided ? "linear-gradient(90deg, #dcf1e4 0%, #dcf1e4 68%, #fbf0c2 88%, #fde6e9 100%)" : "linear-gradient(90deg, #fde6e9, #fbf0c2 16%, #dcf1e4 34%, #dcf1e4 66%, #fbf0c2 84%, #fde6e9)" }} />
                               <span className="q-end l">{q.min}</span>
                               <span className="q-end r">{q.max}</span>
-                              <motion.span className="b-us" initial={{ left: "2%" }} animate={{ left: `${pos}%` }} transition={{ duration: 1.1, delay: n * 0.06, ease: [0.22, 1, 0.36, 1] }} style={{ borderColor: ok ? C.good : C.bad }} />
+                              <motion.span className="b-us" initial={false} animate={{ left: `${pos}%` }} transition={{ duration: 0 }} style={{ borderColor: ok ? C.good : C.bad }} />
                             </div>
                             <div className="b-val"><b><CountUp value={v} decimals={q.digits} /></b><small>{q.unit}</small></div>
                             <Chip tone={ok ? "good" : "bad"}>{ok ? "Within limit" : "Out of limit"}</Chip>
@@ -408,7 +429,7 @@ export default function Insights({ f, setRange, go }: { f: Filters; setRange: (r
                         return (
                           <motion.li key={c.name} {...rise(n)}>
                             <span>{c.name}</span>
-                            <div className="bar"><motion.i initial={{ width: 0 }} animate={{ width: `${Math.min(100, (used / (c.target * 1.25)) * 100)}%` }} transition={{ duration: 0.9, delay: 0.1 + n * 0.07 }} style={{ background: over ? C.warn : C.teal }} /><s style={{ left: `${(1 / 1.25) * 100}%` }} title={`Target ${c.target}`} /></div>
+                            <div className="bar"><motion.i initial={false} animate={{ width: `${Math.min(100, (used / (c.target * 1.25)) * 100)}%` }} transition={{ duration: 0 }} style={{ background: over ? C.warn : C.teal }} /><s style={{ left: `${(1 / 1.25) * 100}%` }} title={`Target ${c.target}`} /></div>
                             <b><CountUp value={used} decimals={1} /> <em>g</em></b>
                           </motion.li>
                         );

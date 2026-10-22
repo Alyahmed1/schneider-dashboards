@@ -63,7 +63,7 @@ export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkO
 
   return (
     <div className="mt">
-      <div className="mt-head"><h1>Maintenance</h1><p>Work orders and predictive maintenance. Drag a card to another column, or use its buttons.</p></div>
+      <motion.div className="mt-head" {...rise(0)}><h1>Maintenance</h1><p>Work orders and predictive maintenance. Drag a card to another column, or use its buttons.</p></motion.div>
 
       <div className="mt-tiles">
         {tiles.map((x, i) => (

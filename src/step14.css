@@ -99,3 +99,10 @@
   .ins-tiles { grid-template-columns: minmax(0, 1fr); }
   .mt-tiles { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* one calm motion everywhere: items fade in, no endless loops */
+@keyframes sldpop { from { opacity: 0; } to { opacity: 1; } }
+.sld-in { animation: sldpop .4s ease-out both; }
+.opp .op-ico { animation: none !important; box-shadow: none; }
+.opp .op-bar i::after { display: none; }
+@media (prefers-reduced-motion: reduce) { .sld-in { animation: none !important; } }

@@ -69,8 +69,8 @@ export default function Overview({ f, setRange, go, wos }: { f: Filters; setRang
                 <XAxis dataKey="t" {...axis} interval="preserveStartEnd" minTickGap={18} />
                 <YAxis {...axis} width={46} tickCount={4} tickFormatter={(v: number) => compact(v)} domain={domain} />
                 <Tooltip content={<Tip unit="m³" />} cursor={{ stroke: C.teal, strokeOpacity: 0.25 }} />
-                <Area type="monotone" dataKey="actual" name="Actual" stroke={C.teal} strokeWidth={2.4} fill="url(#prodG)" animationDuration={1400} />
-                <Line type="monotone" dataKey="target" name="Target" stroke="#9aa9ae" strokeDasharray="5 5" dot={false} strokeWidth={1.6} animationDuration={1400} />
+                <Area type="monotone" dataKey="actual" name="Actual" stroke={C.teal} strokeWidth={2.4} fill="url(#prodG)" animationDuration={900} />
+                <Line type="monotone" dataKey="target" name="Target" stroke="#9aa9ae" strokeDasharray="5 5" dot={false} strokeWidth={1.6} animationDuration={900} />
               </AreaChart>
             </ResponsiveContainer>
           </Replay>

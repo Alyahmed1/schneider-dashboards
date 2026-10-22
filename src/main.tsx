@@ -17,6 +17,7 @@ import "./step10.css";
 import "./step11.css";
 import "./step12.css";
 import "./step13.css";
+import "./step14.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

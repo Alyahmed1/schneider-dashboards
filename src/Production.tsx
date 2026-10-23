@@ -39,7 +39,7 @@ export default function Production({ f, start }: { f: Filters; start?: string })
   const [jump, setJump] = useState(0);
   useEffect(() => {
     const el = sceneRef.current;
-    if (!jump || !el || !window.matchMedia("(max-width: 720px)").matches) return;
+    if (!jump || !el || !window.matchMedia("(max-width: 720px), (max-height: 500px) and (max-width: 1000px)").matches) return;
     const id = requestAnimationFrame(() => {
       const bar = document.querySelector(".topbar")?.getBoundingClientRect().height ?? 0;
       el.querySelector(".scene-wrap")?.scrollTo({ left: 0 });

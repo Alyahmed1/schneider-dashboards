@@ -46,7 +46,7 @@
   .al-where, .al-when, .al-type { grid-column: 2; }
   .al-act { grid-column: 3; grid-row: 1 / span 4; }
 }
-@media (max-width: 720px) {
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
   .al-row { grid-template-columns: 1fr; }
   .al-where, .al-when, .al-type, .al-act { grid-column: 1; grid-row: auto; }
 }
@@ -159,7 +159,7 @@ html[data-theme="dark"] .ax-btn.go { color: #9db6ff; }
 .ax-status { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); border-top: 0; background: var(--surface-3); font-size: 12px; color: var(--text-2); }
 .ax-status span { padding: 5px 14px; border-right: 1px solid var(--line); }
 .ax-status span:last-child { border-right: 0; margin-left: auto; }
-@media (max-width: 720px) { .ax-detail { flex-direction: column; } .ax-wrap { max-height: 60vh; } }
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) { .ax-detail { flex-direction: column; } .ax-wrap { max-height: 60vh; } }
 
 .ax-btn.icon { padding: 2px 7px; }
 .ax-btn.icon svg { display: block; }

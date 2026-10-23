@@ -30,7 +30,7 @@
 }
 
 /* Overview banner: more of the photo, a shorter white fade */
-@media (min-width: 721px) {
+@media (min-width: 721px) and (min-height: 501px) {
   .banner:not(.slim) { min-height: 240px; }
   .banner:not(.slim)::after { background: linear-gradient(90deg, rgba(255, 255, 255, .96) 0%, rgba(255, 255, 255, .86) 20%, rgba(255, 255, 255, 0) 44%); }
   html[data-theme="dark"] .banner:not(.slim)::after { background: linear-gradient(90deg, rgba(15, 37, 48, .96) 0%, rgba(15, 37, 48, .84) 20%, rgba(15, 37, 48, 0) 44%); }

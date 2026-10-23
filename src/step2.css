@@ -137,7 +137,7 @@
   .board { grid-template-columns: 1fr; }
   .donut-row { grid-template-columns: 150px 1fr; }
 }
-@media (max-width: 720px) {
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
   .donut-row { grid-template-columns: 1fr; justify-items: center; }
   .split { width: 100%; }
   .d-big b { font-size: 36px; }

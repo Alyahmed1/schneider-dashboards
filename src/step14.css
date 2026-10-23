@@ -1,5 +1,5 @@
 /* ================= step 14: phone layout (loaded last, so it wins over the desktop rules) ================= */
-@media (max-width: 720px) {
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
   /* top bar: logo + name + buttons on one row, tabs on the next */
   .topbar { flex-wrap: wrap; gap: 8px 10px; padding: 10px 14px 8px; }
   .brand { flex: 1 1 0; min-width: 0; gap: 8px; margin: 0; padding: 0; }
@@ -106,3 +106,38 @@
 .opp .op-ico { animation: none !important; box-shadow: none; }
 .opp .op-bar i::after { display: none; }
 @media (prefers-reduced-motion: reduce) { .sld-in { animation: none !important; } }
+
+/* ================= phone held sideways: the phone layout above, but using the extra width ================= */
+@media (max-height: 500px) and (max-width: 1000px) {
+  .topbar { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+  .page { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+  .cc-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ins-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ins-mid, .ins-bot, .ins-opps, .ins-goals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ins-permits { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mt-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mt-board .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pm-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .al-screen .al-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pop-two2, .pop-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page.prod.flow .scene, .page.prod.flow.elec .scene, .page.prod:not(.flow) .scene { height: calc(100vh - 110px); min-height: 300px; }
+  .pop, .pop.wide, .pop.xwide { max-height: calc(100vh - 16px); overflow-y: auto; }
+  .pop-bg { padding: 8px max(12px, env(safe-area-inset-left)); }
+  .bell-panel, .me-panel { top: 52px; max-height: calc(100vh - 60px); overflow-y: auto; left: auto; width: min(420px, 60vw); }
+  .bell-panel ul { max-height: 38vh; }
+}
+
+/* cover on a short, wide screen: everything fits without scrolling */
+@media (max-height: 500px) and (max-width: 1000px) {
+  .cover { padding: 12px max(20px, env(safe-area-inset-left)); }
+  .cover .cover-aveva { height: 26px; }
+  .cover-body { gap: 8px; padding-bottom: 0; max-width: 560px; }
+  .cover-tag { padding: 4px 10px; font-size: 11px; }
+  .cover h1 { font-size: 30px; max-width: none; }
+  .cover p { font-size: 12.5px; }
+  .cover-stats { flex-wrap: nowrap; gap: 8px; }
+  .cover-stats > div { min-width: 0; flex: 1; padding: 6px 10px; border-radius: 12px; }
+  .cover-stats b { font-size: 18px; }
+  .cover-stats span { font-size: 10px; }
+  .cover-btn { margin-top: 0; padding: 10px 20px; font-size: 14px; }
+}

@@ -90,7 +90,7 @@
   .bench .b-val { grid-area: v; }
   .bench .chip { grid-area: c; justify-self: start; }
 }
-@media (max-width: 720px) {
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
   .bh { flex-direction: column; align-items: flex-start; }
   .costlist li { grid-template-columns: 10px 1fr 52px 34px; }
   .costlist li .bar { grid-column: 2 / -1; grid-row: 2; }

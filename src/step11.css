@@ -44,7 +44,7 @@ html[data-theme="dark"] .kt { box-shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px
 html[data-theme="dark"] .kt:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ac) 55%, transparent), 0 0 34px -8px color-mix(in srgb, var(--ac) 55%, transparent); }
 html[data-theme="dark"] .kt-hero { background: linear-gradient(155deg, #0f7f7b 0%, #094a52 100%); }
 @media (max-width: 1280px) { .kt { min-height: 218px; } }
-@media (max-width: 720px) { .kt { min-height: 0; } .kt-spark { height: 38px; } }
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) { .kt { min-height: 0; } .kt-spark { height: 38px; } }
 
 /* ================= Electrical: full-screen single-line diagram ================= */
 .page.elec .scene { min-width: 0; }

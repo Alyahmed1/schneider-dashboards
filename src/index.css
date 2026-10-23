@@ -265,7 +265,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--teal); out
   .rail { display: none; }
   .g-21, .g-12 { grid-template-columns: minmax(0, 1fr); }
 }
-@media (max-width: 720px) {
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
   .g-kpi { grid-template-columns: repeat(2, 1fr); }
   .g-kpi .kpi-hero { grid-column: span 2; }
   .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); }

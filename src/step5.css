@@ -7,7 +7,7 @@
 .countdown b { color: var(--teal-d); font-weight: 500; min-width: 3ch; text-align: right; }
 .countdown-bar { width: 46px; height: 3px; border-radius: 2px; background: rgba(11, 42, 51, .12); overflow: hidden; }
 .countdown-bar i { display: block; height: 100%; background: var(--teal); transition: width .25s linear; }
-@media (max-width: 720px) { .countdown > span:first-child, .countdown-bar { display: none; } }
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) { .countdown > span:first-child, .countdown-bar { display: none; } }
 
 /* drinking-water quality: measure-by-measure rows, compact for a half-width card */
 .bench.qual li { grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: "n v c" "t t t"; gap: 6px 14px; padding: 12px 0; }

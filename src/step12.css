@@ -139,7 +139,7 @@ html[data-theme="dark"] .ins-res .pill.good { color: #6fe0ae; }
   .ins-bench { grid-template-columns: 1fr; }
   .pop-two2 { grid-template-columns: 1fr; }
 }
-@media (max-width: 720px) { .ins-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ins-head { flex-direction: column; align-items: flex-start; } }
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) { .ins-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ins-head { flex-direction: column; align-items: flex-start; } }
 
 /* tighter rows so the whole page fits one screen */
 .ins { gap: 10px; }

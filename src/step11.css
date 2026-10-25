@@ -1,0 +1,67 @@
+/* ================= step 11: Command Center KPI tiles ================= */
+.kt { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px; text-align: left; min-height: 232px; padding: 18px 20px 0; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); cursor: pointer; transition: transform .25s cubic-bezier(.22, 1, .36, 1), box-shadow .25s, border-color .25s; }
+.kt:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--ac) 45%, var(--line)); box-shadow: 0 1px 0 rgba(11, 42, 51, .04), 0 24px 40px -22px color-mix(in srgb, var(--ac) 60%, transparent); }
+.kt:focus-visible { outline: 2px solid var(--ac); outline-offset: 3px; }
+.kt-line { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--ac), color-mix(in srgb, var(--ac) 35%, transparent)); }
+.kt::before { content: ""; position: absolute; right: -46px; top: -46px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--ac) 16%, transparent), transparent 68%); pointer-events: none; }
+.kt-head { position: relative; display: flex; align-items: center; gap: 10px; }
+.kt-ico { flex: none; width: 46px; height: 46px; border-radius: 4px; display: grid; place-items: center; color: #fff; background: linear-gradient(150deg, color-mix(in srgb, var(--ac) 82%, #fff), var(--ac)); box-shadow: 0 10px 20px -10px var(--ac), 0 0 0 1px rgba(255, 255, 255, .25) inset; transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+.kt:hover .kt-ico { transform: rotate(-8deg) scale(1.08); }
+.kt-lab { min-width: 0; flex: 1; }
+.kt-lab b { display: block; font-size: 13px; font-weight: 700; line-height: 1.2; }
+.kt-lab small { display: block; font-size: 12px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kt-val { display: flex; align-items: baseline; gap: 7px; margin-top: 2px; }
+.kt-val b { font-family: var(--display); font-weight: 500; font-size: clamp(32px, 2.7vw, 44px); letter-spacing: -.03em; line-height: 1; }
+.kt-val > span { color: var(--muted); font-size: 13px; }
+.kt-goal { display: grid; gap: 7px; }
+.kt-bar { height: 8px; border-radius: 6px; background: color-mix(in srgb, var(--ac) 14%, var(--track)); overflow: hidden; }
+.kt-bar i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, color-mix(in srgb, var(--ac) 70%, #fff), var(--ac)); }
+.kt-bar i.off { background: linear-gradient(90deg, #f7b25a, var(--warn)); }
+.kt-status { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--good); }
+.kt-status svg { flex: none; }
+.kt-status b { font-weight: 700; }
+.kt-status em { margin-left: auto; font-style: normal; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.kt:has(.kt-bar i.off) .kt-status { color: var(--warn); }
+.kt-spark { height: 44px; margin: auto -20px 0; }
+.kt-go { position: absolute; right: 14px; bottom: 50px; color: var(--ac); opacity: 0; transform: translate(-4px, 4px); transition: opacity .25s, transform .25s; }
+.kt:hover .kt-go { opacity: 1; transform: translate(0, 0); }
+
+/* the first tile stays the big teal hero */
+.kt-hero { color: #fff; border-color: transparent; background: linear-gradient(155deg, #0e8f8a 0%, #0a5f64 100%); }
+.kt-hero::before { background: radial-gradient(circle, rgba(255, 255, 255, .18), transparent 68%); }
+.kt-hero .kt-line { background: linear-gradient(90deg, rgba(255, 255, 255, .85), rgba(255, 255, 255, .1)); }
+.kt-hero .kt-ico { background: rgba(255, 255, 255, .2); box-shadow: 0 0 0 1px rgba(255, 255, 255, .35) inset; }
+.kt-hero .kt-lab small, .kt-hero .kt-val > span, .kt-hero .kt-status em { color: rgba(255, 255, 255, .78); }
+.kt-hero .kt-bar { background: rgba(255, 255, 255, .22); }
+.kt-hero .kt-bar i { background: #fff; }
+.kt-hero .kt-bar i.off { background: #ffd08a; }
+.kt-hero .kt-status, .kt-hero:has(.kt-bar i.off) .kt-status { color: #fff; }
+.kt-hero .kt-go { color: #fff; }
+.kt-hero .delta.up { background: rgba(255, 255, 255, .2); color: #fff; }
+.kt-hero .delta.down { background: rgba(240, 138, 36, .92); color: #fff; }
+
+html[data-theme="dark"] .kt { box-shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -22px rgba(0, 0, 0, .9); }
+html[data-theme="dark"] .kt:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ac) 55%, transparent), 0 0 34px -8px color-mix(in srgb, var(--ac) 55%, transparent); }
+html[data-theme="dark"] .kt-hero { background: linear-gradient(155deg, #0f7f7b 0%, #094a52 100%); }
+@media (max-width: 1280px) { .kt { min-height: 218px; } }
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) { .kt { min-height: 0; } .kt-spark { height: 38px; } }
+
+/* ================= Electrical: full-screen single-line diagram ================= */
+.page.elec .scene { min-width: 0; }
+.sld2 .wire { stroke-width: 5; }
+.sld2 .wire-flow { stroke-width: 5; stroke-dasharray: 2 14; }
+.sld2 .bus { fill: var(--ink); }
+.sld2 .sld-tag { font-family: var(--mono); fill: var(--muted); }
+.sld2 .nd-box { stroke-width: 2; }
+.sld2 .nd-ico { color: var(--teal-d); stroke: var(--teal-d); fill: none; opacity: .85; }
+.sld2 .nd.off .nd-ico { opacity: .35; }
+.sld2 .nd-name { font-weight: 700; }
+.sld2 .brk rect:nth-of-type(2) { stroke-width: 2.6; }
+.sld2 .brk.open line { stroke-width: 3; }
+.pop.xwide { width: min(860px, 100%); }
+.pop-two { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: center; margin-top: 12px; }
+.pop .chart-h.tall { height: 170px; margin: 0; }
+.donut-row.small { grid-template-columns: 120px 1fr; gap: 12px; }
+.donut-row.small .donut { height: 120px; }
+.scene-btn:disabled { opacity: .45; cursor: default; }
+@media (max-width: 900px) { .pop-two { grid-template-columns: 1fr; } .page.elec .scene { min-width: 900px; height: auto; aspect-ratio: 2.3 / 1; } }

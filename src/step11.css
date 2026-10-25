@@ -56,8 +56,8 @@ html[data-theme="dark"] .kt-hero { background: linear-gradient(155deg, #0f7f7b 0
 .sld2 .nd-ico { color: var(--teal-d); stroke: var(--teal-d); fill: none; opacity: .85; }
 .sld2 .nd.off .nd-ico { opacity: .35; }
 .sld2 .nd-name { font-weight: 700; }
-.sld2 .brk rect:nth-of-type(2) { stroke-width: 2.6; }
-.sld2 .brk.open line { stroke-width: 3; }
+.sld2 .brk-blade { stroke-width: 3.2; }
+.sld2 .brk-term { stroke-width: 2.6; }
 .pop.xwide { width: min(860px, 100%); }
 .pop-two { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: center; margin-top: 12px; }
 .pop .chart-h.tall { height: 170px; margin: 0; }

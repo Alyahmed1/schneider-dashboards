@@ -8,8 +8,13 @@ export const niceMax = (v: number) => {
 };
 export const tick = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)}k` : `${+v.toFixed(1)}`);
 
-export function Panel({ title, className = "", i = 0, children }: { title: string; className?: string; i?: number; children: ReactNode }) {
-  return <section className={`hm-p ${className}`} style={{ ["--i" as string]: i }}><h3>{title}</h3>{children}</section>;
+export function Panel({ title, className = "", i = 0, right, children }: { title: string; className?: string; i?: number; right?: ReactNode; children: ReactNode }) {
+  return (
+    <section className={`hm-p ${className}`} style={{ ["--i" as string]: i }}>
+      {right ? <div className="hm-ph"><h3>{title}</h3>{right}</div> : <h3>{title}</h3>}
+      {children}
+    </section>
+  );
 }
 
 /** dark bars with a cyan fill, the value on top and a left scale */

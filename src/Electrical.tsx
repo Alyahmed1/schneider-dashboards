@@ -164,16 +164,28 @@ export default function Electrical({ f }: { f: Filters }) {
     );
   };
 
-  /** a breaker on a feeder */
+  /** the switch symbol of a breaker: two terminals and a blade. Closed, the blade lies in line with the wire; open, it swings away.
+ *  "dim" is a closed breaker with nothing flowing through it (for example the solar feeder at night). */
+function BreakerSym({ x, y, open, dim }: { x: number; y: number; open: boolean; dim?: boolean }) {
+  return (
+    <g className={`brk-sym ${open ? "open" : "closed"} ${dim ? "dim" : ""}`}>
+      <rect className="brk-mask" x={x - 9} y={y - 14} width="18" height="28" rx="3" />
+      <g transform={`translate(${x} ${y + 13})`}><line className="brk-blade" x1="0" y1="0" x2="0" y2="-25" /></g>
+      <circle className="brk-term" cx={x} cy={y - 13} r="3.6" />
+      <circle className="brk-term" cx={x} cy={y + 13} r="3.6" />
+    </g>
+  );
+}
+
+/** a breaker on a feeder */
   const brk = (id: FeederId, x: number, y: number) => {
     const o = isOpen(id);
     return (
       <g key={`b-${id}`} className={`sld-in brk ${o ? "open" : "closed"}`} style={{ animationDelay: nextDelay() }} onClick={() => setPop({ kind: "brk", id })} role="button" tabIndex={0} aria-label={`${FEEDER_NAME[id]} breaker ${BRK_TAG[id]}, ${o ? "open" : "closed"}. Press for its KPIs.`}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPop({ kind: "brk", id }); } }}>
-        <rect x={x - 24} y={y - 20} width="48" height="40" fill="transparent" />
-        <rect x={x - 12} y={y - 12} width="24" height="24" rx="5" />
-        {o && <line x1={x - 12} y1={y + 12} x2={x + 12} y2={y - 12} />}
-        <text x={x + 20} y={y + 4} className="sld-tag" style={{ fontSize: g.f * 0.82 }}>{BRK_TAG[id]}</text>
+        <rect x={x - 24} y={y - 22} width="48" height="44" fill="transparent" />
+        <BreakerSym x={x} y={y} open={o} dim={!o && !live(id)} />
+        <text x={x + 18} y={y + 4} className="sld-tag" style={{ fontSize: g.f * 0.82 }}>{BRK_TAG[id]}</text>
         <title>{FEEDER_NAME[id]}: {o ? "open" : "closed"}</title>
       </g>
     );
@@ -232,8 +244,8 @@ export default function Electrical({ f }: { f: Filters }) {
           <span><i style={{ background: C.sun }} />Solar power</span>
           <span><i style={{ background: "#8a6bd1" }} />Generator</span>
           <span><i style={{ background: C.teal }} />To the plant</span>
-          <span><b className="sq closed" />Breaker closed</span>
-          <span><b className="sq open" />Breaker open</span>
+          <span><svg className="lg-brk" width="18" height="32" viewBox="-9 -16 18 32" aria-hidden><BreakerSym x={0} y={0} open={false} /></svg>Breaker closed</span>
+          <span><svg className="lg-brk" width="18" height="32" viewBox="-9 -16 18 32" aria-hidden><BreakerSym x={0} y={0} open /></svg>Breaker open</span>
         </div>
         <div className="flow-legend sym-legend" aria-hidden>
           {(["grid", "tr", "gen", "motor", "inv", "pv"] as SymKind[]).map((k) => (

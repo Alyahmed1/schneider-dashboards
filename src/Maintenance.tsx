@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowUp, Eye, FileText, X } from "lucide-react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { rng, type Filters } from "./data";
+import { PLANT, rng, type Filters } from "./data";
 import { assetsIn, woInArea, type Asset, type WorkOrder } from "./cmms";
 import { Bars, Panel } from "./charts";
 import { C, CountUp, Tip } from "./ui";
 import { useGrow } from "./anim";
 import { useTick, wobble } from "./live";
+import ExportMenu from "./ExportMenu";
+import { downloadCsv, downloadPdf, type ReportSpec } from "./exportReport";
 
 type AssetStatus = "Running" | "Idle" | "Under maintenance";
 /** which asset a work order is about, and the few assets that are not simply running (sample data) */
@@ -17,6 +19,8 @@ const PILL = { Running: "run", Idle: "idle", "Under maintenance": "under" } as c
 const MONTHS = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 const woText = (w?: WorkOrder) => (!w ? "" : w.status === "Done" ? "Closed" : w.late ? "Delayed" : w.status);
 const woClass = (s: string) => (s === "Closed" ? "closed" : s === "Delayed" ? "late" : s === "In progress" ? "idle" : "open");
+
+const STATUS_TONE: Record<string, "teal" | "ink" | "warn" | "bad" | "mute"> = { Running: "teal", Open: "teal", Idle: "ink", "In progress": "ink", "Under maintenance": "warn", Delayed: "bad", Closed: "mute" };
 
 interface Row { a: Asset; status: AssetStatus; wo?: WorkOrder }
 /** the work-order boxes filter the table too; then it lists work orders instead of assets, so the numbers match */
@@ -108,6 +112,30 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
     { label: "Closed", value: done, wo: "Done" },
   ];
 
+  /** what the table shows right now, as a report: the same filter, the same rows */
+  const buildReport = (): ReportSpec => {
+    const when = new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+    const base = { subtitle: `${PLANT.name}  |  generated ${when}  |  sample data`, summary: chips.map((c): [string, string] => [c.label, String(c.value)]) };
+    if (woFilter) {
+      return {
+        ...base, file: "work-orders", title: "Equipment info: work orders",
+        note: `Showing ${WO_NAME[woFilter]} work orders: ${woShown.length} of ${list.length}`,
+        columns: ["Work order", "Title", "Asset", "Status", "Due", "Priority", "Crew", "Planned hours"],
+        rows: woShown.map((w) => [w.id, w.title, w.asset, woText(w), w.due, w.prio, w.crew, String(w.hours)]),
+        widths: [1.1, 3, 1.6, 1.3, 1.1, 1, 1.6, 1.1],
+        tone: (_r, c, t) => (c === 3 ? STATUS_TONE[t] : undefined),
+      };
+    }
+    return {
+      ...base, file: "equipment-info", title: "Equipment info",
+      note: filter ? `Showing ${filter.toLowerCase()} assets: ${shown.length} of ${rows.length}` : `All ${rows.length} assets`,
+      columns: ["Asset", "Status", "Recent inspection", "Upcoming maintenance", "Work order", "Priority"],
+      rows: shown.map((r) => [r.a.name, r.status, r.a.lastService, r.a.nextPm, woText(r.wo) || "-", r.wo && r.wo.status !== "Done" ? r.wo.prio : "-"]),
+      widths: [2.4, 1.6, 1.4, 1.6, 1.4, 1],
+      tone: (_r, c, t) => (c === 1 || c === 4 ? STATUS_TONE[t] : undefined),
+    };
+  };
+
   return (
     <div className="mx">
       <div className="mx-col">
@@ -159,7 +187,7 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
         </Panel>
       </div>
 
-      <Panel title="Equipment info" className="mx-eq" i={11}>
+      <Panel title="Equipment info" className="mx-eq" i={11} right={<ExportMenu onPdf={() => downloadPdf(buildReport())} onCsv={() => downloadCsv(buildReport())} />}>
         <div className="mx-chips">
           {chips.map((c, n) => {
             const inner = <><span>{c.label}</span><b><CountUp value={c.value} decimals={0} /></b></>;

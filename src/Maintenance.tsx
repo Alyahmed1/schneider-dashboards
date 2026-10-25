@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, CalendarClock, Check, Clock, Minus, RotateCcw, Search, Sparkles, Undo2, User, X } from "lucide-react";
-import type { Filters } from "./data";
+import { PLANT, type Filters } from "./data";
 import { predictive, woInArea, type PredRow, type WorkOrder, type WoStatus } from "./cmms";
 import { C, Chip, CountUp, rise } from "./ui";
+import ExportMenu from "./ExportMenu";
+import { downloadCsv, downloadPdf, type ReportSpec } from "./exportReport";
 
 
 const COLS: { id: WoStatus; label: string; hint: string }[] = [
@@ -59,6 +61,29 @@ export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkO
     const id = `WO-${2450 + Object.keys(made).length}`;
     setMade((m) => ({ ...m, [a.name]: id }));
     setWos((w) => [...w, { id, title: a.pred.action.split(".")[0], asset: a.name, area: a.area === "All plant" ? "All plant" : a.area, prio: a.risk >= 50 ? "High" : "Medium", due: `by ${a.failDate}`, status: "Open", type: "Planned", crew: "Predictive team", hours: 4, note: `Created from predictive maintenance. ${a.pred.signal} is ${a.pred.value} and rising. Estimated failure in ${a.failIn} days (${a.pred.confidence}% confidence).` }]);
+  };
+
+  /** what the predictive table shows right now, as a report: the same filter, the same search, the same rows */
+  const buildReport = (): ReportSpec => {
+    const when = new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+    const filterText = `${hf === "All" ? "All assets" : hf}${q ? `, search "${q}"` : ""}`;
+    return {
+      file: "predictive-maintenance",
+      title: "Predictive maintenance",
+      subtitle: `${PLANT.name}  |  generated ${when}  |  sample data`,
+      summary: [
+        ["Assets at risk", String(atRisk)],
+        ["Next predicted failure", soon.name],
+        ["Expected in", `${soon.failIn} days`],
+        ["Downtime avoided", "46 h this quarter"],
+        ["Assets in this report", String(rows.length)],
+      ],
+      note: `Showing: ${filterText} (${rows.length} of ${all.length})`,
+      columns: ["Asset", "Area", "Class", "Failure risk, 30 d (%)", "Fails in (days)", "Expected date", "Signal", "Reading", "Confidence (%)", "Recommended action"],
+      rows: rows.map((a) => [a.name, a.area, a.crit, String(a.risk), String(a.failIn), a.failDate, a.pred.signal, `${a.pred.value} (${a.pred.trend === "up" ? "rising" : a.pred.trend === "down" ? "falling" : "steady"})`, String(a.pred.confidence), a.pred.action]),
+      widths: [2.1, 1.1, 0.8, 1.2, 1, 1.1, 1.3, 1.5, 1.3, 3.6],
+      tone: (_r, c, t) => (c === 3 ? (Number(t) >= 50 ? "bad" : Number(t) >= 25 ? "warn" : "good") : undefined),
+    };
   };
 
   return (
@@ -123,7 +148,10 @@ export default function Maintenance({ f, wos, setWos }: { f: Filters; wos: WorkO
           <motion.section className="card ins-card mt-assets" {...rise(3)}>
             <header className="ins-ch">
               <div><h3>Predictive maintenance</h3><p>Which assets will fail next, and what to do about it</p></div>
-              <label className="search"><Search size={14} /><span className="sr">Search assets</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search assets" /></label>
+              <div className="mt-tools">
+                <label className="search"><Search size={14} /><span className="sr">Search assets</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search assets" /></label>
+                <ExportMenu onPdf={() => downloadPdf(buildReport())} onCsv={() => downloadCsv(buildReport())} />
+              </div>
             </header>
             <div className="pm-stats">
               <div className="bad"><span>Assets at risk</span><b><CountUp value={atRisk} /></b></div>

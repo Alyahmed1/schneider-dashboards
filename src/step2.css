@@ -41,11 +41,18 @@
 .nd-unit { font-size: 11px; fill: var(--muted); }
 .nd.off .nd-val { fill: #a9b6bb; }
 .brk { cursor: pointer; outline: none; }
-.brk rect:nth-of-type(2) { stroke-width: 2; transition: fill .2s, stroke .2s; }
-.brk.closed rect:nth-of-type(2) { fill: var(--teal); stroke: var(--teal-d); }
-.brk.open rect:nth-of-type(2) { fill: var(--surface); stroke: var(--bad); }
-.brk.open line { stroke: var(--bad); stroke-width: 2.4; }
-.brk:hover rect:nth-of-type(2), .brk:focus-visible rect:nth-of-type(2) { stroke: var(--ink); }
+.brk-mask { fill: var(--surface-0); }
+html[data-theme="dark"] .brk-mask { fill: #0b1d27; }
+.brk-blade { fill: none; stroke-width: 2.8; stroke-linecap: round; transform-box: fill-box; transform-origin: 50% 100%; transform: rotate(0deg); transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), stroke .25s; }
+.brk-term { stroke-width: 2.2; transition: fill .25s, stroke .25s; }
+.brk-sym.closed .brk-blade { stroke: var(--teal); }
+.brk-sym.closed .brk-term { fill: var(--teal); stroke: var(--teal-d); }
+.brk-sym.open .brk-blade { stroke: var(--bad); transform: rotate(-32deg); }
+.brk-sym.open .brk-term { fill: var(--surface); stroke: var(--bad); }
+.brk-sym.dim { opacity: .55; }
+.brk:hover .brk-term, .brk:focus-visible .brk-term { stroke: var(--ink); }
+.brk:hover .brk-blade, .brk:focus-visible .brk-blade { filter: drop-shadow(0 0 3px currentColor); }
+.lg-brk { overflow: visible; vertical-align: middle; }
 .sld-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 12px; font-size: 12px; color: var(--muted); }
 .sld-legend span { display: inline-flex; align-items: center; gap: 7px; }
 .sld-legend i { width: 16px; height: 4px; border-radius: 3px; }

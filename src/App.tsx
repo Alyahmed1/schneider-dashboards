@@ -29,7 +29,7 @@ const TABS: { id: TabId; label: string; icon: LucideIcon; sub: string }[] = [
   { id: "overview", label: "Overview", icon: Workflow, sub: "The whole process, sea to network" },
   { id: "production", label: "Production", icon: Waves, sub: "Follow the water from sea to network" },
   { id: "electrical", label: "Electrical", icon: Zap, sub: "Single-line diagram and power use" },
-  { id: "maintenance", label: "Maintenance", icon: Hammer, sub: "Work orders and asset health (CMMS)" },
+  { id: "maintenance", label: "Maintenance", icon: Hammer, sub: "Work orders, downtime and asset health" },
 ];
 
 export default function App() {
@@ -47,7 +47,7 @@ export default function App() {
   }, [entered]);
   const [tab, setTab] = useState<TabId>("home");
   const [f, setF] = useState<Filters>({ range: "7D", area: "All plant" });
-  const [wos, setWos] = useState<WorkOrder[]>(WORK_ORDERS);
+  const wos: WorkOrder[] = WORK_ORDERS;
   const [stageTarget, setStageTarget] = useState<string | undefined>(undefined);
   // the page layout class follows the tab that is on screen: the old tab keeps its own styles while it fades out
   const [shown, setShown] = useState<TabId>("home");
@@ -108,7 +108,7 @@ export default function App() {
               {tab === "overview" && <Overview f={{ ...f, area: "All plant" }} go={go} t={tick} />}
               {tab === "production" && <Production f={{ ...f, area: "All plant" }} start={stageTarget} />}
               {tab === "electrical" && <Electrical f={{ ...f, area: "All plant" }} />}
-              {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} setWos={setWos} />}
+              {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} />}
             </ErrorBoundary>
           </motion.div>
         </AnimatePresence>

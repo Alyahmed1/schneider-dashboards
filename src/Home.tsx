@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { alarms, membraneScore, overviewKpis, PRICE, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
@@ -8,6 +8,7 @@ import { C, CountUp, Segmented, Tip } from "./ui";
 import EgyptMap, { type Region } from "./EgyptMap";
 import { useTick, wobble } from "./live";
 import { useGrow } from "./anim";
+import { Bars, niceMax, Panel, tick } from "./charts";
 import type { Go, TabId } from "./App";
 
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, energy: 0.004, cost: 0.004, avail: 0.0008, wo: 0, mem: 0 };
@@ -32,36 +33,6 @@ const quarters = (v: number[]) => {
   const n = Math.ceil(v.length / 4);
   return [0, 1, 2, 3].map((q) => v.slice(q * n, q * n + n).reduce((a, b) => a + b, 0));
 };
-const niceMax = (v: number) => {
-  const p = 10 ** Math.floor(Math.log10(Math.max(v, 1e-9)));
-  const n = v / p;
-  return p * (n <= 1 ? 1 : n <= 2 ? 2 : n <= 4 ? 4 : n <= 8 ? 8 : 10);
-};
-const tick = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)}k` : `${+v.toFixed(1)}`);
-
-function Panel({ title, className = "", i = 0, children }: { title: string; className?: string; i?: number; children: ReactNode }) {
-  return <section className={`hm-p ${className}`} style={{ ["--i" as string]: i }}><h3>{title}</h3>{children}</section>;
-}
-
-/** dark bars with a cyan fill, the value on top and a left scale */
-function Bars({ labels, values, unit, grow }: { labels: string[]; values: number[]; unit: string; grow: boolean }) {
-  const max = niceMax(Math.max(...values) * 1.1);
-  return (
-    <div className="hm-bars">
-      <div className="hm-y">{[1, 0.75, 0.5, 0.25, 0].map((f) => <span key={f}>{tick(max * f)}{f === 1 ? ` ${unit}` : ""}</span>)}</div>
-      <div className="hm-cols">
-        {values.map((v, i) => (
-          <div key={i} className="hm-col">
-            <b>{tick(v)}</b>
-            <div className="hm-track"><i style={{ height: `${grow ? Math.max(2, (v / max) * 100) : 2}%`, transitionDelay: `${i * 90}ms` }} /></div>
-            <span>{labels[i]}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const PIE = ["#3dbcdc", "#2a7fa6", "#6a6fd0", "#1f5f85", "#8e94e8"];
 function Pie({ items }: { items: { name: string; value: number }[] }) {
   const total = items.reduce((s, x) => s + x.value, 0);

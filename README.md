@@ -21,4 +21,4 @@ Build for hosting: `npm run build` (output in `dist/`).
 - Light and dark mode, chosen on the cover screen or with the sun/moon button.
 - `public/cover.mp4` is the looping cover video. If it is missing, the cover falls back to a still photo with light animation.
 - The cover video was made with a free Kling plan and carries its watermark; replace it before any commercial use.
-- The AVEVA wordmark is a vector traced from a screenshot, not the official artwork.
+

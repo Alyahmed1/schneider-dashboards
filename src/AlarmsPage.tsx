@@ -17,7 +17,7 @@ const NODE: Record<string, string> = {
   Electrical: "ELEC-PLC", "Post-treatment": "POST-PLC", Storage: "STORE-PLC", Network: "NET-PLC", "Brine outfall": "OUTFALL-PLC",
 };
 
-/** one line of the alarm grid, with the same columns as the AVEVA alarm client */
+/** one line of the alarm grid, with the same columns as the alarm client */
 interface Row {
   a: LogAlarm; d?: DoneInfo; at: number;
   state: "UNACK" | "ACK_RTN"; kind: string; cls: string; priority: number; name: string; group: string; node: string; provider: string;
@@ -113,7 +113,7 @@ export default function AlarmsPage({ go, focus }: { go: Go; focus?: string }) {
     <div className="al-screen">
       <div className="al-head">
         <h1>Alarms</h1>
-        <p>The full alarm list, laid out like the AVEVA alarm client. Red rows are waiting, blue rows are done.</p>
+        <p>The full alarm list. Red rows are waiting, blue rows are done.</p>
       </div>
 
       <div className="grid al-cards">

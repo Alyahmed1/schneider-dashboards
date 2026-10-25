@@ -11,7 +11,6 @@ import Electrical from "./Electrical";
 import Maintenance from "./Maintenance";
 import Insights from "./Insights";
 import ErrorBoundary from "./ErrorBoundary";
-import AvevaMark from "./Aveva";
 import Cover from "./Cover";
 import { useTick } from "./live";
 import AlertsBell from "./AlertsBell";
@@ -64,9 +63,7 @@ export default function App() {
       <AnimatePresence>{!entered && <Cover key="cover" onEnter={() => { go("overview"); setEntered(true); }} theme={theme} setTheme={setTheme} />}</AnimatePresence>
       {ready && <>
       <motion.header className="topbar" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
-        <button className="brand" onClick={() => setEntered(false)} title="Back to the start screen" aria-label="AVEVA Smart Water Desalination, back to the start screen">
-          <AvevaMark />
-          <span className="brand-sep" aria-hidden />
+        <button className="brand" onClick={() => setEntered(false)} title="Back to the start screen" aria-label="Smart Water Desalination, back to the start screen">
           <span className="brand-mark" aria-hidden><Droplets size={20} /></span>
           <div>
             <b>Smart Water Desalination</b>

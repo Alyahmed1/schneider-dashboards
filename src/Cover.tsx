@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Droplets, Moon, Sun } from "lucide-react";
 import type { Theme } from "./App";
-import AvevaMark from "./Aveva";
 import { PLANT } from "./data";
 
 const STATS = [
@@ -56,9 +55,6 @@ export default function Cover({ onEnter, theme, setTheme }: { onEnter: () => voi
       <video className={`cover-img cover-video ${hasVideo ? "on" : ""}`} src="/cover.mp4" autoPlay muted loop playsInline preload="auto" aria-hidden
         onError={() => setVideo("failed")} onLoadedData={() => setVideo("ok")} />
       <div className="cover-shade" aria-hidden />
-      <div className="cover-top">
-        <AvevaMark className="aveva-wordmark cover-aveva" />
-      </div>
       <div className="cover-body">
         <motion.span className="cover-tag" {...up(0)}><Droplets size={14} /> Smart desalination · sea-water reverse osmosis</motion.span>
         <motion.h1 {...up(1)}>Smart Water Desalination</motion.h1>

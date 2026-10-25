@@ -34,7 +34,7 @@ export function AlarmsProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AlarmsState>(() => ({
     log: ALARM_LOG,
     done,
-    markDone: (id) => save({ ...over, [id]: { at: Date.now(), by: "AVEVA" } }),
+    markDone: (id) => save({ ...over, [id]: { at: Date.now(), by: "A" } }),
     undo: (id) => save({ ...over, [id]: null }),
   }), [done, over, save]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

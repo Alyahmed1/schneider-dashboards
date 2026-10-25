@@ -3,7 +3,6 @@
   /* top bar: logo + name + buttons on one row, tabs on the next */
   .topbar { flex-wrap: wrap; gap: 8px 10px; padding: 10px 14px 8px; }
   .brand { flex: 1 1 0; min-width: 0; gap: 8px; margin: 0; padding: 0; }
-  .brand .aveva-wordmark { height: 24px; flex: none; }
   .brand-mark, .brand-sep { display: none; }
   .brand > div { min-width: 0; }
   .brand b { font-size: 12.5px; white-space: normal; line-height: 1.15; }
@@ -130,7 +129,6 @@
 /* cover on a short, wide screen: everything fits without scrolling */
 @media (max-height: 500px) and (max-width: 1000px) {
   .cover { padding: 12px max(20px, env(safe-area-inset-left)); }
-  .cover .cover-aveva { height: 26px; }
   .cover-body { gap: 8px; padding-bottom: 0; max-width: 560px; }
   .cover-tag { padding: 4px 10px; font-size: 11px; }
   .cover h1 { font-size: 30px; max-width: none; }

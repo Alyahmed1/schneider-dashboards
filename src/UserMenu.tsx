@@ -13,7 +13,7 @@ export default function UserMenu({ go, theme, setTheme, wos, onStart }: { go: Go
   const box = useRef<HTMLDivElement>(null);
   const { log, done } = useAlarmLog();
   const active = useMemo(() => activeAlarms(log, done).length, [log, done]);
-  const mine = useMemo(() => Object.values(done).filter((d) => d.by === "AVEVA").length, [done]);
+  const mine = useMemo(() => Object.values(done).filter((d) => d.by === "A").length, [done]);
   const openWo = wos.filter((w) => w.status !== "Done").length;
   const signedIn = useMemo(() => new Date(new Date().setHours(7, 42, 0, 0)).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), []);
 
@@ -30,16 +30,16 @@ export default function UserMenu({ go, theme, setTheme, wos, onStart }: { go: Go
 
   return (
     <div className="user-wrap" ref={box}>
-      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label="Account: AVEVA, plant manager">
+      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label="Account: A, plant manager">
         <span>A</span>
-        <div><b>AVEVA</b><em>Plant manager</em></div>
+        <div><b>A</b><em>Plant manager</em></div>
       </button>
       <AnimatePresence>
         {open && (
           <motion.div className="me-panel" role="dialog" aria-label="Account" initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.18 }}>
             <div className="me-top">
               <div className="me-av" aria-hidden>A</div>
-              <div><b>AVEVA</b><span>Plant manager</span></div>
+              <div><b>A</b><span>Plant manager</span></div>
               <Chip tone="good">Online</Chip>
             </div>
             <div className="me-info">

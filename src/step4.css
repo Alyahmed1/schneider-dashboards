@@ -62,17 +62,13 @@
 
 .card + .grid { margin-top: 18px; }
 
-/* AVEVA wordmark, drawn as SVG */
 :root { --violet: #7a3fe0; }
-.aveva-wordmark { height: 34px; width: auto; display: block; overflow: visible; }
-@media (max-width: 1400px) { .aveva-wordmark { height: 30px; } }
 
 /* cover screen */
-.cover { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-rows: auto 1fr; overflow: hidden; background: #061827; color: #fff; padding: clamp(20px, 4vw, 48px); }
+.cover { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-rows: 1fr; overflow: hidden; background: #061827; color: #fff; padding: clamp(20px, 4vw, 48px); }
 .cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 55%; }
 .cover-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6, 24, 39, .92) 0%, rgba(6, 24, 39, .72) 42%, rgba(6, 24, 39, .15) 100%), linear-gradient(0deg, rgba(6, 24, 39, .75) 0%, transparent 45%); }
-.cover-top, .cover-body { position: relative; z-index: 1; }
-.cover .cover-aveva { height: 42px; }
+.cover-body { position: relative; z-index: 1; }
 .cover-body { align-self: end; max-width: 720px; display: grid; gap: 18px; justify-items: start; padding-bottom: clamp(8px, 4vh, 40px); }
 .cover-tag { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .22); backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; }
 .cover h1 { font-family: var(--display); font-weight: 500; font-size: clamp(54px, 9vw, 116px); letter-spacing: -.035em; line-height: .95; }

@@ -112,7 +112,7 @@
 .me-actions button:hover { background: var(--surface-2); }
 .me-actions svg { color: var(--teal-d); flex: none; }
 
-/* ================= alarm grid, laid out like the AVEVA alarm client ================= */
+/* ================= alarm grid, laid out like an alarm client ================= */
 .ax-wrap { border: 1px solid #8e9aa0; background: var(--surface); overflow: auto; max-height: min(52vh, 470px); min-height: 220px; }
 html[data-theme="dark"] .ax-wrap { border-color: #3a5360; }
 table.ax { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; font-family: "Segoe UI", Arial, sans-serif; font-size: 13px; }

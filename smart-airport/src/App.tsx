@@ -132,6 +132,7 @@ export default function App() {
         <div className="brand">
           <div className="logo-plate">
             <img src="/logos/we.png" alt="WE" />
+            <img className="logo-aveva" src="/logos/aveva.png" alt="AVEVA" />
           </div>
           <h1>Smart Airport City</h1>
         </div>

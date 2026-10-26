@@ -1,0 +1,126 @@
+/* ================= Maintenance: the dashboard of panels, in the same navy look as Home ================= */
+:root { --pill-ink: #ffffff; }
+html[data-theme="dark"] { --pill-ink: #0e1230; }
+
+.mx { position: relative; display: grid; grid-template-columns: minmax(230px, .82fr) minmax(230px, 1fr) minmax(0, 1.95fr); gap: 10px; height: calc(100vh - var(--chrome, 150px)); min-height: 520px; }
+.mx-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; min-height: 0; }
+.mx-grow { flex: 1; min-height: 0; }
+.mx-grow2 { flex: 1.25; min-height: 0; }
+.mx-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mx-stat { padding: 8px 12px 9px; gap: 3px; }
+.mx-stat > span { font-size: 12px; color: var(--text-2); }
+.mx-stat b { font-size: clamp(20px, 1.8vw, 26px); font-weight: 600; line-height: 1.1; }
+.mx-row { flex: 1; min-height: 0; display: flex; align-items: center; gap: 10px; }
+.mx-row .hm-bars { flex: 1; min-width: 0; height: 100%; }
+.mx-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mx-center { display: grid; justify-items: center; align-content: center; gap: 4px; min-height: 0; }
+.mx-center small, .mx-down small { font-size: 11px; color: var(--muted); }
+.mx-down { flex: 1; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.mx-down > div { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.mx-down > div:nth-child(1) { justify-content: center; }
+.mx-down .hm-bars { flex: 1; min-height: 0; }
+
+.hm-bars.compact { grid-template-columns: minmax(0, 1fr); }
+.hm-bars.compact .hm-cols { gap: 4px; }
+.hm-bars.compact .hm-col > span { font-size: 9px; }
+.mx-ring { position: relative; width: 82px; height: 82px; flex: none; display: grid; place-items: center; }
+.mx-ring svg { width: 100%; height: 100%; }
+.mx-ring .bg, .mx-ring .fg { fill: none; stroke-width: 11; }
+.mx-ring .bg { stroke: var(--track); }
+.mx-ring .fg { stroke: var(--teal); transition: stroke-dasharray 1s cubic-bezier(.22, 1, .36, 1); }
+.mx-ring > div { position: absolute; display: grid; justify-items: center; line-height: 1.1; }
+.mx-ring b { font-size: 15px; font-weight: 600; }
+.mx-ring .up { color: var(--good); fill: var(--good); }
+.mx-ring .down { color: var(--bad); fill: var(--bad); }
+
+.mx-two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mx-box { display: grid; gap: 3px; padding: 8px 10px; border: 1px solid var(--line); background: var(--surface-0); }
+.mx-box > span { font-size: 11.5px; color: var(--text-2); }
+.mx-box b { display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 400; white-space: nowrap; }
+.mx-box .up { color: var(--teal); fill: var(--teal); }
+.mx-line { flex: 1; min-height: 0; }
+
+/* equipment */
+.mx-eq { min-width: 0; }
+.mx-chips { display: grid; grid-template-columns: 1.15fr repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px; }
+.mx-chip { display: grid; gap: 4px; align-content: center; padding: 6px 8px; border: 1px solid var(--line); background: var(--surface-0); min-width: 0; }
+.mx-chip > span { font-size: 10.5px; line-height: 1.15; color: var(--text-2); }
+.mx-chip b { font-size: 16px; font-weight: 600; line-height: 1; }
+.mx-chip.big { background: var(--teal); border-color: var(--teal); }
+.mx-chip.big > span, .mx-chip.big b { color: var(--pill-ink); }
+.mx-chip.big b { font-size: 22px; }
+.mx-table-wrap { flex: 1; min-height: 0; overflow: auto; border: 1px solid var(--line); }
+.mx-table { width: 100%; height: 100%; border-collapse: collapse; font-size: 12.5px; }
+.mx-table thead tr { height: 44px; }
+.mx-table th { position: sticky; top: 0; z-index: 1; padding: 8px 8px; text-align: center; font-weight: 400; color: var(--text-2); background: var(--surface-2); border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); line-height: 1.2; }
+.mx-table th:last-child { border-right: 0; }
+.mx-table td { padding: 6px 8px; text-align: center; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+.mx-table td.id { text-align: left; font-weight: 600; }
+.mx-table td.over { color: var(--bad); font-weight: 600; }
+.mx-table tbody tr:hover { background: var(--surface-2); }
+.mx-pill { display: inline-block; min-width: 86px; padding: 2px 10px; font-size: 11.5px; text-align: center; border: 1px solid transparent; }
+.mx-pill.run, .mx-pill.open { background: var(--teal); color: var(--pill-ink); }
+.mx-pill.idle { background: var(--ink); color: var(--bg); }
+.mx-pill.under { background: var(--warn); color: #1a1c36; }
+.mx-pill.late { background: var(--bad); color: #fff; }
+.mx-pill.closed { background: transparent; color: var(--text-2); border-color: var(--muted); }
+.mx-act { display: inline-flex; gap: 10px; }
+.mx-act button { display: grid; place-items: center; color: var(--ink); }
+.mx-act button:hover { color: var(--teal); }
+
+@media (max-width: 1500px) {
+  .mx-table th, .mx-table td { padding-left: 4px; padding-right: 4px; }
+  .mx-table { font-size: 12px; }
+  .mx-pill { min-width: 66px; padding: 2px 6px; font-size: 11px; }
+  .mx-act { gap: 6px; }
+}
+@media (max-height: 800px) {
+  .mx-stat { padding: 6px 12px 7px; }
+  .mx-ring { width: 68px; height: 68px; }
+  .mx-ring b { font-size: 13px; }
+  .mx-table td { padding: 4px 8px; }
+  .mx-chips { margin-bottom: 6px; }
+}
+
+@media (max-width: 1100px), (max-height: 500px) and (max-width: 1000px) {
+  .mx { display: flex; flex-direction: column; height: auto; min-height: 0; }
+  .mx-col { gap: 10px; }
+  .mx-grow, .mx-grow2 { flex: none; height: 220px; }
+  .mx-eq { height: 460px; }
+  .mx-chips { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mx-table { min-width: 700px; }
+}
+
+/* ---- Equipment info: motion ---- */
+@keyframes mxdot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.65); } }
+@keyframes mxwarn { 0%, 100% { box-shadow: 0 0 0 0 rgba(240, 160, 48, 0); } 50% { box-shadow: 0 0 12px 1px rgba(240, 160, 48, .65); } }
+@keyframes mxlate { 0%, 100% { box-shadow: 0 0 0 0 rgba(232, 70, 124, 0); } 50% { box-shadow: 0 0 12px 1px rgba(232, 70, 124, .6); } }
+@keyframes mxover { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+/* 1: the count boxes pop in one by one */
+.mx-chip { animation: mpop .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(450ms + var(--n, 0) * 70ms); }
+/* 2: the rows slide in one after another (done in the component, so rows can also leave when you filter) */
+/* 3: status pills that look alive: running pulses a dot, maintenance glows amber, late and overdue blink pink and red */
+.mx-pill.run::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: currentColor; vertical-align: 1px; animation: mxdot 2s ease-in-out infinite; animation-delay: calc(var(--n, 0) * -.3s); }
+.mx-pill.under { animation: mxwarn 2.4s ease-in-out infinite; }
+.mx-pill.late { animation: mxlate 1.8s ease-in-out infinite; animation-delay: calc(var(--n, 0) * -.2s); }
+.mx-table td.over { animation: mxover 1.6s ease-in-out infinite; }
+/* 4: the row under the pointer gets a cyan bar and its eye icon glows */
+.mx-table tbody tr td { transition: background .15s, box-shadow .15s; }
+.mx-table tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+.mx-act button { transition: color .15s, transform .15s, filter .15s; }
+.mx-table tbody tr:hover .mx-act button:first-child { color: var(--teal); filter: drop-shadow(0 0 5px var(--teal)); transform: scale(1.18); }
+
+/* ---- Equipment info: click a status box to filter the table ---- */
+button.mx-chip { text-align: left; cursor: pointer; font: inherit; color: inherit; transition: border-color .15s, background .15s, box-shadow .2s, transform .15s, opacity .2s; }
+button.mx-chip:hover { transform: translateY(-2px); }
+button.mx-chip.pick:hover { border-color: var(--teal); }
+button.mx-chip.on { border-color: var(--teal); background: var(--tint); box-shadow: 0 0 0 1px var(--teal), 0 0 16px -4px var(--teal); }
+button.mx-chip.big.dim { opacity: .72; }
+.mx-filter { margin: -4px 0 6px; font-size: 11.5px; color: var(--muted); min-height: 16px; }
+.mx-filter b { color: var(--teal-d); font-weight: 600; }
+.mx-filter button { color: var(--teal-d); font-size: 11.5px; text-decoration: underline; }
+.mx-table td.empty { padding: 18px; color: var(--muted); }
+.mx-table.filtered { height: auto; }
+.mx-table.filtered tbody tr { height: 46px; }
+.mx-table td.title { text-align: left; white-space: normal; min-width: 170px; }
+.mx-table.filtered tbody tr { height: 42px; }

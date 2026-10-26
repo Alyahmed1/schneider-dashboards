@@ -1,0 +1,118 @@
+/* ================= Home: map, summary and chart panels (loaded after theme.css) ================= */
+:root {
+  --hm-land: #cdd6ea; --hm-land-edge: #8f9dc4; --hm-nile: #3aa7c8; --hm-region: rgba(26, 159, 194, .28); --hm-region-edge: #1a9fc2;
+  --hm-big: rgba(28, 30, 58, .38); --hm-sea: rgba(28, 30, 58, .45); --hm-ring-in: #ffffff; --hm-ring-bg: #cfd5ea;
+}
+html[data-theme="dark"] {
+  --hm-land: #2c3a66; --hm-land-edge: #4a5a98; --hm-nile: #46c6e6; --hm-region: rgba(61, 188, 220, .5); --hm-region-edge: #5cd0ec;
+  --hm-big: rgba(255, 255, 255, .55); --hm-sea: rgba(255, 255, 255, .4); --hm-ring-in: #1a1c36; --hm-ring-bg: #3d6f8e;
+}
+
+.hm { display: grid; grid-template-columns: minmax(0, 1fr) clamp(340px, 28vw, 440px); grid-template-rows: minmax(0, 1fr) clamp(190px, 27vh, 250px); gap: 10px; height: calc(100vh - var(--chrome, 150px)); min-height: 520px; }
+.hm-map-p { position: relative; grid-column: 1; grid-row: 1; min-width: 0; min-height: 0; background: var(--surface-0); border: 1px solid var(--line); overflow: hidden; }
+.hm-side { grid-column: 2; grid-row: 1; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px; min-height: 0; min-width: 0; }
+.hm-strip { grid-column: 1; grid-row: 2; display: grid; grid-template-columns: 1.15fr 1fr 1fr .62fr; gap: 10px; min-width: 0; min-height: 0; }
+.hm-pair { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: .7fr 1.3fr; gap: 10px; min-width: 0; min-height: 0; }
+
+.hm-p { overflow: hidden; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 10px 14px 12px; background: var(--card); border: 1px solid var(--line); }
+.hm-p h3 { font-size: 15px; font-weight: 400; color: var(--ink); margin-bottom: 8px; line-height: 1.2; }
+
+/* map */
+.hm-map { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hm-map-head { position: absolute; z-index: 2; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; pointer-events: none; }
+.hm-map-head > * { pointer-events: auto; }
+.hm-alarm { padding: 6px 12px; font-size: 12.5px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.hm-alarm.bad { border-color: var(--bad); color: var(--bad); }
+.hm-alarm.ok { color: var(--good); border-color: var(--good); }
+.hm-select { position: absolute; z-index: 2; left: 10px; bottom: 10px; }
+.hm-select select { appearance: none; border: 1px solid var(--line); background: var(--card) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%239ca3c7%27 stroke-width=%273%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 8px center; color: var(--ink); padding: 6px 28px 6px 10px; font-size: 13px; min-width: 190px; border-radius: 0; }
+.hm-land { fill: var(--hm-land); stroke: var(--hm-land-edge); stroke-width: 1.2; }
+.hm-nile { fill: none; stroke: var(--hm-nile); stroke-width: 1.6; opacity: .45; stroke-linecap: round; stroke-linejoin: round; }
+.hm-region { fill: var(--hm-region); stroke: var(--hm-region-edge); stroke-width: 1; }
+.hm-ring-bg { fill: var(--hm-ring-in); stroke: var(--hm-ring-bg); stroke-width: 6; }
+.hm-ring { fill: none; stroke: var(--teal); stroke-width: 6; transition: stroke-dasharray .6s; }
+.hm-ring.warn { stroke: var(--warn); }
+.hm-ring-n { fill: var(--ink); font-size: 13px; font-weight: 600; }
+.hm-ring-t { fill: var(--good); }
+.hm-ring-t.warn { fill: var(--warn); }
+.hm-region-n { fill: var(--ink); font-size: 10.5px; }
+.hm-map-big { fill: var(--hm-big); font-size: 22px; letter-spacing: 2px; }
+.hm-map-sea { fill: var(--hm-sea); font-size: 12px; letter-spacing: 3px; font-style: italic; }
+.hm-plant { fill: var(--bad); stroke: #fff; stroke-width: 1.5; }
+.hm-plant-pulse { fill: none; stroke: var(--bad); stroke-width: 1.5; animation: hmping 2.2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.hm-plant-n { fill: var(--ink); font-size: 11.5px; font-weight: 600; }
+@keyframes hmping { from { transform: scale(1); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
+
+/* summary tiles */
+.hm-sum { padding-bottom: 10px; }
+.hm-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hm-tile { text-align: left; padding: 8px 12px 9px; border: 1px solid var(--line); background: var(--surface-0); display: grid; gap: 2px; min-width: 0; transition: border-color .15s, background .15s; }
+.hm-tile:hover { border-color: var(--teal); background: var(--surface-2); }
+.hm-tile > span { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-tile b { display: flex; align-items: center; gap: 8px; font-size: clamp(16px, 1.45vw, 21px); font-weight: 400; white-space: nowrap; }
+.hm-tile b svg { margin-left: auto; flex: none; }
+.hm-tile b .up { color: var(--good); fill: var(--good); }
+.hm-tile b .down { color: var(--bad); fill: var(--bad); }
+
+/* bars */
+.hm-bars { flex: 1; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); gap: 6px; }
+.hm-y { display: flex; flex-direction: column; justify-content: space-between; text-align: right; font-size: 10px; color: var(--muted); padding: 18px 0 16px; white-space: nowrap; }
+.hm-cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; min-height: 0; }
+.hm-col { display: grid; grid-template-rows: 18px minmax(0, 1fr) 16px; justify-items: center; min-height: 0; }
+.hm-col b { font-size: 12.5px; font-weight: 600; line-height: 18px; }
+.hm-col > span { font-size: 10px; color: var(--muted); line-height: 16px; white-space: nowrap; }
+.hm-track { position: relative; width: 100%; max-width: 44px; height: 100%; background: var(--track); border: 1px solid var(--line); }
+.hm-track i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--teal); transition: height .6s; }
+.hm-line { flex: 1; min-height: 0; }
+
+/* loss and feed boxes */
+.hm-loss, .hm-feed { gap: 0; }
+.hm-box { border: 1px solid var(--line); background: var(--surface-0); padding: 8px 10px; display: grid; gap: 3px; margin-bottom: 8px; }
+.hm-box > span { font-size: 11.5px; color: var(--text-2); }
+.hm-box b { font-size: clamp(15px, 1.3vw, 19px); font-weight: 400; white-space: nowrap; }
+
+/* pie */
+.hm-pie { flex: 1; min-height: 0; display: flex; align-items: center; gap: 12px; }
+.hm-pie svg { width: 42%; max-width: 104px; height: auto; aspect-ratio: 1; flex: none; }
+.hm-pie ul { list-style: none; display: grid; gap: 5px; font-size: 11.5px; min-width: 0; }
+.hm-pie li { display: grid; grid-template-columns: 9px minmax(0, 1fr) auto; gap: 6px; align-items: center; color: var(--text-2); }
+.hm-pie li i { width: 8px; height: 8px; }
+.hm-pie li span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-pie li b { font-weight: 400; color: var(--ink); }
+
+html[data-theme="dark"] .recharts-cartesian-grid line { stroke: var(--line); }
+
+@media (max-height: 800px) {
+  .hm-tiles { gap: 6px; }
+  .hm-tile { padding: 5px 10px 6px; }
+  .hm-tile b { font-size: clamp(15px, 1.3vw, 19px); }
+  .hm-p { padding: 8px 12px 10px; }
+  .hm-p h3 { margin-bottom: 6px; }
+}
+
+/* narrower screens and phones: one column, the page scrolls */
+@media (max-width: 1100px), (max-height: 500px) and (max-width: 1000px) {
+  .hm { display: flex; flex-direction: column; height: auto; min-height: 0; }
+  .hm-map-p { height: clamp(300px, 56vw, 460px); flex: none; }
+  .hm-side { display: flex; flex-direction: column; }
+  .hm-rev { height: 210px; }
+  .hm-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-strip .hm-p { height: 220px; }
+  .hm-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-pair .hm-p { height: 200px; }
+  .hm-select select { min-width: 150px; }
+}
+@media (max-width: 560px) {
+  .hm-strip { grid-template-columns: minmax(0, 1fr); }
+  .hm-pair { grid-template-columns: minmax(0, 1fr); }
+  .hm-tile b { font-size: 15px; }
+}
+
+/* a phone held sideways: the map and the drawing are shorter so a page needs less scrolling */
+@media (max-height: 500px) and (max-width: 1000px) {
+  .hm-map-p { height: clamp(230px, 64vh, 300px); }
+  .hm-strip, .hm-pair { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hm-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hm-strip .hm-p { height: 190px; }
+  .hm-pair .hm-p { height: 190px; }
+}

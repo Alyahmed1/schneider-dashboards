@@ -238,13 +238,6 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
           <button className="scene-btn" onClick={() => setFlowOn((v) => !v)} aria-pressed={!flowOn} aria-label={flowOn ? "Pause the moving water" : "Play the moving water"}><PlayPauseIcon playing={flowOn} /> {flowOn ? "Pause" : "Play"}</button>
         </div>
 
-        <div className="flow-legend" aria-hidden>
-          <span><i style={{ background: "#3d8fe0" }} />Sea water</span>
-          <span><i style={{ background: "#2bc4c0" }} />Permeate and drinking water</span>
-          <span><i style={{ background: "#e0a23c" }} />Brine</span>
-          <span><i style={{ background: "#a070e0" }} />Chemicals</span>
-        </div>
-
         {chips.map((c, n) => {
           const s = list.find((x) => x.id === c.id)!;
           return (

@@ -1,0 +1,110 @@
+/* ================= step 6: theme tokens + dark mode ================= */
+:root {
+  --surface: #ffffff;
+  --surface-0: #fbfaf6;
+  --surface-2: #f7f5ef;
+  --surface-3: #f3f0e8;
+  --surface-4: #efece3;
+  --surface-src: #f4f9ff;
+  --line-2: #f0ece2;
+  --tint: #e6f4f1;
+  --tint-2: #f1f8f6;
+  --track: #eee9dd;
+  --text-2: #4a6670;
+  --wire: #cfd8d6;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #08161e;
+  --card: #0f2530;
+  --surface: #0f2530;
+  --surface-0: #0b1d27;
+  --surface-2: #14303c;
+  --surface-3: #183743;
+  --surface-4: #1b3b48;
+  --surface-src: #102c3a;
+  --line: #1e3a47;
+  --line-2: #1a3340;
+  --tint: rgba(43, 196, 192, .14);
+  --tint-2: rgba(43, 196, 192, .1);
+  --track: #1d3a46;
+  --text-2: #a7bec5;
+  --wire: #2a4755;
+  --ink: #e7f1f3;
+  --muted: #8aa5ad;
+  --teal-d: #5fd6cf;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 32px -22px rgba(0, 0, 0, .8);
+}
+html[data-theme="dark"] body {
+  background-image: radial-gradient(900px 420px at 85% -120px, rgba(43, 196, 192, .12), transparent 70%), radial-gradient(700px 380px at -10% 0, rgba(70, 100, 220, .12), transparent 70%);
+}
+html[data-theme="dark"] .topbar { background: rgba(8, 22, 30, .85); }
+html[data-theme="dark"] button.brand:hover { background: rgba(255, 255, 255, .06); }
+
+/* buttons that used the ink colour as a dark fill now use a light fill with dark text */
+html[data-theme="dark"] .tabs button.on,
+html[data-theme="dark"] .btn.on { color: #06202a; }
+html[data-theme="dark"] .kind-tabs button.on { color: #06202a; }
+html[data-theme="dark"] .kind-tabs button.on span { background: rgba(6, 32, 42, .16); color: #06202a; }
+html[data-theme="dark"] .seg button.on,
+html[data-theme="dark"] .fchip.on { color: #04282b; }
+html[data-theme="dark"] .tip { background: #06141b; border: 1px solid var(--line); }
+
+/* status chips and deltas */
+html[data-theme="dark"] .chip-good, html[data-theme="dark"] .delta.up { background: rgba(31, 169, 113, .18); color: #6fe0ae; }
+html[data-theme="dark"] .chip-warn, html[data-theme="dark"] .delta.down { background: rgba(240, 138, 36, .2); color: #ffb866; }
+html[data-theme="dark"] .chip-bad { background: rgba(226, 73, 90, .2); color: #ff8d9b; }
+html[data-theme="dark"] .chip-info { background: rgba(31, 111, 209, .24); color: #8bb8ff; }
+html[data-theme="dark"] .chip-mute { color: #a7bec5; }
+html[data-theme="dark"] .kpi-hero .delta.up { background: rgba(255, 255, 255, .2); color: #fff; }
+html[data-theme="dark"] .kpi-hero .delta.down { background: rgba(240, 138, 36, .9); color: #fff; }
+html[data-theme="dark"] .wo-type.planned { background: rgba(31, 111, 209, .28); color: #9cc2ff; }
+html[data-theme="dark"] .wo-type.unplanned { background: rgba(240, 138, 36, .26); color: #ffb866; }
+
+/* banners and hero cards */
+html[data-theme="dark"] .banner::after { background: linear-gradient(90deg, #0f2530 0%, rgba(15, 37, 48, .94) 34%, rgba(15, 37, 48, 0) 72%); }
+html[data-theme="dark"] .banner img { filter: brightness(.8) saturate(1.05); }
+html[data-theme="dark"] .bench-hero { background: linear-gradient(155deg, #0f2530 0%, #10323d 100%); }
+html[data-theme="dark"] .result.bad { background: rgba(240, 138, 36, .16); }
+
+/* work order cards */
+html[data-theme="dark"] .wo.prio-high { background: rgba(226, 73, 90, .2); }
+html[data-theme="dark"] .wo.prio-medium { background: rgba(240, 180, 41, .17); }
+html[data-theme="dark"] .wo.prio-low { background: rgba(31, 169, 113, .17); }
+html[data-theme="dark"] .wo.prio-done { background: #1c4757; }
+html[data-theme="dark"] .wo .av { background: rgba(255, 255, 255, .14); color: var(--ink); }
+html[data-theme="dark"] .wo-act button { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); color: var(--ink); }
+html[data-theme="dark"] .wo-act button:hover { background: rgba(255, 255, 255, .16); }
+html[data-theme="dark"] .col { border-color: transparent; }
+
+/* diagram */
+html[data-theme="dark"] .sld-wrap { background: radial-gradient(circle at 1px 1px, #27434f 1px, transparent 1.4px) 0 0 / 18px 18px, #0b1d27; border-color: var(--line); }
+html[data-theme="dark"] .nd.off .nd-box { fill: #122b36; }
+html[data-theme="dark"] .nd.sel .nd-box { fill: #123a44; }
+
+/* charts and gauges */
+html[data-theme="dark"] .recharts-cartesian-grid line,
+html[data-theme="dark"] .recharts-polar-grid-angle line,
+html[data-theme="dark"] .recharts-polar-grid-concentric-polygon { stroke: #1e3a47; }
+html[data-theme="dark"] .recharts-cartesian-axis-tick-value,
+html[data-theme="dark"] .recharts-polar-angle-axis-tick-value { fill: #8aa5ad; }
+html[data-theme="dark"] .recharts-cursor { stroke: #5fd6cf; }
+html[data-theme="dark"] .b-zone { filter: brightness(.62) saturate(2.4); }
+html[data-theme="dark"] .b-us { background: #e7f1f3; box-shadow: 0 3px 8px rgba(0, 0, 0, .5); }
+html[data-theme="dark"] .soon { border-color: #2a4755; }
+html[data-theme="dark"] .modal-bg { background: rgba(2, 10, 14, .6); }
+
+/* theme switch: small button in the top bar and a pair of pills on the cover */
+.theme-btn svg { transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+.theme-btn:hover svg { transform: rotate(25deg) scale(1.1); }
+.cover-theme { display: inline-flex; align-items: center; gap: 10px; margin-top: 2px; font-size: 13px; color: rgba(255, 255, 255, .75); }
+.cover-theme > div { display: inline-flex; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .2); backdrop-filter: blur(8px); }
+.cover-theme button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; color: rgba(255, 255, 255, .85); font-weight: 600; font-size: 12.5px; transition: background .2s, color .2s; }
+.cover-theme button.on { background: #fff; color: #06202a; }
+.cover-theme button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+.item-tabs { margin-bottom: 12px; }
+.item-tabs button { padding: 7px 13px; font-size: 12.5px; }
+.kind-stats b.ok { color: var(--good); }
+.kind-stats b.over { color: var(--warn); }

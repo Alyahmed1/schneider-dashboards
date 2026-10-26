@@ -1,0 +1,99 @@
+/* ================= every tab fits the screen without scrolling (laptops and desktops) =================
+   The page becomes exactly one screen tall: top bar, the tab, and the dock. Panels share the height, maps and charts stretch to fill
+   what is left, and long lists scroll inside their own panel. Phones and short screens keep the normal scrolling page. */
+
+/* chart boxes need a height of their own on every screen size */
+.ut-chart, .fc-chart, .zd-chart { display: flex; flex-direction: column; }
+.ut-chart { height: 230px; } .as-grid .ut-chart { height: 170px; }
+.fc-chart { height: 150px; } .sf-grid .fc-chart { height: 130px; }
+.zd-chart { height: 130px; }
+.ut-chart .recharts-responsive-container, .fc-chart .recharts-responsive-container, .zd-chart .recharts-responsive-container { flex: 1 1 0; min-height: 0; }
+.feedbox { display: block; }
+
+@media (min-width: 1100px) and (min-height: 600px) {
+  .app { height: 100dvh; padding-bottom: 0; display: flex; flex-direction: column; }
+  .chrome { flex: none; width: 100%; box-sizing: border-box; }
+  .page { flex: 1 1 0; min-height: 0; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; padding-top: 6px; padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+  .app.storying .page { padding-bottom: 124px; }
+  .page > div { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+  .page > div > * { flex: 1 1 0; min-height: 0; }
+
+  .home, .mob, .as-grid, .sf-grid, .ut-grid { grid-template-rows: auto minmax(0, 1fr); align-items: stretch; }
+  .as-chat, .plan-grid, .loc-grid, .pf-grid { grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+  .plan { display: flex; flex-direction: column; }
+  .plan > .plan-grid, .plan > .loc-grid, .plan > .ut-grid { flex: 1 1 0; min-height: 0; }
+  .pf-root { display: flex; flex-direction: column; gap: 8px; }
+  .pf-root > .ut-kpis, .pf-root > .subtabs { flex: none; }
+  .pf-root > .pf-grid, .pf-root > .panel { flex: 1 1 0; min-height: 0; }
+  .subtabs { margin-bottom: 8px; flex: none; }
+
+  .panel { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .as-list { overflow: visible; }
+  .side, .ut-main { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .side > .panel, .ut-main > .panel { flex: 0 0 auto; }
+  .side > .panel.grow, .ut-main > .panel.grow { flex: 1 1 0; }
+
+  /* maps and diagrams stretch to the room they are given */
+  .page .map-wrap { flex: 1 1 0; min-height: 0; position: relative; }
+  .page .map-wrap > .mm { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none !important; min-height: 0 !important; }
+  .panel > .loc-map { flex: 1 1 0; min-height: 0; max-height: none; height: auto; }
+  .pf-scroll { flex: 1 1 0; min-height: 0; overflow: hidden; }
+  .pf { height: 100%; width: 100%; min-width: 0; }
+  .pf-grid { grid-template-columns: minmax(0, 2.1fr) minmax(300px, 1fr); }
+
+  /* charts */
+  .page .ut-chart, .page .fc-chart, .page .zd-chart { flex: 1 1 0; height: auto; min-height: 70px; }
+  .page .mob .fc-chart { flex: none; height: clamp(90px, 16vh, 150px); }
+  .page .sf-grid .fc-chart { flex: none; height: clamp(64px, 11vh, 120px); }
+  .sf-grid .side > .panel.grow:nth-child(1) { flex-grow: 1.5; }
+
+  /* lists scroll inside their panel */
+  .alerts, .zlist, .lots, .events, .potentials, .cat, .drive { min-height: 0; }
+  .panel.grow > .alerts, .panel.grow > .lots, .panel.grow > .events, .panel.grow > .potentials, .panel.grow > .cat, .panel.grow > .zbars { flex: 1 1 0; overflow-y: auto; max-height: none; }
+  .as-table { flex: 1 1 0; min-height: 0; max-height: none; }
+  .wos { max-height: clamp(70px, 14vh, 150px); }
+  .chat .msgs { flex: 1 1 0; height: auto; min-height: 0; max-height: none; }
+  .chat .sugg, .chat .composer { flex: none; }
+
+  /* tighter cards and small things, so the content has room */
+  .ut-kpis .kpi, .mob-kpis .kpi { padding: 4px 12px; }
+  .ut-kpis .kpi b, .mob-kpis .kpi b { font-size: 21px; }
+  .panel { padding: 8px 12px; }
+  .panel-h { margin-bottom: 4px; }
+  .panel-h h2 { font-size: 17px; }
+  .map-note { margin-top: 4px; font-size: 10.5px; }
+  .sliders { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sliders.two { grid-template-columns: 1fr 1fr; }
+  .whatif-out { margin-top: 4px; }
+  .zlist { grid-template-columns: 1fr 1fr; column-gap: 8px; }
+  .zlist button { grid-template-columns: 12px minmax(0, 1fr) auto auto; }
+  .zbar { display: none; }
+  .zd-tiles { margin: 4px 0; }
+  .zd-serves .chip { padding: 2px 9px; }
+  .lagoons { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .lagoons li { grid-template-columns: 22px 1fr; grid-template-areas: "n n" "g v" "p p" "s s"; row-gap: 3px; }
+  .lagoons .ln { font-size: 11.5px; }
+  .lagoons small { font-size: 10px; }
+  .dma { grid-template-columns: repeat(3, 1fr); gap: 2px 8px; margin-top: 4px; }
+  .dma button { grid-template-columns: minmax(0, 1fr) auto; }
+  .dma em { display: none; }
+  .leak-card { margin-top: 4px; padding: 6px 9px; gap: 5px; }
+  .as-facts { margin-bottom: 2px; }
+  .as-facts b { font-size: 19px; }
+  .why { font-size: 12px; margin: 2px 0 3px; }
+  .advice { font-size: 12px; padding: 5px 9px; }
+  .recs { gap: 5px; }
+  .recs li { padding: 5px 9px; font-size: 12px; }
+  .as-chat .map-note { display: none; }
+  .donut { grid-template-columns: 96px 1fr; }
+  .alerts button { padding: 4px 6px; }
+  .tiles2 button { padding: 8px; }
+  .events li { padding: 4px 6px; }
+
+  /* the camera view takes the biggest 16:9 box that fits the room it is given */
+  .feedbox { flex: 1 1 0; min-height: 0; container-type: size; display: grid; place-items: center; }
+  .sf-live .feedbox > .feed { width: min(100cqw, calc(100cqh * 16 / 9)); }
+  .sf-info { margin: 5px 2px; }
+}
+
+@media (min-width: 1700px) { .chrome, .page { max-width: 1760px; } }

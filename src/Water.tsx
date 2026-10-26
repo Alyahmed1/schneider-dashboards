@@ -62,9 +62,9 @@ export default function Water({ go }: { go: (tab: "assets", target?: string) => 
       </div>
 
       <div className="ut-main">
-        <Panel title="Water through the day" i={0} aside={<span className="loc-tag">m³ per hour</span>}>
+        <Panel title="Water through the day" className="grow" i={0} aside={<span className="loc-tag">m³ per hour</span>}>
           <div className="ut-chart" aria-label="Water use through the day: homes and buildings, irrigation, and treated wastewater">
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={day.hours} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--line-2)" vertical={false} />
                 <XAxis dataKey="label" interval={3} tick={{ fontSize: 10, fill: "var(--muted)" }} tickLine={false} axisLine={false} />
@@ -104,7 +104,7 @@ export default function Water({ go }: { go: (tab: "assets", target?: string) => 
       </div>
 
       <div className="side">
-        <Panel title="Leak detection" i={2} aside={<span className="loc-tag">night flow by district</span>}>
+        <Panel title="Leak detection" className="grow" i={2} aside={<span className="loc-tag">night flow by district</span>}>
           <div className="map-wrap">
             <MasterMap muted grow={grow} fills={fills} viewBox="150 190 650 640">
               <g className="leak" transform={`translate(${LEAK.at[0]} ${LEAK.at[1]})`} aria-hidden>

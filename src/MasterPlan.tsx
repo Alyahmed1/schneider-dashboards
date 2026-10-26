@@ -110,7 +110,7 @@ export default function MasterPlan({ go, focus }: { go: (tab: TabId, target?: st
               </ul>
             </Panel>
 
-            <Panel title={shown ? shown.name : "Zone detail"} i={2}>
+            <Panel title={shown ? shown.name : "Zone detail"} className="grow" i={2}>
               {shown ? (
                 <div className="zdetail" style={{ ["--zc" as string]: `var(${shown.color})` }}>
                   <p className="zd-blurb">{shown.blurb}</p>
@@ -123,7 +123,7 @@ export default function MasterPlan({ go, focus }: { go: (tab: TabId, target?: st
                   </div>
                   {sel && shown.id === sel.id && (
                     <div className="zd-chart" aria-label="Power through the day">
-                      <ResponsiveContainer width="100%" height={110}>
+                      <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={curve} margin={{ top: 6, right: 6, left: -22, bottom: 0 }}>
                           <defs><linearGradient id="zg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="var(--zc)" stopOpacity=".55" /><stop offset="1" stopColor="var(--zc)" stopOpacity=".05" /></linearGradient></defs>
                           <CartesianGrid stroke="var(--line-2)" vertical={false} />

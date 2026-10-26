@@ -113,14 +113,14 @@ export default function Assets({ focus }: { focus?: string }) {
       </Panel>
 
       <div className="side">
-        <Panel title={`${a.id}  ${a.name}`} i={1} aside={<span className={`pill ${STATUS_TONE[a.status]}`}>{a.status}</span>}>
+        <Panel title={`${a.id}  ${a.name}`} className="grow" i={1} aside={<span className={`pill ${STATUS_TONE[a.status]}`}>{a.status}</span>}>
           <div className="as-facts">
             <div><b>{a.health}%</b><span>health</span></div>
             <div><b>{Math.round(a.prob30 * 100)}%</b><span>failure risk, 30 days</span></div>
             <div><b>{rulText(a)}</b><span>to reach the limit</span></div>
           </div>
           <div className="ut-chart" aria-label={`${a.sensor} over the last 30 days and the forecast`}>
-            <ResponsiveContainer width="100%" height={170}>
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chart} margin={{ top: 8, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--line-2)" vertical={false} />
                 <XAxis dataKey="d" type="number" domain={[-30, 30]} ticks={[-30, -15, 0, 15, 30]} tickFormatter={(d) => (d === 0 ? "today" : d > 0 ? `+${d}d` : `${d}d`)} tick={{ fontSize: 10, fill: "var(--muted)" }} tickLine={false} axisLine={false} />

@@ -1,20 +1,23 @@
 import { useMemo, useState } from "react";
 import { useStoryCmd } from "./storytour";
-import { ArrowUpRight, Car, Droplets, Gauge, ShieldAlert, Wrench, Zap, type LucideIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight, Car, ClipboardList, Droplets, Gauge, Wrench, Zap, type LucideIcon } from "lucide-react";
 import { ALERTS, BRIEF, ZONES, type TabId, type ZoneId } from "./data";
 import MasterMap from "./MasterMap";
 import { LivePill, useTick, wobble } from "./live";
 import { zoneMw } from "./zonemodel";
 import { waterNow } from "./watermodel";
+import { freeSpaces, networkIndex, totalSpaces } from "./traffic";
+import { ASSETS } from "./assetdata";
 import { useWorkOrders } from "./workorders";
 import { CountUp, Panel, useGrow } from "./ui";
 
+/** the numbers printed in the brief */
 const FACTS: { v: number; suffix?: string; label: string }[] = [
-  { v: BRIEF.feddan, label: "Feddan, total project area" },
-  { v: BRIEF.residentialPct, suffix: "%", label: "Residential" },
-  { v: BRIEF.mixedPct, suffix: "%", label: "Mixed-use" },
-  { v: BRIEF.residentialFeddan, label: "Feddan, residential area" },
-  { v: BRIEF.commercialFeddan, label: "Feddan, commercial district" },
+  { v: BRIEF.feddan, label: "feddan in total" },
+  { v: BRIEF.residentialPct, suffix: "%", label: "residential" },
+  { v: BRIEF.mixedPct, suffix: "%", label: "mixed-use" },
+  { v: BRIEF.residentialFeddan, label: "feddan residential" },
+  { v: BRIEF.commercialFeddan, label: "feddan commercial" },
 ];
 
 const TOTAL = ZONES.reduce((s, z) => s + z.feddan, 0);
@@ -49,7 +52,20 @@ function Donut({ grow, hover, onHover }: { grow: boolean; hover: ZoneId | null; 
   );
 }
 
-interface Tile { id: string; icon: LucideIcon; label: string; value: number; decimals: number; suffix: string; tab: TabId }
+/** a small line of the last twelve hours, drawing itself in */
+function Spark({ pts, good }: { pts: number[]; good: boolean }) {
+  const min = Math.min(...pts), max = Math.max(...pts), span = max - min || 1;
+  const xy = pts.map((v, i) => [(i / (pts.length - 1)) * 100, 27 - ((v - min) / span) * 24] as const);
+  const line = xy.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  return (
+    <svg className="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden>
+      <path className="area" d={`${line} L100 30 L0 30Z`} style={{ fill: good ? "var(--good)" : "var(--bad)" }} />
+      <path className="ln" d={line} pathLength={1} style={{ stroke: good ? "var(--good)" : "var(--bad)" }} />
+    </svg>
+  );
+}
+
+interface Kpi { id: string; icon: LucideIcon; label: string; value: number; dec: number; suffix: string; series: number[]; delta: number; deltaText: string; lowerBetter: boolean; tab: TabId }
 
 /** Home: the whole community on one screen */
 export default function Home({ go }: { go: (tab: TabId, target?: string) => void }) {
@@ -65,23 +81,36 @@ export default function Home({ go }: { go: (tab: TabId, target?: string) => void
   const active = hover ?? selected;
   const zone = ZONES.find((z) => z.id === active) ?? null;
 
-  const tiles: Tile[] = useMemo(() => [
-    { id: "power", icon: Zap, label: "Power now", value: ZONES.reduce((s, z, i) => s + wobble(zoneMw(z.id, z.mw, hour), i + 1, t, 0.01), 0), decimals: 1, suffix: " MW", tab: "utilities" },
-    { id: "water", icon: Droplets, label: "Water use", value: wobble(waterNow(hour), 7, t, 0.01), decimals: 0, suffix: " m³/h", tab: "utilities" },
-    { id: "traffic", icon: Car, label: "Traffic flow", value: Math.min(100, wobble(72, 21, t, 0.02)), decimals: 0, suffix: "%", tab: "mobility" },
-    { id: "parking", icon: Gauge, label: "Parking free", value: Math.min(100, wobble(61, 22, t, 0.03)), decimals: 0, suffix: "%", tab: "mobility" },
-    { id: "health", icon: Wrench, label: "Asset health", value: Math.min(100, wobble(96.2, 23, t, 0.002)), decimals: 1, suffix: "%", tab: "assets" },
-    { id: "inc", icon: ShieldAlert, label: "Open work orders", value: openOrders, decimals: 0, suffix: "", tab: "assets" },
-  ], [t, hour, openOrders]);
+  const kpis: Kpi[] = useMemo(() => {
+    const last12 = (f: (h: number) => number) => Array.from({ length: 12 }, (_, k) => f((((hour - 11 + k) % 24) + 24) % 24));
+    const power = (h: number) => ZONES.reduce((s, z) => s + zoneMw(z.id, z.mw, h), 0);
+    const atRisk = ASSETS.filter((a) => a.status !== "OK").length;
+    const pct = (n: number) => `${n > 0 ? "+" : ""}${n.toFixed(1)}%`;
+    // "vs yesterday" is a fixed sample change: the models repeat every day, so there is no real yesterday to compare with
+    return [
+      { id: "power", icon: Zap, label: "Power now", value: wobble(power(hour), 1, t, 0.01), dec: 1, suffix: " MW", series: last12(power), delta: -2.4, deltaText: pct(-2.4), lowerBetter: true, tab: "utilities" },
+      { id: "water", icon: Droplets, label: "Water use", value: wobble(waterNow(hour), 7, t, 0.01), dec: 0, suffix: " m³/h", series: last12(waterNow), delta: 1.1, deltaText: pct(1.1), lowerBetter: true, tab: "utilities" },
+      { id: "traffic", icon: Car, label: "Traffic flow", value: Math.min(100, wobble(networkIndex(hour) * 100, 21, t, 0.02)), dec: 0, suffix: "%", series: last12((h) => networkIndex(h) * 100), delta: -3.1, deltaText: pct(-3.1), lowerBetter: true, tab: "mobility" },
+      { id: "parking", icon: Gauge, label: "Parking free", value: Math.min(100, wobble((freeSpaces(hour) / totalSpaces) * 100, 22, t, 0.03)), dec: 0, suffix: "%", series: last12((h) => (freeSpaces(h) / totalSpaces) * 100), delta: 4.2, deltaText: pct(4.2), lowerBetter: false, tab: "mobility" },
+      { id: "risk", icon: Wrench, label: "Assets at risk", value: atRisk, dec: 0, suffix: ` of ${ASSETS.length}`, series: [8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, atRisk], delta: 1, deltaText: "+1", lowerBetter: true, tab: "assets" },
+      { id: "wo", icon: ClipboardList, label: "Open work orders", value: openOrders, dec: 0, suffix: "", series: [2, 2, 3, 3, 3, 3, 4, 4, 3, 3, 3, openOrders], delta: -1, deltaText: "-1", lowerBetter: true, tab: "assets" },
+    ];
+  }, [t, hour, openOrders]);
 
   return (
     <div className="home">
-      <div className="facts">
-        {FACTS.map((f, i) => (
-          <div className="fact" key={f.label} style={{ ["--n" as string]: i }}>
-            <b><CountUp value={f.v} suffix={f.suffix} /></b><span>{f.label}</span>
-          </div>
-        ))}
+      <div className="kstrip">
+        {kpis.map((k, i) => {
+          const good = k.lowerBetter ? k.delta < 0 : k.delta > 0;
+          return (
+            <button className="kcard" key={k.id} style={{ ["--n" as string]: i }} onClick={() => go(k.tab)} title={`Open ${k.tab}`}>
+              <span className="kl"><k.icon size={14} />{k.label}</span>
+              <b className="kv"><CountUp value={k.value} decimals={k.dec} suffix={k.suffix} ms={900} /></b>
+              <Spark pts={k.series} good={good} />
+              <span className={`kd ${good ? "good" : "bad"}`}>{k.delta > 0 ? <ArrowUp size={12} /> : <ArrowDown size={12} />}{k.deltaText}<em> vs yesterday</em></span>
+            </button>
+          );
+        })}
       </div>
 
       <Panel title="Master plan" className="map-panel" i={0} aside={
@@ -100,7 +129,7 @@ export default function Home({ go }: { go: (tab: TabId, target?: string) => void
               {zone.note && <p className="zc-note">{zone.note}</p>}
               <div className="zc-row">
                 <div><b>{zone.feddan}</b><span>feddan · {Math.round((zone.feddan / TOTAL) * 100)}%</span></div>
-                <div><b>{wobble(zone.mw, ZONES.indexOf(zone) + 1, t, 0.01).toFixed(1)}</b><span>MW now</span></div>
+                <div><b>{wobble(zoneMw(zone.id, zone.mw, hour), ZONES.indexOf(zone) + 1, t, 0.01).toFixed(1)}</b><span>MW now</span></div>
                 <div><b>{Math.round(wobble(zone.water, ZONES.indexOf(zone) + 11, t, 0.01))}</b><span>m³/h water</span></div>
                 <div><b>{zone.occ == null ? "—" : `${Math.min(100, Math.round(wobble(zone.occ, ZONES.indexOf(zone) + 31, t, 0.01)))}%`}</b><span>{zone.occ == null ? "not occupied" : "occupancy"}</span></div>
               </div>
@@ -108,23 +137,17 @@ export default function Home({ go }: { go: (tab: TabId, target?: string) => void
             </> : <p className="zc-hint">Hover or select a zone</p>}
           </div>
         </div>
-        <p className="map-note">Hover a zone to see its numbers, select it to keep them open. Zone power, water and occupancy are sample numbers; the 380, 80/20, 304 and 76 feddan and the boundary lengths are from the brief, and zone sizes are measured from its zoning map. Images are AI-generated and are presented for concept illustration only.</p>
+        <p className="map-note">Hover a zone to see its numbers, select it to keep them open. Images are AI-generated and are presented for concept illustration only.</p>
       </Panel>
 
       <div className="side">
-        <Panel title="Land use" i={1}><Donut grow={grow} hover={active} onHover={setHover} /></Panel>
-        <Panel title="City now" i={2}>
-          <div className="tiles">
-            {tiles.map((k, i) => (
-              <button className="tile" key={k.id} style={{ ["--n" as string]: i }} onClick={() => go(k.tab)}>
-                <k.icon size={16} />
-                <b><CountUp value={k.value} decimals={k.decimals} suffix={k.suffix} /></b>
-                <span>{k.label}</span>
-              </button>
-            ))}
+        <Panel title="Land use" i={1}>
+          <Donut grow={grow} hover={active} onHover={setHover} />
+          <div className="facts2" aria-label="Facts from the brief">
+            {FACTS.map((f) => <div key={f.label}><b><CountUp value={f.v} suffix={f.suffix} ms={900} /></b><span>{f.label}</span></div>)}
           </div>
         </Panel>
-        <Panel title="Live alerts" i={3}>
+        <Panel title="Live alerts" className="grow" i={2}>
           <ul className="alerts">
             {ALERTS.map((a) => (
               <li key={a.text}><button onClick={() => go(a.tab, a.target)}><i className={`sev ${a.sev}`} /><span>{a.text}</span><em>{a.where} · {a.ago}</em></button></li>

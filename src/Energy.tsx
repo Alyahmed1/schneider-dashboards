@@ -60,9 +60,9 @@ export default function Energy() {
       </div>
 
       <div className="ut-main">
-        <Panel title="Power through the day" i={0} aside={<span className="loc-tag">MW, grid + solar + battery</span>}>
+        <Panel title="Power through the day" className="grow" i={0} aside={<span className="loc-tag">MW, grid + solar + battery</span>}>
           <div className="ut-chart" aria-label="Power supplied through the day by source, with the demand without optimization">
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={out.hours} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--line-2)" vertical={false} />
                 <XAxis dataKey="label" interval={3} tick={{ fontSize: 10, fill: "var(--muted)" }} tickLine={false} axisLine={false} />
@@ -96,7 +96,7 @@ export default function Energy() {
         <Panel title="AI recommendations" i={2}>
           <ul className="recs">{recs.map((r) => <li key={r.title}><b>{r.title}</b><span>{r.text}</span></li>)}</ul>
         </Panel>
-        <Panel title="Power by zone, now" i={3}>
+        <Panel title="Power by zone, now" className="grow" i={3}>
           <ul className="zbars">
             {byZone.map(({ z, mw }) => (
               <li key={z.id}><i style={{ background: `var(${z.color})` }} /><span>{z.name}</span><em><u style={{ width: grow ? `${(mw / maxZone) * 100}%` : 0, background: `var(${z.color})` }} /></em><b>{mw.toFixed(1)}</b></li>

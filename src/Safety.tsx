@@ -75,7 +75,7 @@ export default function Safety({ focus }: { focus?: string }) {
           <button className={`chip ${privacy ? "on" : ""}`} aria-pressed={privacy} onClick={() => setPrivacy(!privacy)}><EyeOff size={13} /> Privacy mode</button>
         </div>
       }>
-        <CameraFeed key={cam.id} cam={cam} detect={detect} privacy={privacy} />
+        <div className="feedbox"><CameraFeed key={cam.id} cam={cam} detect={detect} privacy={privacy} /></div>
         <div className="sf-info">
           <b>{cam.id} · {cam.name}</b>
           {cam.kind === "offline" ? <span className="pill bad">Offline</span> : cam.kind === "density" ? <span>Crowd density from the drone view; no individuals tracked.</span> :
@@ -92,7 +92,7 @@ export default function Safety({ focus }: { focus?: string }) {
       </Panel>
 
       <div className="side">
-        <Panel title="Cameras on the plan" i={1}>
+        <Panel title="Cameras on the plan" className="grow" i={1}>
           <div className="map-wrap">
             <MasterMap muted grow={grow} viewBox="250 180 600 640">
               {CAMS.map((c) => (
@@ -106,7 +106,7 @@ export default function Safety({ focus }: { focus?: string }) {
           </div>
         </Panel>
 
-        <Panel title="Events today" i={2} aside={<span className="loc-tag">{events.length} events</span>}>
+        <Panel title="Events today" className="grow" i={2} aside={<span className="loc-tag">{events.length} events</span>}>
           <ul className="events">
             {events.map((e) => (
               <li key={e.id} className={e.cam === sel ? "on" : ""}>
@@ -123,7 +123,7 @@ export default function Safety({ focus }: { focus?: string }) {
 
         <Panel title="People and vehicles by hour" i={3}>
           <div className="fc-chart" aria-label="People and vehicles seen across the community through the day">
-            <ResponsiveContainer width="100%" height={130}>
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={series} margin={{ top: 6, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--line-2)" vertical={false} />
                 <XAxis dataKey="label" interval={5} tick={{ fontSize: 10, fill: "var(--muted)" }} tickLine={false} axisLine={false} />

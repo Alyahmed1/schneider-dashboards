@@ -158,7 +158,7 @@ export default function Mobility({ focus }: { focus?: string }) {
       <div className="side">
         <Panel title="AI forecast" i={1} aside={<span className="loc-tag">next 12 hours</span>}>
           <div className="fc-chart" aria-label="Network congestion, so far today and the AI forecast">
-            <ResponsiveContainer width="100%" height={150}>
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={fc} margin={{ top: 6, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--line-2)" vertical={false} />
                 <XAxis dataKey="label" interval={3} tick={{ fontSize: 10, fill: "var(--muted)" }} tickLine={false} axisLine={false} />
@@ -175,7 +175,7 @@ export default function Mobility({ focus }: { focus?: string }) {
           <p className="advice"><b>{String(peak.hour).padStart(2, "0")}:00</b> is the busiest hour ahead, about {peak.pct}% on {peakRoad.name}. Suggest an extra lane open at the {peakGate.name} from {String(Math.max(0, peak.hour - 1)).padStart(2, "0")}:00.</p>
         </Panel>
 
-        <Panel title="Smart parking" i={2} aside={<span className="loc-tag">{freeSpaces(hour)} free</span>}>
+        <Panel title="Smart parking" className="grow" i={2} aside={<span className="loc-tag">{freeSpaces(hour)} free</span>}>
           <ul className="lots">
             {LOTS.map((l) => {
               const occ = lotOcc(l, hour), on = l.id === lotId;

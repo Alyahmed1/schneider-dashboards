@@ -118,7 +118,7 @@ export default function Assistant() {
       </Panel>
 
       <div className="side">
-        <Panel title="On the plan" i={1} aside={focus ? <button className="chip" onClick={() => setFocus(null)}>Whole plan</button> : undefined}>
+        <Panel title="On the plan" className="grow" i={1} aside={focus ? <button className="chip" onClick={() => setFocus(null)}>Whole plan</button> : undefined}>
           <div className="map-wrap">
             <MasterMap muted grow={grow} viewBox={vb} fills={focus?.zone ? { [focus.zone]: "var(--gold)" } : undefined}>
               {focus?.route && <g className="route" aria-hidden><path className="route-line" d={asPath(focus.route)} /><circle r="6" className="route-dot"><animateMotion dur="3.2s" repeatCount="indefinite" path={asPath(focus.route)} /></circle></g>}

@@ -70,7 +70,7 @@ export default function Location() {
             ))}
           </ul>
         </Panel>
-        <Panel title="Location potentials" i={2}>
+        <Panel title="Location potentials" className="grow" i={2}>
           <ol className="potentials">{POTENTIALS.map((p) => <li key={p}>{p}</li>)}</ol>
         </Panel>
       </div>

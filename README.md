@@ -20,4 +20,6 @@ Build for hosting: `npm run build` (output in `dist/`).
 - Stack: Vite, React, TypeScript, Recharts, Framer Motion.
 - Look: cream, deep green and gold (sampled from the brief) with serif headings; a dark mode is the toggle. All colours and fonts are in `src/tokens.css`.
 - `reference/` holds the pages of the client's PDF for working only; it is git-ignored and not published.
-- Status: Phase 0 (tokens and empty project). The eight tabs come in later phases.
+- Cover: put the looping aerial video at `public/cover.mp4`; until it exists the cover shows `public/cover-still.jpg` with a slow push-in.
+- The master plan is traced from the brief's colour zoning map into `src/planGeometry.ts` (generated, not hand-edited). Zone areas are measured from the drawing: commercial is the printed 76 feddan and the other zones share the printed 304.
+- Status: Phase 1 (cover, shell, Home with the master plan). Master Plan, Mobility, Utilities, Assets, Safety, Assistant and Platform come in later phases.

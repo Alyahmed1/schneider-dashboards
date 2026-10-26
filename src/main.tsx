@@ -12,6 +12,7 @@ import "./utilities.css";
 import "./export.css";
 import "./phase4.css";
 import "./motion.css";
+import "./polish.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

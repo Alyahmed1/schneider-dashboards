@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Bell, Camera, Car, ClipboardPlus, Clock, EyeOff, ScanEye, Users, type LucideIcon } from "lucide-react";
 import MasterMap from "./MasterMap";
@@ -26,6 +27,7 @@ export default function Safety({ focus }: { focus?: string }) {
   const grow = useGrow(250);
   const { add } = useWorkOrders();
   const [sel, setSel] = useState<string>(() => (CAMS.some((c) => c.id === focus) ? (focus as string) : "C2"));
+  useStoryCmd((c, a) => { if (c === "sf:cam" && a) setSel(a); });
   const [detect, setDetect] = useState(true);
   const [privacy, setPrivacy] = useState(true);
   const [made, setMade] = useState<Record<string, string>>({});

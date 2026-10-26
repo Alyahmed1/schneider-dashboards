@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { ArrowUpRight, Car, Droplets, Gauge, ShieldAlert, Wrench, Zap, type LucideIcon } from "lucide-react";
 import { ALERTS, BRIEF, ZONES, type TabId, type ZoneId } from "./data";
 import MasterMap from "./MasterMap";
@@ -58,6 +59,7 @@ export default function Home({ go }: { go: (tab: TabId, target?: string) => void
   const grow = useGrow(350);
   const [hover, setHover] = useState<ZoneId | null>(null);
   const [selected, setSelected] = useState<ZoneId | null>(null);
+  useStoryCmd((c, a) => { if (c === "home:zone") setHover((a || null) as ZoneId | null); });
   const [dims, setDims] = useState(true);
   const [neighbors, setNeighbors] = useState(true);
   const active = hover ?? selected;

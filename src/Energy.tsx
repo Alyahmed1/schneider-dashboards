@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceArea, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { BatteryCharging, CircleDollarSign, Gauge, Leaf, RotateCcw, Sun, Zap, type LucideIcon } from "lucide-react";
 import { ZONES } from "./data";
@@ -23,6 +24,7 @@ export default function Energy() {
   const t = useTick();
   const grow = useGrow(250);
   const [inp, setInp] = useState<EnergyIn>(DEFAULTS);
+  useStoryCmd((c, a) => { if (c === "ut:shift") setInp((p) => ({ ...p, shiftPct: Number(a) })); });
   const hour = new Date().getHours();
   const out = useMemo(() => simulate(inp), [inp]);
   const noShift = useMemo(() => simulate({ ...inp, shiftPct: 0 }), [inp]);

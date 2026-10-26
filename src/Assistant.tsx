@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useStoryCmd } from "./storytour";
 import { Bot, CarFront, ClipboardList, DoorOpen, Gauge, MapPin, Send, TicketCheck, type LucideIcon } from "lucide-react";
 import MasterMap from "./MasterMap";
 import { SUGGESTIONS, reply, type Card, type Focus } from "./assistantengine";
@@ -83,6 +84,7 @@ export default function Assistant() {
     }, 650);
   };
   const submit = (e: FormEvent) => { e.preventDefault(); send(text); };
+  useStoryCmd((c, a) => { if (c === "ai:ask" && a) send(a); });
 
   useEffect(scroll, [msgs, typing, shown]);
 

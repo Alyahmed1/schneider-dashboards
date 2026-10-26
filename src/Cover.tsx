@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Moon, Sun } from "lucide-react";
+import { ArrowRight, Moon, Play, Sun } from "lucide-react";
 import type { Theme } from "./App";
 import { BRIEF } from "./data";
 
@@ -14,7 +14,7 @@ const STATS = [
 ];
 
 /** the start screen: the looping aerial video (public/cover.mp4), or the still with a slow push-in until that file exists */
-export default function Cover({ onEnter, theme, setTheme }: { onEnter: () => void; theme: Theme; setTheme: (t: Theme) => void }) {
+export default function Cover({ onEnter, onStory, theme, setTheme }: { onEnter: () => void; onStory: () => void; theme: Theme; setTheme: (t: Theme) => void }) {
   // "loading" shows the still behind the title, so there is never an empty frame before the video starts
   const [video, setVideo] = useState<"loading" | "ok" | "failed">("loading");
   return (
@@ -40,7 +40,10 @@ export default function Cover({ onEnter, theme, setTheme }: { onEnter: () => voi
         <motion.div className="cover-stats" {...up(3)}>
           {STATS.map((s) => <div key={s.u}><b>{s.v}</b><span>{s.u}</span></div>)}
         </motion.div>
-        <motion.button className="cover-go" onClick={onEnter} {...up(4)}>Enter dashboard <ArrowRight size={18} /></motion.button>
+        <motion.div className="cover-actions" {...up(4)}>
+          <button className="cover-go" onClick={onEnter}>Enter dashboard <ArrowRight size={18} /></button>
+          <button className="cover-story" onClick={onStory}><Play size={15} /> Watch the guided tour</button>
+        </motion.div>
       </div>
       <p className="cover-note">New Zayed, Egypt · Images are AI-generated and are presented for concept illustration only</p>
     </motion.div>

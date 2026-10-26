@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Car, Gauge, Navigation, Pause, Play, Radio, Timer } from "lucide-react";
 import MasterMap from "./MasterMap";
@@ -52,6 +53,11 @@ export default function Mobility({ focus }: { focus?: string }) {
   const [playing, setPlaying] = useState(false);
   const [layers, setLayers] = useState({ traffic: true, parking: true });
   const [lotId, setLotId] = useState<string | null>(() => (LOTS.some((l) => l.id === focus) ? (focus as string) : null));
+  useStoryCmd((c, a) => {
+    if (c === "mob:hour") { setLive(false); setPlaying(false); setScrub(Number(a)); }
+    else if (c === "mob:play") { setLive(false); setPlaying(true); }
+    else if (c === "mob:lot") setLotId(a || null);
+  });
 
   // the clock: the real time in live mode, the slider otherwise; Play runs a whole day in about a minute
   useEffect(() => {

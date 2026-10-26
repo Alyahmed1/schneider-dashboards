@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { CartesianGrid, ComposedChart, Line, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { CalendarClock, ClipboardPlus, Clock, Search, ShieldCheck, TriangleAlert, Wrench, type LucideIcon } from "lucide-react";
 import { ZONES, type ZoneId } from "./data";
@@ -23,6 +24,7 @@ export default function Assets({ focus }: { focus?: string }) {
   const [q, setQ] = useState("");
   const [view, setView] = useState<"list" | "plan">("list");
   const [sel, setSel] = useState<string>(() => (ASSETS.some((a) => a.id === focus) ? (focus as string) : ASSETS[0].id));
+  useStoryCmd((c, a) => { if (c === "as:select" && a) setSel(a); });
 
   const list = useMemo(() => ASSETS.filter((a) => (status === "All" || a.status === status) && (zone === "all" || a.zone === zone) && (`${a.id} ${a.name} ${a.type}`.toLowerCase().includes(q.trim().toLowerCase()))), [status, zone, q]);
   const a = ASSETS.find((x) => x.id === sel) ?? ASSETS[0];

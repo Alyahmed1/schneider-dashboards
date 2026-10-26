@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useStoryCmd } from "./storytour";
 import Energy from "./Energy";
 import Water from "./Water";
 import type { TabId } from "./data";
@@ -6,6 +7,7 @@ import type { TabId } from "./data";
 /** Utilities: energy optimization and water monitoring, two views of the community's networks */
 export default function Utilities({ go, focus }: { go: (tab: TabId, target?: string) => void; focus?: string }) {
   const [view, setView] = useState<"energy" | "water">(focus === "water" ? "water" : "energy");
+  useStoryCmd((c, a) => { if (c === "ut:view") setView(a as "energy" | "water"); });
   return (
     <div className="plan">
       <div className="subtabs" role="tablist">

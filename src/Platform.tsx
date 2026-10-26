@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { Activity, Database, Gauge, HardDrive, ShieldCheck, Smartphone, type LucideIcon } from "lucide-react";
 import { CATALOGUE, LAYERS, SERVICES, SOURCES } from "./platformdata";
 import type { TabId } from "./data";
@@ -22,6 +23,10 @@ export default function Platform({ go }: { go: (tab: TabId) => void }) {
   const grow = useGrow(250);
   const [sel, setSel] = useState<string>("lake");
   const [future, setFuture] = useState<Record<string, boolean>>({});
+  useStoryCmd((c, a) => {
+    if (c === "pf:select" && a) setSel(a);
+    else if (c === "pf:future" && a) { setFuture((f) => ({ ...f, [a]: true })); setSel(a); }
+  });
   const total = SOURCES.reduce((s, x, i) => s + wobble(x.rate, i + 41, t, 0.01), 0);
   const gb = SOURCES.reduce((s, x) => s + x.gb, 0);
   const services = SERVICES.filter((s) => !s.future || future[s.id]);
@@ -52,7 +57,7 @@ export default function Platform({ go }: { go: (tab: TabId) => void }) {
       </div>
 
       <Panel title="From sensor to service" className="pf-diagram" i={0} aside={<span className="loc-tag">reference architecture · sample rates</span>}>
-        <svg className="pf" viewBox="0 0 1100 530" role="img" aria-label="Data flows from eight sources through edge, stream, data platform, AI models and an API to the city services">
+        <div className="pf-scroll"><svg className="pf" viewBox="0 0 1100 530" role="img" aria-label="Data flows from eight sources through edge, stream, data platform, AI models and an API to the city services">
           <g className="pf-cols" aria-hidden>
             <text x={SRC_X} y="12">SOURCES</text><text x={EDGE_X[0]} y="58">PLATFORM</text><text x={SVC_X} y="12">SERVICES</text>
           </g>
@@ -89,7 +94,7 @@ export default function Platform({ go }: { go: (tab: TabId) => void }) {
               <rect width={SVC_W} height="38" rx="8" /><text x="12" y="24" className="t1">{s.name}</text>
             </g>
           ))}
-        </svg>
+        </svg></div>
         <p className="map-note">Packets are drawn in proportion to each source's rate. Click any box to see what it carries.</p>
       </Panel>
 

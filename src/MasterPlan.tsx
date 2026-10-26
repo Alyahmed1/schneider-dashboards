@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useStoryCmd } from "./storytour";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ZoomOut } from "lucide-react";
 import { OFFERS, ZONES, type TabId, type ZoneId } from "./data";
@@ -24,6 +25,11 @@ export default function MasterPlan({ go, focus }: { go: (tab: TabId, target?: st
   const [metric, setMetric] = useState<Metric>("use");
   const [selected, setSelected] = useState<ZoneId | null>(() => (ZONES.some((z) => z.id === focus) ? (focus as ZoneId) : null));
   const [hover, setHover] = useState<ZoneId | null>(null);
+  useStoryCmd((c, a) => {
+    if (c === "plan:select") setSelected(a ? (a as ZoneId) : null);
+    else if (c === "plan:metric") setMetric(a as Metric);
+    else if (c === "plan:view") setView(a as "zoning" | "location");
+  });
   const [dims, setDims] = useState(false);
   const [neighbors, setNeighbors] = useState(false);
   const [roads, setRoads] = useState(false);

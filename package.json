@@ -1,0 +1,25 @@
+{
+  "name": "telal-west-ai-city-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 4728 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4728 --strictPort"
+  },
+  "dependencies": {
+    "framer-motion": "^12.23.22",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "recharts": "^2.15.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.3",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  }
+}

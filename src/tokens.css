@@ -1,0 +1,60 @@
+/* ================= design tokens: Telal West AI City =================
+   Light is the brand look (cream paper, deep green ink, gold accent, serif headings), sampled from the brief.
+   Dark is the control-room alternative: same accent, deep forest background.
+   Every colour, font and radius used anywhere in the app comes from here. */
+:root {
+  --bg: #f4ede7;
+  --surface: #fbf7f2;
+  --surface-2: #efe6dc;
+  --card: #fffdfa;
+  --ink: #17382b;
+  --text-2: #3f5a4d;
+  --muted: #7b7468;
+  --line: #ddd0c0;
+  --line-2: #e8ddcf;
+  --gold: #a8793a;
+  --gold-soft: #c9a063;
+  --gold-tint: rgba(168, 121, 58, .12);
+  --green: #17382b;
+  --green-2: #2c6b4f;
+  --water: #3f9fa6;
+  --good: #3a8f5c;
+  --warn: #d08a1e;
+  --bad: #c0463f;
+  --info: #3f7fa6;
+  /* land-use colours, matched to the zoning map in the brief */
+  --z-apartments: #5fb0c9;
+  --z-school: #8d6fc4;
+  --z-villas: #d9c24a;
+  --z-golf: #5aa05a;
+  --z-hotel: #e08a3c;
+  --z-commercial: #d9736d;
+  --z-hospital: #d96fa8;
+  --z-future: #a78bdc;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(23, 56, 43, .06), 0 6px 20px rgba(23, 56, 43, .06);
+  --display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --body: "Jost", "Segoe UI", system-ui, sans-serif;
+}
+html[data-theme="dark"] {
+  --bg: #0f1d17;
+  --surface: #152a21;
+  --surface-2: #1b352a;
+  --card: #183027;
+  --ink: #f4ede7;
+  --text-2: #cfd8d0;
+  --muted: #94a69b;
+  --line: #2b4a3c;
+  --line-2: #223d31;
+  --gold: #d2a461;
+  --gold-soft: #e1bb80;
+  --gold-tint: rgba(210, 164, 97, .14);
+  --green: #6fcf9b;
+  --green-2: #4fb384;
+  --water: #55c0c8;
+  --good: #52c585;
+  --warn: #efab3a;
+  --bad: #e86a62;
+  --info: #5fa6d0;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+}

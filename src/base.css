@@ -1,0 +1,30 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body, #root { margin: 0; min-height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; margin: 0; letter-spacing: .01em; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ---- Phase 0 token check page (replaced by the real cover and Home in Phase 1) ---- */
+.p0 { max-width: 1040px; margin: 0 auto; padding: 32px 24px 64px; }
+.p0-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.p0-logo { height: 54px; }
+html[data-theme="dark"] .p0-logo { filter: invert(1) brightness(1.1); }
+.p0-btn { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 16px; }
+.p0-btn:hover { border-color: var(--gold); }
+.p0-eyebrow { color: var(--gold); letter-spacing: .28em; text-transform: uppercase; font-size: 12px; margin-top: 36px; }
+.p0 h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.02; margin: 8px 0 6px; }
+.p0 h1 em { color: var(--gold); font-style: normal; }
+.p0-sub { color: var(--text-2); letter-spacing: .2em; text-transform: uppercase; font-size: 13px; }
+.p0-hero { margin: 28px 0; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); aspect-ratio: 16 / 7; }
+.p0-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.p0-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.p0 h3 { font-size: 22px; margin: 28px 0 12px; }
+.sw { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.sw i { display: block; height: 52px; }
+.sw span { font-variant-ligatures: none; display: block; padding: 8px 10px; font-size: 12px; color: var(--muted); }
+.sw b { display: block; color: var(--ink); font-weight: 500; font-size: 13px; }
+.p0-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+.fact { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.fact b { font-family: var(--display); font-size: 34px; font-weight: 500; display: block; line-height: 1.1; }
+.fact span { color: var(--gold); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; }
+.p0-note { margin-top: 36px; color: var(--muted); font-size: 12px; }

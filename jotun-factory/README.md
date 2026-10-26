@@ -23,3 +23,4 @@ npm run preview  # serve the build on port 4724
 Overview, Process, Equipment, Quality, Utilities, Maintenance, Logistics (dock board), Alerts.
 
 All data is simulated (`src/data.ts`, `src/live.tsx`) for demo purposes.
+

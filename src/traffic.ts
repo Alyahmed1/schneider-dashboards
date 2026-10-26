@@ -77,3 +77,9 @@ export function nextPeak(now: number) {
   for (let k = 0; k <= 12; k++) { const hh = (now + k) % 24, v = networkIndex(hh); if (v > best.v) best = { h: hh, v }; }
   return { hour: Math.floor(best.h), pct: Math.round(best.v * 100) };
 }
+
+/** minutes by car along a route (the plan's map units are taken as about 2.25 m each), slower when the network is busy */
+export const etaMinutes = (route: [number, number][], index: number) => {
+  const km = (lengthOf(route) * 2.25) / 1000, v = Math.max(8, avgSpeed(index) * 0.7);
+  return Math.max(1, Math.round((km / v) * 60));
+};

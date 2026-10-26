@@ -23,4 +23,5 @@ Build for hosting: `npm run build` (output in `dist/`).
 - Cover: put the looping aerial video at `public/cover.mp4`; until it exists the cover shows `public/cover-still.jpg` with a slow push-in.
 - The master plan is traced from the brief's colour zoning map into `src/planGeometry.ts` (generated, not hand-edited). Zone areas are measured from the drawing: commercial is the printed 76 feddan and the other zones share the printed 304.
 - Utilities (energy with what-if sliders, water with leak detection) and Assets (predictive maintenance with PDF and CSV export, shared work orders) are built on small sample models in `src/energymodel.ts`, `src/watermodel.ts` and `src/assetdata.ts`.
-- Status: Phase 3 done (Home, Master Plan, Mobility, Utilities, Assets). Safety, Assistant and Platform come in phase 4.
+- Safety is a simulated camera wall: the views are pictures from the brief, the detection boxes are drawn and move along paths (`src/camdata.ts`); no real video or people. Assistant answers come from rules over the dashboard's own sample data (`src/assistantengine.ts`); a production version would hand that data to a language model as tools. Platform is a reference architecture diagram with sample rates.
+- Status: Phase 4 done, all eight tabs are built. Phase 5 is the guided story mode, polish and phone layouts, then the launch video.

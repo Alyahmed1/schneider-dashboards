@@ -102,12 +102,10 @@ export const OFFERS: { tab: TabId; name: string; text: string }[] = [
   { tab: "platform", name: "Digital Data Platform", text: "Connected AI platform that integrates data and enables future city services." },
 ];
 
-export const PLAN_NOTE = "A balanced land-use distribution designed to maximize value, accessibility and lifestyle.";
-
 /** sample alerts shown on Home */
 export const ALERTS: { sev: "bad" | "warn" | "info"; text: string; where: string; ago: string; tab: TabId; target?: string }[] = [
   { sev: "bad", text: "Lagoon pump station 2: vibration rising", where: "Assets", ago: "9 min ago", tab: "assets" },
   { sev: "warn", text: "Parking lot near the Hotel is 92% full", where: "Mobility", ago: "24 min ago", tab: "mobility", target: "p2" },
   { sev: "warn", text: "Golf irrigation 14% above plan today", where: "Utilities", ago: "1 h ago", tab: "utilities" },
-  { sev: "info", text: "Gate camera 7 reconnected", where: "Safety", ago: "2 h ago", tab: "safety" },
+  { sev: "info", text: "Gate camera 7 reconnected", where: "Safety", ago: "2 h ago", tab: "safety", target: "C7" },
 ];

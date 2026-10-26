@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 export type WoStatus = "Open" | "In progress" | "Done";
-export interface WorkOrder { id: string; title: string; asset?: string; priority: "High" | "Medium" | "Low"; due: string; status: WoStatus; source: "AI forecast" | "Leak detection" | "Manual" }
+export interface WorkOrder { id: string; title: string; asset?: string; priority: "High" | "Medium" | "Low"; due: string; status: WoStatus; source: "AI forecast" | "Leak detection" | "Camera event" | "Resident request" | "Manual" }
 
 const day = (n: number) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }); };
 

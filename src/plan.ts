@@ -68,3 +68,14 @@ export function zoneBox(z: Zone, pad = 70): [number, number, number, number] {
 }
 export const FULL_BOX: [number, number, number, number] = [150, 140, 1100, 820];
 export const zoneById = (id: ZoneId) => ZONES.find((z) => z.id === id) as Zone;
+
+/** the box around a set of points (a route), padded and given the map's shape, as a viewBox [x, y, w, h] */
+export function boxOf(pts: Pt[], pad = 60): [number, number, number, number] {
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+  const ar = 1100 / 820;
+  let w = x1 - x0, h = y1 - y0;
+  if (w / h < ar) w = h * ar; else h = w / ar;
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  return [cx - w / 2, cy - h / 2, w, h];
+}

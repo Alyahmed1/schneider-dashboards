@@ -4,11 +4,13 @@ import { Car, Database, Gauge, Map as MapIcon, MessageCircle, Moon, ScanEye, Sun
 import type { TabId } from "./data";
 import Cover from "./Cover";
 import Home from "./Home";
-import Soon from "./Soon";
 import MasterPlan from "./MasterPlan";
 import Mobility from "./Mobility";
 import Utilities from "./Utilities";
 import Assets from "./Assets";
+import Safety from "./Safety";
+import Assistant from "./Assistant";
+import Platform from "./Platform";
 
 export type Theme = "light" | "dark";
 const readTheme = (): Theme => {
@@ -68,7 +70,7 @@ export default function App() {
         <main className="page">
           <AnimatePresence mode="wait">
             <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-              {tab === "home" ? <Home go={go} /> : tab === "plan" ? <MasterPlan go={go} focus={target} /> : tab === "mobility" ? <Mobility focus={target} /> : tab === "utilities" ? <Utilities go={go} focus={target} /> : tab === "assets" ? <Assets focus={target} /> : <Soon tab={tab} label={cur.label} />}
+              {tab === "home" ? <Home go={go} /> : tab === "plan" ? <MasterPlan go={go} focus={target} /> : tab === "mobility" ? <Mobility focus={target} /> : tab === "utilities" ? <Utilities go={go} focus={target} /> : tab === "assets" ? <Assets focus={target} /> : tab === "safety" ? <Safety focus={target} /> : tab === "assistant" ? <Assistant /> : <Platform go={go} />}
             </motion.div>
           </AnimatePresence>
         </main>

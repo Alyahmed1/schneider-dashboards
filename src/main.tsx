@@ -10,6 +10,7 @@ import "./plan.css";
 import "./mobility.css";
 import "./utilities.css";
 import "./export.css";
+import "./phase4.css";
 import "./motion.css";
 
 createRoot(document.getElementById("root")!).render(

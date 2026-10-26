@@ -22,4 +22,5 @@ Build for hosting: `npm run build` (output in `dist/`).
 - `reference/` holds the pages of the client's PDF for working only; it is git-ignored and not published.
 - Cover: put the looping aerial video at `public/cover.mp4`; until it exists the cover shows `public/cover-still.jpg` with a slow push-in.
 - The master plan is traced from the brief's colour zoning map into `src/planGeometry.ts` (generated, not hand-edited). Zone areas are measured from the drawing: commercial is the printed 76 feddan and the other zones share the printed 304.
-- Status: Phase 1 (cover, shell, Home with the master plan). Master Plan, Mobility, Utilities, Assets, Safety, Assistant and Platform come in later phases.
+- Utilities (energy with what-if sliders, water with leak detection) and Assets (predictive maintenance with PDF and CSV export, shared work orders) are built on small sample models in `src/energymodel.ts`, `src/watermodel.ts` and `src/assetdata.ts`.
+- Status: Phase 3 done (Home, Master Plan, Mobility, Utilities, Assets). Safety, Assistant and Platform come in phase 4.

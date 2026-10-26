@@ -2,17 +2,22 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { LiveProvider } from "./live";
+import { WorkOrdersProvider } from "./workorders";
 import "./tokens.css";
 import "./base.css";
 import "./home.css";
 import "./plan.css";
 import "./mobility.css";
+import "./utilities.css";
+import "./export.css";
 import "./motion.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <LiveProvider>
-      <App />
+      <WorkOrdersProvider>
+        <App />
+      </WorkOrdersProvider>
     </LiveProvider>
   </StrictMode>,
 );

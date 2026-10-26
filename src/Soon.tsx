@@ -1,7 +1,7 @@
 import { OFFERS, PLAN_NOTE, type TabId } from "./data";
 
 /** which phase builds each tab */
-const PHASE: Record<string, number> = { utilities: 3, assets: 3, safety: 4, assistant: 4, platform: 4 };
+const PHASE: Record<string, number> = { safety: 4, assistant: 4, platform: 4 };
 
 /** stands in for a tab that a later phase builds; shows what the brief says that tab is for */
 export default function Soon({ tab, label }: { tab: TabId; label: string }) {

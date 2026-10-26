@@ -7,6 +7,8 @@ import Home from "./Home";
 import Soon from "./Soon";
 import MasterPlan from "./MasterPlan";
 import Mobility from "./Mobility";
+import Utilities from "./Utilities";
+import Assets from "./Assets";
 
 export type Theme = "light" | "dark";
 const readTheme = (): Theme => {
@@ -66,7 +68,7 @@ export default function App() {
         <main className="page">
           <AnimatePresence mode="wait">
             <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-              {tab === "home" ? <Home go={go} /> : tab === "plan" ? <MasterPlan go={go} focus={target} /> : tab === "mobility" ? <Mobility focus={target} /> : <Soon tab={tab} label={cur.label} />}
+              {tab === "home" ? <Home go={go} /> : tab === "plan" ? <MasterPlan go={go} focus={target} /> : tab === "mobility" ? <Mobility focus={target} /> : tab === "utilities" ? <Utilities go={go} focus={target} /> : tab === "assets" ? <Assets focus={target} /> : <Soon tab={tab} label={cur.label} />}
             </motion.div>
           </AnimatePresence>
         </main>

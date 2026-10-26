@@ -3,6 +3,9 @@ import { ArrowUpRight, Car, Droplets, Gauge, ShieldAlert, Wrench, Zap, type Luci
 import { ALERTS, BRIEF, ZONES, type TabId, type ZoneId } from "./data";
 import MasterMap from "./MasterMap";
 import { LivePill, useTick, wobble } from "./live";
+import { zoneMw } from "./zonemodel";
+import { waterNow } from "./watermodel";
+import { useWorkOrders } from "./workorders";
 import { CountUp, Panel, useGrow } from "./ui";
 
 const FACTS: { v: number; suffix?: string; label: string }[] = [
@@ -50,6 +53,8 @@ interface Tile { id: string; icon: LucideIcon; label: string; value: number; dec
 /** Home: the whole community on one screen */
 export default function Home({ go }: { go: (tab: TabId, target?: string) => void }) {
   const t = useTick();
+  const hour = new Date().getHours() + new Date().getMinutes() / 60;
+  const { open: openOrders } = useWorkOrders();
   const grow = useGrow(350);
   const [hover, setHover] = useState<ZoneId | null>(null);
   const [selected, setSelected] = useState<ZoneId | null>(null);
@@ -59,13 +64,13 @@ export default function Home({ go }: { go: (tab: TabId, target?: string) => void
   const zone = ZONES.find((z) => z.id === active) ?? null;
 
   const tiles: Tile[] = useMemo(() => [
-    { id: "power", icon: Zap, label: "Power now", value: ZONES.reduce((s, z, i) => s + wobble(z.mw, i + 1, t, 0.01), 0), decimals: 1, suffix: " MW", tab: "utilities" },
-    { id: "water", icon: Droplets, label: "Water use", value: ZONES.reduce((s, z, i) => s + wobble(z.water, i + 11, t, 0.01), 0), decimals: 0, suffix: " m³/h", tab: "utilities" },
+    { id: "power", icon: Zap, label: "Power now", value: ZONES.reduce((s, z, i) => s + wobble(zoneMw(z.id, z.mw, hour), i + 1, t, 0.01), 0), decimals: 1, suffix: " MW", tab: "utilities" },
+    { id: "water", icon: Droplets, label: "Water use", value: wobble(waterNow(hour), 7, t, 0.01), decimals: 0, suffix: " m³/h", tab: "utilities" },
     { id: "traffic", icon: Car, label: "Traffic flow", value: Math.min(100, wobble(72, 21, t, 0.02)), decimals: 0, suffix: "%", tab: "mobility" },
     { id: "parking", icon: Gauge, label: "Parking free", value: Math.min(100, wobble(61, 22, t, 0.03)), decimals: 0, suffix: "%", tab: "mobility" },
     { id: "health", icon: Wrench, label: "Asset health", value: Math.min(100, wobble(96.2, 23, t, 0.002)), decimals: 1, suffix: "%", tab: "assets" },
-    { id: "inc", icon: ShieldAlert, label: "Open incidents", value: 4, decimals: 0, suffix: "", tab: "safety" },
-  ], [t]);
+    { id: "inc", icon: ShieldAlert, label: "Open work orders", value: openOrders, decimals: 0, suffix: "", tab: "assets" },
+  ], [t, hour, openOrders]);
 
   return (
     <div className="home">

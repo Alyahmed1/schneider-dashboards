@@ -13,9 +13,11 @@ import type { Go } from "./App";
    placed in two rows and joined by the real water lines. The drawing is laid out in real pixels,
    so it always fills the panel, and every label is placed where it covers nothing. */
 
-const ORDER: { id: string; c: number; r: number }[] = [
+/** the water snakes like the Overview picture: stages 1 to 4 run left to right, stage 5 sits under stage 4
+    and stages 5 to 8 run back to the left (their pictures are mirrored, so the water flows right to left) */
+const ORDER: { id: string; c: number; r: number; m?: boolean }[] = [
   { id: "intake", c: 0, r: 0 }, { id: "pre", c: 1, r: 0 }, { id: "hp", c: 2, r: 0 }, { id: "ro", c: 3, r: 0 },
-  { id: "erd", c: 0, r: 1 }, { id: "post", c: 1, r: 1 }, { id: "net", c: 2, r: 1 }, { id: "tank", c: 3, r: 1 },
+  { id: "erd", c: 3, r: 1, m: true }, { id: "post", c: 2, r: 1, m: true }, { id: "net", c: 1, r: 1, m: true }, { id: "tank", c: 0, r: 1, m: true },
 ];
 
 /** the tags the Overview keeps; every tag is still available in the Production picture */
@@ -34,7 +36,7 @@ interface Geo { w: number; h: number; e: number; cw: number; ch: number; x0: num
 
 /** pick the biggest picture size that fits the panel, then spread the leftover space evenly */
 function layout(w: number, h: number): Geo {
-  const SIDE = 16, GAPX = 30, TOP = 108, LANES = 70, BOTTOM = 52;
+  const SIDE = 16, GAPX = 30, TOP = 108, LANES = 70, BOTTOM = 24;
   const e = Math.max(0.2, Math.min((w - 2 * SIDE - 3 * GAPX) / 3200, (h - TOP - LANES - BOTTOM) / 900));
   const cw = 800 * e;
   const ch = 450 * e;
@@ -48,7 +50,7 @@ function layout(w: number, h: number): Geo {
 }
 const cx = (g: Geo, c: number) => g.x0 + c * (g.cw + g.gap);
 const cy = (g: Geo, r: number) => (r === 0 ? g.y1 : g.y2);
-const px = (g: Geo, c: number, x: number) => cx(g, c) + x * g.e; // a point inside a picture, in panel pixels
+const px = (g: Geo, c: number, x: number, m?: boolean) => cx(g, c) + (m ? 800 - x : x) * g.e; // a point inside a picture, in panel pixels
 const py = (g: Geo, r: number, y: number) => cy(g, r) + y * g.e;
 const elbow = (ax: number, ay: number, bx: number, by: number) => `M${ax} ${ay} H${(ax + bx) / 2} V${by} H${bx}`;
 
@@ -65,13 +67,14 @@ function Links({ g }: { g: Geo }) {
       <Pipe d={elbow(R(0), py(g, 0, 225), L(1), py(g, 0, 225))} kind="raw" w={6} />
       <Pipe d={elbow(R(1), py(g, 0, 225), L(2), py(g, 0, 225))} kind="raw" w={6} />
       <Pipe d={`M${R(2)} ${py(g, 0, 360)} H${xa} V${py(g, 0, 225)} H${L(3)}`} kind="raw" w={6} />
-      <Pipe d={`M${R(3)} ${py(g, 0, 225)} H${R(3) + edge} V${g.lane1} H${L(0) - edge} V${py(g, 1, 225)} H${L(0)}`} kind="sludge" w={6} />
-      <Pipe d={elbow(R(0), py(g, 1, 300), L(1), py(g, 1, 225))} kind="treated" w={6} />
-      <Pipe d={elbow(R(1), py(g, 1, 400), L(2), py(g, 1, 360))} kind="product" w={6} />
-      <Pipe d={`M${R(2)} ${py(g, 0, 425)} H${xs} V${py(g, 1, 225)} H${L(3)}`} kind="sludge" w={6} />
-      <Pipe d={`M${R(0)} ${py(g, 1, 380)} H${R(0) + edge} V${g.lane2} H${xs} V${py(g, 1, 225)}`} kind="sludge" w={6} />
-      <Cap x={(R(0) + R(2)) / 2} y={g.lane1 - 6}>Mixed liquor to the secondary clarifiers</Cap>
-      <Cap x={(R(0) + xs) / 2} y={g.lane2 - 6}>Waste sludge to thickening and digestion</Cap>
+      {/* the bottom row runs right to left: its pictures are mirrored, so water enters at their right edge and leaves at the left */}
+      <Pipe d={`M${R(3)} ${py(g, 0, 225)} H${R(3) + edge} V${py(g, 1, 225)} H${R(3)}`} kind="sludge" w={6} />
+      <Pipe d={elbow(L(3), py(g, 1, 300), R(2), py(g, 1, 225))} kind="treated" w={6} />
+      <Pipe d={elbow(L(2), py(g, 1, 400), R(1), py(g, 1, 360))} kind="product" w={6} />
+      <Pipe d={`M${R(2)} ${py(g, 0, 425)} H${xs} V${g.lane1} H${R(0) + edge} V${py(g, 1, 225)} H${R(0)}`} kind="sludge" w={6} />
+      <Pipe d={`M${L(3)} ${py(g, 1, 380)} H${L(3) - edge} V${g.lane2} H${R(0) + edge} V${py(g, 1, 225)}`} kind="sludge" w={6} />
+      <Cap x={R(3) - 130} y={g.lane1 - 6}>Mixed liquor to the secondary clarifiers</Cap>
+      <Cap x={(L(3) + R(0)) / 2} y={g.lane2 - 6}>Waste sludge to thickening and digestion</Cap>
     </g>
   );
 }
@@ -80,14 +83,14 @@ function PlantArt({ g }: { g: Geo }) {
   return (
     <ScaleCtx.Provider value={{ pipe: 1.5, icon: 1.55 }}>
     <g>
-      {ORDER.map(({ id, c, r }) => {
+      {ORDER.map(({ id, c, r, m }) => {
         const Art = SCENES[id].Art;
         const cid = `ov-clip-${id}`;
         return (
-          <g key={id} data-cell={id} transform={`translate(${cx(g, c)} ${cy(g, r)}) scale(${g.e})`}>
+          <g key={id} data-cell={id} transform={m ? `translate(${cx(g, c) + g.cw} ${cy(g, r)}) scale(${-g.e} ${g.e})` : `translate(${cx(g, c)} ${cy(g, r)}) scale(${g.e})`}>
             <clipPath id={cid}><rect width="800" height="450" rx="26" /></clipPath>
             <rect width="800" height="450" rx="26" className="cell-bg" />
-            <g clipPath={`url(#${cid})`}><Art /></g>
+            <g clipPath={`url(#${cid})`} className={m ? "mirror" : undefined}><Art /></g>
             <rect width="800" height="450" rx="26" className="cell-edge" />
           </g>
         );
@@ -184,11 +187,11 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
 
     const h = fs * 1.25 + 8;
     const out: Placed[] = [];
-    ORDER.forEach(({ id, c, r }) => {
+    ORDER.forEach(({ id, c, r, m }) => {
       SCENES[id].tags.filter((tg) => KEEP[id].includes(tg.id)).forEach((tag) => {
         const text = `${tag.tag}${tag.show ? ` ${fmt(tag.show.v, tag.show.d ?? 0)}${tag.show.unit}` : ""}`;
         const w = text.length * fs * 0.64 + 30;
-        const ax = px(g, c, tag.x);
+        const ax = px(g, c, tag.x, m);
         const ay = py(g, r, tag.y);
         let best: { x: number; y: number; cost: number } | null = null;
         search:
@@ -237,16 +240,6 @@ export default function PlantFlow({ f, go, t }: { f: Filters; go: Go; t: number 
         <div className="scene-title"><b>Full process, inlet to reuse</b><Chip tone={attention ? "bad" : "good"}>{attention ? "Action needed" : "Normal"}</Chip></div>
         <div className="scene-tools">
           <button className="scene-btn" onClick={() => setFlowOn((v) => !v)} aria-pressed={!flowOn} aria-label={flowOn ? "Pause the moving water" : "Play the moving water"}><PlayPauseIcon playing={flowOn} /> {flowOn ? "Pause" : "Play"}</button>
-        </div>
-
-        <div className="flow-legend" aria-hidden>
-          <span><i style={{ background: "var(--f-raw)" }} />Raw sewage</span>
-          <span><i style={{ background: "var(--f-sludge)" }} />Sludge and mixed liquor</span>
-          <span><i style={{ background: "var(--f-treated)" }} />Treated water</span>
-          <span><i style={{ background: "#2fbf9b" }} />Reuse water</span>
-          <span><i style={{ background: "var(--f-air)" }} />Air</span>
-          <span><i style={{ background: "var(--f-gas)" }} />Biogas</span>
-          <span><i style={{ background: "#a070e0" }} />Chemicals</span>
         </div>
 
         {chips.map((c, n) => {

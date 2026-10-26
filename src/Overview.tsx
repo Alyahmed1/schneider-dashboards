@@ -307,6 +307,17 @@ export default function Overview({ f, go, t }: { f: Filters; go: Go; t: number }
         <div className="ovx-subtabs" role="tablist" aria-label="Overview views">
           {SUBS.map(([id, label]) => <button key={id} role="tab" aria-selected={sub === id} className={sub === id ? "on" : ""} onClick={() => setSub(id)}>{label}</button>)}
         </div>
+        {sub === "operations" && (
+          <div className="ov-legend" aria-hidden>
+            <span><i style={{ background: "var(--f-raw)" }} />Raw sewage</span>
+            <span><i style={{ background: "var(--f-sludge)" }} />Sludge and mixed liquor</span>
+            <span><i style={{ background: "var(--f-treated)" }} />Treated water</span>
+            <span><i style={{ background: "#2fbf9b" }} />Reuse water</span>
+            <span><i style={{ background: "var(--f-air)" }} />Air</span>
+            <span><i style={{ background: "var(--f-gas)" }} />Biogas</span>
+            <span><i style={{ background: "#a070e0" }} />Chemicals</span>
+          </div>
+        )}
         {sub === "overview" && (
           <>
             <div className="ov-legend" aria-hidden>

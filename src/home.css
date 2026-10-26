@@ -27,19 +27,20 @@ html[data-theme="dark"] {
 .hm-alarm { padding: 6px 12px; font-size: 12.5px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 .hm-alarm.bad { border-color: var(--bad); color: var(--bad); }
 .hm-alarm.ok { color: var(--good); border-color: var(--good); }
-.hm-select { flex: none; align-self: flex-start; }
-.hm-select select { appearance: none; border: 1px solid var(--line); background: var(--card) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%239ca3c7%27 stroke-width=%273%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 8px center; color: var(--ink); padding: 6px 28px 6px 10px; font-size: 13px; min-width: 190px; border-radius: 0; }
+.hm-select { flex: none; }
+.hm-map-lead { display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.hm-select select { height: 100%; appearance: none; border: 1px solid var(--line); background: var(--card) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%2710%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%239ca3c7%27 stroke-width=%273%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 8px center; color: var(--ink); padding: 6px 28px 6px 10px; font-size: 13px; min-width: 190px; border-radius: 0; }
 .hm-land { fill: var(--hm-land); stroke: var(--hm-land-edge); stroke-width: 1.2; }
 .hm-region { fill: var(--hm-region); stroke: var(--hm-region-edge); stroke-width: 1; }
 .hm-ring-bg { fill: var(--hm-ring-in); stroke: var(--hm-ring-bg); stroke-width: 6; }
 .hm-ring { fill: none; stroke: var(--teal); stroke-width: 6; transition: stroke-dasharray .6s; }
 .hm-ring.warn { stroke: var(--warn); }
-.hm-ring-n { fill: var(--ink); font-size: 14px; font-weight: 600; }
+.hm-ring-n { fill: var(--ink); font-size: 17px; font-weight: 600; }
 .hm-ring-t { fill: var(--good); }
 .hm-ring-t.warn { fill: var(--warn); }
-.hm-region-n { fill: var(--ink); font-size: 12.5px; }
+.hm-region-n { fill: var(--ink); font-size: 15px; }
 .hm-map-big { fill: var(--hm-big); font-size: 22px; letter-spacing: 2px; }
-.hm-map-sea { fill: var(--hm-sea); font-size: 12px; letter-spacing: 3px; font-style: italic; }
+.hm-map-sea { fill: var(--hm-sea); font-size: 15px; letter-spacing: 3px; font-style: italic; }
 
 /* summary tiles */
 .hm-sum { padding-bottom: 10px; }
@@ -130,15 +131,16 @@ html[data-theme="dark"] .recharts-cartesian-grid line { stroke: var(--line); }
 .hm-rib-c.bad::after { background: var(--bad); }
 
 /* catchment map: pipes, plant site and its units */
-.hm-pipe { fill: none; stroke-width: 3; stroke-linecap: butt; }
+.hm-pipe { fill: none; stroke-width: 4; stroke-linecap: butt; }
 .hm-pipe.raw { stroke: var(--pipe-raw); stroke-dasharray: 8 6; }
 .hm-pipe.clean { stroke: var(--pipe-clean); stroke-dasharray: 8 6; }
 .hm-pipe.sludge { stroke: var(--pipe-sludge); stroke-width: 2; stroke-dasharray: 5 4; }
 .hm-pipe.gas { stroke: var(--pipe-gas); stroke-width: 2; stroke-dasharray: 4 3; }
-.hm-pipe.site { stroke-width: 3; }
+.hm-pipe.site { stroke-width: 2.2; }
 .hm-site { fill: var(--hm-land); stroke: var(--hm-land-edge); stroke-width: 1.2; }
 .hm-site-n { fill: var(--ink); font-size: 12px; font-weight: 600; }
-.hm-site-s { fill: var(--muted); font-size: 10px; }
+.hm-site-s { fill: var(--text-2); font-size: 9px; }
+.hm-site-u { fill: var(--text-2); font-size: 9px; }
 .hm-unit { fill: var(--card); stroke: var(--hm-land-edge); stroke-width: 1.2; }
 .hm-unit.uv { stroke: var(--pipe-clean); }
 .hm-unit.dig { stroke: var(--pipe-sludge); }

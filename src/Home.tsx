@@ -94,7 +94,15 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
     <div className="hm">
       <section className="hm-map-p" style={{ ["--i" as string]: 0 }}>
         <div className="hm-map-head">
-          <button className={`hm-alarm ${critical ? "bad" : "ok"}`} onClick={() => go("alarms")}>{critical ? `${critical} critical alarm` : "All normal"}</button>
+          <div className="hm-map-lead">
+            <button className={`hm-alarm ${critical ? "bad" : "ok"}`} onClick={() => go("alarms")}>{critical ? `${critical} critical alarm` : "All normal"}</button>
+            <label className="hm-select">
+              <span className="sr">Map metric</span>
+              <select value={metric} onChange={(e) => setMetric(e.target.value as MetricId)}>
+                {METRICS.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
+              </select>
+            </label>
+          </div>
           <Segmented<Range> label="Time range" value={f.range} options={RANGES} onChange={setRange} />
         </div>
         <div className="hm-rib" role="list" aria-label="Treatment process, live flow per stage">
@@ -106,12 +114,6 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
           ))}
         </div>
         <div className="hm-map-wrap"><CatchmentMap regions={regions} unit={m.unit} grow={grow} /></div>
-        <label className="hm-select">
-          <span className="sr">Map metric</span>
-          <select value={metric} onChange={(e) => setMetric(e.target.value as MetricId)}>
-            {METRICS.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
-          </select>
-        </label>
       </section>
 
       <div className="hm-side">

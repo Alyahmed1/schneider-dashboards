@@ -25,7 +25,7 @@ import "./overview.css";
 import "./maint.css";
 import "./export.css";
 import "./motion.css";
-import "./cover-light.css";
+import "./cover-dark.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

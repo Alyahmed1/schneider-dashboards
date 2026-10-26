@@ -14,15 +14,15 @@ const STATS = [
 const ease = [0.22, 1, 0.36, 1] as const;
 const up = (i: number) => ({ initial: { opacity: 0, y: 28 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay: 0.25 + i * 0.12, ease } });
 
-/** The start screen is always light. The viewer must pick Light or Dark before entering: nothing is chosen for them. */
+/** The start screen is always dark. The viewer must pick Light or Dark before entering: nothing is chosen for them. */
 export default function Cover({ onEnter, setTheme }: { onEnter: () => void; theme: Theme; setTheme: (t: Theme) => void }) {
-  // "loading" shows only the pale background, so the still never flashes before the video starts
+  // "loading" shows only the dark background, so the still never flashes before the video starts
   const [video, setVideo] = useState<"loading" | "ok" | "failed">("loading");
   const hasVideo = video === "ok";
   const [picked, setPicked] = useState<Theme | null>(null);
   const pick = (t: Theme) => { setPicked(t); setTheme(t); };
   return (
-    <motion.div className={`cover cover-light ${hasVideo ? "has-video" : ""}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.03 }} transition={{ duration: 0.6, ease: "easeInOut" }}>
+    <motion.div className={`cover cover-dark ${hasVideo ? "has-video" : ""}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.03 }} transition={{ duration: 0.6, ease: "easeInOut" }}>
       {/* no video file: fall back to the still (public/cover.jpg) with a slow push-in */}
       {video === "failed" && (
         <div className="cover-stage-still" aria-hidden>

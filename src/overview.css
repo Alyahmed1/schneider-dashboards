@@ -128,3 +128,6 @@ html[data-theme="dark"] { --ov-pipe: #2f6b5c; }
 .iso-alarm .iso-mt, .iso-alarm .iso-ot { fill: #c2503f; }
 @keyframes armturn { to { transform: rotate(360deg); } }
 .ov-legend i { height: 4px; }
+
+/* Operations: the bottom row of pictures is mirrored so the water runs right to left; keep their text readable */
+.mirror text { transform-box: fill-box; transform-origin: center; transform: scaleX(-1); }

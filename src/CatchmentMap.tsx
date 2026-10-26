@@ -3,12 +3,12 @@ import { useId } from "react";
 /** the catchment: sewage pumping stations feed the plant on the left, treated water goes to the reuse zones on the right */
 export interface Region { id: string; name: string; value: number; warn?: boolean; side: "in" | "out" }
 
-const W = 960, H = 320;
-const S = 1.3; // the plant site is drawn at 270 x 176 and enlarged by this
+const W = 1060, H = 300;
+const S = 1.5; // the plant site is drawn at 270 x 176 and enlarged by this
 const PW = 270, PH = 176;
-const CX = W / 2, MID = H / 2 + 8;
-const ys = (n: number) => 58 + n * 72;
-const R = 24; // ring radius
+const CX = W / 2, MID = 156;
+const ys = (n: number) => 60 + n * 64;
+const R = 26; // ring radius
 
 /** one ring widget: percentage ring with the zone name beside it (on the outside, away from the plant) */
 function Ring({ r, n, x, y, grow, unit }: { r: Region; n: number; x: number; y: number; grow: boolean; unit: string }) {
@@ -33,7 +33,7 @@ export default function CatchmentMap({ regions, unit, grow = true }: { regions: 
   const uid = useId().replace(/:/g, "");
   const ins = regions.filter((r) => r.side === "in");
   const outs = regions.filter((r) => r.side === "out");
-  const lx = 165, rx = W - 165;
+  const lx = 180, rx = W - 180;
   const pl = CX - (PW / 2) * S, pr = CX + (PW / 2) * S; // left and right edge of the plant site
   return (
     <svg className="hm-map" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="Catchment map: four sewage pumping stations feed the wastewater treatment plant, which supplies four reuse zones">
@@ -44,9 +44,9 @@ export default function CatchmentMap({ regions, unit, grow = true }: { regions: 
         </linearGradient>
       </defs>
 
-      <text className="hm-map-sea" x={lx} y="14" textAnchor="middle">Pumping stations</text>
-      <text className="hm-map-sea" x={CX} y="14" textAnchor="middle">Treatment plant</text>
-      <text className="hm-map-sea" x={rx} y="14" textAnchor="middle">Reuse zones</text>
+      <text className="hm-map-sea" x={lx} y="12" textAnchor="middle">Pumping stations</text>
+      <text className="hm-map-sea" x={CX} y="12" textAnchor="middle">Treatment plant</text>
+      <text className="hm-map-sea" x={rx} y="12" textAnchor="middle">Reuse zones</text>
 
       {/* sewers in, treated water out */}
       {ins.map((_, i) => <path key={`i${i}`} className="hm-pipe raw" d={`M${lx + R + 9} ${ys(i)} C ${pl - 50} ${ys(i)}, ${pl - 50} ${MID}, ${pl} ${MID}`} />)}
@@ -91,6 +91,14 @@ function PlantSite({ gid }: { gid: string }) {
       <path className="hm-pipe gas" d={`M159 ${m + 60} H188`} />
       <rect className="hm-unit chp" x="188" y={m + 50} width="26" height="20" />
       <text className="hm-site-s" x="226" y={m + 64}>CHP</text>
+      {/* every unit is named so the picture reads without a legend */}
+      <text className="hm-site-u" x="20" y={m - 20} textAnchor="middle">Screens</text>
+      <text className="hm-site-u" x="52" y={m + 24} textAnchor="middle">Grit</text>
+      <text className="hm-site-u" x="84" y={m - 22} textAnchor="middle">Primary</text>
+      <text className="hm-site-u" x="147" y={m - 42} textAnchor="middle">Aeration lanes</text>
+      <text className="hm-site-u" x="214" y={m - 25} textAnchor="middle">Clarifier</text>
+      <text className="hm-site-u" x="251" y={m + 22} textAnchor="middle">UV</text>
+      <text className="hm-site-u" x="135" y={m + 84} textAnchor="middle">Digesters</text>
     </g>
   );
 }

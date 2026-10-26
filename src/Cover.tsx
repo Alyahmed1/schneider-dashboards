@@ -27,7 +27,7 @@ export default function Cover({ onEnter, theme, setTheme }: { onEnter: () => voi
       </div>
 
       <div className="cover-top">
-        <img className="cover-logo" src="/pre-logo.png" alt="PRE Group" />
+        <img className="cover-logo" src="/pre-logo-white.png" alt="PRE Group" />
         <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
           {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </button>

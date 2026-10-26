@@ -48,7 +48,7 @@ function Donut({ grow, hover, onHover }: { grow: boolean; hover: ZoneId | null; 
 interface Tile { id: string; icon: LucideIcon; label: string; value: number; decimals: number; suffix: string; tab: TabId }
 
 /** Home: the whole community on one screen */
-export default function Home({ go }: { go: (tab: TabId) => void }) {
+export default function Home({ go }: { go: (tab: TabId, target?: string) => void }) {
   const t = useTick();
   const grow = useGrow(350);
   const [hover, setHover] = useState<ZoneId | null>(null);
@@ -97,7 +97,7 @@ export default function Home({ go }: { go: (tab: TabId) => void }) {
                 <div><b>{Math.round(wobble(zone.water, ZONES.indexOf(zone) + 11, t, 0.01))}</b><span>m³/h water</span></div>
                 <div><b>{zone.occ == null ? "—" : `${Math.min(100, Math.round(wobble(zone.occ, ZONES.indexOf(zone) + 31, t, 0.01)))}%`}</b><span>{zone.occ == null ? "not occupied" : "occupancy"}</span></div>
               </div>
-              <button className="zc-go" onClick={() => go("plan")}>Open in Master Plan <ArrowUpRight size={14} /></button>
+              <button className="zc-go" onClick={() => go("plan", zone.id)}>Open in Master Plan <ArrowUpRight size={14} /></button>
             </> : <p className="zc-hint">Hover or select a zone</p>}
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function Home({ go }: { go: (tab: TabId) => void }) {
         <Panel title="Live alerts" i={3}>
           <ul className="alerts">
             {ALERTS.map((a) => (
-              <li key={a.text}><button onClick={() => go(a.tab)}><i className={`sev ${a.sev}`} /><span>{a.text}</span><em>{a.where} · {a.ago}</em></button></li>
+              <li key={a.text}><button onClick={() => go(a.tab, a.target)}><i className={`sev ${a.sev}`} /><span>{a.text}</span><em>{a.where} · {a.ago}</em></button></li>
             ))}
           </ul>
         </Panel>

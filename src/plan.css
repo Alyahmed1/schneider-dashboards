@@ -1,0 +1,85 @@
+/* ================= Master Plan tab ================= */
+.subtabs { display: flex; gap: 4px; margin: 0 0 10px; }
+.subtabs button { padding: 7px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-size: 13px; color: var(--text-2); }
+.subtabs button:hover { border-color: var(--gold); }
+.subtabs button.on { background: var(--green); border-color: var(--green); color: var(--bg); }
+html[data-theme="dark"] .subtabs button.on { color: #0f1d17; }
+
+.plan-grid, .loc-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr); gap: 10px; align-items: start; }
+.plan-map .mm { max-height: calc(100vh - 345px); min-height: 330px; }
+.colorby { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; font-size: 12px; color: var(--muted); }
+.colorby > span { margin-right: 2px; }
+.chip.reset { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.ramp { display: flex; align-items: center; gap: 6px; margin-left: 6px; font-size: 11px; }
+.ramp i { width: 90px; height: 8px; border-radius: 4px; display: block; }
+.ramp b { font-weight: 500; color: var(--ink); }
+
+/* the camera glide: zones other than the picked one fade back */
+.plan-roads .rd-case { fill: none; stroke: var(--card); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
+.plan-roads .rd { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 2 7; }
+
+.zlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.zlist button { display: grid; grid-template-columns: 12px minmax(0, 1.1fr) minmax(40px, 1fr) auto auto; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 4px 6px; border-radius: 6px; font-size: 12.5px; }
+.zlist button:hover, .zlist button.hot { background: var(--gold-tint); }
+.zlist button.sel { background: var(--gold-tint); box-shadow: inset 3px 0 0 var(--gold); }
+.zlist i { width: 10px; height: 10px; border-radius: 3px; }
+.zlist .zn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.zbar { height: 6px; background: var(--line-2); border-radius: 3px; overflow: hidden; }
+.zbar em { display: block; height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(.22, 1, .36, 1); }
+.zlist b { font-weight: 500; min-width: 40px; text-align: right; }
+.zlist small { color: var(--muted); font-weight: 400; }
+.zlist u { text-decoration: none; color: var(--gold); font-weight: 500; font-size: 12px; min-width: 66px; text-align: right; }
+
+.zdetail { border-top: 3px solid var(--zc); padding-top: 8px; margin-top: -2px; }
+.zd-blurb { font-size: 12.5px; color: var(--text-2); }
+.zd-hint { font-size: 12.5px; color: var(--muted); }
+.zc-note { font-size: 11.5px; color: var(--warn); margin-top: 4px; }
+.zd-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
+.zd-tiles b { display: block; font-family: var(--display); font-size: 19px; font-weight: 500; line-height: 1.15; }
+.zd-tiles span { font-size: 10px; color: var(--muted); }
+.zd-chart { position: relative; }
+.zd-cap { display: block; font-size: 10.5px; color: var(--muted); margin: 0 0 4px 4px; }
+.zd-serves { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.zd-serves > span { font-size: 11px; color: var(--muted); width: 100%; }
+.zd-serves .chip { font-size: 11.5px; padding: 3px 10px; }
+.zd-serves .chip:hover { border-color: var(--gold); }
+
+/* ================= Location ================= */
+.loc-tag { font-size: 11px; color: var(--gold); letter-spacing: .1em; text-transform: uppercase; }
+.loc-map { display: block; width: 100%; height: auto; max-height: calc(100vh - 310px); }
+.loc-ring { fill: none; stroke: var(--gold); stroke-width: 1.4; stroke-dasharray: 5 7; opacity: .7; transition: r 1.1s cubic-bezier(.22, 1, .36, 1); }
+.loc-ring-t { font: 600 12px var(--body); fill: var(--gold); letter-spacing: .12em; paint-order: stroke; stroke: var(--card); stroke-width: 4px; }
+.lm { cursor: pointer; outline: none; transition: opacity .2s; }
+.lm circle:first-of-type { fill: var(--card); stroke: var(--green-2); stroke-width: 2; transition: fill .2s, r .2s; }
+.lm .dot { fill: var(--green-2); }
+.lm.shop circle:first-of-type { stroke: var(--gold); } .lm.shop .dot { fill: var(--gold); }
+.lm.edu circle:first-of-type { stroke: var(--z-school); } .lm.edu .dot { fill: var(--z-school); }
+.lm.park circle:first-of-type { stroke: var(--z-golf); } .lm.park .dot { fill: var(--z-golf); }
+.lm.club circle:first-of-type { stroke: var(--bad); } .lm.club .dot { fill: var(--bad); }
+.lm text { font: 500 12.5px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+.lm.off { opacity: .35; }
+.lm.on circle:first-of-type { r: 19; fill: var(--gold-tint); }
+.lm-line { stroke: var(--gold); stroke-width: 1.6; stroke-dasharray: 4 5; }
+.loc-site circle { fill: var(--green); }
+.loc-site .pulse { fill: var(--gold); opacity: .25; animation: sitepulse 2.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.loc-site path { fill: var(--gold-soft); }
+.loc-site .hole { fill: var(--green); }
+.loc-site text { font: 600 13px var(--body); letter-spacing: .14em; fill: var(--ink); paint-order: stroke; stroke: var(--card); stroke-width: 4px; }
+.drive { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.drive li { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(40px, 1fr) 52px; align-items: center; gap: 8px; font-size: 12.5px; padding: 3px 6px; border-radius: 6px; }
+.drive li.on { background: var(--gold-tint); }
+.drive li > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dbar { height: 7px; background: var(--line-2); border-radius: 4px; overflow: hidden; }
+.dbar em { display: block; height: 100%; background: var(--gold); border-radius: 4px; transition: width 1s cubic-bezier(.22, 1, .36, 1); }
+.drive b { font-weight: 500; text-align: right; }
+.potentials { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: 12.5px; color: var(--text-2); }
+.potentials li::marker { color: var(--gold); font-weight: 600; }
+
+@media (max-width: 1100px) {
+  .plan-grid, .loc-grid { grid-template-columns: 1fr; }
+  .plan-map .mm, .loc-map { max-height: none; }
+}
+@media (max-width: 700px) {
+  .zd-tiles { grid-template-columns: repeat(2, 1fr); }
+  .chip.reset { margin-left: 0; }
+}

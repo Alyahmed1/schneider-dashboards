@@ -5,6 +5,8 @@ import type { TabId } from "./data";
 import Cover from "./Cover";
 import Home from "./Home";
 import Soon from "./Soon";
+import MasterPlan from "./MasterPlan";
+import Mobility from "./Mobility";
 
 export type Theme = "light" | "dark";
 const readTheme = (): Theme => {
@@ -36,6 +38,8 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [entered]);
   const [tab, setTab] = useState<TabId>("home");
+  const [target, setTarget] = useState<string | undefined>(undefined);
+  const go = (to: TabId, tg?: string) => { setTarget(tg); setTab(to); };
   const cur = TABS.find((t) => t.id === tab) ?? TABS[0];
 
   return (
@@ -53,7 +57,7 @@ export default function App() {
             </button>
           </header>
           <nav className="crumbs" aria-label="Breadcrumb">
-            <button className="crumb" onClick={() => setTab("home")}>Telal West</button>
+            <button className="crumb" onClick={() => go("home")}>Telal West</button>
             <span className="crumb">New Zayed</span>
             <span className="crumb here" aria-current="page">{cur.label}</span>
           </nav>
@@ -62,14 +66,14 @@ export default function App() {
         <main className="page">
           <AnimatePresence mode="wait">
             <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-              {tab === "home" ? <Home go={setTab} /> : <Soon tab={tab} label={cur.label} />}
+              {tab === "home" ? <Home go={go} /> : tab === "plan" ? <MasterPlan go={go} focus={target} /> : tab === "mobility" ? <Mobility focus={target} /> : <Soon tab={tab} label={cur.label} />}
             </motion.div>
           </AnimatePresence>
         </main>
 
         <nav className="dock" aria-label="Sections">
           {TABS.map((t) => (
-            <button key={t.id} className={t.id === tab ? "on" : ""} onClick={() => setTab(t.id)} aria-current={t.id === tab ? "page" : undefined}>
+            <button key={t.id} className={t.id === tab ? "on" : ""} onClick={() => go(t.id)} aria-current={t.id === tab ? "page" : undefined}>
               <t.icon size={16} /><span>{t.label}</span>
             </button>
           ))}

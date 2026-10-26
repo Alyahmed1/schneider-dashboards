@@ -12,8 +12,8 @@ button:focus-visible, .zone:focus-visible { outline: 2px solid var(--gold); outl
 .chrome { padding: 14px 24px 0; max-width: 1480px; margin: 0 auto; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .brand { display: flex; align-items: center; gap: 12px; text-align: left; }
-.brand-logo { height: 34px; }
-html[data-theme="dark"] .brand-logo, html[data-theme="dark"] .cover-logo { filter: invert(1) brightness(1.1); }
+.brand-logo { height: 30px; }
+html[data-theme="dark"] .brand-logo { filter: invert(1) brightness(1.1); }
 .brand span { display: flex; flex-direction: column; line-height: 1.1; border-left: 1px solid var(--line); padding-left: 12px; }
 .brand b { font-family: var(--display); font-weight: 500; font-size: 18px; }
 .brand i { font-style: normal; color: var(--gold); letter-spacing: .26em; text-transform: uppercase; font-size: 10px; margin-top: 3px; }
@@ -42,7 +42,7 @@ html[data-theme="dark"] .dock button.on { color: #0f1d17; }
 .cover.has-video .cover-still { animation: none; }
 .cover-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8, 20, 14, .82) 0%, rgba(8, 20, 14, .4) 55%, rgba(8, 20, 14, .1) 100%), linear-gradient(0deg, rgba(8, 20, 14, .6), transparent 40%); }
 .cover-top { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 22px 32px; }
-.cover-logo { height: 46px; filter: invert(1) brightness(1.2); }
+.cover-logo { height: 44px; }
 .cover .icon-btn { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .35); color: #fff; backdrop-filter: blur(6px); }
 .cover-body { position: absolute; left: clamp(24px, 6vw, 96px); bottom: clamp(60px, 14vh, 150px); max-width: 720px; }
 .cover-eyebrow { color: var(--gold-soft); letter-spacing: .34em; text-transform: uppercase; font-size: 13px; }

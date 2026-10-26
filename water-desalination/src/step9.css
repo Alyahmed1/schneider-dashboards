@@ -1,0 +1,55 @@
+/* ================= step 9: Overview tab (whole process, one screen) ================= */
+.page.prod.flow { --chrome: 132px; }
+@media (max-width: 1400px) { .page.prod.flow { --chrome: 188px; } }
+@media (max-width: 900px) { .page.prod.flow .scene { min-width: 900px; aspect-ratio: 1760 / 560; } }
+.page.flow .scene-tools { align-items: center; }
+.page.flow .scene-tools .live-pill { padding: 7px 12px; }
+.flow-legend { position: absolute; left: 14px; bottom: 12px; z-index: 4; display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 7px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 11.5px; color: var(--text-2); box-shadow: 0 8px 18px -12px rgba(11, 42, 51, .5); }
+.flow-legend span { display: inline-flex; align-items: center; gap: 7px; }
+.flow-legend i { width: 14px; height: 4px; border-radius: 3px; }
+.pop-foot { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+/* eight tabs: icons only on the active one when the screen is not very wide */
+@media (max-width: 1780px) {
+  .tabs button:not(.on) > svg { display: none; }
+}
+
+/* the Open in Production button stays visible even when the popup scrolls */
+.pop-foot { position: sticky; bottom: -22px; margin: 14px -22px -22px; padding: 12px 22px 18px; background: linear-gradient(180deg, transparent, var(--surface) 38%); }
+.pop .chart-h.xs { height: 110px; }
+
+/* detailed Overview: stage pictures in a grid, small tags, stage chips */
+.cell-bg { fill: rgba(255, 255, 255, .35); }
+.cell-edge { fill: none; stroke: var(--line); stroke-width: 3; }
+html[data-theme="dark"] .cell-bg { fill: rgba(255, 255, 255, .03); }
+.conn .pipe-flow { stroke-dasharray: 1 7; animation-name: wireflow-s; }
+@keyframes wireflow-s { to { stroke-dashoffset: -8; } }
+.page.flow .tag { padding: 2px 6px 2px 5px; border-width: 1px; gap: 4px; }
+.page.flow .tag-dot { width: 5px; height: 5px; }
+.chip-pos { position: absolute; transform: translate(0, -100%); z-index: 3; }
+.stage-chip { display: inline-flex; align-items: center; gap: 7px; padding: 3px 10px 3px 8px; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: var(--tagfs, 10px); white-space: nowrap; box-shadow: 0 6px 14px -8px rgba(11, 42, 51, .6); transition: transform .15s; }
+.stage-chip:hover { transform: translateY(-1px); }
+.stage-chip b { font-weight: 700; }
+.stage-chip span { font-family: var(--mono); opacity: .85; }
+.stage-chip .dot { margin: 0; width: 7px; height: 7px; }
+html[data-theme="dark"] .stage-chip { color: #06202a; }
+.page.flow .flow-legend { font-size: 10.5px; padding: 5px 12px; left: 12px; bottom: 8px; }
+
+/* bigger text on the Overview */
+.page.flow .tag { padding: 3px 8px 3px 6px; border-width: 1.2px; }
+.page.flow .tag-dot { width: 6px; height: 6px; }
+.page.flow .sc-cap { font-size: 24px; }
+.page.flow .conn .sc-cap { font-size: 15px; }
+.page.flow .stage-chip { padding: 4px 12px 4px 9px; }
+.page.flow .scene-title b { font-size: 18px; }
+.page.flow .flow-legend { font-size: 12px; }
+
+/* no dimming behind popups: the picture stays fully visible */
+.pop-bg { background: transparent; backdrop-filter: none; }
+.pop { box-shadow: 0 24px 60px -18px rgba(0, 0, 0, .55), 0 0 0 1px var(--line); }
+
+/* start / stop and on / off buttons inside the equipment popup */
+.pop-ctl { display: flex; align-items: center; gap: 8px; margin: 2px 0 14px; flex-wrap: wrap; }
+.pop-ctl .btn { min-width: 96px; padding: 9px 16px; }
+.pop-ctl span { margin-left: 4px; font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.eq-valve.closed { fill: var(--bad); stroke: var(--bad); }

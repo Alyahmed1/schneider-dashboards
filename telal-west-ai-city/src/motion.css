@@ -1,0 +1,21 @@
+/* ================= motion: everything enters once when a tab opens; reduced-motion users get none =================
+   Fill mode "backwards" only holds the first frame during the delay, so afterwards the page is just the normal page. */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pop { from { opacity: 0; transform: scale(.94); } }
+@keyframes zonein { from { opacity: 0; transform: scale(.94); } }
+@keyframes march { to { stroke-dashoffset: -34; } }
+@keyframes shimmer { 0%, 100% { fill-opacity: .9; } 50% { fill-opacity: .65; } }
+@keyframes dot { 0%, 100% { box-shadow: 0 0 0 0 rgba(58, 143, 92, .55); } 50% { box-shadow: 0 0 0 5px rgba(58, 143, 92, 0); } }
+
+.fact { animation: pop .5s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(80ms + var(--n, 0) * 70ms); }
+.panel { animation: rise .55s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(200ms + var(--i, 0) * 90ms); }
+.tile { animation: pop .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(450ms + var(--n, 0) * 60ms); }
+.mm .zone { transform-box: fill-box; transform-origin: center; animation: zonein .6s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(350ms + var(--n, 0) * 110ms); }
+.mm-edge { animation: march 1.6s linear infinite; }
+.lagoon { animation: shimmer 3.4s ease-in-out infinite; animation-delay: calc(var(--k, 0) * -.7s); }
+.live-dot { animation: dot 2s ease-out infinite; }
+.live-bar i { transition: width .25s linear; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

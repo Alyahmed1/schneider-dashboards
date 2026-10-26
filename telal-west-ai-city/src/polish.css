@@ -1,0 +1,92 @@
+/* ================= Story mode, loading states, safe areas and small screens (loaded last) ================= */
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.story-btn { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--gold); color: var(--gold); font-size: 13px; font-weight: 500; background: var(--card); transition: background .2s, color .2s; }
+.story-btn:hover { background: var(--gold); color: var(--card); }
+.cover-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cover-story { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .55); color: #fff; background: rgba(255, 255, 255, .1); backdrop-filter: blur(6px); font-size: 14px; transition: background .2s; }
+.cover-story:hover { background: rgba(255, 255, 255, .22); }
+.loading { display: grid; place-items: center; gap: 12px; min-height: 40vh; color: var(--muted); font-size: 14px; letter-spacing: .08em; }
+.loading b { color: var(--ink); font-family: var(--display); font-weight: 500; font-size: 18px; letter-spacing: 0; }
+
+.dock { transition: opacity .35s, transform .35s; }
+.dock.hide { opacity: 0; pointer-events: none; transform: translate(-50%, 24px); }
+.app.storying .page { padding-bottom: 150px; }
+.story { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(800px, calc(100vw - 24px)); z-index: 45; padding: 10px 16px 14px;
+  background: color-mix(in srgb, var(--card) 94%, transparent); backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 56px -14px rgba(0, 0, 0, .5); animation: rise .5s cubic-bezier(.22, 1, .36, 1) backwards; }
+.story-bars { display: flex; gap: 3px; margin-bottom: 10px; }
+.story-bars i { flex: 1; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; display: block; }
+.story-bars i.full { background: var(--gold); }
+.story-bars u { display: block; height: 100%; background: var(--gold); }
+.story-body { display: flex; gap: 16px; align-items: center; justify-content: space-between; animation: fadein .45s; }
+.story-text { min-width: 0; }
+.story-text small { color: var(--gold); letter-spacing: .2em; text-transform: uppercase; font-size: 10.5px; }
+.story-text h3 { font-size: 24px; margin: 2px 0; }
+.story-text p { font-size: 13.5px; color: var(--text-2); max-width: 580px; }
+.story-ctl { display: flex; gap: 6px; flex: none; }
+.story-ctl button { min-width: 36px; height: 36px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; }
+.story-ctl button:hover { border-color: var(--gold); color: var(--gold); }
+.story-ctl .go { background: var(--green); border-color: var(--green); color: var(--bg); padding: 0 16px; }
+html[data-theme="dark"] .story-ctl .go { color: #0f1d17; }
+.story-ctl .go:hover { color: var(--bg); filter: brightness(1.12); }
+
+/* notches and home bars */
+.app { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+.dock { bottom: calc(14px + env(safe-area-inset-bottom)); }
+.chrome, .page { padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); }
+.cover-top { padding-left: max(32px, env(safe-area-inset-left)); padding-right: max(32px, env(safe-area-inset-right)); }
+
+@media (max-width: 700px) {
+  .chrome, .page { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+  .story-btn span { display: none; }
+  .story-btn { padding: 8px 10px; }
+  .story-text h3 { font-size: 19px; }
+  .story-text p { font-size: 12.5px; }
+  .story-body { align-items: flex-end; flex-direction: column; gap: 8px; }
+  .story-ctl { align-self: flex-end; }
+  .app.storying .page { padding-bottom: 230px; }
+  .cover-story { padding: 11px 16px; font-size: 13px; }
+}
+
+/* phones held sideways: little height, so everything gets tighter and the maps are allowed to be as tall as they need */
+@media (max-height: 520px) and (orientation: landscape) {
+  .app { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+  .chrome { padding-top: 6px; }
+  .crumbs { display: none; }
+  .brand span { display: none; }
+  .brand-logo { height: 24px; }
+  .icon-btn { width: 32px; height: 32px; }
+  .page { padding-top: 6px; }
+  .dock { bottom: calc(6px + env(safe-area-inset-bottom)); padding: 3px; }
+  .dock button { padding: 6px 11px; }
+  .cover-top { padding-top: 10px; padding-bottom: 6px; }
+  .cover-logo { height: 28px; }
+  .cover-body { bottom: 34px; left: max(28px, env(safe-area-inset-left)); }
+  .cover h1 { font-size: 50px; margin: 2px 0 4px; }
+  .cover-eyebrow { font-size: 11px; }
+  .cover-tag { font-size: 10px; }
+  .cover-stats { margin: 10px 0 12px; gap: 18px; }
+  .cover-stats b { font-size: 22px; }
+  .cover-go, .cover-story { padding: 9px 18px; font-size: 13px; }
+  .cover-note { bottom: 6px; font-size: 10px; }
+  .mm, .plan-map .mm, .mob-map .mm, .as-list .mm, .loc-map, .ut-grid .side .mm, .as-chat .mm { max-height: none !important; min-height: 0 !important; }
+  .chat .msgs { height: 200px; min-height: 0; }
+  .as-table { max-height: 220px; min-height: 0; }
+  .kpi { padding: 4px 10px; } .kpi b, .ut-kpis .kpi b { font-size: 19px; }
+  .fact { padding: 4px 12px; } .fact b { font-size: 22px; }
+  .story { bottom: calc(6px + env(safe-area-inset-bottom)); padding: 6px 12px 8px; }
+  .story-bars { margin-bottom: 6px; }
+  .story-text h3 { font-size: 17px; } .story-text p { font-size: 12px; }
+  .story-body { flex-direction: row; align-items: center; }
+  .app.storying .page { padding-bottom: 120px; }
+}
+
+/* small screens: the data-flow diagram keeps a readable size and scrolls sideways inside its own box; the chat does not leave a tall empty gap */
+.pf-scroll { overflow-x: auto; }
+@media (max-width: 1100px) {
+  .pf { min-width: 860px; }
+  .chat .msgs { height: min(320px, 46vh); }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .sf-live > .feed { height: calc(100vh - 150px); width: auto; max-width: 100%; margin: 0 auto; }
+  .chat .msgs { height: 200px; }
+}

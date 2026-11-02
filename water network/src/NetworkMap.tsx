@@ -23,10 +23,12 @@ const mid = (p: Pipe, t = 0.5) => { const a = nodeById(p.from), b = nodeById(p.t
 
 interface Hover { id: string; x: number; y: number }
 
-export default function NetworkMap() {
-  const [metric, setMetric] = useState<Metric>("Consumption");
-  const [hour, setHour] = useState(8);
+export default function NetworkMap({ preset }: { preset?: { hour: number; metric: Metric; n: number } | null }) {
+  const [metric, setMetric] = useState<Metric>(preset?.metric ?? "Consumption");
+  const [hour, setHour] = useState(preset?.hour ?? 8);
   const [play, setPlay] = useState(false);
+  // the assistant can send the map to a time and a colouring
+  useEffect(() => { if (preset) { setMetric(preset.metric); setHour(preset.hour); setPlay(false); } }, [preset?.n]); // eslint-disable-line react-hooks/exhaustive-deps
   const [zone, setZone] = useState<ZoneId | null>(null);
   const [sel, setSel] = useState<string | null>("FT-04");
   const [showInst, setShowInst] = useState(true);

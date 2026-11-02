@@ -5,6 +5,7 @@ import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./dat
 import { Segmented } from "./ui";
 import Home from "./Home";
 import NetworkMap from "./NetworkMap";
+import Assistant, { type MapPreset } from "./Assistant";
 import Production from "./Production";
 import Overview from "./Overview";
 import AlarmsPage from "./AlarmsPage";
@@ -58,6 +59,7 @@ export default function App() {
   const [tab, setTab] = useState<TabId>(LINK?.tab ?? SITE.start);
   const [f, setF] = useState<Filters>({ range: "7D", area: "All network" });
   const wos: WorkOrder[] = WORK_ORDERS;
+  const [preset, setPreset] = useState<MapPreset | null>(null);
   const [stageTarget, setStageTarget] = useState<string | undefined>(LINK?.stage);
   // the page layout class follows the tab that is on screen: the old tab keeps its own styles while it fades out
   const [shown, setShown] = useState<TabId>(LINK?.tab ?? SITE.start);
@@ -118,7 +120,7 @@ export default function App() {
           <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
             <ErrorBoundary key={tab}>
               {tab === "home" && <Home f={{ ...f, area: "All network" }} setRange={(range) => setF({ ...f, range })} go={go} wos={wos} />}
-              {tab === "network" && <NetworkMap />}
+              {tab === "network" && <NetworkMap preset={preset} />}
               {tab === "alarms" && <AlarmsPage go={go} focus={stageTarget} />}
               {tab === "overview" && <Overview f={{ ...f, area: "All network" }} go={go} t={tick} />}
               {tab === "production" && <Production f={{ ...f, area: "All network" }} start={stageTarget} />}
@@ -135,6 +137,7 @@ export default function App() {
           </button>
         ))}
       </nav>
+      <Assistant onShow={(p) => { setPreset(p); go("network"); }} />
       </>}
     </div>
   );

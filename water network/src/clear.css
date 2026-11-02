@@ -81,8 +81,12 @@ html[data-theme="light"] .sea, :root:not([data-theme="dark"]) .sea { fill: #8fc2
 /* ---- the assistant ---- */
 /* the assistant is a tab in the dock; opening it docks a panel on the right and the page makes room, so nothing is covered */
 :root { --as-w: 380px; }
-.dock-ai { color: var(--teal) !important; }
-.dock-ai.on { background: var(--surface-3) !important; }
+/* the button lives at the end of the breadcrumb row, next to "Smart Water Network > New Cairo Water Network > Maintenance" */
+.crumb-ai { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 0 20px; font-size: 14px; font-weight: 600; color: var(--teal); border-left: 1px solid var(--line); background: transparent; }
+.crumb-ai:hover { background: var(--surface-2); }
+.crumb-ai.on { background: var(--teal); color: #fff; }
+html[data-theme="dark"] .crumb-ai.on { color: #06141f; }
+@media (max-width: 720px) { .crumb-ai span { display: none; } .crumb-ai { padding: 0 14px; } }
 .app.as-open { padding-right: var(--as-w); }
 .app.as-open .dock { right: var(--as-w); }
 .as-panel { position: fixed; top: 0; right: 0; bottom: calc(var(--dock-h, 46px) + env(safe-area-inset-bottom)); z-index: 45; width: var(--as-w); display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--line); overflow: hidden; }

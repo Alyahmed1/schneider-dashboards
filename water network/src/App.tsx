@@ -97,6 +97,9 @@ export default function App() {
           <button className="crumb" onClick={() => go(SITE.start)}>{SITE.title}</button>
           <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
+          <button className={`crumb-ai ${assistOpen ? "on" : ""}`} onClick={() => setAssistOpen((o) => !o)} aria-pressed={assistOpen} aria-label={assistOpen ? "Close the assistant" : "Open the assistant"}>
+            <MessageCircle size={16} /><span>Assistant</span>
+          </button>
         </nav>
       </motion.div>
 
@@ -137,9 +140,6 @@ export default function App() {
             <t.icon size={15} /><span>{t.label}</span>
           </button>
         ))}
-        <button className={`dock-ai ${assistOpen ? "on" : ""}`} onClick={() => setAssistOpen((o) => !o)} aria-pressed={assistOpen} aria-label={assistOpen ? "Close the assistant" : "Open the assistant"}>
-          <MessageCircle size={15} /><span>Assistant</span>
-        </button>
       </nav>
       <Assistant open={assistOpen} onClose={() => setAssistOpen(false)} onShow={(p) => { setPreset(p); go("network"); }} />
       </>}

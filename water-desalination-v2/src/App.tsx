@@ -82,6 +82,7 @@ export default function App() {
           <button className="crumb" onClick={() => go("home")}>Smart Water Desalination</button>
           <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
+          <Assistant go={go} />
         </nav>
       </motion.div>
 
@@ -122,7 +123,6 @@ export default function App() {
           </button>
         ))}
       </nav>
-      <Assistant go={go} />
       </>}
     </div>
   );

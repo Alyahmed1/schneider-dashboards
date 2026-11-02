@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { ask, SUGGESTED, type Answer } from "./askengine";
@@ -32,14 +33,14 @@ export default function Assistant({ go }: { go: Go }) {
   return (
     <>
       <button className={`as-fab ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-label={open ? "Close the assistant" : "Open the assistant"} aria-expanded={open}>
-        {open ? <X size={20} /> : <MessageCircle size={20} />}<span>{open ? "Close" : "Ask the assistant"}</span>
+        {open ? <X size={16} /> : <MessageCircle size={16} />}<span>{open ? "Close" : "Ask the assistant"}</span>
       </button>
-      <AnimatePresence>
+      {createPortal(<AnimatePresence>
         {open && (
-          <motion.section className="as-panel" role="dialog" aria-label="Plant assistant" initial={{ opacity: 0, y: 18, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.section className="as-panel" role="dialog" aria-label="Plant assistant" initial={{ opacity: 0, y: -12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
             <header>
               <Sparkles size={16} />
-              <div><b>Plant assistant</b><small>Demo · runs in your browser, free</small></div>
+              <div><b>Plant assistant</b></div>
               <button onClick={() => setOpen(false)} aria-label="Close"><X size={16} /></button>
             </header>
             <div className="as-log" aria-live="polite">
@@ -59,7 +60,7 @@ export default function Assistant({ go }: { go: Go }) {
             </form>
           </motion.section>
         )}
-      </AnimatePresence>
+      </AnimatePresence>, document.body)}
     </>
   );
 }

@@ -127,6 +127,6 @@ html[data-theme="dark"] .as-panel form button { color: #06141f; }
   .as-panel { top: auto; width: 100%; height: 72vh; border-left: 0; border-top: 1px solid var(--line); z-index: 50; }
 }
 
-/* KPI / detail popups: a real overlay on top of everything, dimmed and blurred, so the popup reads clearly */
-.pop-bg { position: fixed !important; inset: 0; z-index: 200; padding: 24px; display: grid; place-items: center; background: rgba(6, 20, 27, .62) !important; backdrop-filter: blur(6px) !important; -webkit-backdrop-filter: blur(6px) !important; }
-.pop { max-height: calc(100vh - 48px); background: var(--surface); box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .7), 0 0 0 1px var(--line); }
+/* KPI / detail popups: fixed on top of the page, no dimming and no blur, with a solid card so it reads clearly */
+.pop-bg { position: fixed !important; inset: 0; z-index: 200; padding: 24px; display: grid; place-items: center; background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.pop { max-height: calc(100vh - 48px); background: var(--surface) !important; opacity: 1; box-shadow: 0 18px 50px -12px rgba(0, 0, 0, .45), 0 0 0 1px var(--line); }

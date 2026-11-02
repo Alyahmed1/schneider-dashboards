@@ -23,7 +23,7 @@ type Spots = Record<"source" | "plant" | "ps1" | "res" | "trunk" | "zones" | "me
 /** where each stage stands: four across the top, four across the bottom (the water comes back along the bottom); the columns spread out as the box gets wider */
 const spots = (W: number): Spots => {
   const sp = Math.max(400, Math.min(560, (W - 480) / 3));
-  const c = [0, 1, 2, 3].map((i) => W / 2 + (i - 1.5) * sp);
+  const c = [0, 1, 2, 3].map((i) => W / 2 + (i - 1.5) * sp + 14); // +14: the left edge of the river is wider than the right edge of the labels
   return { source: [c[0], 254], plant: [c[1], 206], ps1: [c[2], 247], res: [c[3], 305], trunk: [c[3], 530], zones: [c[2], 575], meters: [c[1], 554], leak: [c[0], 531] };
 };
 const lines = (G: Spots): Line[] => [
@@ -83,7 +83,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
   useLayoutEffect(() => {
     const el = svgRef.current;
     if (!el) return;
-    const read = () => { const r = el.getBoundingClientRect(); if (r.height > 0) setW(Math.max(1660, Math.round((VIEW_H * r.width) / r.height))); };
+    const read = () => { const r = el.getBoundingClientRect(); if (r.height > 0) setW(Math.max(1660, Math.round((VIEW_H * r.width) / r.height) - 48)); };
     read();
     const ro = new ResizeObserver(read);
     ro.observe(el);
@@ -121,7 +121,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
     <div className="ov">
       <section className="ov-art">
         <div className="ov-scroll">
-          <svg ref={svgRef} className={`ov-svg ${flowOn ? "" : "paused"}`} viewBox={`0 60 ${W} ${VIEW_H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="The whole water supply chain, from the river to the customers">
+          <svg ref={svgRef} className={`ov-svg ${flowOn ? "" : "paused"}`} viewBox={`-24 60 ${W + 48} ${VIEW_H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="The whole water supply chain, from the river to the customers">
             <defs>
               <linearGradient id="iso-gw" x1="0" x2="1"><stop offset="0" stopColor="#f4f8fc" /><stop offset=".45" stopColor="#d3e1ee" /><stop offset="1" stopColor="#9db6cc" /></linearGradient>
               <linearGradient id="iso-gb" x1="0" x2="1"><stop offset="0" stopColor="#6db4ee" /><stop offset=".5" stopColor="#3a86c8" /><stop offset="1" stopColor="#265f93" /></linearGradient>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { MapPin, Send, Sparkles, X } from "lucide-react";
 import { ask, SUGGESTED, type Answer } from "./askengine";
 import type { Metric } from "./mapcolor";
 
@@ -8,8 +8,7 @@ interface Msg { who: "me" | "bot"; text: string; show?: Answer["show"]; chips?: 
 export type MapPreset = { hour: number; metric: Metric; n: number };
 
 /** A small chat assistant. Free and offline: it answers from the same network model as the screens, in the browser. */
-export default function Assistant({ onShow }: { onShow: (p: MapPreset) => void }) {
-  const [open, setOpen] = useState(false);
+export default function Assistant({ open, onClose, onShow }: { open: boolean; onClose: () => void; onShow: (p: MapPreset) => void }) {
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState("");
   const [msgs, setMsgs] = useState<Msg[]>([{ who: "bot", text: "Hi, I'm the network assistant. Ask me about consumption, leakage, pressure or what to fix first.", chips: SUGGESTED }]);
@@ -32,22 +31,19 @@ export default function Assistant({ onShow }: { onShow: (p: MapPreset) => void }
 
   return (
     <>
-      <button className={`as-fab ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-label={open ? "Close the assistant" : "Open the assistant"} aria-expanded={open}>
-        {open ? <X size={20} /> : <MessageCircle size={20} />}<span>{open ? "Close" : "Ask the assistant"}</span>
-      </button>
       <AnimatePresence>
         {open && (
-          <motion.section className="as-panel" role="dialog" aria-label="Network assistant" initial={{ opacity: 0, y: 18, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.section className="as-panel" role="dialog" aria-label="Network assistant" initial={{ x: 40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 40, opacity: 0 }} transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
             <header>
               <Sparkles size={16} />
               <div><b>Network assistant</b><small>Demo · runs in your browser, free</small></div>
-              <button onClick={() => setOpen(false)} aria-label="Close"><X size={16} /></button>
+              <button onClick={onClose} aria-label="Close the assistant"><X size={16} /></button>
             </header>
             <div className="as-log" aria-live="polite">
               {msgs.map((m, i) => (
                 <div key={i} className={`as-msg ${m.who}`}>
                   <p>{m.text}</p>
-                  {m.show && <button className="as-go" onClick={() => { onShow({ hour: m.show!.hour, metric: m.show!.metric, n: Date.now() }); setOpen(false); }}><MapPin size={13} /> {m.show.label}</button>}
+                  {m.show && <button className="as-go" onClick={() => { onShow({ hour: m.show!.hour, metric: m.show!.metric, n: Date.now() }); if (window.matchMedia("(max-width: 900px)").matches) onClose(); }}><MapPin size={13} /> {m.show.label}</button>}
                   {m.who === "bot" && m.chips && i === msgs.length - 1 && <div className="as-chips">{m.chips.map((c) => <button key={c} onClick={() => send(c)}>{c}</button>)}</div>}
                 </div>
               ))}

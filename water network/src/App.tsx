@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Droplets, Map as MapIcon, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
+import { Droplets, MessageCircle, Map as MapIcon, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
 import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Home from "./Home";
@@ -60,6 +60,7 @@ export default function App() {
   const [f, setF] = useState<Filters>({ range: "7D", area: "All network" });
   const wos: WorkOrder[] = WORK_ORDERS;
   const [preset, setPreset] = useState<MapPreset | null>(null);
+  const [assistOpen, setAssistOpen] = useState(false);
   const [stageTarget, setStageTarget] = useState<string | undefined>(LINK?.stage);
   // the page layout class follows the tab that is on screen: the old tab keeps its own styles while it fades out
   const [shown, setShown] = useState<TabId>(LINK?.tab ?? SITE.start);
@@ -73,7 +74,7 @@ export default function App() {
   const cur = TABS.find((t) => t.id === tab) ?? TABS[0];
 
   return (
-    <div className="app">
+    <div className={`app ${assistOpen ? "as-open" : ""}`}>
       <AnimatePresence>{!entered && <Cover key="cover" onEnter={() => { go(SITE.start); setEntered(true); }} theme={theme} setTheme={setTheme} />}</AnimatePresence>
       {ready && <>
       <motion.div className="chrome" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
@@ -136,8 +137,11 @@ export default function App() {
             <t.icon size={15} /><span>{t.label}</span>
           </button>
         ))}
+        <button className={`dock-ai ${assistOpen ? "on" : ""}`} onClick={() => setAssistOpen((o) => !o)} aria-pressed={assistOpen} aria-label={assistOpen ? "Close the assistant" : "Open the assistant"}>
+          <MessageCircle size={15} /><span>Assistant</span>
+        </button>
       </nav>
-      <Assistant onShow={(p) => { setPreset(p); go("network"); }} />
+      <Assistant open={assistOpen} onClose={() => setAssistOpen(false)} onShow={(p) => { setPreset(p); go("network"); }} />
       </>}
     </div>
   );

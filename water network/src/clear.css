@@ -79,10 +79,13 @@ html[data-theme="light"] .sea, :root:not([data-theme="dark"]) .sea { fill: #8fc2
 @media (max-width: 1000px) { .hm-key em { display: none; } .hm-dia { min-height: 300px; } }
 
 /* ---- the assistant ---- */
-.as-fab { position: fixed; right: 16px; bottom: calc(var(--dock-h, 46px) + env(safe-area-inset-bottom) + 14px); z-index: 60; display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; background: var(--teal); color: #fff; border-radius: 999px; font-size: 13.5px; font-weight: 600; box-shadow: 0 6px 22px rgba(0, 0, 0, .35); transition: transform .15s, filter .15s; }
-html[data-theme="dark"] .as-fab { color: #06141f; }
-.as-fab:hover { transform: translateY(-2px); filter: brightness(1.08); }
-.as-panel { position: fixed; right: 16px; bottom: calc(var(--dock-h, 46px) + env(safe-area-inset-bottom) + 66px); z-index: 61; width: min(400px, calc(100vw - 32px)); height: min(560px, calc(100vh - 190px)); display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); box-shadow: 0 16px 48px rgba(0, 0, 0, .45); overflow: hidden; }
+/* the assistant is a tab in the dock; opening it docks a panel on the right and the page makes room, so nothing is covered */
+:root { --as-w: 380px; }
+.dock-ai { color: var(--teal) !important; }
+.dock-ai.on { background: var(--surface-3) !important; }
+.app.as-open { padding-right: var(--as-w); }
+.app.as-open .dock { right: var(--as-w); }
+.as-panel { position: fixed; top: 0; right: 0; bottom: calc(var(--dock-h, 46px) + env(safe-area-inset-bottom)); z-index: 45; width: var(--as-w); display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--line); overflow: hidden; }
 .as-panel header { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); color: var(--teal); }
 .as-panel header div { flex: 1; display: grid; line-height: 1.2; }
 .as-panel header b { color: var(--ink); font-size: 14px; }
@@ -109,7 +112,13 @@ html[data-theme="dark"] .as-msg.me p { color: #06141f; }
 .as-panel form button { width: 38px; display: grid; place-items: center; background: var(--teal); color: #fff; }
 html[data-theme="dark"] .as-panel form button { color: #06141f; }
 .as-panel form button:disabled { opacity: .45; }
-@media (max-width: 720px) { .as-fab span { display: none; } .as-fab { padding: 12px; } }
 @media (prefers-reduced-motion: reduce) { .as-dots i { animation: none; } }
 .ov-svg { min-width: 0; width: 100%; height: 100%; }
 @media (max-width: 1100px) { .ov-svg { min-width: 980px; } }
+
+/* small screens: no room to push the page, so the assistant opens as a sheet over it */
+@media (max-width: 900px) {
+  .app.as-open { padding-right: 0; }
+  .app.as-open .dock { right: 0; }
+  .as-panel { top: auto; width: 100%; height: 72vh; border-left: 0; border-top: 1px solid var(--line); z-index: 50; }
+}

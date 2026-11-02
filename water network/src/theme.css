@@ -1,0 +1,141 @@
+/* ================= theme: flat green-teal control-room look (loaded last, so it wins over steps 1-14) =================
+   Dark is the main look. The light palette keeps the same accent, square corners and sans-serif font. */
+:root {
+  --bg: #eef3f8;
+  --card: #ffffff;
+  --ink: #15263a;
+  --muted: #5a6f84;
+  --line: #cfdbe6;
+  --line-2: #dfe8f1;
+  --teal: #1f7ae0;
+  --teal-d: #1558b0;
+  --aqua: #3aa0f0;
+  --blue: #2a8fb8;
+  --good: #25a244;
+  --warn: #e8921c;
+  --bad: #d63a4a;
+  --radius: 4px;
+  --display: "Segoe UI", "Open Sans", system-ui, sans-serif;
+  --body: "Segoe UI", "Open Sans", system-ui, sans-serif;
+  --mono: "Segoe UI", "Open Sans", system-ui, sans-serif;
+  --shadow: none;
+  --surface: #ffffff;
+  --surface-0: #f6f9fc;
+  --surface-2: #f0f5fa;
+  --surface-3: #e7eff7;
+  --surface-4: #dfe8f2;
+  --surface-src: #eef4fa;
+  --tint: rgba(31,122,224, .12);
+  --tint-2: rgba(31,122,224, .07);
+  --track: #dbe5ef;
+  --text-2: #3a5068;
+  --wire: #bccddc;
+  --scene-a: #f2f6fb; --scene-b: #e2eaf3; --pipe: #c2d3e4; --pipe-edge: #96aac0;
+  --eq: #ffffff; --eq-edge: #7f9a90; --eq-motor: #5f7d72; --eq-line: #7f9a90;
+  --wall-c: #cfdcd6; --hill-c: #d3e2da; --cap: #34524a;
+  --tag-bg: #ffffff; --tag-ink: #15263a; --tag-edge: #1f7ae0;
+}
+html[data-theme="dark"] {
+  --bg: #0e1a26;
+  --card: #142433;
+  --ink: #ffffff;
+  --muted: #93a9bf;
+  --line: #2b4358;
+  --line-2: #213447;
+  --teal: #3db8ff;
+  --teal-d: #7fd0ff;
+  --aqua: #5cc6ff;
+  --blue: #3a9fd0;
+  --good: #3ecf5a;
+  --warn: #f0b429;
+  --bad: #ef5a6a;
+  --shadow: none;
+  --surface: #142433;
+  --surface-0: #0e1a26;
+  --surface-2: #1b3043;
+  --surface-3: #223a50;
+  --surface-4: #2a4660;
+  --surface-src: #182a3b;
+  --tint: rgba(61,184,255, .16);
+  --tint-2: rgba(61,184,255, .1);
+  --track: #09131d;
+  --text-2: #bccfe0;
+  --wire: #2b4358;
+  --scene-a: #0e1a26; --scene-b: #13222f; --pipe: #2e6a5a; --pipe-edge: #1b3a35;
+  --eq: #1b3043; --eq-edge: #4f7a74; --eq-motor: #3f6a64; --eq-line: #4f7a74;
+  --sea-c: #2a6a5a; --wall-c: #1b3043; --hill-c: #162735; --cap: #a9cfc6;
+  --tag-bg: #0e1a26; --tag-ink: #ffffff; --tag-edge: #3db8ff;
+}
+
+body, html[data-theme="dark"] body { background-image: none; font-size: 14px; }
+html[data-theme="dark"] .topbar { background: rgba(16, 28, 31, .94); }
+.topbar { background: rgba(238, 243, 241, .94); backdrop-filter: none; }
+
+/* square, flat controls */
+.tabs, .seg, .select select, .tabs button, .seg button, .chip, .delta, .icon-btn { border-radius: 3px; }
+.tabs button.on, .seg button.on { background: var(--teal); color: #fff; }
+html[data-theme="dark"] .tabs button.on, html[data-theme="dark"] .seg button.on { color: #06201a; }
+.brand-mark { border-radius: 4px; box-shadow: none; background: var(--teal); }
+.card, .kpi, .banner { box-shadow: none; }
+h1, h2, h3, .page-head h1, .card-h h3 { font-weight: 400; letter-spacing: 0; }
+.kpi-val b, .ring b, .readings b { font-weight: 400; letter-spacing: 0; }
+:where(b, strong, td, span, input) { font-variant-numeric: tabular-nums; }
+
+/* ================= chrome: thin title bar, breadcrumb row, and a tab bar docked at the bottom ================= */
+:root { --top-h: 40px; --crumb-h: 38px; --dock-h: 46px; }
+.chrome { position: sticky; top: 0; z-index: 30; background: var(--bg); }
+.topbar { position: static; height: var(--top-h); padding: 0 clamp(10px, 1.4vw, 18px); gap: 12px; justify-content: space-between; border-bottom: 1px solid var(--line); background: var(--bg); }
+html[data-theme="dark"] .topbar { background: var(--bg); }
+.brand { gap: 8px; padding: 0; }
+.brand-mark { width: 22px; height: 22px; border-radius: 3px; }
+.brand b { font-family: var(--body); font-size: 13px; font-weight: 600; letter-spacing: 0; }
+.top-actions { gap: 8px; }
+.icon-btn { width: 28px; height: 28px; }
+.icon-btn i { top: -5px; right: -5px; min-width: 16px; height: 16px; font-size: 10px; border-radius: 3px; }
+.user span { width: 28px; height: 28px; border-radius: 3px; font-size: 13px; }
+.user b { font-size: 12px; }
+.user em { font-size: 11px; }
+
+.crumbs { display: flex; align-items: stretch; height: var(--crumb-h); border-bottom: 1px solid var(--line); background: var(--bg); overflow-x: auto; scrollbar-width: none; }
+.crumbs::-webkit-scrollbar { display: none; }
+.crumb { display: inline-flex; align-items: center; flex: none; padding: 0 8px 0 16px; font-size: 15px; font-weight: 500; color: var(--text-2); white-space: nowrap; position: relative; }
+.crumb:not(.here)::after { content: ""; flex: none; width: 8px; height: 8px; margin-left: 12px; border: solid var(--muted); border-width: 0 2px 2px 0; transform: rotate(-45deg); opacity: .85; }
+button.crumb:hover { color: var(--ink); background: var(--surface-2); }
+button.crumb:hover::after { border-color: var(--teal); }
+.crumb.here { padding: 0 18px; font-weight: 700; color: var(--ink); background: var(--surface); box-shadow: inset 0 -3px 0 var(--teal); }
+
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); height: calc(var(--dock-h) + env(safe-area-inset-bottom)); padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: var(--bg); border-top: 1px solid var(--line); }
+.dock button { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 13.5px; border-right: 1px solid var(--line); border-radius: 0; position: relative; transition: background .15s, color .15s; }
+.dock button:last-child { border-right: 0; }
+.dock button:hover { color: var(--ink); background: var(--surface-2); }
+.dock button.on { color: var(--ink); background: var(--surface-3); }
+.dock button.on::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--teal); }
+html[data-theme="dark"] .dock button.on { background: var(--surface-2); }
+
+/* the pages leave room for the dock at the bottom */
+.app { padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom)); }
+.page.prod.flow { --chrome: 150px; }
+.page.prod { --chrome: 398px; }
+@media (max-width: 1400px) { .page.prod.flow { --chrome: 150px; } .page.prod { --chrome: 454px; } }
+
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
+  .topbar { flex-wrap: nowrap; padding: 0 12px; }
+  .brand { flex: 1 1 0; }
+  .brand b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user div { display: none; }
+  .dock button { flex-direction: column; gap: 2px; font-size: 10.5px; padding-top: 4px; }
+  .crumb { padding: 0 6px 0 12px; font-size: 13px; }
+  .crumb.here { padding: 0 12px; }
+  .crumbs .crumb:nth-child(2) { display: none; }
+  .page { padding-bottom: 24px; }
+}
+
+/* a phone held sideways: slimmer bars so the content gets the room */
+@media (max-height: 500px) and (max-width: 1000px) {
+  :root { --top-h: 34px; --crumb-h: 30px; --dock-h: 36px; }
+  .dock button { flex-direction: row; gap: 6px; font-size: 12px; padding-top: 0; }
+  .dock button > svg { width: 14px; height: 14px; }
+  .brand-mark { width: 18px; height: 18px; }
+  .icon-btn, .user span { width: 24px; height: 24px; }
+  .crumb { font-size: 12.5px; }
+}

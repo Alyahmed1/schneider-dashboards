@@ -1,0 +1,199 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - banner [ref=e5]:
+        - button "Smart Water Network, back to the start screen" [ref=e6] [cursor=pointer]:
+          - generic [ref=e11]: Smart Water Network
+        - generic [ref=e13]:
+          - button "Switch to light mode" [ref=e14] [cursor=pointer]
+          - button "Alarms, 9 need attention" [ref=e22] [cursor=pointer]:
+            - generic [ref=e26]: "9"
+          - 'button "Account: A, network manager" [ref=e28] [cursor=pointer]':
+            - generic [ref=e29]: A
+            - generic [ref=e30]:
+              - generic [ref=e31]: A
+              - emphasis [ref=e32]: Network manager
+      - navigation "Breadcrumb" [ref=e33]:
+        - button "Smart Water Network" [ref=e34] [cursor=pointer]
+        - generic [ref=e35]: New Cairo Water Network
+        - generic [ref=e36]: Network Map
+    - main [ref=e37]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - tablist "Colour the network by" [ref=e42]:
+              - tab "Consumption" [selected] [ref=e43] [cursor=pointer]
+              - tab "Pressure" [ref=e44] [cursor=pointer]
+              - tab "Leakage" [ref=e45] [cursor=pointer]
+            - generic [ref=e46]:
+              - button "Instruments" [pressed] [ref=e47] [cursor=pointer]
+              - generic [ref=e51]: 8 active faults
+          - generic [ref=e52]:
+            - img "Water network map coloured by Consumption" [ref=e53]:
+              - generic [ref=e54] [cursor=pointer]
+              - generic [ref=e61] [cursor=pointer]
+              - generic [ref=e67] [cursor=pointer]
+              - generic [ref=e75] [cursor=pointer]
+              - generic [ref=e82] [cursor=pointer]
+              - generic [ref=e87] [cursor=pointer]
+              - generic [ref=e93] [cursor=pointer]:
+                - generic [ref=e94]: First Settlement
+                - generic [ref=e95]: 440 L/s · 11% lost
+              - generic [ref=e96] [cursor=pointer]:
+                - generic [ref=e97]: Third Settlement
+                - generic [ref=e98]: 468 L/s · 14% lost
+              - generic [ref=e99] [cursor=pointer]:
+                - generic [ref=e100]: Fifth Settlement
+                - generic [ref=e101]: 713 L/s · 18% lost
+              - generic [ref=e102] [cursor=pointer]:
+                - generic [ref=e103]: Narges Villas
+                - generic [ref=e104]: 442 L/s · 23% lost
+              - generic [ref=e105] [cursor=pointer]:
+                - generic [ref=e106]: Banafseg
+                - generic [ref=e107]: 343 L/s · 13% lost
+              - generic [ref=e108] [cursor=pointer]:
+                - generic [ref=e109]: Rehab Edge
+                - generic [ref=e110]: 242 L/s · 15% lost
+              - generic [ref=e210]: Treatment plant
+              - generic [ref=e214]: Pump station PS-1
+              - generic [ref=e219]: Reservoir 77%
+              - generic [ref=e224]: Booster PS-2
+              - generic [ref=e257]: 12 L/s
+              - generic [ref=e262]: 6.5 L/s
+              - generic [ref=e267]: 9 L/s
+              - generic [ref=e272]: 4.2 L/s
+              - 'button "FT-01 Plant outlet flow: 1712 L/s" [ref=e277] [cursor=pointer]':
+                - generic: Q
+                - generic: 1712 L/s
+              - 'button "FT-02 Z1 inlet flow: 908 L/s" [ref=e279] [cursor=pointer]':
+                - generic: Q
+                - generic: 908 L/s
+              - 'button "FT-03 Z2 inlet flow: 468 L/s" [ref=e281] [cursor=pointer]':
+                - generic: Q
+                - generic: 468 L/s
+              - 'button "FT-04 Z3 inlet flow: 713 L/s" [ref=e283] [cursor=pointer]':
+                - generic: Q
+                - generic: 713 L/s
+              - 'button "FT-05 Z4 inlet flow: 442 L/s" [ref=e286] [cursor=pointer]':
+                - generic: Q
+                - generic: 442 L/s
+              - 'button "FT-06 Z5 inlet flow: 343 L/s" [ref=e288] [cursor=pointer]':
+                - generic: Q
+                - generic: 343 L/s
+              - 'button "FT-07 Z6 inlet flow: 242 L/s" [ref=e290] [cursor=pointer]':
+                - generic: Q
+                - generic: 242 L/s
+              - 'button "LT-01 Reservoir level: 77 %" [ref=e292] [cursor=pointer]':
+                - generic: H
+                - generic: 77 %
+              - 'button "PU-01 PS-1 duty pump: Running" [ref=e294] [cursor=pointer]':
+                - generic: M
+                - generic: Running
+              - 'button "PU-02 PS-2 booster pump: Running" [ref=e296] [cursor=pointer]':
+                - generic: M
+                - generic: Running
+            - generic "Colour key" [ref=e298]:
+              - generic [ref=e299]: How much water is flowing
+              - generic [ref=e300]:
+                - generic [ref=e302]: Low
+                - emphasis [ref=e303]: under 50% of the pipe
+              - generic [ref=e304]:
+                - generic [ref=e306]: Medium
+                - emphasis [ref=e307]: 50 to 80%
+              - generic [ref=e308]:
+                - generic [ref=e310]: High
+                - emphasis [ref=e311]: over 80%
+              - generic [ref=e312]:
+                - generic [ref=e314]: Closed valve
+                - emphasis [ref=e315]: no flow
+          - generic [ref=e316]:
+            - button "Play the day" [ref=e317] [cursor=pointer]
+            - slider "Time of day" [ref=e323]: "8"
+            - generic [ref=e324]:
+              - generic [ref=e325]: 08:00
+              - generic [ref=e326]: Morning peak
+            - button "Now" [ref=e327] [cursor=pointer]
+        - complementary [ref=e328]:
+          - generic [ref=e329]:
+            - generic [ref=e330]:
+              - generic [ref=e331]: Supplied
+              - generic [ref=e332]: 2648 L/s
+            - generic [ref=e333]:
+              - generic [ref=e334]: Water lost
+              - generic [ref=e335]: 16.1 %
+            - generic [ref=e336]:
+              - generic [ref=e337]: Avg pressure
+              - generic [ref=e338]: 3.2 bar
+            - generic [ref=e339]:
+              - generic [ref=e340]: Reservoir
+              - generic [ref=e341]: 77 %
+          - generic [ref=e342]:
+            - heading "Zones" [level=3] [ref=e343]
+            - table [ref=e344]:
+              - rowgroup [ref=e345]:
+                - row [ref=e346]:
+                  - columnheader "Zone" [ref=e347]
+                  - columnheader "Use L/s" [ref=e348]
+                  - columnheader "Bar" [ref=e349]
+                  - columnheader "Lost" [ref=e350]
+              - rowgroup [ref=e351]:
+                - row [ref=e352] [cursor=pointer]:
+                  - cell "Fifth Settlement" [ref=e353]
+                  - cell "582" [ref=e355]
+                  - cell "3.5" [ref=e356]
+                  - cell "18%" [ref=e357]
+                - row [ref=e358] [cursor=pointer]:
+                  - cell "Third Settlement" [ref=e359]
+                  - cell "401" [ref=e361]
+                  - cell "2.2" [ref=e362]
+                  - cell "14%" [ref=e363]
+                - row [ref=e364] [cursor=pointer]:
+                  - cell "First Settlement" [ref=e365]
+                  - cell "392" [ref=e367]
+                  - cell "3.1" [ref=e368]
+                  - cell "11%" [ref=e369]
+                - row [ref=e370] [cursor=pointer]:
+                  - cell "Narges Villas" [ref=e371]
+                  - cell "342" [ref=e373]
+                  - cell "3.7" [ref=e374]
+                  - cell "23%" [ref=e375]
+                - row [ref=e376] [cursor=pointer]:
+                  - cell "Banafseg" [ref=e377]
+                  - cell "298" [ref=e379]
+                  - cell "3.4" [ref=e380]
+                  - cell "13%" [ref=e381]
+                - row [ref=e382] [cursor=pointer]:
+                  - cell "Rehab Edge" [ref=e383]
+                  - cell "205" [ref=e385]
+                  - cell "3.5" [ref=e386]
+                  - cell "15%" [ref=e387]
+          - generic [ref=e388]:
+            - generic [ref=e389]:
+              - generic [ref=e390]:
+                - generic [ref=e391]: FT-04 · Flow meter
+                - heading "Z3 inlet flow" [level=3] [ref=e392]
+              - generic [ref=e393]: Normal
+            - generic [ref=e394]:
+              - generic [ref=e395]: 713 L/s
+              - generic [ref=e396]: 1.42 m/s in DN800
+            - img [ref=e400]:
+              - generic [ref=e404]:
+                - generic [ref=e405]: 0h
+                - generic [ref=e407]: 6h
+                - generic [ref=e409]: 12h
+                - generic [ref=e411]: 18h
+                - generic [ref=e413]: 23h
+              - generic [ref=e416]:
+                - generic [ref=e417]: "0"
+                - generic [ref=e419]: "200"
+                - generic [ref=e421]: "400"
+                - generic [ref=e423]: "600"
+                - generic [ref=e425]: "800"
+    - navigation "Sections" [ref=e429]:
+      - button "Home" [ref=e430] [cursor=pointer]
+      - button "Network Map" [ref=e435] [cursor=pointer]
+      - button "Overview" [ref=e439] [cursor=pointer]
+      - button "Production" [ref=e445] [cursor=pointer]
+      - button "Electrical" [ref=e451] [cursor=pointer]
+      - button "Maintenance" [ref=e455] [cursor=pointer]
+  - generic [aria-hidden] [ref=e461]: "0"

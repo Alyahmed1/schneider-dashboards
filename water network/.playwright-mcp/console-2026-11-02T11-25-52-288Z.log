@@ -1,0 +1,28 @@
+[     116ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:22164
+[     730ms] [ERROR] %o
+
+%s
+
+%s
+ TypeError: Cannot read properties of undefined (reading 'tags')
+    at StageView (http://localhost:4729/src/StageView.tsx?t=1793618568490:458:21)
+    at Object.react_stack_bottom_frame (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:20259:20)
+    at renderWithHooks (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:5918:24)
+    at updateFunctionComponent (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:7763:21)
+    at beginWork (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:8843:20)
+    at runWithFiberInDEV (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:1133:72)
+    at performUnitOfWork (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:13598:98)
+    at workLoopSync (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:13461:43)
+    at renderRootSync (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:13445:13)
+    at performWorkOnRoot (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:12861:37) The above error occurred in the <StageView> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary. @ http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:7275
+[     731ms] [ERROR] Tab crashed: TypeError: Cannot read properties of undefined (reading 'tags')
+    at StageView (http://localhost:4729/src/StageView.tsx?t=1793618568490:458:21)
+    at Object.react_stack_bottom_frame (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:20259:20)
+    at renderWithHooks (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:5918:24)
+    at updateFunctionComponent (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:7763:21)
+    at beginWork (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:8843:20)
+    at runWithFiberInDEV (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:1133:72)
+    at performUnitOfWork (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:13598:98)
+    at workLoopSync (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:13461:43)
+    at renderRootSync (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:13445:13)
+    at performWorkOnRoot (http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:12861:37) @ http://localhost:4729/src/ErrorBoundary.tsx?t=1793618443347:8

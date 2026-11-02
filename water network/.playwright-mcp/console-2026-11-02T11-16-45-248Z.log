@@ -1,0 +1,29 @@
+[     329ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4729/node_modules/.vite/deps/react-dom_client.js?v=a3b6f339:22164
+[  150682ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150684ms] [ERROR] [vite] Failed to reload /src/Electrical.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150685ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150685ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150687ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150688ms] [ERROR] [vite] Failed to reload /src/Production.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150693ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150695ms] [ERROR] [vite] Failed to reload /src/StageView.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150704ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150705ms] [ERROR] [vite] Failed to reload /src/Panels.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150707ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150708ms] [ERROR] [vite] Failed to reload /src/PlantFlow.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150709ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150709ms] [ERROR] [vite] Failed to reload /src/Overview.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150733ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150735ms] [ERROR] [vite] Failed to reload /src/Electrical.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150736ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150737ms] [ERROR] [vite] Failed to reload /src/StageView.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150741ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150742ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150743ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150744ms] [ERROR] [vite] Failed to reload /src/Production.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150770ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150771ms] [ERROR] [vite] Failed to reload /src/PlantFlow.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  150772ms] [ERROR] [vite] SyntaxError: The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes' @ http://localhost:4729/@vite/client:808
+[  150772ms] [ERROR] [vite] Failed to reload /src/Panels.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:4729/@vite/client:808
+[  151594ms] The requested module '/src/data.ts?t=1793618355654' does not provide an export named 'lanes'
+[  239234ms] The requested module '/src/data.ts?t=1793618443255' does not provide an export named 'lanes'

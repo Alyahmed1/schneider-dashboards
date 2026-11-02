@@ -1,0 +1,168 @@
+/* ================= Network Map tab ================= */
+.nm { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 26vw, 400px); gap: 10px; height: calc(100vh - var(--chrome, 108px)); min-height: 560px; }
+.nm-map-p { grid-column: 1; grid-row: auto; gap: 8px; }
+.nm-head { flex: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nm-head-r { display: flex; align-items: center; gap: 8px; }
+.nm-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12.5px; border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 3px; }
+.nm-btn:hover, .nm-btn.on { color: var(--ink); border-color: var(--teal); }
+.nm-wrap { position: relative; flex: 1; min-height: 0; }
+.nm-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* zones */
+.nm-zone > g { opacity: .1; transition: opacity .25s; }
+.nm-zone circle { fill: var(--teal); }
+.nm-zone:hover > g, .nm-zone.on > g { opacity: .22; }
+.nm-zone.dim > g { opacity: .05; }
+.nm-zone { cursor: pointer; }
+.nm-zlabel { cursor: pointer; transition: opacity .25s; }
+.nm-zlabel .n { fill: var(--ink); font-size: 13px; font-weight: 600; paint-order: stroke; stroke: var(--surface-0); stroke-width: 4px; }
+.nm-zlabel .v { fill: var(--muted); font-size: 11px; paint-order: stroke; stroke: var(--surface-0); stroke-width: 4px; }
+.nm-zlabel.dim { opacity: .35; }
+
+/* pipes */
+.nm-pipe { transition: opacity .25s; animation: nmshow .6s ease-out backwards; animation-delay: calc(var(--i, 0) * 28ms); }
+.nm-pipe.dim { opacity: .18; }
+.nm-p { fill: none; stroke-linecap: round; transition: stroke .35s, stroke-width .35s; }
+.nm-p.k-tie { stroke-dasharray: 5 5; }
+.nm-flow { fill: none; stroke: rgba(255, 255, 255, .85); stroke-linecap: round; stroke-dasharray: 1 12; animation: nmflow var(--dur, 1s) linear infinite; pointer-events: none; }
+.nm-flow.rev { animation-direction: reverse; }
+.nm-hit { fill: none; stroke: transparent; stroke-width: 16; cursor: crosshair; }
+.nm-valve circle { fill: var(--card); stroke: var(--muted); stroke-width: 1.4; }
+.nm-valve path { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+@keyframes nmflow { to { stroke-dashoffset: -13; } }
+@keyframes nmshow { from { opacity: 0; } }
+
+/* assets */
+.nm-asset rect, .nm-asset circle, .nm-asset path { fill: var(--card); stroke: var(--teal); stroke-width: 1.8; }
+.nm-asset .ic { fill: var(--teal); stroke: none; }
+.nm-asset .ic.spin { transform-box: fill-box; transform-origin: center; animation: nmspin 3s linear infinite; }
+.nm-asset text { fill: var(--text-2); font-size: 11px; paint-order: stroke; stroke: var(--surface-0); stroke-width: 4px; }
+.nm-tank .lvl { fill: var(--aqua); stroke: none; transition: y .4s, height .4s; opacity: .85; }
+.nm-j { fill: var(--ink); stroke: var(--surface-0); stroke-width: 1.5; }
+.nm-n { fill: var(--card); stroke: var(--ink); stroke-width: 1.2; transition: fill .35s; }
+@keyframes nmspin { to { transform: rotate(360deg); } }
+
+/* leaks */
+.nm-leak .dot { fill: var(--bad); stroke: #fff; stroke-width: 1.5; }
+.nm-leak .rip { fill: none; stroke: var(--bad); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: nmrip 2s ease-out infinite; }
+.nm-leak .rip.r2 { animation-delay: 1s; }
+.nm-leak text { fill: var(--bad); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--surface-0); stroke-width: 4px; }
+@keyframes nmrip { from { transform: scale(1); opacity: .9; } to { transform: scale(3.2); opacity: 0; } }
+
+/* instruments */
+.nm-inst { cursor: pointer; outline: none; }
+.nm-inst .b { fill: var(--card); stroke-width: 2.2; transition: r .15s; }
+.nm-inst text { fill: var(--ink); font-size: 9.5px; font-weight: 700; pointer-events: none; }
+.nm-inst .lead { stroke: var(--muted); stroke-width: 1; opacity: .6; }
+.nm-inst .halo { fill: none; stroke: var(--teal); stroke-width: 1.6; stroke-dasharray: 3 3; animation: nmspin 6s linear infinite; transform-box: fill-box; transform-origin: center; }
+.nm-inst:hover .b, .nm-inst:focus-visible .b { r: 11.5; }
+.nm-inst.bad .b { animation: nmalarm 1.2s ease-in-out infinite; }
+@keyframes nmalarm { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+
+/* legend, keys, tooltip */
+.nm-legend { position: absolute; left: 10px; bottom: 10px; width: 220px; padding: 8px 10px; background: color-mix(in srgb, var(--card) 92%, transparent); border: 1px solid var(--line); font-size: 11.5px; }
+.nm-legend b { display: block; font-weight: 600; margin-bottom: 6px; font-size: 12px; }
+.nm-legend .bar svg { display: block; }
+.nm-legend .ends { display: flex; justify-content: space-between; color: var(--muted); margin-top: 4px; }
+.nm-keys { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; background: color-mix(in srgb, var(--card) 92%, transparent); border: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.nm-keys span { display: flex; align-items: center; gap: 7px; }
+.nm-keys i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--teal); display: grid; place-items: center; font-size: 9px; font-weight: 700; color: var(--ink); background: var(--card); }
+.nm-tip { position: absolute; z-index: 5; width: 200px; padding: 8px 10px; display: grid; gap: 3px; background: var(--card); border: 1px solid var(--line); font-size: 11.5px; color: var(--muted); pointer-events: none; }
+.nm-tip b { color: var(--ink); font-weight: 600; font-size: 12px; }
+.nm-tip em { font-style: normal; color: var(--ink); font-weight: 600; }
+.nm-tip .bad { color: var(--bad); font-weight: 600; }
+
+/* time bar */
+.nm-time { flex: none; display: flex; align-items: center; gap: 12px; padding: 4px 2px 0; }
+.nm-play { width: 34px; height: 34px; display: grid; place-items: center; background: var(--teal); color: #fff; border-radius: 3px; flex: none; }
+html[data-theme="dark"] .nm-play { color: #06141f; }
+.nm-play:hover { filter: brightness(1.1); }
+.nm-track { position: relative; flex: 1; height: 34px; border: 1px solid var(--line); background: var(--surface-2); overflow: hidden; }
+.nm-track svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.nm-track svg path { fill: var(--tint); stroke: var(--teal); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.nm-track .cur { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink); transform: translateX(-1px); pointer-events: none; }
+.nm-track input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.nm-clock { display: grid; min-width: 96px; line-height: 1.15; }
+.nm-clock b { font-size: 20px; font-weight: 400; }
+.nm-clock span { font-size: 11.5px; color: var(--muted); }
+
+/* side */
+.nm-side { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 10px; min-height: 0; min-width: 0; }
+.hm-p.nm-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 10px 12px; }
+.nm-stats div { display: grid; gap: 2px; min-width: 0; }
+.nm-stats span { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.nm-stats b { font-size: 21px; font-weight: 400; line-height: 1.1; }
+.nm-stats b.warn, td.warn { color: var(--warn); }
+.nm-stats small { font-size: 11px; color: var(--muted); }
+.nm-zones table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.nm-zones th { text-align: right; font-weight: 400; color: var(--muted); font-size: 11px; padding: 0 0 4px; }
+.nm-zones th:first-child, .nm-zones td:first-child { text-align: left; }
+.nm-zones td { text-align: right; padding: 5px 0; border-top: 1px solid var(--line-2); }
+.nm-zones td:first-child { display: flex; align-items: center; gap: 8px; }
+.nm-zones td i { width: 10px; height: 10px; flex: none; transition: background .35s; }
+.nm-zones tbody tr { cursor: pointer; }
+.nm-zones tbody tr:hover, .nm-zones tr.on { background: var(--surface-2); }
+.nm-clear { margin-left: 8px; font-size: 11px; color: var(--teal); }
+.nm-detail { min-height: 0; }
+.nm-dh { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.nm-dh small { color: var(--muted); font-size: 11px; }
+.nm-dh h3 { margin: 2px 0 0; }
+.nm-val { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.nm-val b { font-size: 28px; font-weight: 400; }
+.nm-val span { color: var(--muted); font-size: 12px; }
+.nm-chart { flex: 1; min-height: 90px; }
+.nm-chart p, .nm-empty { color: var(--muted); font-size: 12.5px; }
+
+@media (max-width: 1000px) {
+  .nm { grid-template-columns: 1fr; height: auto; }
+  .nm-map-p { min-height: 70vh; }
+  .nm-keys { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .nm-flow, .nm-leak .rip, .nm-inst .halo, .nm-asset .ic.spin, .nm-inst.bad .b { animation: none; } }
+
+/* the Home map is smaller than the full map, so its words and icons are drawn larger */
+.nm-mini .nm-zlabel .n { font-size: 19px; stroke-width: 5px; }
+.nm-mini .nm-zlabel .v { font-size: 15px; stroke-width: 5px; }
+.nm-mini .nm-asset text { font-size: 15px; stroke-width: 5px; }
+.nm-mini .nm-leak .dot { r: 6; }
+
+/* ---- clearer map: bold pipes, a plain three-colour key, readings written next to the instruments ---- */
+.nm-legend { width: 250px; padding: 10px 12px; font-size: 12.5px; }
+.nm-legend b { font-size: 13px; margin-bottom: 8px; }
+.nm-legend .row { display: grid; grid-template-columns: 22px auto 1fr; align-items: center; gap: 8px; padding: 3px 0; }
+.nm-legend .row i { width: 22px; height: 8px; border-radius: 4px; }
+.nm-legend .row i.tie { height: 0; border-top: 2px dashed var(--muted); border-radius: 0; background: none; }
+.nm-legend .row span { color: var(--ink); font-weight: 600; }
+.nm-legend .row em { font-style: normal; color: var(--muted); font-size: 11.5px; text-align: right; }
+.nm-legend-mini { left: 10px; bottom: 10px; }
+.nm-open { position: absolute; right: 10px; bottom: 10px; padding: 7px 14px; font-size: 12.5px; background: var(--teal); color: #fff; border-radius: 3px; }
+html[data-theme="dark"] .nm-open { color: #06141f; }
+.nm-open:hover { filter: brightness(1.1); }
+.nm-zlabel .n { font-size: 15px; } .nm-zlabel .v { font-size: 12.5px; }
+.nm-inst text { font-size: 11px; }
+.nm-inst text.rd { font-size: 12px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface-0); stroke-width: 4px; }
+.nm-zone > g { opacity: .07; }
+.nm-zone:hover > g, .nm-zone.on > g { opacity: .18; }
+.nm-flow { stroke: rgba(255, 255, 255, .9); }
+.nm-n { stroke: var(--surface-0); stroke-width: 1.5; fill: var(--ink); }
+.nm-asset text { font-size: 12.5px; font-weight: 600; fill: var(--ink); }
+.nm-leak text { font-size: 12.5px; }
+.nm-mini .nm-zlabel .n { font-size: 20px; } .nm-mini .nm-zlabel .v { font-size: 16px; }
+.nm-mini .nm-asset text { font-size: 17px; }
+.nm-keys { display: none; }
+.nm-legend:not(.nm-legend-mini) { top: 10px; bottom: auto; left: 10px; }
+.nm-legend.nm-legend-mini { top: 10px; bottom: auto; }
+
+/* phones: the map gets its own height, the key shrinks to the colour names */
+@media (max-width: 1000px) {
+  .nm-wrap { flex: none; height: 62vh; min-height: 380px; }
+  .nm-map-p { min-height: 0; }
+  .nm-legend { width: auto; padding: 6px 9px; font-size: 11.5px; }
+  .nm-legend .row { grid-template-columns: 18px auto; gap: 6px; padding: 1px 0; }
+  .nm-legend .row i { width: 18px; }
+  .nm-legend .row em { display: none; }
+  .nm-legend b { font-size: 11.5px; margin-bottom: 4px; }
+  .nm-time { flex-wrap: wrap; }
+  .nm-clock { min-width: 80px; }
+  .hm-map-wrap { min-height: 340px; }
+}

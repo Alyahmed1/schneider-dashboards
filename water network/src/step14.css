@@ -1,0 +1,141 @@
+/* ================= step 14: phone layout (loaded last, so it wins over the desktop rules) ================= */
+@media (max-width: 720px), (max-height: 500px) and (max-width: 1000px) {
+  /* top bar: logo + name + buttons on one row, tabs on the next */
+  .topbar { flex-wrap: wrap; gap: 8px 10px; padding: 10px 14px 8px; }
+  .brand { flex: 1 1 0; min-width: 0; gap: 8px; margin: 0; padding: 0; }
+  .brand-mark, .brand-sep { display: none; }
+  .brand > div { min-width: 0; }
+  .brand b { font-size: 12.5px; white-space: normal; line-height: 1.15; }
+  .brand > div > span { display: none; }
+  .top-actions { flex: none; gap: 8px; margin: 0; }
+  .icon-btn { width: 36px; height: 36px; }
+  .user span { width: 36px; height: 36px; }
+  .tabs { order: 3; width: 100%; margin: 0; }
+  .tabs button { padding: 8px 12px; font-size: 13px; }
+  .page { padding: 14px 14px 40px; }
+
+  /* popups and the profile / alarms panels use the whole phone screen */
+  .pop-bg { position: fixed; z-index: 80; inset: 0; padding: 12px; background: rgba(6, 20, 27, .35); }
+  .pop, .pop.wide, .pop.xwide { width: 100%; max-height: calc(100vh - 24px); }
+  .bell-panel, .me-panel { position: fixed; top: 64px; left: 12px; right: 12px; width: auto; }
+  .bell-panel ul { max-height: 52vh; }
+
+  /* Overview */
+  .cc-hero { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; min-height: 0; }
+  .cc-hero img { width: 100%; opacity: .32; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 100%); }
+  .cc-hero-m { flex-wrap: wrap; gap: 6px 10px; }
+  .cc-hero-r { margin-left: 0; }
+  .cc-kpis { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .cc .kt { padding: 14px 16px; }
+  .cc .kt-val b { font-size: 34px; }
+  .cc .ins-card { min-height: 260px; }
+  .cc-health { flex-direction: row; }
+
+  /* Operations, Electrical and Production pictures: a fixed, readable size that you scroll across */
+  .page.prod.flow .scene { min-width: 1280px; height: 540px; aspect-ratio: auto; }
+  .page.prod.flow.elec .scene { min-width: 1040px; height: 520px; }
+  .page.prod:not(.flow) .scene { min-width: 860px; height: 484px; aspect-ratio: auto; }
+  .scene-title { max-width: 62%; }
+  .scene-title b { font-size: 14px; }
+  .scene-tools { gap: 6px; }
+  .scene-btn, .kpi-btn { padding: 8px 12px; font-size: 12.5px; }
+  .journey-card .card-h { flex-wrap: wrap; }
+  .tour-ctl { flex-wrap: wrap; justify-content: flex-start; }
+
+  /* Insights */
+  .ins-head { gap: 8px; }
+  .ins-head h1 { font-size: 22px; }
+  .ins-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .it-head .delta { display: none; }
+  .it-head > b { white-space: normal; line-height: 1.15; }
+  .it-status { flex-wrap: wrap; }
+  .it-status em { display: none; }
+  .ins-mid, .ins-bot, .ins-opps { grid-template-columns: minmax(0, 1fr); }
+  .ins-lines { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ins .sl { grid-template-columns: 1fr; gap: 4px; }
+  .ins .sl-top { display: flex; justify-content: space-between; }
+  .ins-goals { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .ins-permits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ins-card { min-height: 0; }
+  .ins-chart { min-height: 170px; }
+  .ins-radar { min-height: 220px; }
+  .opp .op-t b { font-size: 13px; }
+  .ins-opps button.opp { flex-wrap: nowrap; }
+  .pop-two2, .pop-two { grid-template-columns: minmax(0, 1fr); }
+  .ins-bl li { grid-template-columns: 1fr auto; grid-template-areas: "n v" "t t" "c c"; gap: 8px 12px; }
+
+  /* Maintenance */
+  .mt-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mt-board .board { grid-template-columns: minmax(0, 1fr); }
+  .pm-stats { grid-template-columns: minmax(0, 1fr); }
+  .mt-assets-scroll { max-height: 340px; }
+  .pm-detail { flex-direction: column; align-items: flex-start; }
+
+  /* Alarms: each alarm becomes a small card instead of a 16-column grid */
+  .al-screen .al-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .al-screen .mini-kpi { grid-template-columns: auto 1fr; padding: 8px 12px; }
+  .al-screen .mini-kpi > b { font-size: 26px; }
+  .al-screen .ax-wrap, .ax-wrap { flex: none; min-height: 0; height: auto; max-height: none; overflow: visible; border: 0; background: transparent; }
+  table.ax, .ax tbody { display: block; width: 100%; }
+  .ax thead { display: none; }
+  .ax tr { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; grid-template-areas: "a c c" "a n s" "a t t"; gap: 2px 8px; padding: 10px 8px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  .ax tr.sel { border-color: var(--teal); }
+  .ax td { display: none; padding: 0; height: auto; white-space: normal; }
+  .ax td:nth-child(1), .ax td:nth-child(2), .ax td:nth-child(3), .ax td:nth-child(7), .ax td:nth-child(8), .ax td:nth-child(12) { display: block; }
+  .ax td:nth-child(1) { grid-area: a; position: static; align-self: center; border: 0; background: none; }
+  .ax td:nth-child(2) { grid-area: t; font-size: 12px; opacity: .8; }
+  .ax td:nth-child(3) { grid-area: s; font-size: 12px; font-weight: 700; }
+  .ax td:nth-child(7) { grid-area: n; font-weight: 700; }
+  .ax td:nth-child(8) { display: none; }
+  .ax td.cm { grid-area: c; max-width: none; overflow: visible; text-overflow: clip; font-weight: 600; line-height: 1.3; }
+  .ax tr.none { display: block; text-align: center; }
+  .ax tr.none td { display: block; }
+  .ax tbody tr.sel td { background: transparent; }
+  .al-screen .al-card { overflow: visible; }
+  .ax-detail { margin-top: 6px; }
+}
+@media (max-width: 400px) {
+  .ins-tiles { grid-template-columns: minmax(0, 1fr); }
+  .mt-tiles { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* one calm motion everywhere: items fade in, no endless loops */
+@keyframes sldpop { from { opacity: 0; } to { opacity: 1; } }
+.sld-in { animation: sldpop .4s ease-out both; }
+.opp .op-ico { animation: none !important; box-shadow: none; }
+.opp .op-bar i::after { display: none; }
+@media (prefers-reduced-motion: reduce) { .sld-in { animation: none !important; } }
+
+/* ================= phone held sideways: the phone layout above, but using the extra width ================= */
+@media (max-height: 500px) and (max-width: 1000px) {
+  .topbar { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+  .page { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+  .cc-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ins-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ins-mid, .ins-bot, .ins-opps, .ins-goals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ins-permits { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mt-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mt-board .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pm-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .al-screen .al-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pop-two2, .pop-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page.prod.flow .scene, .page.prod.flow.elec .scene, .page.prod:not(.flow) .scene { height: calc(100vh - 110px); min-height: 300px; }
+  .pop, .pop.wide, .pop.xwide { max-height: calc(100vh - 16px); overflow-y: auto; }
+  .pop-bg { padding: 8px max(12px, env(safe-area-inset-left)); }
+  .bell-panel, .me-panel { top: 52px; max-height: calc(100vh - 60px); overflow-y: auto; left: auto; width: min(420px, 60vw); }
+  .bell-panel ul { max-height: 38vh; }
+}
+
+/* cover on a short, wide screen: everything fits without scrolling */
+@media (max-height: 500px) and (max-width: 1000px) {
+  .cover { padding: 12px max(20px, env(safe-area-inset-left)); }
+  .cover-body { gap: 8px; padding-bottom: 0; max-width: 560px; }
+  .cover-tag { padding: 4px 10px; font-size: 11px; }
+  .cover h1 { font-size: 30px; max-width: none; }
+  .cover p { font-size: 12.5px; }
+  .cover-stats { flex-wrap: nowrap; gap: 8px; }
+  .cover-stats > div { min-width: 0; flex: 1; padding: 6px 10px; border-radius: 4px; }
+  .cover-stats b { font-size: 18px; }
+  .cover-stats span { font-size: 10px; }
+  .cover-btn { margin-top: 0; padding: 10px 20px; font-size: 14px; }
+}

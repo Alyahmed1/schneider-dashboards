@@ -1,0 +1,238 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - banner [ref=f1e5]:
+        - button "Smart Water Network, back to the start screen" [ref=f1e6] [cursor=pointer]:
+          - generic [ref=f1e11]: Smart Water Network
+        - generic [ref=f1e13]:
+          - button "Switch to light mode" [ref=f1e14] [cursor=pointer]
+          - button "Alarms, 9 need attention" [ref=f1e22] [cursor=pointer]:
+            - generic [ref=f1e26]: "9"
+          - 'button "Account: A, network manager" [ref=f1e28] [cursor=pointer]':
+            - generic [ref=f1e29]: A
+            - generic [ref=f1e30]:
+              - generic [ref=f1e31]: A
+              - emphasis [ref=f1e32]: Network manager
+      - navigation "Breadcrumb" [ref=f1e33]:
+        - button "Smart Water Network" [ref=f1e34] [cursor=pointer]
+        - generic [ref=f1e35]: New Cairo Water Network
+        - generic [ref=f1e36]: Home
+    - main [ref=f1e37]:
+      - generic [ref=f1e39]:
+        - generic [ref=f1e40]:
+          - generic:
+            - generic [ref=f1e41]:
+              - button "2 critical alarm" [ref=f1e42] [cursor=pointer]
+              - generic [ref=f1e43]:
+                - generic [ref=f1e44]: Colour the map by
+                - combobox "Colour the map by" [ref=f1e45]:
+                  - option "Colour by consumption" [selected]
+                  - option "Colour by pressure"
+                  - option "Colour by water lost"
+              - tablist "Time of day" [ref=f1e46]:
+                - tab "Night" [ref=f1e47] [cursor=pointer]
+                - tab "Morning peak" [selected] [ref=f1e48] [cursor=pointer]
+                - tab "Midday" [ref=f1e49] [cursor=pointer]
+                - tab "Evening" [ref=f1e50] [cursor=pointer]
+            - tablist "Time range" [ref=f1e51]:
+              - tab "24H" [ref=f1e52] [cursor=pointer]
+              - tab "7D" [selected] [ref=f1e53] [cursor=pointer]
+              - tab "30D" [ref=f1e54] [cursor=pointer]
+              - tab "YTD" [ref=f1e55] [cursor=pointer]
+          - generic [ref=f1e56]:
+            - img "The water network coloured by consumption. Click to open the full map." [ref=f1e57] [cursor=pointer]:
+              - generic [ref=f1e157]: Plant
+              - generic [ref=f1e160]: PS-1
+              - generic [ref=f1e163]: Reservoir
+              - generic [ref=f1e166]: PS-2
+              - generic [ref=f1e181]:
+                - generic [ref=f1e182]: First Settlement
+                - generic [ref=f1e183]: 440 L/s
+              - generic [ref=f1e184]:
+                - generic [ref=f1e185]: Third Settlement
+                - generic [ref=f1e186]: 468 L/s
+              - generic [ref=f1e187]:
+                - generic [ref=f1e188]: Fifth Settlement
+                - generic [ref=f1e189]: 713 L/s
+              - generic [ref=f1e190]:
+                - generic [ref=f1e191]: Narges Villas
+                - generic [ref=f1e192]: 442 L/s
+              - generic [ref=f1e193]:
+                - generic [ref=f1e194]: Banafseg
+                - generic [ref=f1e195]: 343 L/s
+              - generic [ref=f1e196]:
+                - generic [ref=f1e197]: Rehab Edge
+                - generic [ref=f1e198]: 242 L/s
+            - generic "Colour key" [ref=f1e199]:
+              - generic [ref=f1e200]: How much water is flowing
+              - generic [ref=f1e201]:
+                - generic [ref=f1e203]: Low
+                - emphasis [ref=f1e204]: under 50% of the pipe
+              - generic [ref=f1e205]:
+                - generic [ref=f1e207]: Medium
+                - emphasis [ref=f1e208]: 50 to 80%
+              - generic [ref=f1e209]:
+                - generic [ref=f1e211]: High
+                - emphasis [ref=f1e212]: over 80%
+            - button "Open the full map" [ref=f1e213] [cursor=pointer]
+        - generic [ref=f1e214]:
+          - generic [ref=f1e215]:
+            - heading "Summary" [level=3] [ref=f1e216]
+            - generic [ref=f1e217]:
+              - 'button "Water supplied: open network" [ref=f1e218] [cursor=pointer]':
+                - generic [ref=f1e219]: Water supplied
+                - generic [ref=f1e220]:
+                  - generic [ref=f1e221]: "1.01"
+                  - text: M m³
+                  - img "needs attention" [ref=f1e222]
+              - 'button "Non-revenue water: open network" [ref=f1e224] [cursor=pointer]':
+                - generic [ref=f1e225]: Non-revenue water
+                - generic [ref=f1e226]:
+                  - generic [ref=f1e227]: "17.0"
+                  - text: "%"
+                  - img "good" [ref=f1e228]
+              - 'button "Average pressure: open network" [ref=f1e230] [cursor=pointer]':
+                - generic [ref=f1e231]: Average pressure
+                - generic [ref=f1e232]:
+                  - generic [ref=f1e233]: "3.3"
+                  - text: bar
+                  - img "good" [ref=f1e234]
+              - 'button "Specific energy: open electrical" [ref=f1e236] [cursor=pointer]':
+                - generic [ref=f1e237]: Specific energy
+                - generic [ref=f1e238]:
+                  - generic [ref=f1e239]: "0.52"
+                  - text: kWh/m³
+                  - img "good" [ref=f1e240]
+              - 'button "Open work orders: open maintenance" [ref=f1e242] [cursor=pointer]':
+                - generic [ref=f1e243]: Open work orders
+                - generic [ref=f1e244]:
+                  - generic [ref=f1e245]: "9"
+                  - img "good" [ref=f1e246]
+              - 'button "Water quality compliance: open overview" [ref=f1e248] [cursor=pointer]':
+                - generic [ref=f1e249]: Water quality compliance
+                - generic [ref=f1e250]:
+                  - generic [ref=f1e251]: "99.4"
+                  - text: "%"
+                  - img "good" [ref=f1e252]
+          - generic [ref=f1e254]:
+            - heading "Revenue billed" [level=3] [ref=f1e255]
+            - generic [ref=f1e256]:
+              - generic [ref=f1e257]:
+                - generic [ref=f1e258]: 1 M LE
+                - generic [ref=f1e259]: "0.8"
+                - generic [ref=f1e260]: "0.5"
+                - generic [ref=f1e261]: "0.3"
+                - generic [ref=f1e262]: "0"
+              - generic [ref=f1e263]:
+                - generic [ref=f1e264]:
+                  - generic [ref=f1e265]: "0.8"
+                  - generic [ref=f1e268]: Tue
+                - generic [ref=f1e269]:
+                  - generic [ref=f1e270]: "0.8"
+                  - generic [ref=f1e273]: Thu
+                - generic [ref=f1e274]:
+                  - generic [ref=f1e275]: "0.7"
+                  - generic [ref=f1e278]: Sat
+                - generic [ref=f1e279]:
+                  - generic [ref=f1e280]: "0.4"
+                  - generic [ref=f1e283]: Mon
+        - generic [ref=f1e284]:
+          - generic [ref=f1e285]:
+            - heading "Supplied and Billed" [level=3] [ref=f1e286]
+            - img [ref=f1e290]:
+              - generic [ref=f1e294]:
+                - generic [ref=f1e295]: Tue
+                - generic [ref=f1e297]: Thu
+                - generic [ref=f1e299]: Sat
+                - generic [ref=f1e301]: Mon
+              - generic [ref=f1e304]:
+                - generic [ref=f1e305]: "0"
+                - generic [ref=f1e307]: "150"
+                - generic [ref=f1e309]: "400"
+          - generic [ref=f1e325]:
+            - heading "Total Water Supplied" [level=3] [ref=f1e326]
+            - generic [ref=f1e327]:
+              - generic [ref=f1e328]:
+                - generic [ref=f1e329]: 400 k m³
+                - generic [ref=f1e330]: "300"
+                - generic [ref=f1e331]: "200"
+                - generic [ref=f1e332]: "100"
+                - generic [ref=f1e333]: "0"
+              - generic [ref=f1e334]:
+                - generic [ref=f1e335]:
+                  - generic [ref=f1e336]: "292.9"
+                  - generic [ref=f1e339]: Tue
+                - generic [ref=f1e340]:
+                  - generic [ref=f1e341]: "288.1"
+                  - generic [ref=f1e344]: Thu
+                - generic [ref=f1e345]:
+                  - generic [ref=f1e346]: "280.4"
+                  - generic [ref=f1e349]: Sat
+                - generic [ref=f1e350]:
+                  - generic [ref=f1e351]: "147.7"
+                  - generic [ref=f1e354]: Mon
+          - generic [ref=f1e355]:
+            - heading "Total Energy Consumed" [level=3] [ref=f1e356]
+            - generic [ref=f1e357]:
+              - generic [ref=f1e358]:
+                - generic [ref=f1e359]: 200 MWh
+                - generic [ref=f1e360]: "150"
+                - generic [ref=f1e361]: "100"
+                - generic [ref=f1e362]: "50"
+                - generic [ref=f1e363]: "0"
+              - generic [ref=f1e364]:
+                - generic [ref=f1e365]:
+                  - generic [ref=f1e366]: "152.3"
+                  - generic [ref=f1e369]: Tue
+                - generic [ref=f1e370]:
+                  - generic [ref=f1e371]: "149.8"
+                  - generic [ref=f1e374]: Thu
+                - generic [ref=f1e375]:
+                  - generic [ref=f1e376]: "145.8"
+                  - generic [ref=f1e379]: Sat
+                - generic [ref=f1e380]:
+                  - generic [ref=f1e381]: "76.8"
+                  - generic [ref=f1e384]: Mon
+          - generic [ref=f1e385]:
+            - heading "Water Loss" [level=3] [ref=f1e386]
+            - generic [ref=f1e387]:
+              - generic [ref=f1e388]: Lost per day
+              - generic [ref=f1e389]: 24,673 m³
+            - generic [ref=f1e390]:
+              - generic [ref=f1e391]: Known leaks
+              - generic [ref=f1e392]: 31.2 L/s
+        - generic [ref=f1e393]:
+          - generic [ref=f1e394]:
+            - heading "Reservoir" [level=3] [ref=f1e395]
+            - generic [ref=f1e396]:
+              - generic [ref=f1e397]: Level now
+              - generic [ref=f1e398]: 75 %
+            - generic [ref=f1e399]:
+              - generic [ref=f1e400]: Plant output
+              - generic [ref=f1e401]: 6,162 m³/h
+          - generic [ref=f1e402]:
+            - heading "Power Monitoring" [level=3] [ref=f1e403]
+            - list [ref=f1e411]:
+              - listitem [ref=f1e412]:
+                - generic [ref=f1e414]: PS-1 high-lift pumps
+                - generic [ref=f1e415]: 43%
+              - listitem [ref=f1e416]:
+                - generic [ref=f1e418]: Raw water pumps
+                - generic [ref=f1e419]: 16%
+              - listitem [ref=f1e420]:
+                - generic [ref=f1e422]: Treatment plant
+                - generic [ref=f1e423]: 20%
+              - listitem [ref=f1e424]:
+                - generic [ref=f1e426]: Booster & storage
+                - generic [ref=f1e427]: 15%
+              - listitem [ref=f1e428]:
+                - generic [ref=f1e430]: Buildings
+                - generic [ref=f1e431]: 6%
+    - navigation "Sections" [ref=f1e432]:
+      - button "Home" [ref=f1e433] [cursor=pointer]
+      - button "Network Map" [ref=f1e438] [cursor=pointer]
+      - button "Overview" [ref=f1e442] [cursor=pointer]
+      - button "Production" [ref=f1e448] [cursor=pointer]
+      - button "Electrical" [ref=f1e454] [cursor=pointer]
+      - button "Maintenance" [ref=f1e458] [cursor=pointer]
+  - generic [aria-hidden] [ref=f1e464]: "0"

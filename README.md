@@ -13,6 +13,7 @@ Industrial monitoring dashboards in one repo. Each folder is a standalone Vite +
 | `water-desalination` | Smart water desalination (v1) |
 | `water-desalination-v2` | Smart water desalination (v2) |
 | `wastewater-treatment` | Smart wastewater treatment |
+| `water network` | Smart water network (New Cairo) |
 | `telal-west-ai-city` | Telal West AI city |
 
 ## Run one

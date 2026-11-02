@@ -1,0 +1,66 @@
+/* ================= clearer pictures: bright equipment, bold coloured pipes, readable captions (loaded last) ================= */
+:root {
+  --pipe: #a9cbe8; --pipe-edge: #5b8fba;
+  --eq: #ffffff; --eq-edge: #2f6ea3; --eq-motor: #4d86b3; --eq-line: #2f6ea3;
+  --scene-a: #f2f7fc; --scene-b: #e0edf8; --wall-c: #cfe0ee; --hill-c: #d3e4f1; --cap: #16324d;
+}
+html[data-theme="dark"] {
+  --pipe: #4b8fc6; --pipe-edge: #1c4a72;
+  --eq: #3d6c9a; --eq-edge: #a8d8fb; --eq-motor: #6aa5d8; --eq-line: #a8d8fb;
+  --scene-a: #10202f; --scene-b: #17324c; --wall-c: #1f3c5a; --hill-c: #1a3450; --cap: #f0f8ff;
+}
+.k-loss { --f: var(--bad); }
+/* the pipe takes the colour of the water inside it, the moving dots are white */
+.pipe .pipe-in { stroke: color-mix(in srgb, var(--f, #3d8fe0) 62%, var(--pipe)); }
+.pipe .pipe-edge { stroke: color-mix(in srgb, var(--f, #3d8fe0) 40%, var(--pipe-edge)); }
+.pipe .pipe-flow { stroke: #fff; opacity: .95; }
+.eq, .eq-valve { stroke-width: 2.6; }
+.eq-line { stroke-width: 2.6; }
+.sc-cap { fill: var(--cap); font-size: 15px; font-weight: 600; paint-order: stroke; stroke: var(--scene-a); stroke-width: 3px; stroke-linejoin: round; }
+.tag { font-size: calc(var(--tagfs, 11px) + 1.5px); }
+.tag b { font-weight: 700; }
+
+/* ---- Overview 3D drawing: blue and grey palette ---- */
+.iso-bt { fill: #5aa9e6; } .iso-bl { fill: #3a82c4; } .iso-br { fill: #27609a; }
+.iso-gt { fill: #a3b6c8; } .iso-gl { fill: #7a8ea2; } .iso-gr { fill: #5e7186; }
+.iso-ct { fill: #f0f4f9; } .iso-cl { fill: #c8d4e0; } .iso-cr { fill: #a4b5c6; }
+.iso-st { fill: #62b6f4; } .iso-sl { fill: #3d91d6; } .iso-sr { fill: #2c70b0; }
+.iso-et { fill: #7db66d; } .iso-el { fill: #629a55; } .iso-er { fill: #4c7e42; }
+.iso-water { fill: #3d9be0; }
+.iso-zdot { stroke: #fff; stroke-width: 2.4; }
+.ov-pipe { stroke-width: 9; }
+.ov-flow { stroke: #fff; stroke-width: 3; opacity: .95; }
+.ov-pipe.raw { stroke: color-mix(in srgb, var(--f-raw) 70%, var(--surface-0)); }
+.ov-pipe.treated { stroke: color-mix(in srgb, var(--f-treated) 65%, var(--surface-0)); }
+.ov-pipe.product { stroke: color-mix(in srgb, #3aa0f0 65%, var(--surface-0)); }
+.ov-pipe.loss { stroke: color-mix(in srgb, var(--bad) 70%, var(--surface-0)); }
+.iso-head text { font-size: 21px; }
+.iso-head text.flow { font-size: 16px; }
+.iso-lab text { font-size: 16px; }
+.iso-box text { font-size: 15px; }
+.iso-note { font-size: 15px; } .iso-note.loss { fill: var(--bad); font-size: 16px; font-weight: 600; }
+.ov-pipe { stroke-dasharray: none; animation: none; stroke-linecap: round; }
+.ov-flow { stroke-dasharray: 2 14; }
+
+/* ---- Home diagram ---- */
+.hd { width: 100%; height: 100%; }
+.hd-pipe { fill: none; stroke: var(--wire); stroke-width: 12; stroke-linecap: round; }
+.hd-flow { fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-dasharray: 2 16; animation: nmflow 1.1s linear infinite; opacity: .95; }
+.hd-asset rect, .hd-asset circle, .hd-asset path:not(.ic) { fill: var(--card); stroke: var(--teal); stroke-width: 3; }
+.hd-asset .ic { fill: var(--teal); stroke: none; }
+.hd-asset .n { fill: var(--ink); font-size: 18px; font-weight: 600; }
+.hd-asset .v { fill: var(--muted); font-size: 16px; }
+.hd-hub { fill: var(--ink); stroke: var(--surface-0); stroke-width: 3; }
+.hd-hubt { fill: var(--muted); font-size: 15px; }
+.hd-tile .bg { fill: var(--card); stroke: var(--line); stroke-width: 1.6; transition: stroke .15s; }
+.hd-tile:hover .bg { stroke: var(--teal); }
+.hd-tile .zn { fill: var(--ink); font-size: 20px; font-weight: 600; }
+.hd-tile .big { font-size: 40px; font-weight: 600; }
+.hd-tile .big .u { fill: var(--muted); font-size: 17px; font-weight: 400; }
+.hd-tile .sub { fill: var(--muted); font-size: 15px; }
+.nm-legend.nm-legend-mini { top: auto; bottom: 10px; }
+@media (prefers-reduced-motion: reduce) { .hd-flow { animation: none; } }
+.nm-open { right: auto; left: 272px; bottom: 10px; }
+.ov-st.rowa { transform: translateY(-26px); }
+.ov-st.rowa { animation-name: ovbuildA; }
+@keyframes ovbuildA { from { opacity: 0; transform: translateY(-8px); } }

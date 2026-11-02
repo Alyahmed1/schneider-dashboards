@@ -1,37 +1,36 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ArrowUp, X } from "lucide-react";
-import { fmt, QUALITY, stages, type Filters, type Stage } from "./data";
+import { fmt, QUALITY, stages, zoneRows, type Filters, type Stage } from "./data";
 import { StageKpis, PlayPauseIcon } from "./StageView";
 import { wobble } from "./live";
 import { useGrow } from "./anim";
 import { networkAt } from "./network";
+import { Basin, Box, Clar, Cyl, Group, Pump, Tube, pt } from "./Iso";
+import { BAD, GOOD, MID } from "./mapcolor";
+import PlantFlow from "./PlantFlow";
 import type { Go } from "./App";
 
-/** where each stage sits in the drawing: five across the top (the water travels right), then three below (it comes back left) */
-const POS: Record<string, { x: number; y: number }> = {
-  source: { x: 40, y: 70 }, plant: { x: 340, y: 70 }, ps1: { x: 640, y: 70 }, res: { x: 940, y: 70 }, trunk: { x: 1240, y: 70 },
-  zones: { x: 1240, y: 330 }, meters: { x: 940, y: 330 }, leak: { x: 640, y: 330 },
-};
-const W = 236, H = 150;
-/** one thin line between two stages: from the right edge of one box to the left edge of the next */
-const LINKS: { from: string; to: string; kind: "raw" | "treated" | "product" | "loss" }[] = [
-  { from: "source", to: "plant", kind: "raw" }, { from: "plant", to: "ps1", kind: "treated" }, { from: "ps1", to: "res", kind: "product" }, { from: "res", to: "trunk", kind: "product" },
-  { from: "trunk", to: "zones", kind: "product" }, { from: "zones", to: "meters", kind: "product" }, { from: "zones", to: "leak", kind: "loss" },
+/** the pipes that join the stages, in drawing coordinates: raw river water, treated water, water in the network, water lost */
+type Line = { kind: "raw" | "treated" | "product" | "loss"; d: string };
+/** a point on the ground of one stage, in drawing coordinates */
+const at = (gx: number, gy: number, x: number, y: number, z = 0) => { const [px, py] = pt(x, y, z); return `${(gx + px).toFixed(1)} ${(gy + py).toFixed(1)}`; };
+const seg = (a: string, b: string) => `M${a} L${b}`;
+const LINES: Line[] = [
+  { kind: "raw", d: seg(at(190, 236, 56, 0, 9), at(600, 230, -100, 0, 9)) },
+  { kind: "treated", d: seg(at(600, 230, 132, 0, 9), at(1010, 236, -92, 0, 9)) },
+  { kind: "product", d: seg(at(1010, 236, 116, 0, 24), at(1420, 266, -22, 0, 8)) },
+  { kind: "product", d: seg(at(1420, 266, 0, 22, 2), at(1420, 496, -6, -30, 16)) },
+  { kind: "product", d: seg(at(1420, 496, -96, 6, 9), at(1000, 496, 84, 0, 9)) },
+  { kind: "product", d: seg(at(1000, 496, -92, 0, 9), at(620, 500, 44, 0, 9)) },
+  { kind: "product", d: seg(at(620, 500, -74, 0, 9), at(210, 496, 98, 0, 10)) },
+  { kind: "loss", d: `M${at(1000, 496, 0, 48, 0)} V618 H${at(210, 496, 0, 20, 0).split(" ")[0]} V${at(210, 496, 0, 20, 0).split(" ")[1]}` },
 ];
-const edge = (id: string, side: "l" | "r" | "t" | "b", dy = 0) => {
-  const p = POS[id];
-  return side === "r" ? [p.x + W, p.y + H / 2 + dy] : side === "l" ? [p.x, p.y + H / 2 + dy] : side === "b" ? [p.x + W / 2, p.y + H] : [p.x + W / 2, p.y];
-};
-function linkPath(l: (typeof LINKS)[number]) {
-  if (l.from === "trunk" && l.to === "zones") { const [a, b] = edge("trunk", "b"), [, d] = edge("zones", "t"); return `M${a} ${b} V${d}`; }
-  if (l.to === "leak") { const [a, b] = edge("zones", "b"), [c] = edge("leak", "b"); return `M${a} ${b} V${b + 26} H${c} V${b}`; }
-  if (l.to === "meters") { const [a, b] = edge("zones", "l"), [c] = edge("meters", "r"); return `M${a} ${b} H${c}`; }
-  const [a, b] = edge(l.from, "r"), [c] = edge(l.to, "l");
-  return `M${a} ${b} H${c}`;
-}
 
-/** live reading: the numbers keep their decimals and move a little with every update */
+type State = "run" | "idle" | "alarm";
+const STATE = (s?: string): State => (s === "Alarm" ? "alarm" : s === "Standby" ? "idle" : "run");
+
+/** numbers in a reading keep the same decimals and move a little with every live update */
 function live(r: { label: string; value: string; unit: string }, seed: number, t: number) {
   const n = parseFloat(r.value.replace(/,/g, ""));
   if (Number.isNaN(n)) return `${r.value}${r.unit ? ` ${r.unit}` : ""}`;
@@ -40,114 +39,284 @@ function live(r: { label: string; value: string; unit: string }, seed: number, t
   return `${fmt(r.unit === "%" && n <= 100 ? Math.min(w, 100) : w, d)}${r.unit ? ` ${r.unit}` : ""}`;
 }
 
-/** the whole supply chain drawn as a flat flow diagram, with live readings; every stage opens its KPIs */
-export default function Overview({ f, go, t }: { f: Filters; go: Go; t: number }) {
+function DataBox({ x, y, w = 200, rows }: { x: number; y: number; w?: number; rows: [string, string][] }) {
+  const h = 14 + rows.length * 19;
+  return (
+    <g className="iso-box" transform={`translate(${x} ${y})`}>
+      <rect width={w} height={h} />
+      {rows.map(([label, v], i) => (
+        <g key={label} transform={`translate(10 ${22 + i * 19})`}>
+          <text className="k">{label}</text>
+          <text className="v" x={w - 20} textAnchor="end">{v}</text>
+        </g>
+      ))}
+    </g>
+  );
+}
+function Label({ x, y, text, state = "run" }: { x: number; y: number; text: string; state?: State }) {
+  return (
+    <g className={`iso-lab ${state}`} transform={`translate(${x} ${y})`}>
+      <circle r="4.2" cx="0" cy="-4" />
+      <text x="10">{text}</text>
+    </g>
+  );
+}
+
+/** the whole supply chain drawn in 3D-style, with live readings; every stage opens its KPIs */
+function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn: boolean }) {
   const list = useMemo(() => stages(f), [f]);
   const grow = useGrow();
-  const [flowOn, setFlowOn] = useState(true);
   const [open, setOpen] = useState<Stage | null>(null);
-  const attention = list.some((s) => s.tone === "bad");
+  const S = (id: string) => list.find((s) => s.id === id)!;
+  const tone = (s: Stage) => (s.tone === "bad" ? "alarm" : s.tone === "warn" ? "warn" : "run");
+  const goStage = (s: Stage) => () => setOpen(s);
+  const rows = (s: Stage, seed: number): [string, string][] => s.readings.slice(0, 2).map((r, i) => [r.label, live(r, seed + i, t)]);
+  const eq = (s: Stage, i: number) => STATE(s.equipment[i]?.state);
+  const head = (n: number, s: Stage, x: number, y: number) => (
+    <g className={`iso-head ${tone(s)}`} transform={`translate(${x} ${y})`} onClick={() => setOpen(s)} role="button" tabIndex={0} aria-label={`${s.name}, open its KPIs`}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(s); } }}>
+      <circle r="5" cx="0" cy="-5" />
+      <text x="13">{n} · {s.name}</text>
+      <text className="flow" x="13" y="19">{fmt(wobble(s.flow, n, t, 0.004))} {s.unit}</text>
+    </g>
+  );
+  const source = S("source"), plant = S("plant"), ps1 = S("ps1"), res = S("res"), trunk = S("trunk"), zones = S("zones"), meters = S("meters"), leak = S("leak");
+  const zr = zoneRows(f);
   const snap = networkAt(8);
-  const q = (name: string) => QUALITY.find((x) => x.name === name)!;
-  const avgBar = Object.values(snap.zones).reduce((a, z) => a + z.pressure, 0) / 6;
-  const rings = [
-    { n: "Free chlorine", v: wobble(q("Free chlorine").value, 51, t, 0.01), unit: "mg/L", d: 2, frac: (v: number) => v / 1 },
-    { n: "Turbidity", v: wobble(q("Turbidity").value, 52, t, 0.02), unit: "NTU", d: 1, frac: (v: number) => v / 1 },
-    { n: "pH", v: wobble(q("pH").value, 53, t, 0.006), unit: "pH", d: 1, frac: (v: number) => (v - 6) / 3 },
-    { n: "Average pressure", v: wobble(avgBar, 54, t, 0.01), unit: "bar", d: 1, frac: (v: number) => v / 7 },
-  ];
-  const src = list[0];
 
+  const q = (name: string) => QUALITY.find((x) => x.name === name)!;
+  const rings = [
+    { n: "Free chlorine", v: wobble(q("Free chlorine").value, 51, t, 0.01), unit: "mg/L", d: 2, frac: (v: number) => v },
+    { n: "Turbidity", v: wobble(q("Turbidity").value, 52, t, 0.02), unit: "NTU", d: 1, frac: (v: number) => v },
+    { n: "pH", v: wobble(q("pH").value, 53, t, 0.006), unit: "pH", d: 1, frac: (v: number) => (v - 6) / 3 },
+    { n: "Average pressure", v: wobble(Object.values(snap.zones).reduce((a, z) => a + z.pressure, 0) / 6, 54, t, 0.01), unit: "bar", d: 1, frac: (v: number) => v / 7 },
+  ];
+  const src = source;
+  const ZCOL = { good: GOOD, warn: MID, bad: BAD, info: GOOD } as const;
+
+  return (
+    <div className="ov">
+      <section className="ov-art">
+        <div className="ov-scroll">
+          <svg className={`ov-svg ${flowOn ? "" : "paused"}`} viewBox="0 70 1600 560" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The whole water supply chain, from the river to the customers">
+            <defs>
+              <linearGradient id="iso-gw" x1="0" x2="1"><stop offset="0" stopColor="#f4f8fc" /><stop offset=".45" stopColor="#d3e1ee" /><stop offset="1" stopColor="#9db6cc" /></linearGradient>
+              <linearGradient id="iso-gb" x1="0" x2="1"><stop offset="0" stopColor="#6db4ee" /><stop offset=".5" stopColor="#3a86c8" /><stop offset="1" stopColor="#265f93" /></linearGradient>
+              <linearGradient id="iso-gp" x1="0" x2="1"><stop offset="0" stopColor="#b08af0" /><stop offset=".5" stopColor="#7d57cc" /><stop offset="1" stopColor="#54379a" /></linearGradient>
+            </defs>
+            {LINES.map((l, i) => (
+              <g key={i} className="ov-pg" style={{ ["--i" as string]: i }}>
+                <path className={`ov-pipe ${l.kind}`} d={l.d} />
+                <path className={`ov-flow ${l.kind}`} d={l.d} />
+              </g>
+            ))}
+
+            {/* 1 · river and intake: the river, the intake house and three raw pumps */}
+            <g className="ov-st rowa" style={{ ["--i" as string]: 0 }}>
+              <Group x={190} y={262} onClick={goStage(source)} label="River intake">
+                <Box x={-150} y={-40} w={90} d={92} h={5} pal="s" />
+                <Box x={-130} y={-30} z={5} w={50} d={70} h={2} pal="s" />
+                <Box x={-42} y={-30} w={46} d={64} h={26} pal="c" />
+                {[0, 1, 2].map((i) => <Pump key={i} x={18} y={-38 + i * 30} />)}
+              </Group>
+              {head(1, source, 60, 134)}
+              <Label x={262} y={186} text="Raw pump 1" state={eq(source, 0)} />
+              <Label x={262} y={208} text="Raw pump 2" state={eq(source, 1)} />
+              <Label x={262} y={230} text="Raw pump 3" state={eq(source, 2)} />
+              <text className="iso-note" x={34} y={282} textAnchor="start">River</text>
+              <DataBox x={60} y={322} rows={rows(source, 1)} />
+            </g>
+
+            {/* 2 · treatment plant: two settling tanks, three filters, chlorine */}
+            <g className="ov-st rowa" style={{ ["--i" as string]: 1 }}>
+              <Group x={600} y={256} onClick={goStage(plant)} label="Treatment plant">
+                {[-36, 36].map((cy, i) => <Clar key={cy} cx={-58} cy={cy} r={26} tone="m" delay={i * 5} />)}
+                {[-46, -8, 30].map((y, i) => <Basin key={y} x={0} y={y} w={84} d={30} h={12} tone="t" bubbles={i === 1 ? 5 : 0} seed={i} />)}
+                <Cyl cx={118} cy={-4} r={13} h={34} pal="p" />
+              </Group>
+              {head(2, plant, 470, 134)}
+              <Label x={640} y={196} text="Settling tank 1" state={eq(plant, 0)} />
+              <Label x={640} y={220} text="Settling tank 2" state={eq(plant, 1)} />
+              <Label x={744} y={250} text="Sand filters" state={eq(plant, 2)} />
+              <Label x={744} y={274} text="Chlorinator" state={eq(plant, 3)} />
+              <DataBox x={470} y={322} rows={rows(plant, 3)} />
+            </g>
+
+            {/* 3 · pump station PS-1: clear-water tank and the high-lift pumps */}
+            <g className="ov-st rowa" style={{ ["--i" as string]: 2 }}>
+              <Group x={1010} y={262} onClick={goStage(ps1)} label="Pump station PS-1">
+                <Cyl cx={-50} cy={0} r={40} h={36} pal="b" water wt="t" />
+                <Box x={20} y={-48} w={92} d={96} h={16} pal="c" />
+                {[0, 1, 2, 3].map((i) => <Pump key={i} x={44} y={-42 + i * 22} z={16} />)}
+              </Group>
+              {head(3, ps1, 880, 134)}
+              <Label x={1150} y={206} text="High-lift pump 1" state={eq(ps1, 0)} />
+              <Label x={1150} y={230} text="High-lift pump 2" state={eq(ps1, 1)} />
+              <Label x={1150} y={254} text="High-lift pump 3" state={eq(ps1, 2)} />
+              <Label x={1150} y={278} text="Pump 4 (standby)" state={eq(ps1, 3)} />
+              <DataBox x={880} y={322} rows={rows(ps1, 5)} />
+            </g>
+
+            {/* 4 · the elevated reservoir */}
+            <g className="ov-st rowa" style={{ ["--i" as string]: 3 }}>
+              <Group x={1420} y={292} onClick={goStage(res)} label="Elevated reservoir">
+                {[[-16, -16], [16, -16], [-16, 16], [16, 16]].map(([x, y]) => <Box key={`${x}${y}`} x={x - 3} y={y - 3} w={6} d={6} h={78} pal="g" />)}
+                <Cyl cx={0} cy={0} z={78} r={42} h={38} pal="w" water wt="t" />
+                <Cyl cx={0} cy={0} z={116} r={26} h={9} pal="b" />
+              </Group>
+              {head(4, res, 1190, 134)}
+              <Label x={1470} y={238} text="Level sensor" state={eq(res, 2)} />
+              <DataBox x={1330} y={322} w={220} rows={rows(res, 7)} />
+            </g>
+
+            {/* 5 · trunk mains and the booster station */}
+            <g className="ov-st" style={{ ["--i" as string]: 4 }}>
+              <Group x={1420} y={496} onClick={goStage(trunk)} label="Trunk mains and booster station">
+                <Box x={-40} y={-28} w={52} d={56} h={14} pal="g" />
+                <Box x={-40} y={-28} z={14} w={52} d={56} h={3} pal="p" />
+                {[0, 1].map((i) => <Pump key={i} x={26} y={-30 + i * 32} />)}
+                <Box x={-96} y={-8} w={24} d={22} h={18} pal="p" />
+              </Group>
+              {head(5, trunk, 1260, 392)}
+              <Label x={1268} y={474} text="PRV" state={eq(trunk, 2)} />
+              <Label x={1490} y={474} text="Booster 1" state={eq(trunk, 0)} />
+              <Label x={1490} y={498} text="Booster 2" state={eq(trunk, 1)} />
+              <DataBox x={1330} y={560} w={220} rows={rows(trunk, 9)} />
+            </g>
+
+            {/* 6 · the six supply zones, each block marked green, amber or red */}
+            <g className="ov-st" style={{ ["--i" as string]: 5 }}>
+              <Group x={1000} y={496} onClick={goStage(zones)} label="Supply zones">
+                {[0, 1].map((row) => [0, 1, 2].map((col) => (
+                  <g key={`${row}${col}`}>
+                    <Box x={-90 + col * 62} y={-52 + row * 54} w={46} d={36} h={20} pal="c" />
+                    <Box x={-84 + col * 62} y={-46 + row * 54} z={20} w={34} d={24} h={4} pal="g" />
+                  </g>
+                )))}
+              </Group>
+              {zr.map((z, i) => {
+                const col = Math.floor(i / 2), row = i % 2;
+                const [sx, sy] = pt(-67 + col * 62, -34 + row * 54, 30);
+                return <circle key={z.name} className="iso-zdot" cx={1000 + sx} cy={496 + sy - 8} r="7" fill={ZCOL[z.tone]} />;
+              })}
+              {head(6, zones, 880, 392)}
+              <DataBox x={880} y={560} w={220} rows={rows(zones, 11)} />
+            </g>
+
+            {/* 7 · customer metering: houses with smart meters and a radio gateway */}
+            <g className="ov-st" style={{ ["--i" as string]: 6 }}>
+              <Group x={620} y={500} onClick={goStage(meters)} label="Customer metering">
+                {[0, 1, 2].map((i) => (
+                  <g key={i}>
+                    <Box x={-70 + i * 40} y={-34} w={28} d={28} h={20} pal="c" />
+                    <Box x={-66 + i * 40} y={-30} z={20} w={20} d={20} h={7} pal="g" />
+                    <Box x={-70 + i * 40} y={14} w={28} d={28} h={20} pal="c" />
+                    <Box x={-66 + i * 40} y={18} z={20} w={20} d={20} h={7} pal="g" />
+                  </g>
+                ))}
+                <Box x={72} y={-8} w={8} d={8} h={64} pal="g" />
+                <Box x={68} y={-12} z={64} w={16} d={16} h={8} pal="b" />
+              </Group>
+              {[0, 1, 2].map((k) => { const [wx, wy] = pt(76, -4, 76); return <path key={k} className="iso-wave" d={`M${620 + wx} ${500 + wy - k * 9} q14 -8 28 0 M${620 + wx} ${500 + wy - k * 9} q-14 -8 -28 0`} />; })}
+              {head(7, meters, 480, 392)}
+              <Label x={690} y={476} text="Radio gateway" state={eq(meters, 0)} />
+              <DataBox x={480} y={560} w={220} rows={rows(meters, 13)} />
+            </g>
+
+            {/* 8 · leaks and losses: a main with a burst, loggers and a repair crew */}
+            <g className="ov-st" style={{ ["--i" as string]: 7 }}>
+              <Group x={210} y={496} onClick={goStage(leak)} label="Leak and loss control">
+                <Box x={-100} y={-20} w={200} d={40} h={3} pal="e" />
+                <Tube a={pt(-96, 0, 10)} b={pt(96, 0, 10)} r={7} pal="b" />
+                <ellipse className="iso-water t" cx={pt(-10, 16, 4)[0]} cy={pt(-10, 16, 4)[1]} rx="30" ry="10" />
+                {[-10, 0, 10].map((o, i) => <circle key={i} className="iso-bub" cx={pt(-10, 0, 16)[0] + o} cy={pt(-10, 0, 16)[1] - 6 - i * 4} r="2.6" style={{ ["--d" as string]: `${i * 0.4}s` }} />)}
+                {[-60, 50].map((x) => <Cyl key={x} cx={x} cy={0} z={10} r={5} h={14} pal="p" />)}
+                <Box x={60} y={26} w={40} d={20} h={14} pal="w" />
+              </Group>
+              {head(8, leak, 60, 392)}
+              <Label x={300} y={468} text="Leak loggers" state={eq(leak, 0)} />
+              <Label x={300} y={492} text="Repair crew" state={eq(leak, 3)} />
+              <DataBox x={60} y={560} w={220} rows={rows(leak, 15)} />
+            </g>
+            <text className="iso-note loss" x={1000} y={632} textAnchor="middle">Water lost on the way, from bursts, leaks and unbilled use</text>
+          </svg>
+        </div>
+      </section>
+
+      <section className="ov-gauges">
+        <div className="ov-g wide">
+          <h3>Source</h3>
+          <div className="ov-gr"><span>{src.readings[0].label}</span><b>{live(src.readings[0], 61, t)}<ArrowUp size={15} className="up" /></b></div>
+          <div className="ov-gr"><span>{src.readings[2].label}</span><b>{live(src.readings[2], 62, t)}<ArrowUp size={15} className="up" /></b></div>
+        </div>
+        {rings.map((r, n) => {
+          const C = 2 * Math.PI * 44;
+          const fr = Math.max(0.03, Math.min(1, r.frac(r.v)));
+          return (
+            <div className="ov-g" key={r.n} style={{ ["--n" as string]: n }}>
+              <h3>{r.n}</h3>
+              <div className="ov-ring">
+                <svg viewBox="0 0 120 120" aria-hidden>
+                  <circle className="bg" cx="60" cy="60" r="44" />
+                  <circle className="fg" cx="60" cy="60" r="44" strokeDasharray={`${grow ? C * fr : 0} ${C}`} transform="rotate(-90 60 60)" />
+                </svg>
+                <div><b>{fmt(r.v, r.d)}</b><span>{r.unit}</span></div>
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div className="pop-bg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(null)}>
+            <motion.div className="pop wide" role="dialog" aria-modal="true" aria-label="Stage KPIs"
+              initial={{ opacity: 0, y: 22, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 14, scale: 0.98 }} transition={{ type: "spring", stiffness: 360, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}>
+              <button className="pop-x" onClick={() => setOpen(null)} aria-label="Close"><X size={16} /> Close</button>
+              <StageKpis stage={open} t={t} seed={open.id.length * 31}>
+                <div className="pop-foot">
+                  <button className="btn on" onClick={() => go("production", open.id)}>Open in Production <ArrowRight size={14} /></button>
+                </div>
+              </StageKpis>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+type Sub = "overview" | "operations";
+const SUBS: [Sub, string][] = [["overview", "Overview"], ["operations", "Operations"]];
+
+/** the Overview tab has two views: the whole supply chain drawn in 3D-style, and the detailed Operations process with every tag */
+export default function Overview({ f, go, t }: { f: Filters; go: Go; t: number }) {
+  const [sub, setSub] = useState<Sub>("overview");
+  const [flowOn, setFlowOn] = useState(true);
+  const attention = useMemo(() => stages(f).some((s) => s.tone === "bad"), [f]);
   return (
     <div className="ovx">
       <div className="ovx-head">
+        <div className="ovx-subtabs" role="tablist" aria-label="Overview views">
+          {SUBS.map(([id, label]) => <button key={id} role="tab" aria-selected={sub === id} className={sub === id ? "on" : ""} onClick={() => setSub(id)}>{label}</button>)}
+        </div>
         <div className="ov-legend" aria-hidden>
-          <span><i style={{ background: "var(--f-raw)" }} />Raw water</span>
+          <span><i style={{ background: "var(--f-raw)" }} />Raw river water</span>
           <span><i style={{ background: "var(--f-treated)" }} />Treated water</span>
           <span><i style={{ background: "#3aa0f0" }} />Water in the network</span>
           <span><i style={{ background: "var(--bad)" }} />Water lost</span>
         </div>
-        <span className={`ov-state ${attention ? "bad" : "ok"}`}>{attention ? "Action needed" : "Normal"}</span>
-        <button className="ov-btn" onClick={() => setFlowOn((v) => !v)} aria-pressed={!flowOn} aria-label={flowOn ? "Pause the moving water" : "Play the moving water"}><PlayPauseIcon playing={flowOn} /> {flowOn ? "Pause" : "Play"}</button>
+        {sub === "overview" && (
+          <>
+            <span className={`ov-state ${attention ? "bad" : "ok"}`}>{attention ? "Action needed" : "Normal"}</span>
+            <button className="ov-btn" onClick={() => setFlowOn((v) => !v)} aria-pressed={!flowOn} aria-label={flowOn ? "Pause the moving water" : "Play the moving water"}><PlayPauseIcon playing={flowOn} /> {flowOn ? "Pause" : "Play"}</button>
+          </>
+        )}
       </div>
-
-      <div className="ov ovx-body">
-        <section className="ov-art">
-          <div className="ov-scroll">
-            <svg className={`ov-svg ${flowOn ? "" : "paused"}`} viewBox="0 30 1560 520" preserveAspectRatio="xMidYMid meet" role="img" aria-label="The water supply chain from the river to the customers">
-              {LINKS.map((l, i) => (
-                <g key={`${l.from}-${l.to}`} className="ov-g-link" style={{ ["--i" as string]: i }}>
-                  <path className={`ov-pipe ${l.kind}`} d={linkPath(l)} style={{ strokeWidth: 9 }} />
-                  <path className={`ov-flow ${l.kind}`} d={linkPath(l)} style={{ strokeWidth: 3 }} />
-                </g>
-              ))}
-              {list.map((s, i) => {
-                const p = POS[s.id];
-                return (
-                  <g key={s.id} className={`ov-node ${s.tone}`} transform={`translate(${p.x} ${p.y})`} style={{ ["--n" as string]: i }} role="button" tabIndex={0} aria-label={`${s.name}, open its KPIs`}
-                    onClick={() => setOpen(s)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(s); } }}>
-                    <rect className="box" width={W} height={H} />
-                    <rect className="bar" width="5" height={H} />
-                    <circle className="num" cx="30" cy="30" r="14" />
-                    <text className="numt" x="30" y="35" textAnchor="middle">{i + 1}</text>
-                    <text className="nm" x="54" y="27">{s.name}</text>
-                    <text className="sh" x="54" y="46">{s.short}</text>
-                    <text className="fl" x="20" y="86">{fmt(wobble(s.flow, i + 1, t, 0.004))}<tspan className="u"> {s.unit}</tspan></text>
-                    {s.readings.slice(0, 2).map((r, k) => (
-                      <g key={r.label} transform={`translate(20 ${108 + k * 18})`}>
-                        <text className="k">{r.label}</text>
-                        <text className="v" x={W - 36} textAnchor="end">{live(r, i * 7 + k, t)}</text>
-                      </g>
-                    ))}
-                  </g>
-                );
-              })}
-              <text className="iso-note" x="1358" y="528" textAnchor="end">Water lost on the way: leaks, bursts and unbilled use</text>
-            </svg>
-          </div>
-        </section>
-
-        <section className="ov-gauges">
-          <div className="ov-g wide">
-            <h3>Source</h3>
-            <div className="ov-gr"><span>{src.readings[0].label}</span><b>{live(src.readings[0], 61, t)}<ArrowUp size={15} className="up" /></b></div>
-            <div className="ov-gr"><span>{src.readings[2].label}</span><b>{live(src.readings[2], 62, t)}<ArrowUp size={15} className="up" /></b></div>
-          </div>
-          {rings.map((r, n) => {
-            const C = 2 * Math.PI * 44;
-            const fr = Math.max(0.03, Math.min(1, r.frac(r.v)));
-            return (
-              <div className="ov-g" key={r.n} style={{ ["--n" as string]: n }}>
-                <h3>{r.n}</h3>
-                <div className="ov-ring">
-                  <svg viewBox="0 0 120 120" aria-hidden>
-                    <circle className="bg" cx="60" cy="60" r="44" />
-                    <circle className="fg" cx="60" cy="60" r="44" strokeDasharray={`${grow ? C * fr : 0} ${C}`} transform="rotate(-90 60 60)" />
-                  </svg>
-                  <div><b>{fmt(r.v, r.d)}</b><span>{r.unit}</span></div>
-                </div>
-              </div>
-            );
-          })}
-        </section>
-
-        <AnimatePresence>
-          {open && (
-            <motion.div className="pop-bg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(null)}>
-              <motion.div className="pop wide" role="dialog" aria-modal="true" aria-label="Stage KPIs"
-                initial={{ opacity: 0, y: 22, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 14, scale: 0.98 }} transition={{ type: "spring", stiffness: 360, damping: 30 }}
-                onClick={(e) => e.stopPropagation()}>
-                <button className="pop-x" onClick={() => setOpen(null)} aria-label="Close"><X size={16} /> Close</button>
-                <StageKpis stage={open} t={t} seed={open.id.length * 31}>
-                  <div className="pop-foot">
-                    <button className="btn on" onClick={() => go("production", open.id)}>Open in Production <ArrowRight size={14} /></button>
-                  </div>
-                </StageKpis>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <motion.div className="ovx-body" key={sub} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}>
+        {sub === "overview" ? <PlantView f={f} go={go} t={t} flowOn={flowOn} /> : <PlantFlow f={f} go={go} t={t} />}
+      </motion.div>
     </div>
   );
 }

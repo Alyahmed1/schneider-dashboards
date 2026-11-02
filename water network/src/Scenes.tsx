@@ -29,7 +29,7 @@ export function effective(tag: TagDef, stageId: string, on: Record<string, boole
 /** the Overview draws pipes and icons larger than the stage pictures so they stay readable when small */
 export const ScaleCtx = createContext({ pipe: 1, icon: 1 });
 
-type Kind = "sea" | "clean" | "brine" | "chem" | "product" | "raw" | "treated" | "sludge" | "gas" | "air";
+type Kind = "loss" | "sea" | "clean" | "brine" | "chem" | "product" | "raw" | "treated" | "sludge" | "gas" | "air";
 
 /* ---------- drawing pieces (flat 2D, coloured by theme variables in step7.css) ---------- */
 export function Pipe({ d, kind = "raw", flow = true, w: w0 = 9 }: { d: string; kind?: Kind; flow?: boolean; w?: number }) {

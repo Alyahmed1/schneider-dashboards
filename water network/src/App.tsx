@@ -18,7 +18,6 @@ import UserMenu from "./UserMenu";
 import { WORK_ORDERS, type WorkOrder } from "./cmms";
 import { otherHref, otherUrl, ownsTab, readDeepLink, SITE } from "./site";
 import "./site.css";
-import "./nm.css";
 
 export type TabId = "home" | "network" | "overview" | "alarms" | "production" | "electrical" | "maintenance";
 export type Go = (tab: TabId, target?: string) => void;

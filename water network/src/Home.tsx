@@ -5,7 +5,7 @@ import { alarms, complianceScore, overviewKpis, PRICE, productionSeries, RANGES,
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
-import MiniMap from "./MiniMap";
+import HomeDiagram from "./HomeDiagram";
 import { LEGEND, METRICS, type Metric } from "./mapcolor";
 import { NET, networkAt } from "./network";
 import { useTick, wobble } from "./live";
@@ -97,12 +97,12 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
           <Segmented<Range> label="Time range" value={f.range} options={RANGES} onChange={setRange} />
         </div>
         <div className="hm-map-wrap">
-          <MiniMap metric={metric} hour={hour} onOpen={() => go("network")} />
+          <HomeDiagram metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} />
           <div className="nm-legend nm-legend-mini" aria-label="Colour key">
             <b>{LEGEND[metric].title}</b>
             {LEGEND[metric].items.map((i) => <div key={i.label} className="row"><i style={{ background: i.c }} /><span>{i.label}</span><em>{i.note}</em></div>)}
           </div>
-          <button className="nm-open" onClick={() => go("network")}>Open the full map</button>
+          <button className="nm-open" onClick={() => go("network")}>Open the full network map</button>
         </div>
       </section>
 

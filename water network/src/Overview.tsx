@@ -104,6 +104,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
   const head = (n: number, s: Stage, x: number, y: number) => (
     <g className={`iso-head ${tone(s)}`} transform={`translate(${x} ${y})`} onClick={() => setOpen(s)} role="button" tabIndex={0} aria-label={`${s.name}, open its KPIs`}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(s); } }}>
+      <rect className="iso-plate" x="-16" y="-28" rx="4" height="56" width={Math.max(`${n} · ${s.name}`.length * 13.4, 150) + 42} />
       <circle r="5" cx="0" cy="-5" />
       <text x="13">{n} · {s.name}</text>
       <text className="flow" x="13" y="19">{fmt(wobble(s.flow, n, t, 0.004))} {s.unit}</text>

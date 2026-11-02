@@ -3,12 +3,19 @@ import { motion } from "framer-motion";
 import { ArrowRight, Droplets, Moon, Sun } from "lucide-react";
 import type { Theme } from "./App";
 import { PLANT } from "./data";
+import { SITE } from "./site";
 
-const STATS = [
+// the headline numbers belong to the KPI site; the process site shows what is inside instead
+const STATS = SITE.id === "kpi" ? [
   { v: "150,000", u: "m³ per day" },
   { v: "0.46", u: "kWh per m³" },
   { v: "99.1%", u: "effluent compliance" },
   { v: "45%", u: "energy self-generated" },
+] : [
+  { v: "Process", u: "flow and stages" },
+  { v: "Alarms", u: "live faults" },
+  { v: "CMMS", u: "work orders" },
+  { v: "Assets", u: "health and service" },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -34,9 +41,9 @@ export default function Cover({ onEnter, setTheme }: { onEnter: () => void; them
         onError={() => setVideo("failed")} onLoadedData={() => setVideo("ok")} />
       <div className="cover-shade" aria-hidden />
       <div className="cover-body">
-        <motion.span className="cover-tag" {...up(0)}><Droplets size={14} /> Smart wastewater treatment · activated sludge</motion.span>
-        <motion.h1 {...up(1)}>Smart Wastewater Treatment</motion.h1>
-        <motion.p {...up(2)}>One live view of treatment, energy, reuse, cost and maintenance for the {PLANT.name}.</motion.p>
+        <motion.span className="cover-tag" {...up(0)}><Droplets size={14} /> {SITE.tag}</motion.span>
+        <motion.h1 {...up(1)}>{SITE.title}</motion.h1>
+        <motion.p {...up(2)}>{SITE.blurb.replace(/\.$/, "")} for the {PLANT.name}.</motion.p>
         <motion.div className="cover-stats" {...up(3)}>
           {STATS.map((s) => <div key={s.u}><b>{s.v}</b><span>{s.u}</span></div>)}
         </motion.div>

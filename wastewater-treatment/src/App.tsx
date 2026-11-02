@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Droplets, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, Droplets, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
 import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Home from "./Home";
@@ -15,26 +15,34 @@ import { useTick } from "./live";
 import AlertsBell from "./AlertsBell";
 import UserMenu from "./UserMenu";
 import { WORK_ORDERS, type WorkOrder } from "./cmms";
+import { OTHER, otherHref, otherUrl, ownsTab, readDeepLink, SITE } from "./site";
+import "./site.css";
 
 export type TabId = "home" | "overview" | "alarms" | "production" | "electrical" | "maintenance";
 export type Go = (tab: TabId, target?: string) => void;
 export type Theme = "light" | "dark";
 
+// opened from the other website: skip the start screen and land on the tab that was asked for
+const LINK = readDeepLink();
+
 const readTheme = (): Theme => {
+  if (LINK?.theme) return LINK.theme;
   try { return localStorage.getItem("eco-theme") === "light" ? "light" : "dark"; } catch { return "dark"; }
 };
 
-const TABS: { id: TabId; label: string; icon: LucideIcon; sub: string }[] = [
+const ALL_TABS: { id: TabId; label: string; icon: LucideIcon; sub: string }[] = [
   { id: "home", label: "Home", icon: Gauge, sub: "The whole plant at a glance" },
   { id: "overview", label: "Overview", icon: Workflow, sub: "The whole process, sea to network" },
   { id: "production", label: "Production", icon: Waves, sub: "Follow the water from sea to network" },
   { id: "electrical", label: "Electrical", icon: Zap, sub: "Single-line diagram and power use" },
   { id: "maintenance", label: "Maintenance", icon: Hammer, sub: "Work orders, downtime and asset health" },
 ];
+const TABS = ALL_TABS.filter((t) => ownsTab(t.id));
 
 export default function App() {
-  const [entered, setEntered] = useState(false);
+  const [entered, setEntered] = useState(!!LINK);
   const [theme, setTheme] = useState<Theme>(readTheme);
+  useEffect(() => { document.title = SITE.title; }, []);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem("eco-theme", theme); } catch { /* private window: theme just is not remembered */ }
@@ -45,30 +53,35 @@ export default function App() {
     const id = window.setTimeout(() => { setReady(entered); if (entered) window.scrollTo(0, 0); }, entered ? 380 : 500);
     return () => window.clearTimeout(id);
   }, [entered]);
-  const [tab, setTab] = useState<TabId>("home");
+  const [tab, setTab] = useState<TabId>(LINK?.tab ?? SITE.start);
   const [f, setF] = useState<Filters>({ range: "7D", area: "All plant" });
   const wos: WorkOrder[] = WORK_ORDERS;
-  const [stageTarget, setStageTarget] = useState<string | undefined>(undefined);
+  const [stageTarget, setStageTarget] = useState<string | undefined>(LINK?.stage);
   // the page layout class follows the tab that is on screen: the old tab keeps its own styles while it fades out
-  const [shown, setShown] = useState<TabId>("home");
+  const [shown, setShown] = useState<TabId>(LINK?.tab ?? SITE.start);
   useEffect(() => { if (!ready) setShown(tab); }, [ready, tab]); // no tab is on screen behind the cover, so nothing is fading out
-  const go: Go = (to, stage) => { setStageTarget(stage); setTab(to); };
+  // a tab that lives on the other website opens there; everything else switches in place
+  const go: Go = (to, stage) => {
+    if (!ownsTab(to)) { if (otherUrl) window.location.assign(otherHref(to, stage, theme)); return; }
+    setStageTarget(stage); setTab(to);
+  };
   const tick = useTick();
   const cur = TABS.find((t) => t.id === tab) ?? TABS[0];
 
   return (
     <div className="app">
-      <AnimatePresence>{!entered && <Cover key="cover" onEnter={() => { go("home"); setEntered(true); }} theme={theme} setTheme={setTheme} />}</AnimatePresence>
+      <AnimatePresence>{!entered && <Cover key="cover" onEnter={() => { go(SITE.start); setEntered(true); }} theme={theme} setTheme={setTheme} />}</AnimatePresence>
       {ready && <>
       <motion.div className="chrome" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
         <header className="topbar">
-          <button className="brand" onClick={() => setEntered(false)} title="Back to the start screen" aria-label="Smart Wastewater Treatment, back to the start screen">
+          <button className="brand" onClick={() => setEntered(false)} title="Back to the start screen" aria-label={`${SITE.title}, back to the start screen`}>
             <span className="brand-mark" aria-hidden><Droplets size={16} /></span>
             <div>
-              <b>Smart Wastewater Treatment</b>
+              <b>{SITE.title}</b>
             </div>
           </button>
           <div className="top-actions">
+            {otherUrl && <a className="site-link" href={otherHref(OTHER.start, undefined, theme)}>{OTHER.title.replace("Smart Wastewater: ", "")} <ArrowUpRight size={14} /></a>}
             <button className="icon-btn theme-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Light mode" : "Dark mode"}>
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
@@ -77,7 +90,7 @@ export default function App() {
           </div>
         </header>
         <nav className="crumbs" aria-label="Breadcrumb">
-          <button className="crumb" onClick={() => go("home")}>Smart Wastewater Treatment</button>
+          <button className="crumb" onClick={() => go(SITE.start)}>{SITE.title}</button>
           <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
         </nav>

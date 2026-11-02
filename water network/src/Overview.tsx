@@ -21,12 +21,12 @@ const seg = (a: string, b: string) => `M${a} L${b}`;
 type Pos = readonly [number, number];
 type Spots = Record<"source" | "plant" | "ps1" | "res" | "trunk" | "zones" | "meters" | "leak", Pos>;
 /** where each stage stands: four across the top, four across the bottom (the water comes back along the bottom); the columns spread out as the box gets wider */
-const spots = (W: number): Spots => {
-  const sp = Math.max(400, Math.min(560, (W - 480) / 3));
+const spots = (W: number, dyA: number, dyB: number): Spots => {
+  const sp = Math.max(400, (W - 480) / 3);
   const c = [0, 1, 2, 3].map((i) => W / 2 + (i - 1.5) * sp + 14); // +14: the left edge of the river is wider than the right edge of the labels
-  return { source: [c[0], 254], plant: [c[1], 206], ps1: [c[2], 247], res: [c[3], 305], trunk: [c[3], 530], zones: [c[2], 575], meters: [c[1], 554], leak: [c[0], 531] };
+  return { source: [c[0], 254 + dyA], plant: [c[1], 206 + dyA], ps1: [c[2], 247 + dyA], res: [c[3], 305 + dyA], trunk: [c[3], 530 + dyB], zones: [c[2], 575 + dyB], meters: [c[1], 554 + dyB], leak: [c[0], 531 + dyB] };
 };
-const lines = (G: Spots): Line[] => [
+const lines = (G: Spots, dyB: number): Line[] => [
   { kind: "raw", d: seg(at(...G.source, 52, 0, 9), at(...G.plant, -100, 0, 9)) },
   { kind: "treated", d: seg(at(...G.plant, 132, 0, 9), at(...G.ps1, -92, 0, 9)) },
   { kind: "product", d: seg(at(...G.ps1, 116, 0, 24), at(...G.res, -22, 0, 8)) },
@@ -34,7 +34,7 @@ const lines = (G: Spots): Line[] => [
   { kind: "product", d: seg(at(...G.trunk, -96, 6, 9), at(...G.zones, 84, 0, 9)) },
   { kind: "product", d: seg(at(...G.zones, -92, 0, 9), at(...G.meters, 44, 0, 9)) },
   { kind: "product", d: seg(at(...G.meters, -74, 0, 9), at(...G.leak, 98, 0, 10)) },
-  { kind: "loss", d: `M${at(...G.zones, 0, 48, 0)} V668 H${G.leak[0]} V${at(...G.leak, 0, 20, 0).split(" ")[1]}` },
+  { kind: "loss", d: `M${at(...G.zones, 0, 48, 0)} V${668 + dyB} H${G.leak[0]} V${at(...G.leak, 0, 20, 0).split(" ")[1]}` },
 ];
 
 type State = "run" | "idle" | "alarm";
@@ -79,17 +79,22 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
   const [open, setOpen] = useState<Stage | null>(null);
   // the drawing is as wide as its box, so it fills the box without being stretched or cropped; the stages stay centred
   const svgRef = useRef<SVGSVGElement>(null);
-  const [W, setW] = useState(1660);
+  const [box, setBox] = useState({ w: 1660, h: VIEW_H });
   useLayoutEffect(() => {
     const el = svgRef.current;
     if (!el) return;
-    const read = () => { const r = el.getBoundingClientRect(); if (r.height > 0) setW(Math.max(1660, Math.round((VIEW_H * r.width) / r.height) - 48)); };
+    const read = () => { const r = el.getBoundingClientRect(); if (r.width > 0 && r.height > 0) setBox({ w: r.width, h: r.height }); };
     read();
     const ro = new ResizeObserver(read);
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  const G = spots(W);
+  // one even scale for the whole drawing; whatever width or height is left over becomes space between the stages
+  const k = Math.min(box.w / 1660, box.h / VIEW_H);
+  const W = box.w / k, H = box.h / k;
+  const extra = Math.max(0, H - VIEW_H);
+  const dyA = extra * 0.2, dyB = extra * 0.8;
+  const G = spots(W, dyA, dyB);
   const S = (id: string) => list.find((s) => s.id === id)!;
   const tone = (s: Stage) => (s.tone === "bad" ? "alarm" : s.tone === "warn" ? "warn" : "run");
   const goStage = (s: Stage) => () => setOpen(s);
@@ -121,13 +126,13 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
     <div className="ov">
       <section className="ov-art">
         <div className="ov-scroll">
-          <svg ref={svgRef} className={`ov-svg ${flowOn ? "" : "paused"}`} viewBox={`-24 60 ${W + 48} ${VIEW_H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="The whole water supply chain, from the river to the customers">
+          <svg ref={svgRef} className={`ov-svg ${flowOn ? "" : "paused"}`} viewBox={`0 60 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="The whole water supply chain, from the river to the customers">
             <defs>
               <linearGradient id="iso-gw" x1="0" x2="1"><stop offset="0" stopColor="#f4f8fc" /><stop offset=".45" stopColor="#d3e1ee" /><stop offset="1" stopColor="#9db6cc" /></linearGradient>
               <linearGradient id="iso-gb" x1="0" x2="1"><stop offset="0" stopColor="#6db4ee" /><stop offset=".5" stopColor="#3a86c8" /><stop offset="1" stopColor="#265f93" /></linearGradient>
               <linearGradient id="iso-gp" x1="0" x2="1"><stop offset="0" stopColor="#b08af0" /><stop offset=".5" stopColor="#7d57cc" /><stop offset="1" stopColor="#54379a" /></linearGradient>
             </defs>
-            {lines(G).map((l, i) => (
+            {lines(G, dyB).map((l, i) => (
               <g key={i} className="ov-pg" style={{ ["--i" as string]: i }}>
                 <path className={`ov-pipe ${l.kind}`} d={l.d} />
                 <path className={`ov-flow ${l.kind}`} d={l.d} />
@@ -142,10 +147,10 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 <Box x={-42} y={-30} w={46} d={64} h={26} pal="c" />
                 {[0, 1, 2].map((i) => <Pump key={i} x={18} y={-38 + i * 30} />)}
               </Group>
-              {head(1, source, G.source[0] - 130, 100)}
+              {head(1, source, G.source[0] - 130, 100 + dyA)}
               <Label x={G.source[0] + 56} y={G.source[1] + 70} text="Raw water pumps (3)" state={eq(source, 0)} />
               <text className="iso-note" x={G.source[0] - 170} y={G.source[1] + 52} textAnchor="start">River</text>
-              <DataBox x={G.source[0] - 130} y={336} rows={rows(source, 1)} />
+              <DataBox x={G.source[0] - 130} y={336 + dyA} rows={rows(source, 1)} />
             </g>
 
             {/* 2 · treatment plant: two settling tanks, three filters, chlorine */}
@@ -155,11 +160,11 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 {[-46, -8, 30].map((y, i) => <Basin key={y} x={0} y={y} w={84} d={30} h={12} tone="t" bubbles={i === 1 ? 5 : 0} seed={i} />)}
                 <Cyl cx={118} cy={-4} r={13} h={34} pal="p" />
               </Group>
-              {head(2, plant, G.plant[0] - 130, 100)}
+              {head(2, plant, G.plant[0] - 130, 100 + dyA)}
               <Label x={G.plant[0] + 190} y={G.plant[1] - 60} text="Settling tanks" state={eq(plant, 0)} />
               <Label x={G.plant[0] + 190} y={G.plant[1] - 38} text="Sand filters" state={eq(plant, 2)} />
               <Label x={G.plant[0] + 190} y={G.plant[1] - 16} text="Chlorinator" state={eq(plant, 3)} />
-              <DataBox x={G.plant[0] - 130} y={336} rows={rows(plant, 3)} />
+              <DataBox x={G.plant[0] - 130} y={336 + dyA} rows={rows(plant, 3)} />
             </g>
 
             {/* 3 · pump station PS-1: clear-water tank and the high-lift pumps */}
@@ -169,12 +174,12 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 <Box x={20} y={-48} w={92} d={96} h={16} pal="c" />
                 {[0, 1, 2, 3].map((i) => <Pump key={i} x={44} y={-42 + i * 22} z={16} />)}
               </Group>
-              {head(3, ps1, G.ps1[0] - 130, 100)}
+              {head(3, ps1, G.ps1[0] - 130, 100 + dyA)}
               <Label x={G.ps1[0] + 200} y={G.ps1[1] - 70} text="High-lift pump 1" state={eq(ps1, 0)} />
               <Label x={G.ps1[0] + 200} y={G.ps1[1] - 48} text="High-lift pump 2" state={eq(ps1, 1)} />
               <Label x={G.ps1[0] + 200} y={G.ps1[1] - 26} text="High-lift pump 3" state={eq(ps1, 2)} />
               <Label x={G.ps1[0] + 200} y={G.ps1[1] - 4} text="Pump 4 (standby)" state={eq(ps1, 3)} />
-              <DataBox x={G.ps1[0] - 130} y={336} rows={rows(ps1, 5)} />
+              <DataBox x={G.ps1[0] - 130} y={336 + dyA} rows={rows(ps1, 5)} />
             </g>
 
             {/* 4 · the elevated reservoir */}
@@ -184,9 +189,9 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 <Cyl cx={0} cy={0} z={78} r={42} h={38} pal="w" water wt="t" />
                 <Cyl cx={0} cy={0} z={116} r={26} h={9} pal="b" />
               </Group>
-              {head(4, res, G.res[0] - 130, 100)}
+              {head(4, res, G.res[0] - 130, 100 + dyA)}
               <Label x={G.res[0] + 92} y={G.res[1] - 120} text="Level sensor" state={eq(res, 2)} />
-              <DataBox x={G.res[0] - 130} y={336} w={220} rows={rows(res, 7)} />
+              <DataBox x={G.res[0] - 130} y={336 + dyA} w={220} rows={rows(res, 7)} />
             </g>
 
             {/* 5 · trunk mains and the booster station */}
@@ -197,11 +202,11 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 {[0, 1].map((i) => <Pump key={i} x={26} y={-30 + i * 32} />)}
                 <Box x={-96} y={-8} w={24} d={22} h={18} pal="p" />
               </Group>
-              {head(5, trunk, G.trunk[0] - 130, 428)}
+              {head(5, trunk, G.trunk[0] - 130, 428 + dyB)}
               <Label x={G.trunk[0] - 170} y={G.trunk[1] - 30} text="PRV" state={eq(trunk, 2)} />
               <Label x={G.trunk[0] + 112} y={G.trunk[1] - 12} text="Booster 1" state={eq(trunk, 0)} />
               <Label x={G.trunk[0] + 112} y={G.trunk[1] + 12} text="Booster 2" state={eq(trunk, 1)} />
-              <DataBox x={G.trunk[0] - 130} y={682} w={220} rows={rows(trunk, 9)} />
+              <DataBox x={G.trunk[0] - 130} y={682 + dyB} w={220} rows={rows(trunk, 9)} />
             </g>
 
             {/* 6 · the six supply zones, each block marked green, amber or red */}
@@ -219,8 +224,8 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 const [sx, sy] = pt(-67 + col * 62, -34 + row * 54, 30);
                 return <circle key={z.name} className="iso-zdot" cx={G.zones[0] + sx * SC} cy={G.zones[1] + sy * SC - 8} r="8" fill={ZCOL[z.tone]} />;
               })}
-              {head(6, zones, G.zones[0] - 130, 428)}
-              <DataBox x={G.zones[0] - 130} y={682} w={220} rows={rows(zones, 11)} />
+              {head(6, zones, G.zones[0] - 130, 428 + dyB)}
+              <DataBox x={G.zones[0] - 130} y={682 + dyB} w={220} rows={rows(zones, 11)} />
             </g>
 
             {/* 7 · customer metering: houses with smart meters and a radio gateway */}
@@ -238,9 +243,9 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 <Box x={68} y={-12} z={64} w={16} d={16} h={8} pal="b" />
               </Group>
               {[0, 1, 2].map((k) => { const [wx, wy] = pt(76, -4, 76); return <path key={k} className="iso-wave" d={`M${G.meters[0] + wx * SC} ${G.meters[1] + wy * SC - k * 10} q15 -9 30 0 M${G.meters[0] + wx * SC} ${G.meters[1] + wy * SC - k * 10} q-15 -9 -30 0`} />; })}
-              {head(7, meters, G.meters[0] - 130, 428)}
+              {head(7, meters, G.meters[0] - 130, 428 + dyB)}
               <Label x={G.meters[0] + 118} y={G.meters[1] - 52} text="Radio gateway" state={eq(meters, 0)} />
-              <DataBox x={G.meters[0] - 130} y={682} w={220} rows={rows(meters, 13)} />
+              <DataBox x={G.meters[0] - 130} y={682 + dyB} w={220} rows={rows(meters, 13)} />
             </g>
 
             {/* 8 · leaks and losses: a main with a burst, loggers and a repair crew */}
@@ -253,10 +258,10 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 {[-60, 50].map((x) => <Cyl key={x} cx={x} cy={0} z={10} r={5} h={14} pal="p" />)}
                 <Box x={60} y={26} w={40} d={20} h={14} pal="w" />
               </Group>
-              {head(8, leak, G.leak[0] - 130, 428)}
+              {head(8, leak, G.leak[0] - 130, 428 + dyB)}
               <Label x={G.leak[0] + 150} y={G.leak[1] - 62} text="Leak loggers" state={eq(leak, 0)} />
               <Label x={G.leak[0] + 150} y={G.leak[1] - 40} text="Repair crew" state={eq(leak, 3)} />
-              <DataBox x={G.leak[0] - 130} y={682} w={220} rows={rows(leak, 15)} />
+              <DataBox x={G.leak[0] - 130} y={682 + dyB} w={220} rows={rows(leak, 15)} />
             </g>
           </svg>
         </div>

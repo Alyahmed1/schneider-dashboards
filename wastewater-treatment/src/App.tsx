@@ -17,6 +17,7 @@ import UserMenu from "./UserMenu";
 import { WORK_ORDERS, type WorkOrder } from "./cmms";
 import { OTHER, otherHref, otherUrl, ownsTab, readDeepLink, SITE } from "./site";
 import "./site.css";
+import Assistant from "./Assistant";
 
 export type TabId = "home" | "overview" | "alarms" | "production" | "electrical" | "maintenance";
 export type Go = (tab: TabId, target?: string) => void;
@@ -93,6 +94,7 @@ export default function App() {
           <button className="crumb" onClick={() => go(SITE.start)}>{SITE.title}</button>
           <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
+          <Assistant go={go} />
         </nav>
       </motion.div>
 

@@ -96,13 +96,15 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
           </div>
           <Segmented<Range> label="Time range" value={f.range} options={RANGES} onChange={setRange} />
         </div>
-        <div className="hm-map-wrap">
-          <HomeDiagram metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} />
-          <div className="nm-legend nm-legend-mini" aria-label="Colour key">
-            <b>{LEGEND[metric].title}</b>
-            {LEGEND[metric].items.map((i) => <div key={i.label} className="row"><i style={{ background: i.c }} /><span>{i.label}</span><em>{i.note}</em></div>)}
+        <div className="hm-map-wrap hm-map-col">
+          <div className="hm-dia">
+            <HomeDiagram metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} />
           </div>
-          <button className="nm-open" onClick={() => go("network")}>Open the full network map</button>
+          <div className="hm-key" aria-label="Colour key">
+            <b>{LEGEND[metric].title}:</b>
+            {LEGEND[metric].items.map((i) => <span key={i.label}><i style={{ background: i.c }} />{i.label} <em>{i.note}</em></span>)}
+            <button className="nm-open" onClick={() => go("network")}>Open the full network map</button>
+          </div>
         </div>
       </section>
 

@@ -140,10 +140,10 @@ export function GasHolder({ cx, cy, z = 0, r = 18, h = 26 }: { cx: number; cy: n
   );
 }
 
-export function Group({ x, y, children, onClick, label, className = "" }: { x: number; y: number; children: ReactNode; onClick?: () => void; label?: string; className?: string }) {
+export function Group({ x, y, s = 1, children, onClick, label, className = "" }: { x: number; y: number; s?: number; children: ReactNode; onClick?: () => void; label?: string; className?: string }) {
   return (
     <g
-      transform={`translate(${x} ${y})`}
+      transform={`translate(${x} ${y}) scale(${s})`}
       className={`iso-stage ${onClick ? "clickable" : ""} ${className}`}
       onClick={onClick}
       role={onClick ? "button" : undefined}

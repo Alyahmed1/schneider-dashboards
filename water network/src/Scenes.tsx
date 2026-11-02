@@ -178,30 +178,33 @@ const ZONE_Q = (id: "Z1" | "Z2" | "Z3" | "Z4" | "Z5" | "Z6") => networkAt(8).zon
 
 /* ---------- 1. source & intake: river, bar screen, intake well, raw pumps (out y 330) ---------- */
 function Source() {
-  const ys = [280, 330, 380];
+  const ys = [170, 235, 300];
+  const clip = useId();
   return (
     <g>
-      <rect x="-900" y="290" width="940" height="170" className="sea" />
-      {[0, 1].map((i) => <path key={i} d={WAVES} transform={`translate(${i * 25} ${320 + i * 50})`} className="wave-line sea-wave" />)}
-      <Pipe d="M-900 330 H100" kind="raw" w={14} />
-      <rect x="44" y="296" width="22" height="68" rx="3" className="eq" />
-      {[52, 60].map((x) => <line key={x} x1={x} x2={x} y1="302" y2="358" className="eq-band" />)}
-      <Tank x={100} y={250} w={150} h={170} level={0.65} tone="raw" />
+      <clipPath id={clip}><rect x="-900" y="150" width="944" height="172" /></clipPath>
+      <rect x="-900" y="150" width="944" height="172" className="sea" />
+      <g clipPath={`url(#${clip})`}>{[0, 1, 2].map((i) => <path key={i} d={WAVES} transform={`translate(${i * 22 - 880} ${190 + i * 45})`} className="wave-line sea-wave" />)}</g>
+      <Pipe d="M-900 235 H110" kind="raw" w={14} />
+      <rect x="44" y="196" width="24" height="78" rx="3" className="eq" />
+      {[52, 60].map((x) => <line key={x} x1={x} x2={x} y1="202" y2="268" className="eq-band" />)}
+      <Tank x={110} y={130} w={150} h={210} level={0.65} tone="raw" />
       {ys.map((y, i) => (
         <g key={y}>
-          <Pipe d={`M250 ${y} H312`} kind="raw" />
-          <Pipe d={`M348 ${y} H470`} kind="raw" />
-          <Valve x={415} y={y} id={["xv1", "xv2", "xv3"][i]} />
-          <Pump x={330} y={y} state={i === 2 ? "Standby" : "Running"} id={["p1", "p2", "p3"][i]} />
+          <Pipe d={`M260 ${y} H322`} kind="raw" />
+          <Pipe d={`M358 ${y} H480`} kind="raw" />
+          <Valve x={430} y={y} id={["xv1", "xv2", "xv3"][i]} />
+          <Pump x={340} y={y} state={i === 2 ? "Standby" : "Running"} id={["p1", "p2", "p3"][i]} />
         </g>
       ))}
-      <Pipe d="M470 280 V380" kind="raw" w={11} />
-      <Pipe d="M470 330 H1700" kind="raw" w={12} />
-      <Cap x={55} y={282} a="middle">Bar screen</Cap>
-      <Cap x={175} y={440}>Intake well</Cap>
-      <Cap x={330} y={250}>Raw water pumps</Cap>
-      <Cap x={640} y={304}>To the treatment plant</Cap>
-      <Cap x={-10} y={430} a="start">River</Cap>
+      <Pipe d="M480 170 V300" kind="raw" w={11} />
+      <Pipe d="M480 235 H1700" kind="raw" w={12} />
+      <rect x="640" y="215" width="34" height="40" rx="4" className="eq" />
+      <Cap x={56} y={186}>Bar screen</Cap>
+      <Cap x={185} y={364}>Intake well</Cap>
+      <Cap x={345} y={350}>Raw water pumps</Cap>
+      <Cap x={700} y={284}>To the treatment plant</Cap>
+      <Cap x={14} y={342} a="start">River</Cap>
     </g>
   );
 }
@@ -341,25 +344,25 @@ function Meters() {
   const xs = [90, 230, 370, 510];
   return (
     <g>
-      <path d="M-900 330 H1700 V650 H-900 Z" className="hill" />
-      <Pipe d="M-900 345 H1700" kind="product" w={12} />
+      <path d="M-900 300 H1700 V650 H-900 Z" className="hill" />
+      <Pipe d="M-900 315 H1700" kind="product" w={12} />
       {xs.map((x, i) => (
         <g key={x}>
-          <Pipe d={`M${x + 28} 345 V275`} kind="product" w={5} />
-          <House x={x} y={205} w={56} h={42} />
-          <Meter x={x + 28} y={290} />
-          {[0, 1].map((k) => <path key={k} d={`M${x + 28} ${270 - k * 12} q10 -10 20 0`} className="spray" style={{ animationDelay: `${i * 0.2}s` }} />)}
+          <Pipe d={`M${x + 28} 315 V240`} kind="product" w={5} />
+          <House x={x} y={150} w={56} h={42} />
+          <Meter x={x + 28} y={226} />
+          {[0, 1].map((k) => <path key={k} d={`M${x + 28} ${206 - k * 12} q10 -10 20 0`} className="spray" style={{ animationDelay: `${i * 0.2}s` }} />)}
         </g>
       ))}
-      <rect x="690" y="110" width="26" height="170" className="eq" />
-      <path d="M680 110 L703 70 L726 110Z" className="eq" />
-      {[0, 1, 2].map((k) => <path key={k} d={`M703 ${60 - k * 12} q16 -8 32 0 M703 ${60 - k * 12} q-16 -8 -32 0`} className="spray" />)}
-      <rect x="650" y="370" width="110" height="60" rx="6" className="eq" />
-      {[385, 400, 415].map((y) => <line key={y} x1="662" x2="748" y1={y} y2={y} className="eq-band" />)}
-      <Pipe d="M703 280 V370" kind="chem" w={4} flow />
-      <Cap x={300} y={400}>Customer connections</Cap>
-      <Cap x={703} y={42}>Radio gateway</Cap>
-      <Cap x={705} y={452}>Billing system</Cap>
+      <rect x="690" y="95" width="26" height="195" className="eq" />
+      <path d="M680 95 L703 58 L726 95Z" className="eq" />
+      {[0, 1, 2].map((k) => <path key={k} d={`M703 ${48 - k * 12} q16 -8 32 0 M703 ${48 - k * 12} q-16 -8 -32 0`} className="spray" />)}
+      <rect x="650" y="345" width="110" height="60" rx="6" className="eq" />
+      {[360, 375, 390].map((y) => <line key={y} x1="662" x2="748" y1={y} y2={y} className="eq-band" />)}
+      <Pipe d="M703 290 V345" kind="chem" w={4} flow />
+      <Cap x={300} y={372}>Customer connections</Cap>
+      <Cap x={760} y={150} a="start">Radio gateway</Cap>
+      <Cap x={705} y={428}>Billing system</Cap>
     </g>
   );
 }
@@ -404,16 +407,16 @@ export const SCENES: Record<string, Scene> = {
   source: {
     Art: withStage("source", Source),
     tags: [
-      { id: "lit", tag: "LIT-101", name: "River level at the intake", x: 175, y: 232, show: { v: 3.1, unit: " m", d: 1 }, state: "Normal", rows: [r("Level", 3.1, "m", 1), r("Low alarm", 1.5, "m", 1), r("Flood alarm", 5.2, "m", 1)], note: "The intake gates close if the river rises above the flood alarm." },
-      { id: "scr", tag: "LDT-101", name: "Bar screen level difference", x: 55, y: 262, show: { v: 0.1, unit: " m", d: 2 }, state: "Normal", rows: [r("Level difference", 0.1, "m", 2), r("Rake starts at", 0.25, "m", 2), r("Debris today", 1.4, "m³", 1)] },
-      { id: "ait", tag: "AIT-101", name: "Raw water turbidity", x: 175, y: 440, show: { v: 18, unit: " NTU" }, state: "Normal", rows: [r("Turbidity", 18, "NTU"), r("Plant limit", 150, "NTU"), r("Water temperature", 24.6, "°C", 1)], note: "After rain upriver this can rise above 80 NTU. The plant raises the coagulant dose to match." },
-      { id: "p1", tag: "P-101A", kind: "pump", name: "Raw water pump 1", x: 330, y: 240, show: { v: 81, unit: "%" }, state: "Running", load: 81, rows: [r("Speed", 81, "%"), r("Flow", 3150, "m³/h"), r("Power", 180, "kW"), r("Vibration", 2.2, "mm/s", 1)] },
-      { id: "p2", tag: "P-101B", kind: "pump", name: "Raw water pump 2", x: 330, y: 290, show: { v: 79, unit: "%" }, state: "Running", load: 79, rows: [r("Speed", 79, "%"), r("Flow", 3140, "m³/h"), r("Power", 175, "kW"), r("Vibration", 2.4, "mm/s", 1)] },
-      { id: "p3", tag: "P-101C", kind: "pump", name: "Raw water pump 3", x: 330, y: 340, show: { v: 0, unit: "%" }, state: "Standby", load: 0, rows: [r("Speed", 0, "%"), r("Ready to start", "Yes"), r("Hours run", 3980, "h")], note: "Standby unit. Starts if another pump trips." },
-      { id: "xv1", tag: "XV-101A", name: "Pump 1 valve", kind: "valve", x: 415, y: 255, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
-      { id: "xv2", tag: "XV-101B", name: "Pump 2 valve", kind: "valve", x: 415, y: 305, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
-      { id: "xv3", tag: "XV-101C", name: "Pump 3 valve", kind: "valve", x: 415, y: 355, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
-      { id: "fit", tag: "FIT-101", name: "Raw water flow", x: 640, y: 290, show: { v: 6290, unit: " m³/h" }, state: "Normal", rows: [r("Flow", 6290, "m³/h"), r("Permit limit", 7200, "m³/h"), r("Today", 150000, "m³")] },
+      { id: "lit", tag: "LIT-101", name: "River level at the intake", x: 185, y: 108, show: { v: 3.1, unit: " m", d: 1 }, state: "Normal", rows: [r("Level", 3.1, "m", 1), r("Low alarm", 1.5, "m", 1), r("Flood alarm", 5.2, "m", 1)], note: "The intake gates close if the river rises above the flood alarm." },
+      { id: "scr", tag: "LDT-101", name: "Bar screen level difference", x: 56, y: 150, show: { v: 0.1, unit: " m", d: 2 }, state: "Normal", rows: [r("Level difference", 0.1, "m", 2), r("Rake starts at", 0.25, "m", 2), r("Debris today", 1.4, "m³", 1)] },
+      { id: "ait", tag: "AIT-101", name: "Raw water turbidity", x: 185, y: 392, show: { v: 18, unit: " NTU" }, state: "Normal", rows: [r("Turbidity", 18, "NTU"), r("Plant limit", 150, "NTU"), r("Water temperature", 24.6, "°C", 1)], note: "After rain upriver this can rise above 80 NTU. The plant raises the coagulant dose to match." },
+      { id: "p1", tag: "P-101A", kind: "pump", name: "Raw water pump 1", x: 330, y: 126, show: { v: 81, unit: "%" }, state: "Running", load: 81, rows: [r("Speed", 81, "%"), r("Flow", 3150, "m³/h"), r("Power", 180, "kW"), r("Vibration", 2.2, "mm/s", 1)] },
+      { id: "p2", tag: "P-101B", kind: "pump", name: "Raw water pump 2", x: 330, y: 196, show: { v: 79, unit: "%" }, state: "Running", load: 79, rows: [r("Speed", 79, "%"), r("Flow", 3140, "m³/h"), r("Power", 175, "kW"), r("Vibration", 2.4, "mm/s", 1)] },
+      { id: "p3", tag: "P-101C", kind: "pump", name: "Raw water pump 3", x: 330, y: 266, show: { v: 0, unit: "%" }, state: "Standby", load: 0, rows: [r("Speed", 0, "%"), r("Ready to start", "Yes"), r("Hours run", 3980, "h")], note: "Standby unit. Starts if another pump trips." },
+      { id: "xv1", tag: "XV-101A", name: "Pump 1 valve", kind: "valve", x: 435, y: 146, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
+      { id: "xv2", tag: "XV-101B", name: "Pump 2 valve", kind: "valve", x: 435, y: 211, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
+      { id: "xv3", tag: "XV-101C", name: "Pump 3 valve", kind: "valve", x: 435, y: 276, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
+      { id: "fit", tag: "FIT-101", name: "Raw water flow", x: 657, y: 190, show: { v: 6290, unit: " m³/h" }, state: "Normal", rows: [r("Flow", 6290, "m³/h"), r("Permit limit", 7200, "m³/h"), r("Today", 150000, "m³")] },
     ],
   },
   plant: {
@@ -450,7 +453,7 @@ export const SCENES: Record<string, Scene> = {
   res: {
     Art: withStage("res", Res),
     tags: [
-      { id: "lit", tag: "LT-01", name: "Reservoir level", x: 400, y: 30, show: { v: 77, unit: "%" }, state: "Normal", load: 77, rows: [r("Level", 77, "%"), r("Stored", 34600, "m³"), r("Low alarm", 25, "%"), r("Net flow", "Emptying")], note: "The reservoir fills at night and covers the morning and evening peaks." },
+      { id: "lit", tag: "LT-01", name: "Reservoir level", x: 400, y: 128, show: { v: 77, unit: "%" }, state: "Normal", load: 77, rows: [r("Level", 77, "%"), r("Stored", 34600, "m³"), r("Low alarm", 25, "%"), r("Net flow", "Emptying")], note: "The reservoir fills at night and covers the morning and evening peaks." },
       { id: "xv1", tag: "XV-401A", name: "Inlet valve", kind: "valve", x: 340, y: 335, show: { v: 60, unit: "% open" }, state: "Normal", rows: [r("Position", 60, "%"), r("State", "Open")] },
       { id: "xv2", tag: "XV-401B", name: "Outlet valve", kind: "valve", x: 460, y: 335, show: { v: 100, unit: "% open" }, state: "Normal", rows: [r("Position", 100, "%"), r("State", "Open")] },
       { id: "ait", tag: "AT-01", name: "Chlorine after the reservoir", x: 640, y: 340, show: { v: 0.77, unit: " mg/L", d: 2 }, state: "Normal", rows: [r("Free chlorine", 0.77, "mg/L", 2), r("Target", "0.6 to 0.9", "mg/L"), r("Water age in tank", 4, "h", 1)] },
@@ -482,11 +485,11 @@ export const SCENES: Record<string, Scene> = {
   meters: {
     Art: withStage("meters", Meters),
     tags: [
-      { id: "m1", tag: "AMR-1021", name: "Smart meter, villa", x: 118, y: 255, show: { v: 0.42, unit: " m³/h", d: 2 }, state: "Normal", rows: [r("Flow now", 0.42, "m³/h", 2), r("This month", 18.4, "m³", 1), r("Reading", "Every 15 min")] },
-      { id: "m2", tag: "AMR-2210", name: "Smart meter, flat", x: 258, y: 255, show: { v: 0.18, unit: " m³/h", d: 2 }, state: "Normal", rows: [r("Flow now", 0.18, "m³/h", 2), r("This month", 9.8, "m³", 1), r("Reading", "Every 15 min")] },
-      { id: "m3", tag: "AMR-3307", name: "Smart meter, shop", x: 398, y: 255, show: { v: 1.2, unit: " m³/h", d: 1 }, state: "Normal", rows: [r("Flow now", 1.2, "m³/h", 1), r("Night flow", 0.3, "m³/h", 1), r("Flag", "Possible leak")] },
-      { id: "gw", tag: "GW-N", name: "Radio gateway north", x: 705, y: 28, show: { v: 98.2, unit: "% read", d: 1 }, state: "Running", load: 58, rows: [r("Meters in range", 20900), r("Reading rate", 98.2, "%", 1), r("Signal", -92, "dBm")] },
-      { id: "bill", tag: "BILLING", name: "Billing system link", x: 705, y: 400, show: { v: 41800, unit: " meters" }, state: "Normal", rows: [r("Meters in service", 41800), r("Tampering flags", 14), r("Billed today", 123000, "m³")], note: "Water billed against water supplied gives the non-revenue water figure." },
+      { id: "m1", tag: "AMR-1021", name: "Smart meter, villa", x: 118, y: 196, show: { v: 0.42, unit: " m³/h", d: 2 }, state: "Normal", rows: [r("Flow now", 0.42, "m³/h", 2), r("This month", 18.4, "m³", 1), r("Reading", "Every 15 min")] },
+      { id: "m2", tag: "AMR-2210", name: "Smart meter, flat", x: 258, y: 196, show: { v: 0.18, unit: " m³/h", d: 2 }, state: "Normal", rows: [r("Flow now", 0.18, "m³/h", 2), r("This month", 9.8, "m³", 1), r("Reading", "Every 15 min")] },
+      { id: "m3", tag: "AMR-3307", name: "Smart meter, shop", x: 398, y: 196, show: { v: 1.2, unit: " m³/h", d: 1 }, state: "Normal", rows: [r("Flow now", 1.2, "m³/h", 1), r("Night flow", 0.3, "m³/h", 1), r("Flag", "Possible leak")] },
+      { id: "gw", tag: "GW-N", name: "Radio gateway north", x: 790, y: 120, show: { v: 98.2, unit: "% read", d: 1 }, state: "Running", load: 58, rows: [r("Meters in range", 20900), r("Reading rate", 98.2, "%", 1), r("Signal", -92, "dBm")] },
+      { id: "bill", tag: "BILLING", name: "Billing system link", x: 705, y: 380, show: { v: 41800, unit: " meters" }, state: "Normal", rows: [r("Meters in service", 41800), r("Tampering flags", 14), r("Billed today", 123000, "m³")], note: "Water billed against water supplied gives the non-revenue water figure." },
     ],
   },
   leak: {
@@ -497,7 +500,7 @@ export const SCENES: Record<string, Scene> = {
       { id: "lk3", tag: "LK-03", name: "Acoustic logger, Narges Villas", x: 700, y: 118, show: { v: 66, unit: " dB" }, state: "Alarm", load: 66, rows: [r("Noise level", 66, "dB"), r("Normal", "under 40", "dB"), r("Leak", 9, "L/s")] },
       { id: "burst", tag: "BURST", name: "Active burst", x: 335, y: 285, show: { v: 12, unit: " L/s" }, state: "Alarm", rows: [r("Loss", 12, "L/s"), r("Since", "3 days"), r("Water lost so far", 3100, "m³"), r("Repair", "In progress")] },
       { id: "crew", tag: "CREW-1", name: "Repair crew 1", x: 798, y: 300, show: { v: 100, unit: "%" }, state: "Running", load: 100, rows: [r("Task", "WO-3121"), r("Time on site", 5, "h"), r("Estimated finish", "16:30")] },
-      { id: "nrw", tag: "NRW", name: "Non-revenue water", x: 600, y: 285, show: { v: 16.8, unit: " %", d: 1 }, state: "Normal", rows: [r("Supplied", 147900, "m³/d"), r("Billed", 123000, "m³/d"), r("Lost", 24900, "m³/d")], note: "A fifth of the zones lose more than 20%. The map shows where." },
+      { id: "nrw", tag: "NRW", name: "Non-revenue water", x: 600, y: 345, show: { v: 16.8, unit: " %", d: 1 }, state: "Normal", rows: [r("Supplied", 147900, "m³/d"), r("Billed", 123000, "m³/d"), r("Lost", 24900, "m³/d")], note: "A fifth of the zones lose more than 20%. The map shows where." },
     ],
   },
 };

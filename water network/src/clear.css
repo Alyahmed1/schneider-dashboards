@@ -61,6 +61,19 @@ html[data-theme="dark"] {
 .nm-legend.nm-legend-mini { top: auto; bottom: 10px; }
 @media (prefers-reduced-motion: reduce) { .hd-flow { animation: none; } }
 .nm-open { right: auto; left: 272px; bottom: 10px; }
-.ov-st.rowa { transform: translateY(-26px); }
-.ov-st.rowa { animation-name: ovbuildA; }
-@keyframes ovbuildA { from { opacity: 0; transform: translateY(-8px); } }
+
+/* the river and the sea-coloured water in the pictures: blue, not green */
+.sea { fill: #2e78b4; }
+html[data-theme="light"] .sea, :root:not([data-theme="dark"]) .sea { fill: #8fc2ea; }
+.sea-wave { stroke: rgba(255, 255, 255, .6); }
+
+/* Home: the diagram has the whole panel, the colour key sits in its own strip underneath (nothing on top of the diagram) */
+.hm-map-col { display: flex; flex-direction: column; gap: 6px; }
+.hm-dia { position: relative; flex: 1; min-height: 0; }
+.hm-key { flex: none; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; padding: 8px 12px; border: 1px solid var(--line); background: var(--card); font-size: 13px; }
+.hm-key b { font-weight: 600; }
+.hm-key span { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-weight: 600; }
+.hm-key span i { width: 22px; height: 8px; border-radius: 4px; display: inline-block; }
+.hm-key em { font-style: normal; color: var(--muted); font-weight: 400; font-size: 12px; }
+.hm-key .nm-open { position: static; margin-left: auto; }
+@media (max-width: 1000px) { .hm-key em { display: none; } .hm-dia { min-height: 300px; } }

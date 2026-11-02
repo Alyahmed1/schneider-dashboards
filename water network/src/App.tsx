@@ -98,7 +98,7 @@ export default function App() {
           <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
           <button className={`crumb-ai ${assistOpen ? "on" : ""}`} onClick={() => setAssistOpen((o) => !o)} aria-pressed={assistOpen} aria-label={assistOpen ? "Close the assistant" : "Open the assistant"}>
-            <MessageCircle size={16} /><span>Assistant</span>
+            <MessageCircle size={18} /><span>{assistOpen ? "Close the assistant" : "Ask the assistant"}</span>
           </button>
         </nav>
       </motion.div>

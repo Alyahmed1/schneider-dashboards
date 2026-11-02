@@ -50,15 +50,15 @@ function live(r: { label: string; value: string; unit: string }, seed: number, t
   return `${fmt(r.unit === "%" && n <= 100 ? Math.min(w, 100) : w, d)}${r.unit ? ` ${r.unit}` : ""}`;
 }
 
-function DataBox({ x, y, w = 200, rows }: { x: number; y: number; w?: number; rows: [string, string][] }) {
-  const h = 14 + rows.length * 19;
+function DataBox({ x, y, w = 232, rows }: { x: number; y: number; w?: number; rows: [string, string][] }) {
+  const h = 16 + rows.length * 23;
   return (
     <g className="iso-box" transform={`translate(${x} ${y})`}>
       <rect width={w} height={h} />
       {rows.map(([label, v], i) => (
-        <g key={label} transform={`translate(10 ${22 + i * 19})`}>
+        <g key={label} transform={`translate(11 ${24 + i * 23})`}>
           <text className="k">{label}</text>
-          <text className="v" x={w - 20} textAnchor="end">{v}</text>
+          <text className="v" x={w - 22} textAnchor="end">{v}</text>
         </g>
       ))}
     </g>
@@ -192,7 +192,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
               </Group>
               {head(4, res, G.res[0] - 130, 100 + dyA)}
               <Label x={G.res[0] + 92 * R} y={G.res[1] - 120 * R} text="Level sensor" state={eq(res, 2)} />
-              <DataBox x={G.res[0] - 130} y={346 + dyA} w={220} rows={rows(res, 7)} />
+              <DataBox x={G.res[0] - 130} y={346 + dyA} w={248} rows={rows(res, 7)} />
             </g>
 
             {/* 5 · trunk mains and the booster station */}
@@ -207,7 +207,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
               <Label x={G.trunk[0] - 170 * R} y={G.trunk[1] - 30 * R} text="PRV" state={eq(trunk, 2)} />
               <Label x={G.trunk[0] + 112 * R} y={G.trunk[1] - 12 * R} text="Booster 1" state={eq(trunk, 0)} />
               <Label x={G.trunk[0] + 112 * R} y={G.trunk[1] + 12 * R} text="Booster 2" state={eq(trunk, 1)} />
-              <DataBox x={G.trunk[0] - 130} y={694 + dyB} w={220} rows={rows(trunk, 9)} />
+              <DataBox x={G.trunk[0] - 130} y={694 + dyB} w={248} rows={rows(trunk, 9)} />
             </g>
 
             {/* 6 · the six supply zones, each block marked green, amber or red */}
@@ -226,7 +226,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
                 return <circle key={z.name} className="iso-zdot" cx={G.zones[0] + sx * SC} cy={G.zones[1] + sy * SC - 8} r="8" fill={ZCOL[z.tone]} />;
               })}
               {head(6, zones, G.zones[0] - 130, 436 + dyB)}
-              <DataBox x={G.zones[0] - 130} y={694 + dyB} w={220} rows={rows(zones, 11)} />
+              <DataBox x={G.zones[0] - 130} y={694 + dyB} w={248} rows={rows(zones, 11)} />
             </g>
 
             {/* 7 · customer metering: houses with smart meters and a radio gateway */}
@@ -246,7 +246,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
               {[0, 1, 2].map((k) => { const [wx, wy] = pt(76, -4, 76); return <path key={k} className="iso-wave" d={`M${G.meters[0] + wx * SC} ${G.meters[1] + wy * SC - k * 10} q15 -9 30 0 M${G.meters[0] + wx * SC} ${G.meters[1] + wy * SC - k * 10} q-15 -9 -30 0`} />; })}
               {head(7, meters, G.meters[0] - 130, 436 + dyB)}
               <Label x={G.meters[0] + 118 * R} y={G.meters[1] - 52 * R} text="Radio gateway" state={eq(meters, 0)} />
-              <DataBox x={G.meters[0] - 130} y={694 + dyB} w={220} rows={rows(meters, 13)} />
+              <DataBox x={G.meters[0] - 130} y={694 + dyB} w={248} rows={rows(meters, 13)} />
             </g>
 
             {/* 8 · leaks and losses: a main with a burst, loggers and a repair crew */}
@@ -262,7 +262,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
               {head(8, leak, G.leak[0] - 130, 436 + dyB)}
               <Label x={G.leak[0] + 150 * R} y={G.leak[1] - 62 * R} text="Leak loggers" state={eq(leak, 0)} />
               <Label x={G.leak[0] + 150 * R} y={G.leak[1] - 40 * R} text="Repair crew" state={eq(leak, 3)} />
-              <DataBox x={G.leak[0] - 130} y={694 + dyB} w={220} rows={rows(leak, 15)} />
+              <DataBox x={G.leak[0] - 130} y={694 + dyB} w={248} rows={rows(leak, 15)} />
             </g>
           </svg>
         </div>

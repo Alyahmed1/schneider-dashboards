@@ -34,11 +34,11 @@ html[data-theme="dark"] {
 .ov-pipe.treated { stroke: color-mix(in srgb, var(--f-treated) 65%, var(--surface-0)); }
 .ov-pipe.product { stroke: color-mix(in srgb, #3aa0f0 65%, var(--surface-0)); }
 .ov-pipe.loss { stroke: color-mix(in srgb, var(--bad) 70%, var(--surface-0)); }
-.iso-head text { font-size: 21px; }
-.iso-head text.flow { font-size: 16px; }
-.iso-lab text { font-size: 16px; }
-.iso-box text { font-size: 15px; }
-.iso-note { font-size: 15px; } .iso-note.loss { fill: var(--bad); font-size: 16px; font-weight: 600; }
+.iso-head text { font-size: 24px; }
+.iso-head text.flow { font-size: 19px; }
+.iso-lab text { font-size: 19px; }
+.iso-box text { font-size: 17.5px; }
+.iso-note { font-size: 18px; } .iso-note.loss { fill: var(--bad); font-size: 18px; font-weight: 600; }
 .ov-pipe { stroke-dasharray: none; animation: none; stroke-linecap: round; }
 .ov-flow { stroke-dasharray: 2 14; }
 
@@ -82,11 +82,11 @@ html[data-theme="light"] .sea, :root:not([data-theme="dark"]) .sea { fill: #8fc2
 /* the assistant is a tab in the dock; opening it docks a panel on the right and the page makes room, so nothing is covered */
 :root { --as-w: 380px; }
 /* the button lives at the end of the breadcrumb row, next to "Smart Water Network > New Cairo Water Network > Maintenance" */
-.crumb-ai { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 0 20px; font-size: 14px; font-weight: 600; color: var(--teal); border-left: 1px solid var(--line); background: transparent; }
-.crumb-ai:hover { background: var(--surface-2); }
-.crumb-ai.on { background: var(--teal); color: #fff; }
-html[data-theme="dark"] .crumb-ai.on { color: #06141f; }
-@media (max-width: 720px) { .crumb-ai span { display: none; } .crumb-ai { padding: 0 14px; } }
+.crumb-ai { margin: auto 14px auto auto; flex: none; display: inline-flex; align-items: center; gap: 9px; padding: 5px 16px; font-size: 14px; font-weight: 600; color: #06202a; background: #35b8d4; border: 0; border-radius: 999px; box-shadow: 0 2px 10px rgba(53, 184, 212, .35); transition: filter .15s, transform .15s; }
+.crumb-ai:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.crumb-ai.on { background: var(--ink); color: var(--bg); box-shadow: none; }
+.crumb-ai svg { flex: none; width: 17px; height: 17px; }
+@media (max-width: 720px) { .crumb-ai span { display: none; } .crumb-ai { padding: 9px; } }
 .app.as-open { padding-right: var(--as-w); }
 .app.as-open .dock { right: var(--as-w); }
 .as-panel { position: fixed; top: 0; right: 0; bottom: calc(var(--dock-h, 46px) + env(safe-area-inset-bottom)); z-index: 45; width: var(--as-w); display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--line); overflow: hidden; }

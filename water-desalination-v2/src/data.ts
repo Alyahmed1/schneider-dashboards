@@ -147,3 +147,16 @@ export const QUALITY: Quality[] = [
 ];
 export const qualityOk = (q: Quality) => q.value >= q.min && q.value <= q.max;
 
+
+/** the four coastal supply zones on the Home map, and what each ring can show (the assistant reads these too) */
+export const ZONES = [
+  { id: "rg", name: "Ras Gharib", lon: 32.55, lat: 28.5 },
+  { id: "hg", name: "Hurghada", lon: 33.2, lat: 27.25 },
+  { id: "qs", name: "Quseir", lon: 33.75, lat: 26.0 },
+  { id: "ma", name: "Marsa Alam", lon: 34.2, lat: 24.75 },
+];
+export const METRICS = [
+  { id: "demand", label: "Demand served", unit: "%", base: [96, 98, 91, 84], low: 90 },
+  { id: "level", label: "Reservoir level", unit: "%", base: [72, 78, 64, 55], low: 60 },
+  { id: "press", label: "Network pressure OK", unit: "%", base: [94, 97, 93, 88], low: 90 },
+] as const;

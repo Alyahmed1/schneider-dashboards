@@ -11,6 +11,7 @@ import Electrical from "./Electrical";
 import Maintenance from "./Maintenance";
 import ErrorBoundary from "./ErrorBoundary";
 import Cover from "./Cover";
+import Assistant from "./Assistant";
 import { useTick } from "./live";
 import AlertsBell from "./AlertsBell";
 import UserMenu from "./UserMenu";
@@ -49,10 +50,11 @@ export default function App() {
   const [f, setF] = useState<Filters>({ range: "7D", area: "All plant" });
   const wos: WorkOrder[] = WORK_ORDERS;
   const [stageTarget, setStageTarget] = useState<string | undefined>(undefined);
+  const [stageAsk, setStageAsk] = useState(0); // goes up every time a stage is asked for, so Production reopens on it even when it is already on screen
   // the page layout class follows the tab that is on screen: the old tab keeps its own styles while it fades out
   const [shown, setShown] = useState<TabId>("home");
   useEffect(() => { if (!ready) setShown(tab); }, [ready, tab]); // no tab is on screen behind the cover, so nothing is fading out
-  const go: Go = (to, stage) => { setStageTarget(stage); setTab(to); };
+  const go: Go = (to, stage) => { setStageTarget(stage); if (stage) setStageAsk((n) => n + 1); setTab(to); };
   const tick = useTick();
   const cur = TABS.find((t) => t.id === tab) ?? TABS[0];
 
@@ -106,7 +108,7 @@ export default function App() {
               {tab === "home" && <Home f={{ ...f, area: "All plant" }} setRange={(range) => setF({ ...f, range })} go={go} wos={wos} />}
               {tab === "alarms" && <AlarmsPage go={go} focus={stageTarget} />}
               {tab === "overview" && <Overview f={{ ...f, area: "All plant" }} go={go} t={tick} />}
-              {tab === "production" && <Production f={{ ...f, area: "All plant" }} start={stageTarget} />}
+              {tab === "production" && <Production key={stageAsk} f={{ ...f, area: "All plant" }} start={stageTarget} />}
               {tab === "electrical" && <Electrical f={{ ...f, area: "All plant" }} />}
               {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} />}
             </ErrorBoundary>
@@ -120,6 +122,7 @@ export default function App() {
           </button>
         ))}
       </nav>
+      <Assistant go={go} />
       </>}
     </div>
   );

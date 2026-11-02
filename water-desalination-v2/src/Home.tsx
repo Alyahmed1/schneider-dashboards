@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { alarms, membraneScore, overviewKpis, PRICE, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
+import { alarms, membraneScore, METRICS, overviewKpis, PRICE, productionSeries, RANGES, rng, stages, ZONES, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
@@ -14,18 +14,6 @@ import type { Go, TabId } from "./App";
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, energy: 0.004, cost: 0.004, avail: 0.0008, wo: 0, mem: 0 };
 const KPI_TO: Record<string, TabId> = { water: "production", energy: "electrical", cost: "overview", avail: "maintenance", wo: "maintenance", mem: "overview" };
 
-/** the four coastal supply zones on the map, and what each ring can show */
-const ZONES = [
-  { id: "rg", name: "Ras Gharib", lon: 32.55, lat: 28.5 },
-  { id: "hg", name: "Hurghada", lon: 33.2, lat: 27.25 },
-  { id: "qs", name: "Quseir", lon: 33.75, lat: 26.0 },
-  { id: "ma", name: "Marsa Alam", lon: 34.2, lat: 24.75 },
-];
-const METRICS = [
-  { id: "demand", label: "Demand served", unit: "%", base: [96, 98, 91, 84], low: 90 },
-  { id: "level", label: "Reservoir level", unit: "%", base: [72, 78, 64, 55], low: 60 },
-  { id: "press", label: "Network pressure OK", unit: "%", base: [94, 97, 93, 88], low: 90 },
-] as const;
 type MetricId = (typeof METRICS)[number]["id"];
 
 /** split a series into four periods (sums) */

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { fmt, MOMENT_LABELS, momentHour, type Moment } from "./farm";
 import { moistColor } from "./farmColor";
-import { LCTRLS, LZONES, runWindow, runMin, flowLpm, SENSORS, siteWeather, todayUseM3, weekUse, zoneById, zonesAt, ZTYPES, type ZoneNow, type ZStatus } from "./landscape";
+import { LCTRLS, LZONES, runMin, flowLpm, SENSORS, siteWeather, todayUseM3, weekUse, zoneById, zonesAt, ZTYPES, type ZoneNow, type ZStatus } from "./landscape";
 import { gwAt } from "./grey";
 import { useOpenAlarms } from "./alarms";
 import { useGrow } from "./anim";
@@ -23,7 +23,6 @@ const LEGEND: Record<LMetric, { label: string; c: string }[]> = {
   "Valve status": [{ label: "Watering", c: ST_C.Watering }, { label: "Scheduled", c: ST_C.Scheduled }, { label: "Done today", c: ST_C.Done }, { label: "Fault", c: ST_C.Fault }],
   "Runtime today": [{ label: "Under 8 min", c: RUN_C[0] }, { label: "8 to 15 min", c: RUN_C[1] }, { label: "15 to 30 min", c: RUN_C[2] }, { label: "Over 30 min", c: RUN_C[3] }],
 };
-const fmtHour = (h: number) => `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}`;
 
 function SiteMap({ metric, snap, sel, onSelect, tank }: { metric: LMetric; snap: ZoneNow[]; sel: string; onSelect: (id: string) => void; tank: number }) {
   // the plan is drawn on a 1000 x 420 grid and stretched sideways (zones get wider, text stays the same size) so it fills its box
@@ -69,7 +68,6 @@ export default function Zones({ start, go }: { start?: string; go: Go }) {
   const [sel, setSel] = useState(start && zoneById(start) ? start : "Z1");
   const hour = momentHour(moment);
   const snap = useMemo(() => zonesAt(hour), [hour]);
-  const n = snap.find((x) => x.z.id === sel)!;
   const w = siteWeather(hour);
   const open = useOpenAlarms();
   const critical = open.filter((a) => a.sev === "Critical").length;
@@ -78,7 +76,6 @@ export default function Zones({ start, go }: { start?: string; go: Go }) {
   const watering = snap.filter((x) => x.status === "Watering").length;
   const online = Math.round((SENSORS.filter((s) => s.status !== "Offline").length / SENSORS.length) * 100);
   const tank = wobble(gwAt(hour).store / 0.6, 31, t, 0.01);
-  const [s0, s1] = runWindow(n.z);
 
   const tiles = [
     { l: "Water today", v: todayUseM3(), d: 1, u: "m³" }, { l: "Zones watering now", v: watering, d: 0, u: `of ${LZONES.length}` },
@@ -106,23 +103,13 @@ export default function Zones({ start, go }: { start?: string; go: Go }) {
         </div>
       </section>
 
-      <div className="ag-side">
+      <div className="ag-side solo">
         <Panel title="Summary" className="ag-sum" i={1}>
           <div className="tiles">
             {tiles.map((k, i) => (
               <div key={k.l} className="tile" style={{ ["--n" as string]: i }}><span>{k.l}</span><b><CountUp value={k.v} decimals={k.d} /> <small>{k.u}</small>{i === 0 && <ArrowUp size={16} className="up" aria-hidden />}</b></div>
             ))}
           </div>
-        </Panel>
-        <Panel title={`Zone ${n.z.id} · ${n.z.name}`} className="ag-crop" i={2}>
-          <dl className="kv">
-            <div><dt>Type</dt><dd>{n.z.type}, {fmt(n.z.area)} m²</dd></div>
-            <div><dt>Controller</dt><dd>{n.z.ctrl}</dd></div>
-            <div><dt>Soil moisture</dt><dd>{fmt(n.moist, 1)} %</dd></div>
-            <div><dt>Valve</dt><dd className={n.status === "Fault" ? "bad" : ""}>{n.status === "Fault" ? n.z.fault : n.status}</dd></div>
-            <div><dt>Runs</dt><dd>{fmtHour(s0)} to {fmtHour(s1)}</dd></div>
-            <div><dt>Water per run</dt><dd>{fmt(n.z.fault ? 0 : (flowLpm(n.z) * runMin(n.z)) / 1000, 1)} m³</dd></div>
-          </dl>
         </Panel>
       </div>
 

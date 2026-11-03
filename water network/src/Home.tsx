@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { alarms, complianceScore, overviewKpis, PRICE, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
+import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
@@ -73,7 +73,6 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
   const supplied = quarters(actual).map((v) => v / 1000);
   const demand = useMemo(() => { const r = rng(404); return supplied.map((v) => v * (1 - NET.nrw) * (0.98 + r() * 0.04)); }, [f.range]); // eslint-disable-line react-hooks/exhaustive-deps
   const energyMWh = quarters(actual).map((v) => (v * 0.52) / 1000);
-  const revenue = quarters(actual).map((v) => (v * (1 - NET.nrw) * PRICE) / 1e6);
   const lineData = supplied.map((v, i) => ({ t: ql[i], supplied: +v.toFixed(1), billed: +demand[i].toFixed(1) }));
   const lost = wobble(NET.supplied - NET.billed, 29, t, 0.01);
   const leaks = wobble(31.7, 30, t, 0.01);
@@ -123,7 +122,6 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
             })}
           </div>
         </Panel>
-        <Panel title="Revenue billed" className="hm-rev" i={2}><Bars labels={ql} values={revenue} unit="M LE" grow={grow} /></Panel>
       </div>
 
       <div className="hm-strip">

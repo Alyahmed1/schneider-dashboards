@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { alarms, membraneScore, METRICS, overviewKpis, PRICE, productionSeries, RANGES, rng, stages, ZONES, type Filters, type Kpi, type Range } from "./data";
+import { alarms, membraneScore, METRICS, overviewKpis, productionSeries, RANGES, rng, stages, ZONES, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
@@ -73,7 +73,6 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
   const prodML = quarters(actual).map((v) => v / 1000);
   const demand = useMemo(() => { const r = rng(404); return prodML.map((v) => v * (0.97 + r() * 0.07)); }, [f.range]); // eslint-disable-line react-hooks/exhaustive-deps
   const energyMWh = quarters(actual).map((v) => (v * 3.18) / 1000);
-  const revenue = quarters(actual).map((v) => (v * PRICE) / 1e6);
   const lineData = demand.map((v, i) => ({ t: ql[i], v: +v.toFixed(1) }));
   const lossML = ((flow[6].flow - flow[7].flow) * 24) / 1000;
   const inputML = (flow[0].flow * 24) / 1000;
@@ -111,7 +110,6 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
             })}
           </div>
         </Panel>
-        <Panel title="Revenue" className="hm-rev" i={2}><Bars labels={ql} values={revenue} unit="M LE" grow={grow} /></Panel>
       </div>
 
       <div className="hm-strip">

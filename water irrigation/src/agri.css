@@ -1,0 +1,105 @@
+/* ================= Agricultural tab: farm map, summary and chart panels ================= */
+:root {
+  --fm-canal: rgba(31, 122, 224, .22);
+  --fm-pipe: #b3c6ba; --fm-ground: #e7efe9;
+}
+html[data-theme="dark"] {
+  --fm-canal: rgba(61, 184, 255, .22);
+  --fm-pipe: #2f5260; --fm-ground: #0f212a;
+}
+
+.ag { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 430px); grid-template-rows: minmax(0, 1fr) clamp(176px, 26vh, 250px); gap: 10px; height: var(--fit); min-height: 520px; }
+.ag-map-p { grid-column: 1; grid-row: 1; position: relative; display: flex; flex-direction: column; gap: 8px; padding: 10px; min-width: 0; min-height: 0; overflow: hidden; background: var(--surface-0); border: 1px solid var(--line); animation: rise .55s cubic-bezier(.22, 1, .36, 1) backwards; }
+.ag-side { grid-column: 2; grid-row: 1; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px; min-height: 0; min-width: 0; }
+.ag-strip { grid-column: 1; grid-row: 2; display: grid; grid-template-columns: 1.15fr 1fr 1fr .62fr; gap: 10px; min-width: 0; min-height: 0; }
+.ag-pair { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: .7fr 1.3fr; gap: 10px; min-width: 0; min-height: 0; }
+.ag-sum { padding-bottom: 10px; }
+/* Summary alone in the side column: it fills the height and the six tiles share it evenly */
+.ag-side.solo { grid-template-rows: minmax(0, 1fr); }
+.ag-side.solo .tiles { flex: 1; min-height: 0; grid-auto-rows: minmax(0, 1fr); }
+.ag-side.solo .tile { align-content: center; gap: 6px; padding: 8px 14px; }
+.ag-side.solo .tile b { font-size: clamp(18px, 1.55vw, 26px); }
+.ag-side.solo .tile b .num { overflow: hidden; text-overflow: ellipsis; }
+.ag-line { flex: 1; min-height: 0; }
+.ag-bud, .ag-pond { gap: 0; }
+
+/* map header and key */
+.ag-map-head { flex: none; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.ag-map-lead { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+.ag-alarm { padding: 6px 12px; font-size: 12.5px; border: 1px solid var(--line); background: var(--card); }
+.ag-alarm.bad { border-color: var(--bad); color: var(--bad); }
+.ag-alarm.ok { border-color: var(--good); color: var(--good); }
+.ag-map-wrap { position: relative; flex: 1; min-height: 0; }
+.ag-map-in { position: absolute; inset: 0; }
+.ag-key { flex: none; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; padding: 8px 12px; border: 1px solid var(--line); background: var(--card); font-size: 12.5px; color: var(--text-2); }
+.ag-key b { color: var(--ink); font-weight: 600; }
+.ag-key span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ag-key i { width: 22px; height: 8px; border-radius: 4px; display: inline-block; }
+.ag-key em { font-style: normal; color: var(--muted); }
+.ag-key .btn { margin-left: auto; }
+
+/* the farm drawing: it scales to fit the box (never cropped), and its text is sized in drawing units */
+.fm { width: 100%; height: 100%; display: block; }
+.fm-canal { fill: var(--fm-canal); }
+.fm-lab { fill: var(--muted); font-size: 15px; }
+.fm-pipe { fill: none; stroke: var(--fm-pipe); stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+.fm-pipe.thin { stroke-width: 3; stroke-dasharray: 3 7; opacity: .8; }
+.fm-flow { fill: none; stroke: var(--water); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 14; opacity: .9; animation: flow 1.1s linear infinite; }
+.fm-flows .fm-flow { stroke: #fff; }
+.fm-st rect { fill: var(--card); stroke: var(--teal); stroke-width: 2.4; }
+.fm-st .ic { fill: none; stroke: var(--teal); stroke-width: 2.4; }
+.fm-st .ic-t { fill: var(--teal); }
+.fm-st .n { fill: var(--ink); font-size: 17px; font-weight: 600; }
+.fm-st .v { fill: var(--muted); font-size: 16px; }
+.fm-well { fill: var(--card); stroke: var(--water); stroke-width: 3; }
+.fm-pond rect { fill: color-mix(in srgb, var(--water) 30%, var(--card)); stroke: var(--water); stroke-width: 2.4; }
+.fm-pond .n { fill: var(--ink); font-size: 17px; font-weight: 600; }
+.fm-pond .v { fill: var(--text-2); font-size: 16px; }
+
+.fm-piv { cursor: pointer; animation: zonein .6s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(450ms + var(--n, 0) * 110ms); }
+.fm-piv .circ { fill-opacity: .3; stroke-width: 3; transition: fill .4s, stroke .4s; }
+.fm-piv:hover .circ, .fm-piv:focus-visible .circ { fill-opacity: .45; }
+.fm-piv .arm { animation: sweep var(--s, 30s) linear infinite; }
+.fm-piv .arm line { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; opacity: .85; }
+.fm-piv .wedge { fill: var(--water); opacity: .3; }
+.fm-piv .plate { fill: var(--card); fill-opacity: .88; stroke: var(--line); stroke-width: 1.2; }
+.fm-piv .id { fill: var(--muted); font-size: 19px; font-weight: 600; }
+.fm-piv .val { fill: var(--ink); font-size: 28px; font-weight: 600; }
+.fm-piv .val.sm { font-size: 19px; }
+.fm-piv .crop { fill: var(--text-2); font-size: 16px; }
+.fm-piv .dot { stroke: var(--card); stroke-width: 2.4; }
+.fm-piv .dot.irrigating { fill: var(--water); }
+.fm-piv .dot.scheduled { fill: var(--warn); }
+.fm-piv .dot.idle { fill: #7d8fa3; }
+.fm-piv .dot.fault { fill: var(--bad); animation: blink 1.1s ease-in-out infinite; }
+
+@keyframes flow { to { stroke-dashoffset: -32; } }
+@keyframes sweep { to { transform: rotate(360deg); } }
+@keyframes zonein { from { opacity: 0; } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+.fm-piv .arm { transform-origin: 0 0; }
+
+@media (max-height: 800px) {
+  .tiles { gap: 6px; }
+  .tile { padding: 5px 10px 6px; }
+  .pn { padding: 8px 12px 10px; }
+  .pn h3 { margin-bottom: 6px; }
+  .box { padding: 4px 10px; margin-bottom: 5px; }
+  .bars-y { padding: 16px 0 14px; }
+  .ag-crop .bars-y span:nth-child(2), .ag-crop .bars-y span:nth-child(4) { visibility: hidden; }
+}
+
+/* narrow screens: the page scrolls, the panels stack, and the farm drawing keeps a readable size (it slides sideways inside its own box) */
+@container pg (max-width: 1100px) {
+  .ag { display: flex; flex-direction: column; height: auto; min-height: 0; }
+  .ag-side { grid-template-rows: auto; }
+  .ag-strip { grid-template-columns: 1fr 1fr; }
+  .ag-pair { grid-template-columns: 1fr 1fr; }
+  .ag-strip .pn, .ag-pair .pn, .ag-crop { min-height: 200px; }
+  .ag-map-wrap { flex: none; height: auto; overflow-x: auto; }
+  .ag-map-in { position: static; min-width: 760px; aspect-ratio: 1250 / 455; }
+}
+@container pg (max-width: 720px) {
+  .ag-strip, .ag-pair { grid-template-columns: 1fr; }
+  .ag-key .btn { margin-left: 0; }
+}

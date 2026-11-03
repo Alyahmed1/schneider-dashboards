@@ -1,0 +1,61 @@
+/* ================= Agricultural · Pivots ================= */
+.pv { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, .85fr); grid-template-rows: auto auto minmax(0, 1fr); gap: 10px; height: var(--fit); min-height: 520px; }
+.pv-top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+.pv-chips { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+.pv-chip { display: grid; grid-template-columns: auto auto minmax(0, 1fr); grid-template-areas: "dot id val" "dot crop crop"; align-items: center; column-gap: 7px; padding: 5px 9px; border: 1px solid var(--line); background: var(--card); text-align: left; min-width: 0; transition: border-color .15s, background .15s; }
+.pv-chip:hover { border-color: var(--teal); }
+.pv-chip.on { border-color: var(--teal); background: var(--surface-2); box-shadow: inset 0 -3px 0 var(--teal); }
+.pv-chip i { grid-area: dot; width: 10px; height: 10px; border-radius: 50%; }
+.pv-chip b { grid-area: id; font-size: 15px; font-weight: 600; }
+.pv-chip em { grid-area: val; font-style: normal; text-align: right; font-size: 14px; }
+.pv-chip span { grid-area: crop; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* the six key numbers */
+.pv-kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.pv-kpi { display: grid; gap: 1px; padding: 8px 14px 9px; background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c, var(--teal)); min-width: 0; animation: pop .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(150ms + var(--n, 0) * 60ms); }
+.pv-kpi > span { font-size: 13.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-kpi b { font-size: clamp(24px, 2.1vw, 32px); font-weight: 400; line-height: 1.15; white-space: nowrap; }
+.pv-kpi b small { font-size: .46em; color: var(--muted); margin-left: 5px; }
+.pv-kpi b .txt { font-size: .85em; }
+.pv-kpi > em { font-style: normal; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.pv-plan { grid-column: 1; grid-row: 3; }
+.pv-plan-in { position: relative; flex: 1; min-height: 0; }
+.pv-plan-in .pp { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pv-mid { grid-column: 2; grid-row: 3; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px; min-width: 0; min-height: 0; }
+.pv-right { grid-column: 3; grid-row: 3; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; min-width: 0; min-height: 0; }
+.pv-line { flex: 1; min-height: 0; }
+
+.pv-ctl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.pv-ctl-grid > div { display: grid; gap: 4px; min-width: 0; align-content: start; }
+.pv-ctl-grid span { font-size: 13px; color: var(--text-2); }
+.pv-ctl-grid .seg button { padding: 5px 9px; font-size: 14px; }
+.pv-ctl-grid .btn { justify-content: center; padding: 7px 12px; font-size: 14px; }
+.pv-ctl-grid .btn:disabled { opacity: .5; cursor: not-allowed; }
+.pv-fault { color: var(--bad); font-size: 13px; margin-top: 6px; }
+.pv-sched .tbl table { font-size: 14px; }
+
+/* the pivot drawn from above */
+.pp-road { fill: none; stroke: var(--line); stroke-width: 2; stroke-dasharray: 3 7; }
+.pp-sec { fill-opacity: .34; stroke: var(--card); stroke-width: 2.5; transition: fill .4s; }
+.pp-rim { fill: var(--text-2); font-size: 21px; }
+.pp-arm { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; opacity: .85; }
+.pp-tower { fill: var(--card); stroke: var(--ink); stroke-width: 2.4; }
+.pp-tower.bad { stroke: var(--bad); fill: var(--bad); animation: blink 1.1s ease-in-out infinite; }
+.pp-wet { fill: var(--water); opacity: .32; }
+.pp-gun { fill: var(--water); opacity: .5; }
+.pp-hub { fill: var(--card); stroke: var(--teal); stroke-width: 4; }
+.pp-t1 { fill: var(--ink); font-size: 30px; font-weight: 600; }
+.pp-t2 { fill: var(--muted); font-size: 20px; }
+.pp-t3 { fill: var(--ink); font-size: 22px; font-weight: 600; }
+.pp-key { fill: var(--text-2); font-size: 18px; }
+
+@container pg (max-width: 1100px) {
+  .pv { display: flex; flex-direction: column; height: auto; min-height: 0; }
+  .pv-chips { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pv-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pv-plan { min-height: 420px; }
+  .pv-mid, .pv-right { display: flex; flex-direction: column; }
+  .pv-line { min-height: 200px; }
+}
+@container pg (max-width: 720px) { .pv-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pv-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

@@ -50,6 +50,7 @@
 .geo-as .gi svg .ic { fill: var(--teal); stroke: none; }
 .geo-as .gi svg .ic.lvl { fill: var(--aqua, var(--teal)); }
 .geo-as b { font-size: 11.5px; font-weight: 700; color: var(--ink); padding: 1px 6px; background: color-mix(in srgb, var(--card) 92%, transparent); border-radius: 3px; white-space: nowrap; }
+.geo:not(.geo-z155) .geo-as i { display: none; }
 .geo-as i { font-style: normal; font-size: 11px; color: var(--muted); padding: 0 6px; background: color-mix(in srgb, var(--card) 88%, transparent); border-radius: 3px; white-space: nowrap; }
 .geo-as.pump .gi svg .ic { animation: nmspin 3s linear infinite; transform-box: fill-box; transform-origin: center; }
 

@@ -9,7 +9,9 @@ export type LL = [number, number];
 
 const CENTER = { lat: 30.0300, lng: 31.4700, x: 480, y: 325 };
 const D_LAT = 4 / 111000, D_LNG = 4 / (111320 * Math.cos((CENTER.lat * Math.PI) / 180));
-export const toLL = (x: number, y: number): LL => [CENTER.lat - (y - CENTER.y) * D_LAT, CENTER.lng + (x - CENTER.x) * D_LNG];
+/** the drawing is stretched (wider 1.5x, taller 1.2x) so the plant, pumps, reservoir and zones sit well apart on screen */
+const SX = 1.5, SY = 1.2;
+export const toLL = (x: number, y: number): LL => [CENTER.lat - (y - CENTER.y) * SY * D_LAT, CENTER.lng + (x - CENTER.x) * SX * D_LNG];
 
 /** convex hull (monotone chain) of [x, y] points */
 function hull(pts: [number, number][]): [number, number][] {

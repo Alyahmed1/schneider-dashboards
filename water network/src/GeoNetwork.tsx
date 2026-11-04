@@ -186,7 +186,7 @@ export default function GeoNetwork(props: Props) {
     }
 
     for (const key of ["areas", "pipes", "assets", "leaks", "inst"] as const) g[key].addTo(m);
-    const zc = () => el.classList.toggle("geo-z15", m.getZoom() >= 15);
+    const zc = () => { el.classList.toggle("geo-z15", m.getZoom() >= 15); el.classList.toggle("geo-z155", m.getZoom() >= 15.5); };
     m.on("zoomend", zc); zc();
     // the box has no size until the page has laid it out, so frame the network the first time it has one
     let framed = false;

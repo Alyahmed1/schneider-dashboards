@@ -5,7 +5,7 @@ import { zoneInfo } from "./geo";
 /** the three zones as a plain list: shown on a phone, where the map is small */
 export default function ZoneList({ metric, hour, zone, onZone }: { metric: Metric; hour: number; zone: ZoneId | null; onZone: (z: ZoneId | null) => void }) {
   const s = networkAt(hour);
-  const from: Record<string, string> = { Z1: "Fed from the hub", Z3: "Fed from the hub", Z4: "Fed from the PS-2 booster" };
+  const from: Record<string, string> = { Z1: "Fed from the hub", Z3: "Fed from the hub", Z4: "Fed from the PS-2 booster", Z5: "Fed from the hub", Z6: "Fed from the hub", Z7: "Fed from the hub", Z8: "Fed from the hub" };
   return (
     <ul className="ns-list" aria-label="The three zones">
       {ZONES.map((z) => {

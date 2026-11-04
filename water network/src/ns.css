@@ -109,28 +109,29 @@ html[data-theme="light"] { --ns-bg1: #123566; --ns-bg2: #0a1f45; }
 @media (prefers-reduced-motion: reduce) { .ns-flow { animation: none; } .ns-zoom { transition: none; } }
 
 /* meters grouped by what they belong to (the Readings panel) */
-.nm-read { min-height: 0; overflow: auto; }
+.nm-read { min-height: 0; overflow: visible; }
 .nm-read h3 { margin-bottom: 6px; }
-.nm-read-g { display: grid; grid-template-columns: 84px 1fr; gap: 2px 6px; align-items: start; padding: 2px 0; border-top: 1px solid var(--line-2, var(--line)); }
+.nm-read-g { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 1px 6px; align-items: center; padding: 2px 0; border-top: 1px solid var(--line-2, var(--line)); }
 .nm-read-g:first-of-type { border-top: 0; }
-.nm-read-g > span { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.6; }
-.nm-read .ns-chips { display: flex; flex-wrap: wrap; gap: 4px 5px; }
-.nm-read .ns-chip { display: inline-flex; align-items: center; gap: 4px; padding: 0 7px 0 5px; font: inherit; font-size: 11.5px; line-height: 19px; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.nm-read-g > span { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.nm-read-g.on > span { color: var(--teal); }
+.nm-read .ns-chips { display: flex; flex-wrap: wrap; gap: 2px 4px; }
+.nm-read .ns-chip { display: inline-flex; align-items: center; gap: 4px; padding: 0 7px 0 5px; font: inherit; font-size: 13px; line-height: 22px; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; white-space: nowrap; }
 .nm-read .ns-chip i { width: 7px; height: 7px; border-radius: 50%; display: block; }
-.nm-read .ns-chip span { color: var(--muted); font-size: 10.5px; }
+.nm-read .ns-chip span { color: var(--muted); font-size: 12.5px; }
 .nm-read .ns-chip b { font-weight: 600; }
 .nm-read .ns-chip:hover { border-color: var(--ns-tool); }
 .nm-read .ns-chip.sel { outline: 2px solid var(--ns-tool); outline-offset: 1px; }
 .nm-read .ns-chip.warn { border-color: var(--warn); }
 .nm-read .ns-chip.bad { border-color: var(--bad); }
 
-.nm-read .ns-leak { display: inline-flex; align-items: center; gap: 4px; padding: 0 8px 0 6px; font: inherit; font-size: 11.5px; line-height: 19px; cursor: pointer; }
+.nm-read .ns-leak { display: inline-flex; align-items: center; gap: 4px; padding: 0 7px 0 5px; font: inherit; font-size: 13px; line-height: 22px; cursor: pointer; }
 .nm-read .ns-leak i { width: 7px; height: 7px; border-radius: 50%; background: var(--bad); }
 .nm-read-foot { margin: 6px 0 0; padding-top: 6px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--muted); }
 /* the right column: nothing scrolls, the chart takes whatever room is left */
 .nm-side { display: flex; flex-direction: column; overflow: hidden; gap: 8px; }
 .nm-side > .hm-p { flex: none; }
-.nm-side > .nm-read { flex: 2 1 auto; min-height: max-content; overflow: visible; padding: 8px 12px 8px; }
+.nm-side > .nm-read { flex: 0 0 auto; overflow: visible; padding: 8px 12px 6px; }
 .nm-side > .nm-detail { flex: 1 1 0; min-height: 120px; }
 @media (max-width: 960px) { .nm-side { overflow: visible; } .nm-side > .nm-detail { flex: none; min-height: 220px; } }
 
@@ -148,12 +149,12 @@ html[data-theme="light"] { --ns-bg1: #123566; --ns-bg2: #0a1f45; }
 .nm-top b.warn { color: var(--warn); }
 @media (max-width: 1280px) { .nm-top { gap: 12px; } .nm-top small { display: none; } }
 
-/* the tasks: the open work orders, most urgent first */
-.nm-side > .nm-tasks { flex: 3 1 auto; min-height: max-content; overflow: visible; padding: 10px 14px 8px; }
-.nm-tasks h3 { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+/* the tasks: the open work orders, most urgent first. The list scrolls inside its box. */
+.nm-side > .nm-tasks { flex: 1 1 auto; min-height: 0; overflow: hidden; padding: 12px 14px 10px; }
+.nm-tasks h3 { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; flex: none; }
 .nm-tasks h3 small { font-size: 11px; color: var(--muted); font-weight: 400; }
 .nm-tasks h3 .nm-clear { margin-left: auto; }
-.nm-tasks ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.nm-tasks ul { list-style: none; margin: 0; padding: 0 4px 0 0; display: grid; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
 .nm-tasks li button { width: 100%; display: grid; grid-template-columns: 8px 1fr auto; align-items: center; gap: 8px; padding: 1px 4px; font: inherit; font-size: 11.5px; line-height: 18px; color: var(--ink); text-align: left; background: none; border: 0; border-top: 1px solid var(--line-2, var(--line)); cursor: pointer; }
 .nm-tasks li:first-child button { border-top: 0; }
 .nm-tasks li button:hover { background: var(--surface-2); }
@@ -164,22 +165,12 @@ html[data-theme="light"] { --ns-bg1: #123566; --ns-bg2: #0a1f45; }
 .nm-tasks li i.p-High { background: var(--bad); } .nm-tasks li i.p-Medium { background: var(--warn); } .nm-tasks li i.p-Low { background: var(--good, #2fbf6b); }
 @media (max-width: 960px) { .nm-side > .nm-tasks { flex: none; } }
 
-/* a short screen: the readings and tasks get a little tighter, so every task still shows */
-@media (max-height: 830px) and (min-width: 961px) {
-  .nm-tasks li button { line-height: 16px; font-size: 11px; padding: 0 4px; }
-  .nm-read-g { padding: 1px 0; }
-  .nm-read .ns-chip, .nm-read .ns-leak { line-height: 17px; font-size: 11px; }
-  .nm-read-g > span { font-size: 11.5px; line-height: 1.5; }
-  .nm-side { gap: 6px; }
-  .nm-side > .nm-read, .nm-side > .nm-tasks { padding-top: 6px; padding-bottom: 5px; }
-}
 
 /* a bigger Tasks box: roomier rows and larger type */
-.nm-tasks h3 { font-size: 16px; margin-bottom: 6px; }
-.nm-tasks li button { padding: 3px 6px; font-size: 13px; line-height: 22px; grid-template-columns: 10px 1fr auto; gap: 10px; }
+.nm-tasks h3 { font-size: 17px; margin-bottom: 8px; }
+.nm-tasks li button { padding: 7px 8px; font-size: 15px; line-height: 26px; grid-template-columns: 10px 1fr auto; gap: 10px; }
 .nm-tasks li i { width: 10px; height: 10px; }
-.nm-tasks li em { font-size: 12px; }
-@media (max-height: 830px) and (min-width: 961px) { .nm-tasks li button { font-size: 12px; line-height: 18px; padding: 1px 5px; } .nm-tasks h3 { font-size: 15px; margin-bottom: 3px; } }
+.nm-tasks li em { font-size: 13px; }
 
 /* Readings, leaks and tasks: larger, and sized by the screen height so they still fit a laptop without scrolling */
 @media (min-width: 961px) {
@@ -203,12 +194,12 @@ html[data-theme="light"] { --ns-bg1: #123566; --ns-bg2: #0a1f45; }
   .nm-time .nm-btn { padding: 3px 10px; font-size: 12px; }
   .nm-read h3, .nm-tasks h3 { font-size: clamp(15px, 1.9vh, 18px); margin-bottom: clamp(3px, .6vh, 8px); }
   .nm-read h3 small, .nm-tasks h3 small { font-size: clamp(11px, 1.3vh, 13px); }
-  .nm-read-g { grid-template-columns: clamp(92px, 11vh, 120px) 1fr; padding: clamp(1px, .35vh, 4px) 0; }
-  .nm-read-g > span { font-size: clamp(12px, 1.5vh, 14.5px); line-height: clamp(18px, 2.5vh, 26px); }
-  .nm-read .ns-chips { gap: clamp(2px, .5vh, 6px) 6px; }
-  .nm-read .ns-chip, .nm-read .ns-leak { font-size: clamp(12px, 1.45vh, 14.5px); line-height: clamp(18px, 2.5vh, 26px); padding: 0 9px 0 7px; gap: 5px; }
-  .nm-read .ns-chip span { font-size: clamp(11px, 1.3vh, 13px); }
-  .nm-read .ns-chip i, .nm-read .ns-leak i { width: 8px; height: 8px; }
-  .nm-tasks li button { font-size: clamp(12.5px, 1.55vh, 15px); line-height: clamp(17px, 2.6vh, 28px); padding: 1px 6px; }
-  .nm-tasks li em { font-size: clamp(11.5px, 1.35vh, 13.5px); }
+  .nm-read-g { grid-template-columns: 108px minmax(0, 1fr); padding: 1px 0; }
+  .nm-read-g > span { font-size: 13px; line-height: 16px; }
+  .nm-read .ns-chips { gap: 3px 4px; }
+  .nm-read .ns-chip, .nm-read .ns-leak { font-size: 12.5px; line-height: 22px; padding: 0 7px 0 5px; gap: 4px; }
+  .nm-read .ns-chip span { font-size: 11.5px; }
+  .nm-read .ns-chip i, .nm-read .ns-leak i { width: 7px; height: 7px; }
+  .nm-tasks li button { font-size: 14.5px; line-height: 22px; padding: 8px 4px; }
+  .nm-tasks li em { font-size: 13px; }
 }

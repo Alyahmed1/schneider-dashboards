@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent as RPointerEvent } from "react";
-import { INSTRUMENTS, LEAKS, networkAt, pipeBetween, pipeById, readInstrument, ZONES, type InstrumentType, type ZoneId } from "./network";
+import { INSTRUMENTS, LEAKS, networkAt, pipeBetween, pipeById, readInstrument, ZONES, type ZoneId } from "./network";
 import { BAD, GOOD, MID, type Metric } from "./mapcolor";
 import { pipeColor, zoneInfo } from "./geo";
 
@@ -18,49 +18,69 @@ const ZONE_SHAPE: Record<ZoneId, P[]> = {
   Z1: [[394, 118], [452, 108], [451, 175], [450, 240], [452, 285], [400, 292], [358, 285], [342, 262], [335, 220], [337, 195], [347, 172], [360, 160], [394, 158]],
   Z3: [[505, 94], [567, 90], [597, 104], [625, 115], [645, 131], [659, 149], [652, 172], [630, 207], [600, 217], [560, 209], [557, 190], [532, 172], [526, 164], [507, 152]],
   Z4: [[567, 290], [598, 268], [640, 235], [670, 212], [687, 214], [702, 254], [717, 287], [712, 330], [700, 362], [670, 410], [647, 394], [625, 365], [592, 335]],
+  Z5: [[86, 114], [208, 108], [214, 166], [84, 172]],
+  Z6: [[58, 266], [188, 260], [194, 314], [54, 318]],
+  Z7: [[36, 334], [158, 328], [164, 382], [32, 388]],
+  Z8: [[336, 368], [452, 364], [458, 408], [332, 412]],
 };
-/** the zone cards printed on the picture, and the thin line from each card to its zone */
-const CARD: Record<ZoneId, Rect> = { Z1: { x: 284, y: 21, w: 181, h: 75 }, Z3: { x: 567, y: 5, w: 178, h: 77 }, Z4: { x: 770, y: 163, w: 178, h: 78 } };
-const CARD_BG: Record<ZoneId, string> = { Z1: "#032742", Z3: "#01213d", Z4: "#01203b" };
+/** the zone cards. The first three sit on cards printed on the picture. The four new ones sit in open gaps, clear of zones, pipes and badges. */
+const CARD: Record<ZoneId, Rect> = {
+  Z1: { x: 284, y: 21, w: 181, h: 75 }, Z3: { x: 567, y: 5, w: 178, h: 77 }, Z4: { x: 770, y: 163, w: 178, h: 78 },
+  Z5: { x: 52, y: 8, w: 180, h: 76 }, Z6: { x: 8, y: 178, w: 180, h: 76 }, Z7: { x: 6, y: 396, w: 188, h: 76 }, Z8: { x: 248, y: 416, w: 178, h: 76 },
+};
+/** only these three cards are printed on the picture, so only they need covering when Zones is off */
+const PRINTED_ZONES: ZoneId[] = ["Z1", "Z3", "Z4"];
+const CARD_BG: Record<string, string> = { Z1: "#032742", Z3: "#01213d", Z4: "#01203b" };
 /** where plain streets of the same size sit, as an offset from each card */
-const CARD_FROM: Record<ZoneId, P> = { Z1: [-200, 0], Z3: [230, 0], Z4: [60, 180] };
-const CARD_LEAD: Record<ZoneId, P[]> = { Z1: [[420, 96], [439, 129]], Z3: [[602, 82], [574, 115]], Z4: [[770, 206], [747, 206], [699, 264]] };
+const CARD_FROM: Record<string, P> = { Z1: [-200, 0], Z3: [230, 0], Z4: [60, 180] };
+const CARD_LEAD: Record<string, P[]> = { Z1: [[420, 96], [439, 129]], Z3: [[602, 82], [574, 115]], Z4: [[770, 206], [747, 206], [699, 264]] };
 
 /** each pipe of the picture, as the model pipe it stands for (drawn from the upstream end); bg is the picture's colour beside it, used to hide it */
-const SEGS: { from: string; to: string; pts: P[]; bg: string; id: string }[] = ([
-  { from: "wtp", to: "ps1", pts: [[493, 418], [491, 384]], bg: "#0a2a45" },
-  { from: "ps1", to: "j0", pts: [[494, 343], [512, 313]], bg: "#0a2a45" },
-  { from: "j0", to: "res", pts: [[508, 278], [502, 267], [483, 263], [467, 257], [447, 223], [419, 213]], bg: "#1e5a43" },
-  { from: "j0", to: "j1", pts: [[502, 267], [505, 233]], bg: "#0a2a45" },
-  { from: "j1", to: "a1", pts: [[505, 233], [468, 236], [447, 223]], bg: "#0f3a48" },
-  { from: "a1", to: "a2", pts: [[388, 184], [380, 172], [354, 162], [342, 154]], bg: "#2d6b37" },
-  { from: "a1", to: "a3", pts: [[380, 172], [390, 153]], bg: "#4d831e" },
-  { from: "a1", to: "a5", pts: [[365, 208], [334, 207], [318, 208]], bg: "#82771d" },
-  { from: "j1", to: "c1", pts: [[505, 233], [506, 211], [531, 182]], bg: "#55783a" },
-  { from: "c1", to: "c2", pts: [[531, 182], [575, 182]], bg: "#7a2634" },
-  { from: "c2", to: "c4", pts: [[575, 182], [615, 182]], bg: "#8e1d31" },
-  { from: "c2", to: "c3", pts: [[615, 182], [628, 165], [633, 142]], bg: "#702532" },
-  { from: "ps2", to: "d1", pts: [[538, 295], [575, 296], [605, 331]], bg: "#0d7144" },
-  { from: "ps2", to: "d1", pts: [[605, 331], [612, 300], [626, 286]], bg: "#3a881d" },
-  { from: "d1", to: "d2", pts: [[605, 331], [615, 331], [635, 356]], bg: "#0f6848" },
-  { from: "d1", to: "d3", pts: [[635, 356], [637, 324]], bg: "#298d28" },
-  { from: "d2", to: "d4", pts: [[635, 356], [660, 387], [675, 372], [690, 350]], bg: "#089114" },
-  { from: "d4", to: "d5", pts: [[690, 350], [710, 351], [728, 333]], bg: "#034c3d" },
-] as { from: string; to: string; pts: P[]; bg: string }[]).map((s) => ({ ...s, id: pipeBetween(s.from, s.to).id }));
+const SEGS: { from: string; to: string; pts: P[]; bg: string; id: string; brown?: boolean }[] = ([
+  // each line starts where the previous one ends, and the last point of a run is a plant, the reservoir, or a P badge
+  { from: "wtp", to: "ps1", pts: [[493, 445], [491, 363]], bg: "#0a2a45" },
+  { from: "ps1", to: "j0", pts: [[491, 363], [508, 278]], bg: "#0a2a45" },
+  { from: "j0", to: "res", pts: [[508, 278], [470, 248], [430, 224], [392, 210]], bg: "#1e5a43" },
+  { from: "j0", to: "j1", pts: [[508, 278], [505, 233]], bg: "#0a2a45" },
+  { from: "j1", to: "a1", pts: [[505, 233], [448, 228]], bg: "#0f3a48" },
+  { from: "a1", to: "a2", pts: [[448, 228], [348, 168]], bg: "#2d6b37" },
+  { from: "j1", to: "c1", pts: [[505, 233], [531, 182]], bg: "#55783a", brown: true },
+  { from: "c1", to: "c2", pts: [[531, 182], [575, 182]], bg: "#7a2634", brown: true },
+  { from: "c2", to: "c4", pts: [[575, 182], [610, 168]], bg: "#8e1d31", brown: true },
+  { from: "c2", to: "c3", pts: [[610, 168], [633, 142]], bg: "#702532", brown: true },
+  { from: "j0", to: "ps2", pts: [[508, 278], [520, 295]], bg: "#0a2a45" },
+  { from: "ps2", to: "d1", pts: [[520, 295], [590, 300]], bg: "#0d7144" },
+  { from: "ps2", to: "d1", pts: [[590, 300], [605, 331]], bg: "#0d7144", brown: true },
+  { from: "d1", to: "d3", pts: [[605, 331], [650, 348]], bg: "#298d28", brown: true },
+  { from: "d2", to: "d4", pts: [[650, 348], [690, 350]], bg: "#089114", brown: true },
+  { from: "d4", to: "d5", pts: [[690, 350], [700, 370]], bg: "#034c3d", brown: true },
+  // one feeder each, from the hub to that district's P. The shared part is the same line, then they split.
+  { from: "j0", to: "pa1", pts: [[508, 278], [450, 310], [250, 310], [220, 168], [200, 142], [98, 150]], bg: "#0a2a45" },
+  { from: "j0", to: "nc1", pts: [[508, 278], [450, 310], [250, 310], [186, 292], [72, 292]], bg: "#0a2a45" },
+  { from: "j0", to: "qg1", pts: [[508, 278], [450, 310], [250, 310], [160, 354], [50, 364]], bg: "#0a2a45" },
+  { from: "j0", to: "mc1", pts: [[508, 278], [450, 310], [420, 376], [440, 400]], bg: "#0a2a45" },
+] as { from: string; to: string; pts: P[]; bg: string; brown?: boolean }[]).map((s) => ({ ...s, id: pipeBetween(s.from, s.to).id }));
 
-/** the controller badges: most sit on a badge printed on the picture, a few are added where the picture has none */
-const BADGES: { id: string; x: number; y: number; z: ZoneId | null; bg?: string; pill?: Rect & { icon: "gauge" | "sound"; from: P } }[] = [
-  { id: "PT-02", x: 390, y: 153, z: "Z1", bg: "#767e23", pill: { x: 271, y: 124, w: 90, h: 27, icon: "gauge", from: [-60, 250] } },
-  { id: "FT-02", x: 467, y: 236, z: "Z1", bg: "#0a2a45" },
-  { id: "FT-04", x: 506, y: 211, z: "Z3", bg: "#0a2a45" },
-  { id: "LK-02", x: 595, y: 165, z: "Z3", bg: "#852333", pill: { x: 468, y: 129, w: 86, h: 26, icon: "sound", from: [420, 120] } },
-  { id: "AT-02", x: 633, y: 130, z: "Z3", bg: "#594546" },
-  { id: "PT-03", x: 613, y: 200, z: "Z3" },
-  { id: "FT-01", x: 492, y: 401, z: null },
-  { id: "FT-05", x: 556, y: 296, z: "Z4" },
-  { id: "PRV-01", x: 629, y: 274, z: "Z4", bg: "#178f2b" },
-  { id: "LK-03", x: 639, y: 312, z: "Z4", bg: "#437624" },
-  { id: "PT-04", x: 685, y: 343, z: "Z4", bg: "#0e9a1f", pill: { x: 726, y: 317, w: 94, h: 28, icon: "gauge", from: [120, 60] } },
+/** F where the water enters a zone, P at the far end. id is the existing meter, when there is one. */
+const BADGES: { id?: string; letter: "F" | "P"; x: number; y: number; z: ZoneId }[] = [
+  { id: "FT-02", letter: "F", x: 448, y: 228, z: "Z1" }, { id: "PT-02", letter: "P", x: 348, y: 168, z: "Z1" },
+  { id: "FT-04", letter: "F", x: 531, y: 182, z: "Z3" }, { id: "PT-03", letter: "P", x: 633, y: 142, z: "Z3" },
+  { id: "FT-05", letter: "F", x: 590, y: 300, z: "Z4" }, { id: "PT-04", letter: "P", x: 700, y: 370, z: "Z4" },
+  { id: "FT-06", letter: "F", x: 200, y: 142, z: "Z5" }, { id: "PT-05", letter: "P", x: 98, y: 150, z: "Z5" },
+  { id: "FT-07", letter: "F", x: 186, y: 292, z: "Z6" }, { id: "PT-06", letter: "P", x: 72, y: 292, z: "Z6" },
+  { id: "FT-08", letter: "F", x: 160, y: 354, z: "Z7" }, { id: "PT-07", letter: "P", x: 50, y: 364, z: "Z7" },
+  { id: "FT-09", letter: "F", x: 420, y: 376, z: "Z8" }, { id: "PT-08", letter: "P", x: 440, y: 400, z: "Z8" },
+];
+/** letters and gauges printed on the picture that this map no longer uses, covered so they never show through */
+const HIDE_DOTS: { x: number; y: number; bg: string }[] = [
+  { x: 390, y: 153, bg: "#767e23" }, { x: 467, y: 236, bg: "#0a2a45" }, { x: 506, y: 211, bg: "#0a2a45" },
+  { x: 595, y: 165, bg: "#852333" }, { x: 633, y: 130, bg: "#594546" }, { x: 629, y: 274, bg: "#178f2b" },
+  { x: 639, y: 312, bg: "#437624" }, { x: 685, y: 343, bg: "#0e9a1f" },
+];
+const HIDE_PILLS: { id: string; r: Rect; from: P }[] = [
+  { id: "g1", r: { x: 271, y: 124, w: 90, h: 27 }, from: [-60, 250] },
+  { id: "g2", r: { x: 468, y: 129, w: 86, h: 26 }, from: [420, 120] },
+  { id: "g3", r: { x: 726, y: 317, w: 94, h: 28 }, from: [120, 60] },
 ];
 /** the plant, the pumps and the reservoir printed on the picture, and the meters that belong to each */
 const FACS: { id: string; name: string; x: number; y: number; r: number; meters: string[] }[] = [
@@ -75,7 +95,6 @@ const FAC_LABELS: Rect[] = [{ x: 486, y: 307, w: 72, h: 27 }, { x: 502, y: 360, 
 /** the zoom buttons printed on the picture: always covered, the working ones sit on top of the map */
 const PRINTED_TOOLS: Rect = { x: 7, y: 6, w: 42, h: 106 };
 
-const GLYPH: Record<InstrumentType, string> = { flow: "Q", pressure: "P", quality: "Cl", level: "H", pump: "M", leak: "Lk", prv: "V" };
 const TONE_FILL: Record<string, string> = { good: "#1f8f45", warn: "#c58a10", bad: "#c8283f", info: "#1f6fd6" };
 const lvl = (c: string) => (c === GOOD ? "lv0" : c === MID ? "lv1" : "lv2");
 const pts = (p: P[]) => p.map((q) => q.join(",")).join(" ");
@@ -195,7 +214,7 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
 
   return (
     <div ref={box} className={`ni ${drag ? "drag" : ""}`} style={{ background: BG }} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}
-      role="application" aria-label="Map of the water network over New Cairo with three zones: Banafseg, Rehab and Lotus. Drag to move, scroll or use the plus and minus to zoom, the house to see it all.">
+      role="application" aria-label="Map of the water network over New Cairo. Drag to move, scroll or use the plus and minus to zoom, the house to see it all.">
       <div className="ni-stage" style={{ width: IW, height: IH, transform: `translate(${tx}px, ${ty}px) scale(${k})` }}>
         <svg className="ni-svg" width={IW} height={IH} viewBox={`0 0 ${IW} ${IH}`}>
           <defs>
@@ -212,18 +231,18 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
           {/* what is switched off is painted over in the colour of the picture around it; the zone colouring then goes over these patches too */}
           <g className="ni-cover" filter="url(#ni-feather)">
             {!layers.pipes && SEGS.map((g, i) => <path key={i} d={line(g.pts)} className="pipe" style={{ stroke: g.bg }} />)}
-            {!layers.ctl && BADGES.filter((b) => b.bg).map((b) => <circle key={b.id} cx={b.x} cy={b.y} r="17" style={{ fill: b.bg }} />)}
-            {!layers.areas && ZONES.map((z) => (
-              <g key={z.id} style={{ fill: CARD_BG[z.id], stroke: CARD_BG[z.id] }}>
-                <path d={line(CARD_LEAD[z.id])} className="lead" />
-                <circle cx={CARD_LEAD[z.id].at(-1)![0]} cy={CARD_LEAD[z.id].at(-1)![1]} r="6" />
+            {HIDE_DOTS.map((b, i) => <circle key={i} cx={b.x} cy={b.y} r="17" style={{ fill: b.bg }} />)}
+            {!layers.areas && PRINTED_ZONES.map((id) => (
+              <g key={id} style={{ fill: CARD_BG[id], stroke: CARD_BG[id] }}>
+                <path d={line(CARD_LEAD[id])} className="lead" />
+                <circle cx={CARD_LEAD[id].at(-1)![0]} cy={CARD_LEAD[id].at(-1)![1]} r="6" />
               </g>
             ))}
           </g>
           {/* boxes printed on plain streets are covered with plain streets from elsewhere in the picture */}
           <Clone id="tools" r={PRINTED_TOOLS} from={[60, 0]} />
-          {!layers.ctl && BADGES.filter((b) => b.pill).map((b) => <Clone key={b.id} id={b.id} r={b.pill!} from={b.pill!.from} rx={b.pill!.h / 2} />)}
-          {!layers.areas && ZONES.map((z) => <Clone key={z.id} id={z.id} r={CARD[z.id]} from={CARD_FROM[z.id]} />)}
+          {HIDE_PILLS.map((b) => <Clone key={b.id} id={b.id} r={b.r} from={b.from} rx={b.r.h / 2} />)}
+          {!layers.areas && PRINTED_ZONES.map((id) => <Clone key={id} id={id} r={CARD[id]} from={CARD_FROM[id]} />)}
 
           <g className="ni-zones">
             {ZONES.map((z) => {
@@ -257,8 +276,8 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
               const zn = p.zone === "trunk" ? "Trunk main" : ZONES.find((z) => z.id === p.zone)!.name;
               return (
                 <g key={i} className={d ? "dim" : ""} {...hover(`${p.id} · DN${p.dn} · ${zn}`, [`Flow ${st.flow.toFixed(0)} L/s · ${st.velocity.toFixed(2)} m/s`, `Pressure ${st.pressure.toFixed(1)} bar · ${p.length} m long`, ...(st.leak > 0 ? [`Leak ${st.leak} L/s`] : [])])}>
-                  <path d={line(g.pts)} className="case" />
-                  <path d={line(g.pts)} className="pipe" style={{ stroke: pipeColor(metric, s, p) }} filter="url(#ni-glow)" />
+                  <path d={line(g.pts)} className="case" style={g.brown ? { stroke: "#8a5a32" } : undefined} />
+                  <path d={line(g.pts)} className="pipe" style={{ stroke: g.brown ? "#8a5a32" : pipeColor(metric, s, p) }} filter="url(#ni-glow)" />
                   {moving && <path d={line(g.pts)} className={`flow ${st.reverse ? "rev" : ""}`} style={{ ["--dur" as string]: `${Math.max(0.35, Math.min(4, 13 / (Math.max(st.velocity, 0.05) * 14)))}s` }} />}
                   <path d={line(g.pts)} className="hit" />
                 </g>
@@ -287,14 +306,19 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
           {/* controllers */}
           {layers.ctl && <g className="ni-ctl">
             {BADGES.map((b) => {
-              const inst = INST[b.id], r = readInstrument(inst, hour), off = inst.forced === "offline";
+              const q = s.zones[b.z];
+              const inst = b.id ? INST[b.id] : undefined;
+              const read = inst ? readInstrument(inst, hour) : null;
+              const tone = read ? read.tone : b.letter === "P" && q.pressure < 2.5 ? "bad" : "good";
+              const text = read ? read.text : b.letter === "F" ? `${q.supplied.toFixed(0)} L/s` : `${q.pressure.toFixed(1)} bar`;
+              const title = inst ? `${b.letter} · ${inst.name}` : `${b.letter} · ${ZONES.find((z) => z.id === b.z)!.name}`;
               return (
-                <g key={b.id} className={`ni-b ${r.tone} ${sel === b.id ? "sel" : ""} ${dimZ(b.z) ? "dim" : ""}`} role="button" tabIndex={0} aria-label={`${b.id} ${inst.name}: ${off ? "offline" : r.text}`}
-                  onClick={click(() => ctlSel(b.id))} onKeyDown={key(() => ctlSel(b.id))} {...hover(`${b.id} · ${inst.name}`, [`${r.text} · ${r.detail}`])}>
-                  {r.tone === "bad" && <circle cx={b.x} cy={b.y} r="11" className="rip" />}
-                  {sel === b.id && <circle cx={b.x} cy={b.y} r="17" className="ring" />}
-                  <circle cx={b.x} cy={b.y} r="12.5" className="dot" style={{ fill: TONE_FILL[r.tone] }} />
-                  <text x={b.x} y={b.y + 0.5}>{GLYPH[inst.type]}</text>
+                <g key={b.id ?? `${b.z}${b.letter}`} className={`ni-b ${tone} ${sel === b.id ? "sel" : ""} ${dimZ(b.z) ? "dim" : ""}`} role="button" tabIndex={0} aria-label={`${title}: ${text}`}
+                  onClick={click(() => { if (b.id) ctlSel(b.id); else pickZone(b.z); })} onKeyDown={key(() => { if (b.id) ctlSel(b.id); else pickZone(b.z); })} {...hover(title, [text])}>
+                  {tone === "bad" && <circle cx={b.x} cy={b.y} r="11" className="rip" />}
+                  {b.id && sel === b.id && <circle cx={b.x} cy={b.y} r="17" className="ring" />}
+                  <circle cx={b.x} cy={b.y} r="12.5" className="dot" style={{ fill: TONE_FILL[tone] }} />
+                  <text x={b.x} y={b.y + 0.5}>{b.letter}</text>
                 </g>
               );
             })}
@@ -307,7 +331,7 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
           const sp = vals.map((x, i) => [4 + (i / 23) * 52, 22 - ((x - lo) / (hi - lo || 1)) * 18] as P);
           const leaks = LEAKS.filter((l) => pipeById(l.pipe).zone === z.id);
           return (
-            <button key={z.id} type="button" className={`ni-card ${lvl(info.c)} ${dimZ(z.id) ? "dim" : ""} ${zone === z.id ? "on" : ""}`} style={{ left: c.x, top: c.y, width: c.w, height: c.h, ["--c" as string]: info.c }}
+            <button key={z.id} type="button" className={`ni-card ${z.name.length > 12 ? "long" : ""} ${lvl(info.c)} ${dimZ(z.id) ? "dim" : ""} ${zone === z.id ? "on" : ""}`} style={{ left: c.x, top: c.y, width: c.w, height: c.h, ["--c" as string]: info.c }}
               onClick={click(() => pickZone(z.id))} aria-pressed={zone === z.id} title={leaks.length ? leaks.map((l) => `${l.id}: leak ${l.rate} L/s, ${l.status.toLowerCase()}`).join("\n") : undefined}>
               <b className="n">{z.name}</b>
               <span className="v"><b>{info.big}</b> {info.unit}</span>
@@ -317,19 +341,6 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
                 <path d={line(sp)} className="ln" />
                 <circle cx={4 + (Math.min(23, Math.round(hour)) / 23) * 52} cy={sp[Math.min(23, Math.round(hour))][1]} r="2" />
               </svg>
-            </button>
-          );
-        })}
-
-        {/* gauges */}
-        {layers.ctl && BADGES.filter((b) => b.pill).map((b) => {
-          const r = readInstrument(INST[b.id], hour), g = b.pill!;
-          return (
-            <button key={b.id} type="button" className={`ni-pill ${r.tone} ${sel === b.id ? "sel" : ""} ${dimZ(b.z) ? "dim" : ""}`} style={{ left: g.x, top: g.y, width: g.w, height: g.h }} onClick={click(() => ctlSel(b.id))} title={`${b.id} · ${INST[b.id].name}: ${r.detail}`}>
-              {g.icon === "gauge"
-                ? <svg viewBox="0 0 24 24" aria-hidden><path d="M4 17a8 8 0 1 1 16 0" /><path d="M12 17l4-5" /><circle cx="12" cy="17" r="1.6" /></svg>
-                : <svg viewBox="0 0 24 24" aria-hidden><path d="M4 10h3l4-4v12l-4-4H4z" /><path d="M15 9a4 4 0 0 1 0 6" /><path d="M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>}
-              <b>{r.text}</b>
             </button>
           );
         })}

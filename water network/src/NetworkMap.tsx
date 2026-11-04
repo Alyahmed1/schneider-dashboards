@@ -89,7 +89,7 @@ export default function NetworkMap({ preset, go }: { preset?: { hour: number; me
           </div>
         </div>
 
-        <p className="nm-how"><b>How to read it:</b> the glowing pipes carry the water from the plant, through the booster, to the three zones <i>·</i> the zone and pipe colours follow the button you pick above <i>·</i> the round badges are the controllers: click one to select it <i>·</i> click a zone to focus it, drag or scroll to move and zoom.</p>
+        <p className="nm-how"><b>How to read it:</b> every pipe runs from one point to the next, from the plant out to each zone <i>·</i> F is where water enters and P is the far end <i>·</i> a reading or a leak on the right is the same point on the map.</p>
 
         <div className="nm-wrap" ref={wrap} style={mapH ? { flex: "none", height: mapH } : undefined}>
           <NetworkImage metric={metric} hour={hour} zone={zone} onZone={setZone} layers={lay} sel={sel} onSel={setSel} />
@@ -116,21 +116,23 @@ export default function NetworkMap({ preset, go }: { preset?: { hour: number; me
 
         <section className="hm-p nm-read">
           <h3>Readings and leaks <small>{LEAKS.length} leaks · {(LEAKS.reduce((a, l) => a + l.rate, 0) * 86.4).toFixed(0)} m³/day</small> {zone && <button className="nm-clear" onClick={() => setZone(null)}>Show all</button>}</h3>
-          {METER_GROUPS.map((g) => (
-            <div key={g.name} className="nm-read-g">
+          {METER_GROUPS.map((g) => {
+            const zid = ZONES.find((q) => q.name === g.name)?.id;
+            return (
+            <div key={g.name} className={`nm-read-g ${zid && zone === zid ? "on" : ""}`}>
               <span>{g.name}</span>
               <div className="ns-chips">
                 {g.ids.map((id) => { const inst = INSTRUMENTS.find((i) => i.id === id)!, r = readings[id], off = inst.forced === "offline"; return (
-                  <button key={id} type="button" className={`ns-chip ${r.tone} ${sel === id ? "sel" : ""}`} onClick={() => setSel(id)} title={`${id} · ${inst.name}`} aria-label={`${TYPE_NAME[inst.type]} ${id}, ${inst.name}: ${off ? "offline" : r.text}`}>
+                  <button key={id} type="button" className={`ns-chip ${r.tone} ${sel === id ? "sel" : ""}`} onClick={() => { setSel(id); if (zid) setZone(zid); }} title={`${id} · ${inst.name}`} aria-label={`${TYPE_NAME[inst.type]} ${id}, ${inst.name}: ${off ? "offline" : r.text}`}>
                     <i style={{ background: TONE_COLOR[r.tone] }} /><span>{GLYPH[inst.type]}</span><b>{off ? "offline" : r.text}</b>
                   </button>
                 ); })}
-                {(() => { const zid = ZONES.find((q) => q.name === g.name)?.id; return LEAKS.filter((l) => zid && pipeById(l.pipe).zone === zid).map((l) => (
+                {LEAKS.filter((l) => zid && pipeById(l.pipe).zone === zid).map((l) => (
                   <button key={l.id} type="button" className="ns-leak" onClick={() => setZone(zid ?? null)} title={`${l.id}: ${l.note}. ${l.status}, running for ${l.since}. Click to focus this zone.`} aria-label={`${l.id}, ${l.rate} litres per second, ${l.status}: focus ${g.name}`}><i />Leak <b>{l.rate}</b></button>
-                )); })()}
+                ))}
               </div>
             </div>
-          ))}
+          ); })}
         </section>
 
 

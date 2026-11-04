@@ -1,6 +1,6 @@
 /* ================= Map helpers: base map tiles for the Home region map, and the colours shared by the Home and Network maps ================= */
 import { useEffect, useState } from "react";
-import { BAD, colorOf, type Metric } from "./mapcolor";
+import { colorOf, type Metric } from "./mapcolor";
 import { PIPES, ZONES, type Pipe, type Snapshot, type ZoneId } from "./network";
 
 /* ---------- basemaps ---------- */
@@ -27,15 +27,11 @@ export function useTheme(): "light" | "dark" {
 }
 
 /* ---------- colours and numbers shared by Home and the Network Map ---------- */
-const WIRE = "#8796a8";
-export function pipeColor(metric: Metric, s: Snapshot, p: Pipe) {
-  if (p.kind === "tie") return WIRE;
-  const st = s.pipes[p.id];
-  switch (metric) {
-    case "Consumption": return colorOf(metric, st.load);
-    case "Pressure": return colorOf(metric, st.pressure);
-    case "Leakage": return st.leak > 0 ? BAD : p.zone === "trunk" ? WIRE : colorOf(metric, s.zones[p.zone].nrw);
-  }
+const GREEN = "#2fce55";
+const BROWN = "#8a5a32";
+/** pipes stay green; brown only where a known leak is losing water. Zone and card colours still follow the button above the map. */
+export function pipeColor(_metric: Metric, s: Snapshot, p: Pipe) {
+  return s.pipes[p.id].leak > 0 ? BROWN : GREEN;
 }
 /** mean pipe load of a zone, the same number its pipes are coloured with */
 export function zoneLoad(s: Snapshot, id: ZoneId) {

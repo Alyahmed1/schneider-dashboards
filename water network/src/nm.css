@@ -155,7 +155,7 @@ html[data-theme="dark"] .nm-open { color: #06141f; }
 
 /* phones: the map gets its own height, the key shrinks to the colour names */
 @media (max-width: 1000px) {
-  .nm-wrap { flex: none; height: 62vh; min-height: 380px; }
+  .nm-wrap { flex: none; height: auto; aspect-ratio: 2 / 1; min-height: 0; width: 100%; }
   .nm-map-p { min-height: 0; }
   .nm-legend { width: auto; padding: 6px 9px; font-size: 11.5px; }
   .nm-legend .row { grid-template-columns: 18px auto; gap: 6px; padding: 1px 0; }

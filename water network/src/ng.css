@@ -121,6 +121,7 @@
 .ni-card:hover, .ni-card.on { box-shadow: 0 0 0 1.5px var(--c), 0 0 14px rgba(56, 232, 255, .35); }
 .ni-card.dim { opacity: .45; }
 .ni-card .n { font-size: 14px; font-weight: 700; line-height: 1.15; }
+.ni-card.long .n { font-size: 12px; line-height: 1.1; }
 .ni-card .v { font-size: 12.5px; color: #c9d9ef; white-space: nowrap; line-height: 1.15; }
 .ni-card .v b { font-size: 25px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
 .ni-card .s { margin-right: -56px; font-size: 10.5px; color: #b9cbe6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }

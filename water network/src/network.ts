@@ -4,7 +4,7 @@
    (Hazen-Williams head loss), so every map colour is consistent with every other number. */
 import type { Tone } from "./data";
 
-export type ZoneId = "Z1" | "Z3" | "Z4";
+export type ZoneId = "Z1" | "Z3" | "Z4" | "Z5" | "Z6" | "Z7" | "Z8";
 export type Profile = "residential" | "commercial" | "mixed";
 
 export interface Zone {
@@ -21,6 +21,10 @@ export const ZONES: Zone[] = [
   { id: "Z1", name: "Banafseg", profile: "mixed", daily: 21000, nrw: 0.11, ground: 66, label: { x: 540, y: 90 } },
   { id: "Z3", name: "Rehab", profile: "residential", daily: 34000, nrw: 0.17, ground: 62, label: { x: 760, y: 280 } },
   { id: "Z4", name: "Lotus", profile: "residential", daily: 20000, nrw: 0.21, ground: 58, label: { x: 620, y: 560 } },
+  { id: "Z5", name: "Police Academy", profile: "commercial", daily: 9000, nrw: 0.08, ground: 64, label: { x: 160, y: 120 } },
+  { id: "Z6", name: "New Cairo", profile: "mixed", daily: 14000, nrw: 0.12, ground: 62, label: { x: 140, y: 220 } },
+  { id: "Z7", name: "El Qahera El Gedida", profile: "residential", daily: 7000, nrw: 0.09, ground: 60, label: { x: 120, y: 330 } },
+  { id: "Z8", name: "Mostakbal City", profile: "residential", daily: 11000, nrw: 0.14, ground: 58, label: { x: 260, y: 380 } },
 ];
 export const zoneById = (id: ZoneId) => ZONES.find((z) => z.id === id)!;
 
@@ -58,6 +62,8 @@ export const NODES: WNode[] = [
   n("c1", 540, 310, "demand", "Z3", 2), n("c2", 640, 300, "demand", "Z3", 3), n("c3", 740, 310, "demand", "Z3", 3), n("c4", 640, 380, "demand", "Z3", 3), n("c5", 760, 400, "demand", "Z3", 3), n("c6", 860, 330, "demand", "Z3", 3),
   // Z4 Lotus
   n("d1", 520, 420, "demand", "Z4", 2), n("d2", 620, 470, "demand", "Z4", 3), n("d3", 520, 510, "demand", "Z4", 3), n("d4", 720, 460, "demand", "Z4", 3), n("d5", 730, 540, "demand", "Z4", 2),
+  // the four districts west of the reservoir
+  n("pa1", 80, 80, "demand", "Z5", 1), n("nc1", 70, 170, "demand", "Z6", 1), n("qg1", 50, 260, "demand", "Z7", 1), n("mc1", 150, 300, "demand", "Z8", 1),
 ];
 export const nodeById = (id: string) => NODES.find((x) => x.id === id)!;
 
@@ -88,6 +94,8 @@ export const PIPES: Pipe[] = [
   pipe("j1", "c1", "Z3"), pipe("c1", "c2", "Z3"), pipe("c2", "c3", "Z3"), pipe("c2", "c4", "Z3"), pipe("c3", "c6", "Z3"), pipe("c4", "c5", "Z3"), pipe("c5", "c6", "Z3", "loop"),
   // Z4
   pipe("ps2", "d1", "Z4"), pipe("d1", "d2", "Z4"), pipe("d1", "d3", "Z4"), pipe("d2", "d4", "Z4"), pipe("d4", "d5", "Z4"), pipe("d3", "d2", "Z4", "loop"),
+  // west districts, each a single feeder from the hub, with no known leak
+  pipe("j0", "pa1", "Z5"), pipe("j0", "nc1", "Z6"), pipe("j0", "qg1", "Z7"), pipe("j0", "mc1", "Z8"),
   // closed ties between zones (isolation valves, no flow)
   pipe("a5", "c2", "Z1", "tie"), pipe("d2", "c4", "Z4", "tie"),
 ];
@@ -252,7 +260,7 @@ export function networkAt(hour: number): Snapshot {
     // diameters are still zero here, so only flows are read (they do not depend on diameter)
     const s = solveFlowsOnly(k / 4);
     for (const [id, q] of Object.entries(s)) peak.set(id, Math.max(peak.get(id) ?? 0, q));
-    totalSum += s[PIPES[3].id] + s[PIPES[4].id]; // the two pipes that leave the hub carry everything
+    totalSum += PIPES.filter((p) => p.from === "j0" && p.to !== "res" && p.kind === "tree").reduce((a, p) => a + s[p.id], 0);
   }
   // the plant runs flat at the daily average, so its two pipes are sized for that, not for the peak
   peak.set(PIPES[0].id, totalSum / 96); peak.set(PIPES[1].id, totalSum / 96);
@@ -310,10 +318,18 @@ export const INSTRUMENTS: Instrument[] = [
   { id: "FT-02", type: "flow", name: "Z1 inlet flow", at: onPipe("j1", "a1") },
   { id: "FT-04", type: "flow", name: "Z3 inlet flow", at: onPipe("j1", "c1") },
   { id: "FT-05", type: "flow", name: "Z4 inlet flow", at: onPipe("ps2", "d1") },
+  { id: "FT-06", type: "flow", name: "Police Academy inlet flow", at: onPipe("j0", "pa1") },
+  { id: "FT-07", type: "flow", name: "New Cairo inlet flow", at: onPipe("j0", "nc1") },
+  { id: "FT-08", type: "flow", name: "El Qahera El Gedida inlet flow", at: onPipe("j0", "qg1") },
+  { id: "FT-09", type: "flow", name: "Mostakbal City inlet flow", at: onPipe("j0", "mc1") },
   { id: "PT-01", type: "pressure", name: "PS-1 discharge pressure", at: { node: "j0" } },
   { id: "PT-02", type: "pressure", name: "Banafseg pressure", at: { node: "a4" } },
   { id: "PT-03", type: "pressure", name: "Rehab pressure", at: { node: "c6" } },
   { id: "PT-04", type: "pressure", name: "Lotus pressure", at: { node: "d5" } },
+  { id: "PT-05", type: "pressure", name: "Police Academy pressure", at: { node: "pa1" } },
+  { id: "PT-06", type: "pressure", name: "New Cairo pressure", at: { node: "nc1" } },
+  { id: "PT-07", type: "pressure", name: "El Qahera El Gedida pressure", at: { node: "qg1" } },
+  { id: "PT-08", type: "pressure", name: "Mostakbal City pressure", at: { node: "mc1" } },
   { id: "AT-01", type: "quality", name: "Chlorine after reservoir", at: { node: "j0" } },
   { id: "AT-02", type: "quality", name: "Chlorine, Rehab", at: { node: "c6" } },
   { id: "LT-01", type: "level", name: "Reservoir level", at: { node: "res" } },

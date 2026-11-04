@@ -124,3 +124,35 @@
   .hm-map-wrap.hm-map-col { height: auto; overflow: visible; }
   .hm-map-col .hm-dia { flex: none; height: clamp(340px, 74vw, 480px); min-height: 0; }
 }
+
+/* ---- Network Map side column: every box shows all of its rows; a short screen scrolls the column instead of clipping ---- */
+.nm-side { grid-template-rows: auto auto auto minmax(190px, 1fr); }
+.hm-p.nm-stats { padding: 8px 12px; }
+.nm-stats b { font-size: 19px; }
+.hm-p.nm-zones, .hm-p.nm-loss { overflow: visible; flex: none; padding: 8px 12px 10px; }
+.nm-zones h3, .nm-loss h3 { margin-bottom: 4px; font-size: 14px; }
+.nm-zones td { padding: 3px 0; }
+.nm-zones table { font-size: 12px; }
+.nm-leaks { gap: 3px; }
+.nm-leaks button { padding: 3px 8px; font-size: 11.5px; }
+.nm-leaks span small { font-size: 10.5px; line-height: 1.2; }
+.nm-detail { min-height: 190px; }
+
+/* ---- Home: the key floats on the map so the map gets the whole box ---- */
+@media (min-width: 1101px) {
+  .hm-map-col .hm-key.geo-key { position: absolute; top: 10px; right: 10px; z-index: 900; flex-direction: column; align-items: stretch; gap: 5px; padding: 8px 10px; width: max-content; box-shadow: 0 2px 8px rgba(0, 0, 0, .2); }
+  .hm-map-col .hm-key.geo-key > b { font-size: 12px; }
+  .hm-map-col .hm-key.geo-key em { display: none; }
+  .hm-map-col .hm-key.geo-key .nm-open { margin: 4px 0 0; }
+  .hm { grid-template-rows: minmax(0, 1fr) clamp(165px, 22vh, 235px); }
+}
+.geo-home .geo-zl { min-width: 96px; padding: 4px 8px 5px 9px; }
+.geo-home .geo-zl .n { font-size: 11.5px; }
+.geo-home .geo-zl .v b { font-size: 17px; }
+.nm-side > .hm-p.nm-stats, .nm-side > .hm-p.nm-zones, .nm-side > .hm-p.nm-loss { min-height: max-content; }
+.nm-side > .hm-p.nm-zones, .nm-side > .hm-p.nm-loss, .nm-side > .hm-p.nm-stats.x { display: block; height: auto; }
+.nm-zones table { display: table; }
+/* simplest and safest: a plain column. Boxes keep their full height; the detail box takes what is left; a short screen scrolls the column */
+.nm-side { display: flex; flex-direction: column; }
+.nm-side > .hm-p { flex: none; }
+.nm-side > .hm-p.nm-detail { flex: 1 0 190px; }

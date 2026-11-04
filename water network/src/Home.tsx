@@ -99,7 +99,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
           <div className="hm-dia">
             <GeoNetwork mode="home" metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} label="Interactive map of the water network over New Cairo: the treatment plant, pump stations, reservoir and six supply zones. Click a zone, pump or reservoir for its numbers." />
           </div>
-          <div className="hm-key" aria-label="Colour key">
+          <div className="hm-key geo-key" aria-label="Colour key">
             <b>{LEGEND[metric].title}:</b>
             {LEGEND[metric].items.map((i) => <span key={i.label}><i style={{ background: i.c }} />{i.label} <em>{i.note}</em></span>)}
             <button className="nm-open" onClick={() => go("network")}>Open the full network map</button>

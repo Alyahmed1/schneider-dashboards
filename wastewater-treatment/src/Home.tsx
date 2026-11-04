@@ -10,6 +10,7 @@ import { useTick, wobble } from "./live";
 import { useGrow } from "./anim";
 import { Bars, niceMax, Panel, tick } from "./charts";
 import type { Go, TabId } from "./App";
+import "./kpi.css";
 
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, energy: 0.004, cost: 0.004, avail: 0.0008, wo: 0, mem: 0 };
 const KPI_TO: Record<string, TabId> = { water: "production", energy: "energy", cost: "overview", avail: "maintenance", wo: "maintenance", mem: "overview" };
@@ -90,7 +91,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
   const oxygen = wobble(2.1, 31, t, 0.01);
 
   return (
-    <div className="hm">
+    <div className="hm kp">
       <section className="hm-map-p" style={{ ["--i" as string]: 0 }}>
         <div className="hm-map-head">
           <div className="hm-map-lead">

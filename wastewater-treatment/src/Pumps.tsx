@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
 import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import { rng } from "./data";
@@ -7,7 +7,11 @@ import { useTick, wobble } from "./live";
 import { CountUp, Replay, Tip } from "./ui";
 import { Panel } from "./charts";
 import { Trend } from "./boardui";
+import { KpDefs } from "./kpiui";
+import { PumpArt, PumpHero } from "./PlantArt";
 import type { Go } from "./App";
+import "./kpi.css";
+import "./kpi-boards.css";
 
 type Run = "Running" | "Standby" | "Alarm";
 interface Pump {
@@ -28,36 +32,15 @@ const PUMPS: Pump[] = [
   { id: "P-10", name: "Sludge pump 2", duty: "Digesters", maker: "Seepex", model: "BN 35-6", kw: 22, flow: 70, state: "Alarm", eff: 61.2, cap: 48, hot: true, seed: 20 },
 ];
 
-function PumpArt({ running, hot }: { running: boolean; hot: boolean }) {
-  return (
-    <svg className="pu-svg" viewBox="0 0 560 300" role="img" aria-label="Centrifugal pump cutaway">
-      <rect x="30" y="250" width="500" height="14" className="base" />
-      <path d="M8 168 H148" className={running ? "hm-pipe clean" : "pipe-still"} />
-      <text x="16" y="150">Suction</text>
-      <circle cx="210" cy="168" r="74" className="case" />
-      <circle cx="210" cy="168" r="64" className="case-in" />
-      <path d="M210 94 V40 H390" className={running ? "hm-pipe clean" : "pipe-still"} />
-      <text x="300" y="32">Discharge</text>
-      <g className={running ? "bd-spin" : "bd-spin off"}>
-        <circle cx="210" cy="168" r="28" className="hub" />
-        {Array.from({ length: 6 }, (_, i) => (
-          <path key={i} d="M210 168 C226 148 240 150 248 168" transform={`rotate(${i * 60} 210 168)`} className="vane" />
-        ))}
-      </g>
-      <rect x="248" y="162" width="86" height="12" className="shaft" />
-      <rect x="292" y="146" width="18" height="44" className={hot ? "bearing hot bd-hot" : "bearing"} />
-      <rect x="334" y="112" width="150" height="112" className="motor" />
-      {Array.from({ length: 7 }, (_, i) => <rect key={i} x={350 + i * 16} y="112" width="5" height="112" className="fin" />)}
-      <circle cx="484" cy="168" r="26" className="cowl" />
-      <text x="372" y="246">Motor</text>
-    </svg>
-  );
-}
-
-function Body({ pump, go }: { pump: Pump; go: Go }) {
+/** Pumps: the plant's centrifugal pumps, one at a time, with the same live motion. Numbers refresh every 10 seconds. */
+export default function Pumps({ go }: { go: Go }) {
   const t = useTick();
   const grow = useGrow();
+  const [id, setId] = useState("P-01");
+  const pump = PUMPS.find((p) => p.id === id)!;
   const running = pump.state !== "Standby";
+  const kwh = pump.state === "Standby" ? 40 : pump.kw * 18 * (pump.eff / 80);
+
   const trend = useMemo(() => {
     const r = rng(pump.seed);
     return Array.from({ length: 18 }, (_, i) => {
@@ -67,7 +50,7 @@ function Body({ pump, go }: { pump: Pump; go: Go }) {
   }, [pump, running]);
   const health = useMemo(() => {
     const r = rng(pump.seed + 5);
-    return Array.from({ length: 18 }, () => Math.round((pump.hot ? 38 : 76) + r() * (pump.hot ? 50 : 22)));
+    return Array.from({ length: 24 }, () => Math.round((pump.hot ? 38 : 76) + r() * (pump.hot ? 50 : 22)));
   }, [pump]);
   const curve = useMemo(() => {
     const r = rng(pump.seed + 9);
@@ -83,92 +66,86 @@ function Body({ pump, go }: { pump: Pump; go: Go }) {
     ? [{ name: "Bearing temperature", start: "Today 06:40", end: "Open" }, { name: "Efficiency drop", start: "Today 05:10", end: "Open" }]
     : [{ name: "Vibration check", start: "12 Oct 09:00", end: "12 Oct 09:40" }];
 
-  return (
-    <div className="pu-body">
-      <div className="pu-col">
-        <Panel title="Power trends" className="bd-grow" i={1}>
-          <Trend data={trend} unit=" kW" lines={[
-            { key: "active", name: "Active power", color: "var(--teal)" },
-            { key: "expected", name: "Expected", color: "var(--blue)", dash: "4 3" },
-            { key: "loss", name: "Shortfall", color: "var(--warn)" },
-          ]} />
-        </Panel>
-        <Panel title="Predictive health" i={2}>
-          <div className="pu-bars">
-            {health.map((v, i) => <i key={i} className={v < 45 ? "bad" : v < 70 ? "warn" : ""} style={{ height: `${grow ? v : 4}%`, ["--n" as string]: i }} />)}
-          </div>
-        </Panel>
-        <button className="bd-cta" onClick={() => go("alarms")}><AlertTriangle size={15} /> View alerts</button>
-      </div>
-      <Panel title={pump.name} className="bd-grow" i={3}>
-        <PumpArt running={running} hot={pump.hot} />
-      </Panel>
-      <div className="pu-col">
-        <div className="pu-losses">
-          <Panel title="Revenue loss" i={4}><b className="bd-big" style={{ color: lossLe < 0 ? "var(--bad)" : undefined }}><CountUp value={lossLe} decimals={1} /></b><span className="bd-unit">LE/h</span></Panel>
-          <Panel title="Flow loss" i={5}><b className="bd-big" style={{ color: lossFlow < 0 ? "var(--bad)" : undefined }}><CountUp value={lossFlow} decimals={0} /></b><span className="bd-unit">m³/h</span></Panel>
-        </div>
-        <Panel title="Power curve" className="bd-grow" i={6}>
-          <Replay className="bd-chart">
-            <ResponsiveContainer>
-              <ScatterChart margin={{ left: -8, right: 8, top: 8, bottom: 0 }}>
-                <CartesianGrid stroke="var(--line)" strokeDasharray="3 4" />
-                <XAxis dataKey="x" name="Flow" stroke="var(--muted)" fontSize={10} tickLine={false} axisLine={false} interval={3} />
-                <YAxis dataKey="y" name="Power" stroke="var(--muted)" fontSize={10} tickLine={false} axisLine={false} width={48} tickFormatter={(v: number) => `${v >= 20 ? Math.round(v) : +Number(v).toFixed(1)} kW`} />
-                <Tooltip content={<Tip unit="" />} cursor={{ strokeDasharray: "3 3" }} />
-                <Scatter data={curve} fill="var(--teal)" isAnimationActive animationDuration={1100} />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </Replay>
-        </Panel>
-        <Panel title="Predictive events" i={7}>
-          <table className="pu-table">
-            <thead><tr><th>Event</th><th>Start</th><th>End</th></tr></thead>
-            <tbody>{events.map((e) => <tr key={e.name}><td>{e.name}</td><td>{e.start}</td><td>{e.end}</td></tr>)}</tbody>
-          </table>
-        </Panel>
-        <Panel title="Pump details" i={8}>
-          <div className="pu-meta">
-            <div><span>Duty</span><b>{pump.duty}</b></div>
-            <div><span>Manufacturer</span><b>{pump.maker}</b></div>
-            <div><span>Model</span><b>{pump.model}</b></div>
-            <div><span>Rated power</span><b><CountUp value={wobble(pump.kw, pump.seed, t, 0)} decimals={0} /> kW</b></div>
-          </div>
-        </Panel>
-      </div>
-    </div>
-  );
-}
+  const chips: { l: string; v: ReactNode; tone?: string }[] = [
+    { l: "Daily energy", v: <><CountUp value={wobble(kwh, 2, t, 0.01)} decimals={0} /> kWh</> },
+    { l: "Capacity", v: <><CountUp value={wobble(pump.cap, 3, t, 0.01)} decimals={1} />%</> },
+    { l: "State", v: pump.state, tone: pump.state === "Alarm" ? "bad" : pump.state === "Running" ? "ok" : "" },
+    { l: "Operating efficiency", v: <><CountUp value={wobble(pump.eff, 4, t, 0.006)} decimals={1} />%</> },
+    { l: "Overheat alarm", v: pump.hot ? "High" : "Clear", tone: pump.hot ? "bad" : "ok" },
+  ];
 
-/** Pumps: the turbine board rebuilt as the plant's centrifugal pumps, with the same live motion. */
-export default function Pumps({ go }: { go: Go }) {
-  const t = useTick();
-  const [id, setId] = useState("P-01");
-  const pump = PUMPS.find((p) => p.id === id)!;
-  const kwh = pump.state === "Standby" ? 40 : pump.kw * 18 * (pump.eff / 80);
   return (
-    <div className="bd-fit pu">
-      <section className="hm-p pu-head" style={{ ["--i" as string]: 0 }}>
-        <div className="pu-top">
-          <div>
-            <h2>Pump operations</h2>
-            <p>{pump.name} · {pump.duty}</p>
-          </div>
-          <div className="seg pu-pick" role="tablist" aria-label="Pump">
-            {PUMPS.map((p) => (
-              <button key={p.id} role="tab" aria-selected={p.id === id} className={`${p.id === id ? "on" : ""} ${p.hot ? "hot" : ""}`} onClick={() => setId(p.id)}>{p.id}</button>
-            ))}
-          </div>
+    <div className="bd-fit kp pu2">
+      <KpDefs />
+      <Panel title="Pump operations" className="a-menu" i={0}>
+        <div className="pu2-menu" role="tablist" aria-label="Pump">
+          {PUMPS.map((p) => (
+            <button key={p.id} role="tab" aria-selected={p.id === id} className={`${p.id === id ? "on" : ""} ${p.hot ? "hot" : ""}`} onClick={() => setId(p.id)}>
+              <span className="mini"><PumpArt /></span>
+              <b>{p.id}</b><em>{p.name}</em>
+              <i className={p.state === "Alarm" ? "bad" : p.state === "Standby" ? "idle" : "ok"} aria-label={p.state} />
+            </button>
+          ))}
         </div>
-        <div className="pu-kpis">
-          <div><span>Daily energy</span><b><CountUp value={wobble(kwh, 2, t, 0.01)} decimals={0} /> kWh</b></div>
-          <div><span>Capacity</span><b><CountUp value={wobble(pump.cap, 3, t, 0.01)} decimals={1} />%</b></div>
-          <div><span>State</span><b className={pump.state === "Alarm" ? "bad" : pump.state === "Running" ? "ok" : ""}>{pump.state}</b></div>
-          <div><span>Operating efficiency</span><b><CountUp value={wobble(pump.eff, 4, t, 0.006)} decimals={1} />%</b></div>
-          <div><span>Overheat alarm</span><b className={pump.hot ? "bad" : "ok"}>{pump.hot ? "High" : "Clear"}</b></div>
-        </div>
+      </Panel>
+
+      <section className="hm-p a-kpis pu2-kpis" style={{ ["--i" as string]: 1 }}>
+        <div className="pu2-title"><h2>{pump.name}</h2><p>{pump.duty} · {pump.id}</p></div>
+        {chips.map((c) => (
+          <div key={c.l} className={`chip ${c.tone ?? ""}`}><span>{c.l}</span><b>{c.v}</b></div>
+        ))}
       </section>
-      <Body key={id} pump={pump} go={go} />
+
+      <Panel title="Power trends (kW)" className="a-trend" i={2}>
+        <Trend data={trend} unit=" kW" lines={[
+          { key: "active", name: "Active power", color: "var(--teal)" },
+          { key: "expected", name: "Expected", color: "var(--blue)", dash: "4 3" },
+          { key: "loss", name: "Shortfall", color: "var(--warn)" },
+        ]} />
+      </Panel>
+      <Panel title="Predictive health score" className="a-health" i={3}>
+        <div className="pu-bars">
+          {health.map((v, i) => <i key={i} className={v < 45 ? "bad" : v < 70 ? "warn" : ""} style={{ height: `${grow ? v : 4}%`, ["--n" as string]: i }} />)}
+        </div>
+      </Panel>
+
+      <section className="hm-p a-img pu2-img" style={{ ["--i" as string]: 4 }} aria-label={pump.name}>
+        <PumpHero running={running} hot={pump.hot} />
+        <button className="pu2-alerts" onClick={() => go("alarms")}><AlertTriangle size={14} /> View alerts</button>
+      </section>
+
+      <Panel title="Pump details" className="a-det" i={5}>
+        <div className="pu2-meta">
+          <div><span>Manufacturer</span><b>{pump.maker}</b></div>
+          <div><span>Model</span><b>{pump.model}</b></div>
+          <div><span>Rated power</span><b><CountUp value={wobble(pump.kw, pump.seed, t, 0)} decimals={0} /> kW</b></div>
+        </div>
+      </Panel>
+      <Panel title="Losses" className="a-loss" i={6}>
+        <div className="pu2-loss">
+          <div><span>Revenue loss</span><b className={lossLe < 0 ? "neg" : ""}><CountUp value={lossLe} decimals={1} /> <small>LE/h</small></b></div>
+          <div><span>Flow loss</span><b className={lossFlow < 0 ? "neg" : ""}><CountUp value={lossFlow} decimals={0} /> <small>m³/h</small></b></div>
+        </div>
+      </Panel>
+      <Panel title="Predictive events" className="a-events" i={7}>
+        <table className="pu-table">
+          <thead><tr><th>Event</th><th>Start</th><th>End</th></tr></thead>
+          <tbody>{events.map((e) => <tr key={e.name}><td>{e.name}</td><td>{e.start}</td><td>{e.end}</td></tr>)}</tbody>
+        </table>
+      </Panel>
+      <Panel title="Power curve" className="a-curve" i={8}>
+        <Replay className="bd-chart">
+          <ResponsiveContainer>
+            <ScatterChart margin={{ left: -8, right: 8, top: 8, bottom: 0 }}>
+              <CartesianGrid stroke="var(--line)" strokeDasharray="3 4" />
+              <XAxis dataKey="x" name="Flow" stroke="var(--muted)" fontSize={10} tickLine={false} axisLine={false} interval={3} />
+              <YAxis dataKey="y" name="Power" stroke="var(--muted)" fontSize={10} tickLine={false} axisLine={false} width={48} tickFormatter={(v: number) => `${v >= 20 ? Math.round(v) : +Number(v).toFixed(1)} kW`} />
+              <Tooltip content={<Tip unit="" />} cursor={{ strokeDasharray: "3 3" }} />
+              <Scatter data={curve} fill="var(--aqua)" isAnimationActive animationDuration={1100} />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </Replay>
+      </Panel>
     </div>
   );
 }

@@ -29,6 +29,8 @@ import "./cover-dark.css";
 import "./nm.css";
 import "./clear.css";
 import "./geo.css";
+import "./ns.css";
+import "./ng.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

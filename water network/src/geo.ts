@@ -1,67 +1,7 @@
-/* ================= Real-map helpers: the network drawn over New Cairo =================
-   The model in network.ts uses a 960 x 650 drawing (1 unit = 4 m). Here it is placed on a real map around New Cairo
-   so the zones, pipes, pumps and reservoir sit on streets and buildings. The positions are sample data, not a survey. */
+/* ================= Map helpers: base map tiles for the Home region map, and the colours shared by the Home and Network maps ================= */
 import { useEffect, useState } from "react";
 import { BAD, colorOf, type Metric } from "./mapcolor";
-import { NODES, PIPES, ZONES, type Pipe, type Snapshot, type ZoneId } from "./network";
-import { ZONE_RINGS, type Ring } from "./geoZones";
-
-export type LL = [number, number];
-const M_LAT = 111000, M_LNG = 111320 * Math.cos((30.03 * Math.PI) / 180);
-const shift = (p: LL, east: number, north: number): LL => [p[0] + north / M_LAT, p[1] + east / M_LNG];
-
-/* ---------- zones: each one sits on a real neighbourhood (see geoZones.ts) ---------- */
-const area = (r: Ring) => Math.abs(r.reduce((a, p, i) => { const q = r[(i + 1) % r.length]; return a + (p[1] * q[0] - q[1] * p[0]); }, 0)) / 2;
-const centroidOf = (r: Ring): LL => {
-  let A = 0, cx = 0, cy = 0;
-  r.forEach((p, i) => { const q = r[(i + 1) % r.length], f = p[1] * q[0] - q[1] * p[0]; A += f; cx += (p[1] + q[1]) * f; cy += (p[0] + q[0]) * f; });
-  return A ? [cy / (3 * A), cx / (3 * A)] : r[0];
-};
-const inRing = (pt: LL, r: Ring) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { if ((r[i][0] > pt[0]) !== (r[j][0] > pt[0]) && pt[1] < ((r[j][1] - r[i][1]) * (pt[0] - r[i][0])) / (r[j][0] - r[i][0]) + r[i][1]) c = !c; } return c; };
-
-export const ZONE_AREA: Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; upper: LL; east: LL; west: LL }> = Object.fromEntries(
-  ZONES.map((z) => {
-    const rings = ZONE_RINGS[z.id] as Ring[];
-    const big = rings.reduce((a, r) => (area(r) > area(a) ? r : a), rings[0]);
-    const c = centroidOf(big);
-    const pts = rings.flat();
-    const lo = Math.min(...pts.map((p) => p[0])), hi = Math.max(...pts.map((p) => p[0]));
-    return [z.id, { rings, centre: c, upper: [hi - 0.14 * (hi - lo), c[1]] as LL, top: [Math.max(...pts.map((p) => p[0])), c[1]] as LL, east: [c[0], Math.max(...pts.map((p) => p[1]))] as LL, west: [c[0], Math.min(...pts.map((p) => p[1]))] as LL }];
-  }),
-) as Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; upper: LL; east: LL; west: LL }>;
-
-/* ---------- where every node of the network sits on the map ---------- */
-const NODE_LL: Record<string, LL> = {};
-{
-  for (const z of ZONES) {
-    const rings = ZONE_AREA[z.id].rings as Ring[], ns = NODES.filter((n) => n.zone === z.id), c = ZONE_AREA[z.id].centre;
-    if (rings.length > 1) { ns.forEach((n, i) => { const r = rings[i % rings.length], rc = centroidOf(r); NODE_LL[n.id] = shift(rc, ((i * 37) % 5 - 2) * 25, ((i * 53) % 5 - 2) * 25); }); continue; }
-    // one neighbourhood: the zone's drawing is scaled to fill about 60% of it and pulled inside its edge
-    const all = rings[0], la = all.map((p) => p[0]), lo = all.map((p) => p[1]);
-    const tw = (Math.max(...lo) - Math.min(...lo)) * M_LNG, th = (Math.max(...la) - Math.min(...la)) * M_LAT;
-    const xs = ns.map((n) => n.x), ys = ns.map((n) => n.y), cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
-    const cw = Math.max(...xs) - Math.min(...xs) || 1, ch = Math.max(...ys) - Math.min(...ys) || 1;
-    const k = Math.min((tw * 0.5) / cw, (th * 0.42) / ch);
-    for (const n of ns) {
-      let p = shift(c, (n.x - cx) * k, -(n.y - cy) * k - th * 0.06);
-      for (let i = 0; i < 12 && !inRing(p, all); i++) p = [p[0] + (c[0] - p[0]) * 0.25, p[1] + (c[1] - p[1]) * 0.25];
-      NODE_LL[n.id] = p;
-    }
-  }
-  // the supply chain reads left to right and bottom to top with room around every piece:
-  // treatment plant, then PS-1, then the junction, which feeds the reservoir, the hub next to the zones and PS-2 (for Narges)
-  NODE_LL.wtp = [30.0030, 31.4660];
-  NODE_LL.ps1 = [30.0120, 31.4800];
-  NODE_LL.j0 = [30.0295, 31.4880];
-  NODE_LL.res = [30.0395, 31.4950];
-  NODE_LL.j1 = [30.0440, 31.4850];
-  NODE_LL.ps2 = [30.0238, 31.4805];
-  NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
-}
-export const nodeLL = (id: string): LL => NODE_LL[id];
-export const pipeLine = (p: Pipe): LL[] => [nodeLL(p.from), nodeLL(p.to)];
-export const pipeMid = (p: Pipe, t = 0.5): LL => { const a = nodeLL(p.from), b = nodeLL(p.to); return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; };
-export const ALL_LL: LL[] = [...Object.values(NODE_LL), ...ZONES.flatMap((z) => ZONE_AREA[z.id].rings.flat())];
+import { PIPES, ZONES, type Pipe, type Snapshot, type ZoneId } from "./network";
 
 /* ---------- basemaps ---------- */
 export type Basemap = "Streets" | "Satellite";

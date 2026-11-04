@@ -124,7 +124,7 @@ export default function App() {
           <motion.div key={tab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
             <ErrorBoundary key={tab}>
               {tab === "home" && <Home f={{ ...f, area: "All network" }} setRange={(range) => setF({ ...f, range })} go={go} wos={wos} />}
-              {tab === "network" && <NetworkMap preset={preset} />}
+              {tab === "network" && <NetworkMap preset={preset} go={go} />}
               {tab === "alarms" && <AlarmsPage go={go} focus={stageTarget} />}
               {tab === "overview" && <Overview f={{ ...f, area: "All network" }} go={go} t={tick} />}
               {tab === "production" && <Production f={{ ...f, area: "All network" }} start={stageTarget} />}

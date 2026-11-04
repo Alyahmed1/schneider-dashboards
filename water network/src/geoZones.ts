@@ -1,15 +1,7 @@
-/* Real neighbourhood boundaries (OpenStreetMap, via Nominatim, simplified), [lat, lng]. Six areas of New Cairo that sit side by side.
- Rehab is the one drawn by hand. The pipes, meters and numbers on top of them are sample data. */
+/* Real neighbourhood boundaries (OpenStreetMap, via Nominatim, simplified), [lat, lng]. Z1 is the whole of Banafseg, Z3 is Rehab (drawn by hand, no boundary is published) and Z4 is Lotus. */
 export type Ring = [number, number][];
 export const ZONE_RINGS: Record<string, Ring[]> = {
-  // Banafseg: the Banafseg blocks 1 to 12 and the apartments, outlined together
   Z1: [[[30.02915, 31.47355], [30.02952, 31.47428], [30.03559, 31.47456], [30.05579, 31.47464], [30.06713, 31.47463], [30.06964, 31.47404], [30.06988, 31.47302], [30.06913, 31.46266], [30.06856, 31.46215], [30.03758, 31.46042], [30.03671, 31.46114], [30.0293, 31.47044]]],
-  // First Settlement
-  Z2: [[[30.06349, 31.43249], [30.0606, 31.44401], [30.05378, 31.44207], [30.05178, 31.44211], [30.05321, 31.46161], [30.07002, 31.46201], [30.07521, 31.44986], [30.07435, 31.43977], [30.07353, 31.43895], [30.0685, 31.43762]]],
-  // Rehab: drawn by hand around Al Rehab City, no boundary is published
   Z3: [[[30.0735, 31.4855], [30.0745, 31.4985], [30.07, 31.5085], [30.058, 31.5095], [30.0535, 31.499], [30.056, 31.488]]],
-  // Lotus district
   Z4: [[[30.02564, 31.49873], [30.02, 31.51056], [30.0122, 31.52132], [30.01201, 31.5224], [30.01478, 31.52507], [30.02084, 31.52785], [30.02524, 31.5287], [30.02651, 31.52774], [30.03108, 31.5285], [30.03856, 31.5258], [30.04124, 31.52394], [30.04168, 31.52243], [30.0333, 31.50999], [30.0286, 31.49889]]],
-  // Narges 1
-  Z5: [[[30.02268, 31.45423], [30.01733, 31.46038], [30.01768, 31.46152], [30.02027, 31.464], [30.0242, 31.46409], [30.02508, 31.46316], [30.02481, 31.45662], [30.0235, 31.45459]]],
 };

@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowDown, ArrowUp, Maximize2 } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
 import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
-import RegionMap, { REGION_METRICS, regionNotes, type RegionMetric } from "./RegionMap";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
 import { NET, networkAt } from "./network";
@@ -15,7 +14,6 @@ import type { Go, TabId } from "./App";
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, nrw: 0.004, press: 0.006, energy: 0.004, wo: 0, mem: 0 };
 const KPI_TO: Record<string, TabId> = { water: "network", nrw: "network", press: "network", energy: "electrical", wo: "maintenance", mem: "overview" };
 
-const MOMENTS = [{ label: "Night", h: 3 }, { label: "Morning peak", h: 8 }, { label: "Midday", h: 13 }, { label: "Evening", h: 19 }] as const;
 
 /** split a series into four periods (sums) */
 const quarters = (v: number[]) => {
@@ -49,9 +47,7 @@ function Pie({ items }: { items: { name: string; value: number }[] }) {
 export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (r: Range) => void; go: Go; wos: WorkOrder[] }) {
   const t = useTick();
   const grow = useGrow();
-  const [metric, setMetric] = useState<RegionMetric>("WaterQuality");
-  const [moment, setMoment] = useState<(typeof MOMENTS)[number]["label"]>("Morning peak");
-  const hour = MOMENTS.find((m) => m.label === moment)!.h;
+  const hour = 8; // the Reservoir box reads the network at the morning peak
   const series = useMemo(() => productionSeries(f), [f]);
   const { done: alarmsDone } = useAlarmLog();
   const critical = useMemo(() => alarms(f).filter((a) => !alarmsDone[a.id] && a.sev === "Critical").length, [f, alarmsDone]);
@@ -84,26 +80,14 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
         <div className="hm-map-head">
           <div className="hm-map-lead">
             <button className={`hm-alarm ${critical ? "bad" : "ok"}`} onClick={() => go("alarms")}>{critical ? `${critical} critical alarm` : "All normal"}</button>
-            <Segmented label="Time of day" value={moment} options={MOMENTS.map((m) => m.label)} onChange={setMoment} />
+            <button className="hm-open-net" onClick={() => go("network")}>Open full network <ArrowRight size={15} aria-hidden /></button>
           </div>
           <Segmented<Range> label="Time range" value={f.range} options={RANGES} onChange={setRange} />
         </div>
         <div className="hm-map-wrap hm-map-col hm-ref">
-          <div className="hm-dia">
-            <RegionMap metric={metric} onOpen={() => go("network")} />
-          </div>
-          <label className="hm-select hm-ref-select">
-            <span className="sr">Colour the map by</span>
-            <select value={metric} onChange={(e) => setMetric(e.target.value as RegionMetric)}>
-              {REGION_METRICS.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
-            </select>
-          </label>
-          <div className="hm-ref-key" aria-label="Colour key">
-            {(["Good", "Moderate", "Bad"] as const).map((w, n) => (
-              <span key={w} title={`${w}: ${regionNotes(metric)[n]}`}>{w}<i className={`k${n}`} /></span>
-            ))}
-          </div>
-          <button className="hm-ref-open" onClick={() => go("network")} title="Open the New Cairo network map" aria-label="Open the New Cairo network map"><Maximize2 size={15} /></button>
+          <button className="hm-dia hm-ref-img" onClick={() => go("network")} aria-label="Map of Egypt by region, coloured Good, Moderate and Bad. Open the New Cairo network map.">
+            <img src="/home-map-wide.jpg" alt="Map of the regions of Egypt (Matrouh, Alexandria, Delta, Cairo, Greater region and Middle Egypt) coloured Good, Moderate or Bad" draggable={false} />
+          </button>
         </div>
       </section>
 

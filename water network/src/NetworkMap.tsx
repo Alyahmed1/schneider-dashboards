@@ -1,34 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
-import { Chip, Segmented } from "./ui";
-import { colorOf, LEGEND, METRICS, type Metric } from "./mapcolor";
-import GeoNetwork, { type GeoFocus, type GeoLayers } from "./GeoNetwork";
-import { BASEMAPS, pipeMid, zoneLoad as zoneLoadAt, type Basemap } from "./geo";
-import { dayCurve, INSTRUMENTS, LEAKS, networkAt, pipeById, readInstrument, ZONES, type InstrumentType, type ZoneId } from "./network";
+import { Segmented, TONE_COLOR } from "./ui";
+import { WORK_ORDERS } from "./cmms";
+import type { Go } from "./App";
+import { METER_GROUPS } from "./meters";
+import { LEGEND, METRICS, type Metric } from "./mapcolor";
+import NetworkImage, { type GeoLayers } from "./NetworkImage";
+import ZoneList from "./ZoneList";
+import { dayCurve, INSTRUMENTS, LEAKS, pipeById, readInstrument, ZONES, type InstrumentType, type ZoneId } from "./network";
 
 export type { Metric };
 
+const GLYPH: Record<InstrumentType, string> = { flow: "Q", pressure: "P", quality: "Cl", level: "H", pump: "M", leak: "Lk", prv: "V" };
 const TYPE_NAME: Record<InstrumentType, string> = { flow: "Flow meter", pressure: "Pressure sensor", quality: "Chlorine analyser", level: "Level sensor", pump: "Pump", leak: "Leak logger", prv: "Pressure-reducing valve" };
 
+const PRIO = { High: 0, Medium: 1, Low: 2 } as const;
+const OPEN = WORK_ORDERS.filter((w) => w.status !== "Done").sort((a, b) => PRIO[a.prio] - PRIO[b.prio] || (a.status === "In progress" ? -1 : 1));
 const CURVE = dayCurve();
 const CURVE_MAX = Math.max(...CURVE.map((d) => d.supplied));
 const hh = (h: number) => `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}`;
+const SIDE_MIN = 320, TIME_H = 30;
 const period = (h: number) => (h < 5 ? "Night low" : h < 9 ? "Morning peak" : h < 17 ? "Daytime" : h < 21 ? "Evening peak" : "Night");
 
 
 
-export default function NetworkMap({ preset }: { preset?: { hour: number; metric: Metric; n: number } | null }) {
+export default function NetworkMap({ preset, go }: { preset?: { hour: number; metric: Metric; n: number } | null; go?: Go }) {
   const [metric, setMetric] = useState<Metric>(preset?.metric ?? "Consumption");
   const [hour, setHour] = useState(preset?.hour ?? 8);
   const [play, setPlay] = useState(false);
   // the assistant can send the map to a time and a colouring
   useEffect(() => { if (preset) { setMetric(preset.metric); setHour(preset.hour); setPlay(false); } }, [preset?.n]); // eslint-disable-line react-hooks/exhaustive-deps
   const [zone, setZone] = useState<ZoneId | null>(null);
+  const [lay, setLay] = useState<GeoLayers>({ areas: true, pipes: true, ctl: true });
   const [sel, setSel] = useState<string | null>("FT-04");
-  const [lay, setLay] = useState<GeoLayers>({ areas: true, pipes: true, inst: false, leaks: false });
-  const [base, setBase] = useState<Basemap>("Streets");
-  const [focus, setFocus] = useState<GeoFocus | null>(null);
 
   useEffect(() => {
     if (!play) return;
@@ -36,54 +40,65 @@ export default function NetworkMap({ preset }: { preset?: { hour: number; metric
     return () => window.clearInterval(id);
   }, [play]);
 
-  const s = networkAt(hour);
+
+  // the map column is as wide as the picture (2 : 1) can be at the height it gets; the readings and tasks column takes the rest
+  const root = useRef<HTMLDivElement>(null), wrap = useRef<HTMLDivElement>(null);
+  const [mapW, setMapW] = useState<number | null>(null);
+  const [mapH, setMapH] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const fit = () => {
+      const r = root.current, w = wrap.current; if (!r || !w) return;
+      if (window.innerWidth <= 960) { setMapW(null); setMapH(null); return; }
+      const panel = w.parentElement!, pr = panel.getBoundingClientRect(), cs = getComputedStyle(panel);
+      const extraW = panel.offsetWidth - w.offsetWidth;
+      // the height the map may take: down to the panel's bottom, less the time bar under it
+      const avail = pr.bottom - parseFloat(cs.paddingBottom) - parseFloat(cs.borderBottomWidth) - w.getBoundingClientRect().top - 8 - TIME_H;
+      const sideMax = Math.max(SIDE_MIN, r.clientWidth * 0.42);
+      const next = Math.round(Math.max(r.clientWidth - 10 - sideMax, Math.min(r.clientWidth - 10 - SIDE_MIN, avail * 2 + extraW)));
+      setMapW((o) => (o !== null && Math.abs(o - next) < 2 ? o : next));
+      setMapH(Math.floor(Math.min(avail, (next - extraW) / 2)));
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(root.current!); ro.observe(wrap.current!);
+    window.addEventListener("resize", fit);
+    return () => { ro.disconnect(); window.removeEventListener("resize", fit); };
+  }, []);
 
   const readings = useMemo(() => Object.fromEntries(INSTRUMENTS.map((i) => [i.id, readInstrument(i, hour)])), [hour]);
-  const selInst = INSTRUMENTS.find((i) => i.id === sel) ?? null;
-  const trend = useMemo(() => (selInst ? Array.from({ length: 24 }, (_, h) => ({ h, v: +readInstrument(selInst, h).value.toFixed(2) })) : []), [selInst]);
 
   const bad = INSTRUMENTS.filter((i) => readings[i.id].tone === "bad").length + LEAKS.length;
 
-  /** mean pipe load of a zone, the same number the pipes are coloured with */
-  const zoneLoad = (id: ZoneId) => zoneLoadAt(s, id);
-  const avgP = ZONES.reduce((a, z) => a + s.zones[z.id].pressure * s.zones[z.id].demand, 0) / ZONES.reduce((a, z) => a + s.zones[z.id].demand, 0);
-  const nrw = s.loss / s.supplied;
-  const legend = LEGEND[metric];
 
   return (
-    <div className="nm">
+    <div className="nm" ref={root} style={mapW ? { gridTemplateColumns: `${mapW}px minmax(0, 1fr)` } : undefined}>
       <section className="hm-map-p nm-map-p">
         <div className="nm-head">
           <Segmented<Metric> label="Colour the network by" value={metric} options={METRICS} onChange={setMetric} />
+          <div className="nm-key" aria-label="Colour key">
+            <b>{LEGEND[metric].title}</b>
+            {LEGEND[metric].items.map((i) => <span key={i.label} title={`${i.label}: ${i.note}`}><i style={{ background: i.c }} />{i.label} <em>{i.note.replace(" of the pipe", "").replace(", or a burst", "")}</em></span>)}
+          </div>
           <div className="nm-head-r">
             <div className="nm-layers" role="group" aria-label="Map layers">
-              <button className={`nm-btn ${lay.areas ? "on" : ""}`} onClick={() => setLay({ ...lay, areas: !lay.areas })} aria-pressed={lay.areas}><i className="sw" />Areas</button>
-              <button className={`nm-btn ${lay.pipes ? "on" : ""}`} onClick={() => setLay({ ...lay, pipes: !lay.pipes })} aria-pressed={lay.pipes}><i className="sw" />Pipes</button>
-              <button className={`nm-btn ${lay.inst ? "on" : ""}`} onClick={() => setLay({ ...lay, inst: !lay.inst })} aria-pressed={lay.inst}><i className="sw" />Instruments</button>
-              <button className={`nm-btn lk ${lay.leaks ? "on" : ""}`} onClick={() => setLay({ ...lay, leaks: !lay.leaks })} aria-pressed={lay.leaks}><i className="sw" />Leaks</button>
+              <button className={`nm-btn ${lay.areas ? "on" : ""}`} onClick={() => setLay((l) => ({ ...l, areas: !l.areas }))} aria-pressed={lay.areas}><i className="sw" />Zones</button>
+              <button className={`nm-btn ${lay.pipes ? "on" : ""}`} onClick={() => setLay((l) => ({ ...l, pipes: !l.pipes }))} aria-pressed={lay.pipes}><i className="sw" />Pipes</button>
+              <button className={`nm-btn ${lay.ctl ? "on" : ""}`} onClick={() => setLay((l) => ({ ...l, ctl: !l.ctl }))} aria-pressed={lay.ctl}><i className="sw" />Controllers</button>
             </div>
-            <Segmented<Basemap> label="Base map" value={base} options={BASEMAPS} onChange={setBase} />
             <span className={`hm-alarm ${bad ? "bad" : "ok"}`}>{bad} active faults</span>
           </div>
         </div>
 
-        <p className="nm-how"><b>How to read it:</b> each coloured area is a supply zone <i>·</i> thick lines are the main pipes <i>·</i> every leak is listed on the right <i>·</i> click a zone to see its street pipes.</p>
+        <p className="nm-how"><b>How to read it:</b> the glowing pipes carry the water from the plant, through the booster, to the three zones <i>·</i> the zone and pipe colours follow the button you pick above <i>·</i> the round badges are the controllers: click one to select it <i>·</i> click a zone to focus it, drag or scroll to move and zoom.</p>
 
-        <div className="nm-wrap">
-          <GeoNetwork mode="network" metric={metric} hour={hour} basemap={base} zone={zone} onZone={setZone} layers={lay} sel={sel} onSel={setSel} focus={focus}
-            label={`Interactive map of the water network over New Cairo, coloured by ${metric}. Drag to move, scroll or use the plus and minus to zoom.`} />
-
-          {/* legend */}
-          <div className="nm-legend" aria-label="Colour key">
-            <b>{legend.title}</b>
-            {legend.items.map((i) => <div key={i.label} className="row"><i style={{ background: i.c }} /><span>{i.label}</span><em>{i.note}</em></div>)}
-            <div className="row"><i className="tie" /><span>Closed valve</span><em>no flow</em></div>
-          </div>
+        <div className="nm-wrap" ref={wrap} style={mapH ? { flex: "none", height: mapH } : undefined}>
+          <NetworkImage metric={metric} hour={hour} zone={zone} onZone={setZone} layers={lay} sel={sel} onSel={setSel} />
         </div>
+        <ZoneList metric={metric} hour={hour} zone={zone} onZone={setZone} />
 
         {/* time: drag to see the network through the day, or press play */}
         <div className="nm-time">
-          <button className="nm-play" onClick={() => setPlay(!play)} aria-label={play ? "Pause" : "Play the day"}>{play ? <Pause size={16} /> : <Play size={16} />}</button>
+          <button className="nm-play" onClick={() => setPlay(!play)} aria-label={play ? "Pause" : "Play the day"}>{play ? <Pause size={13} /> : <Play size={13} />}</button>
           <div className="nm-track">
             <svg viewBox="0 0 96 28" preserveAspectRatio="none" aria-hidden>
               <path d={`M0 28 ${CURVE.map((d, i) => `L${(i / 23) * 96} ${28 - (d.supplied / CURVE_MAX) * 24}`).join(" ")} L96 28Z`} />
@@ -97,64 +112,41 @@ export default function NetworkMap({ preset }: { preset?: { hour: number; metric
       </section>
 
       <aside className="nm-side">
-        <section className="hm-p nm-stats">
-          <div><span>Supplied</span><b>{s.supplied.toFixed(0)}<small> L/s</small></b></div>
-          <div><span>Water lost</span><b className={nrw > 0.2 ? "warn" : ""}>{(nrw * 100).toFixed(1)}<small> %</small></b></div>
-          <div><span>Avg pressure</span><b className={avgP < 2.8 ? "warn" : ""}>{avgP.toFixed(1)}<small> bar</small></b></div>
-          <div><span>Reservoir</span><b>{s.tank.toFixed(0)}<small> %</small></b></div>
-        </section>
 
-        <section className="hm-p nm-zones">
-          <h3>Zones {zone && <button className="nm-clear" onClick={() => setZone(null)}>Show all</button>}</h3>
-          <table>
-            <thead><tr><th>Zone</th><th>Use L/s</th><th>Bar</th><th>Lost</th><th>m³/day</th></tr></thead>
-            <tbody>
-              {[...ZONES].sort((a, b) => s.zones[b.id].demand - s.zones[a.id].demand).map((z) => {
-                const q = s.zones[z.id];
-                const col = metric === "Pressure" ? colorOf(metric, q.pressure) : metric === "Leakage" ? colorOf(metric, q.nrw) : colorOf("Consumption", zoneLoad(z.id));
-                return (
-                  <tr key={z.id} className={zone === z.id ? "on" : ""} onClick={() => setZone(zone === z.id ? null : z.id)}>
-                    <td><i style={{ background: col }} />{z.name}</td>
-                    <td>{q.demand.toFixed(0)}</td>
-                    <td className={q.minPressure < 2.5 ? "warn" : ""}>{q.pressure.toFixed(1)}</td>
-                    <td className={q.nrw > 0.2 ? "warn" : ""}>{(q.nrw * 100).toFixed(0)}%</td>
-                    <td className={q.nrw > 0.2 ? "warn" : ""}>{(q.loss * 86.4).toLocaleString("en-US", { maximumFractionDigits: 0 })}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </section>
 
-        <section className="hm-p nm-loss">
-          <h3>Leaks and losses <small>{LEAKS.length} known · {(LEAKS.reduce((a, l) => a + l.rate, 0) * 86.4).toFixed(0)} m³/day</small></h3>
-          <div className="nm-leaks">
-            {LEAKS.map((l) => { const p = pipeById(l.pipe), ll = pipeMid(p, 0.55); return (
-              <button key={l.id} onClick={() => { setLay({ ...lay, leaks: true }); setFocus({ lat: ll[0], lng: ll[1], n: Date.now(), zoom: 16.5 }); }} aria-label={`${l.id}, ${l.rate} litres per second, ${l.status}: show on the map`}>
-                <i /><span>{l.id} · {ZONES.find((z) => z.id === p.zone)?.name ?? "Trunk"}<small>{l.status} · {l.since}</small></span><b>{l.rate} L/s</b>
-              </button>
-            ); })}
-          </div>
-        </section>
-
-        <section className="hm-p nm-detail">
-          {selInst ? (() => { const r = readings[selInst.id]; const off = selInst.forced === "offline"; return <>
-            <div className="nm-dh"><div><small>{selInst.id} · {TYPE_NAME[selInst.type]}</small><h3>{selInst.name}</h3></div><Chip tone={r.tone}>{off ? "Offline" : r.tone === "good" ? "Normal" : r.tone === "warn" ? "Watch" : "Fault"}</Chip></div>
-            <div className="nm-val"><b>{off ? "—" : r.text}</b><span>{r.detail}</span></div>
-            <div className="nm-chart">
-              {off ? <p>No data since 06:10. Check the radio link at the pole.</p> : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trend} margin={{ top: 6, right: 8, bottom: 0, left: -18 }}>
-                    <CartesianGrid stroke="var(--line-2)" strokeDasharray="3 4" vertical={false} />
-                    <XAxis dataKey="h" ticks={[0, 6, 12, 18, 23]} tickFormatter={(v) => `${v}h`} tick={{ fill: "var(--muted)", fontSize: 11 }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fill: "var(--muted)", fontSize: 11 }} tickLine={false} axisLine={false} domain={["auto", "auto"]} width={46} />
-                    <ReferenceLine x={Math.floor(hour)} stroke="var(--teal)" strokeDasharray="4 3" />
-                    <Line type="monotone" dataKey="v" stroke="var(--teal)" strokeWidth={2} dot={false} isAnimationActive />
-                  </LineChart>
-                </ResponsiveContainer>
-              )}
+        <section className="hm-p nm-read">
+          <h3>Readings and leaks <small>{LEAKS.length} leaks · {(LEAKS.reduce((a, l) => a + l.rate, 0) * 86.4).toFixed(0)} m³/day</small> {zone && <button className="nm-clear" onClick={() => setZone(null)}>Show all</button>}</h3>
+          {METER_GROUPS.map((g) => (
+            <div key={g.name} className="nm-read-g">
+              <span>{g.name}</span>
+              <div className="ns-chips">
+                {g.ids.map((id) => { const inst = INSTRUMENTS.find((i) => i.id === id)!, r = readings[id], off = inst.forced === "offline"; return (
+                  <button key={id} type="button" className={`ns-chip ${r.tone} ${sel === id ? "sel" : ""}`} onClick={() => setSel(id)} title={`${id} · ${inst.name}`} aria-label={`${TYPE_NAME[inst.type]} ${id}, ${inst.name}: ${off ? "offline" : r.text}`}>
+                    <i style={{ background: TONE_COLOR[r.tone] }} /><span>{GLYPH[inst.type]}</span><b>{off ? "offline" : r.text}</b>
+                  </button>
+                ); })}
+                {(() => { const zid = ZONES.find((q) => q.name === g.name)?.id; return LEAKS.filter((l) => zid && pipeById(l.pipe).zone === zid).map((l) => (
+                  <button key={l.id} type="button" className="ns-leak" onClick={() => setZone(zid ?? null)} title={`${l.id}: ${l.note}. ${l.status}, running for ${l.since}. Click to focus this zone.`} aria-label={`${l.id}, ${l.rate} litres per second, ${l.status}: focus ${g.name}`}><i />Leak <b>{l.rate}</b></button>
+                )); })()}
+              </div>
             </div>
-          </>; })() : <p className="nm-empty">Click an instrument on the map to see its reading and its day.</p>}
+          ))}
+        </section>
+
+
+
+        <section className="hm-p nm-tasks">
+          <h3>Tasks <small>{OPEN.length} open</small>{go && <button className="nm-clear" onClick={() => go("maintenance")}>All tasks</button>}</h3>
+          <ul>
+            {OPEN.map((t) => { const zid = ZONES.find((q) => q.name === t.area)?.id; return (
+              <li key={t.id}>
+                <button type="button" className={zid && zone === zid ? "on" : ""} onClick={() => { if (zid) setZone(zone === zid ? null : zid); }}
+                  title={`${t.id} · ${t.title}. ${t.asset}, ${t.area}. ${t.status}, due ${t.due}. ${t.crew}.`} aria-label={`${t.title}, ${t.area}, ${t.prio} priority, ${t.status}, due ${t.due}`}>
+                  <i className={`p-${t.prio}`} /><span>{t.title}</span><em>{t.status === "In progress" ? "Now" : t.due}</em>
+                </button>
+              </li>
+            ); })}
+          </ul>
         </section>
       </aside>
     </div>

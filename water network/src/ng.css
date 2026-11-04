@@ -1,0 +1,161 @@
+/* ================= Network Map on the real roads, in the look of the intro video: night blue, glowing cyan pipes, glowing sensor pins ================= */
+.ng { --ng-cyan: #38e8ff; --ng-glow: rgba(56, 232, 255, .65); }
+.ng .leaflet-control-zoom a, .ng .geo-home { background: var(--card); color: var(--ink); }
+
+/* regions */
+.ng-zone { cursor: pointer; transition: fill .35s, fill-opacity .3s, stroke-opacity .3s; filter: drop-shadow(0 0 6px rgba(120, 200, 255, .55)); }
+.ng-zone:hover { fill-opacity: .5; }
+.ng-zl { position: absolute; transform: translate(-50%, calc(-100% - 8px)); width: max-content; min-width: 150px; max-width: 220px; display: grid; gap: 1px; padding: 6px 12px 7px; cursor: pointer; text-align: left; white-space: nowrap;
+  background: rgba(6, 20, 46, .88); border: 1px solid rgba(180, 215, 255, .5); border-left: 6px solid var(--c, #1aa7ae); border-radius: 6px; box-shadow: 0 0 16px rgba(56, 232, 255, .28), 0 3px 10px rgba(0, 10, 30, .5); color: #fff; transition: opacity .25s, transform .2s; }
+.ng-zl.lv0 { --c: #1aa7ae; } .ng-zl.lv1 { --c: #f7c11f; } .ng-zl.lv2 { --c: #e0405a; }
+.ng-zl:hover { transform: translate(-50%, calc(-100% - 8px)) scale(1.04); }
+.ng-zl.dim { opacity: .4; }
+.ng-zl.on { box-shadow: 0 0 0 2px var(--c), 0 0 18px rgba(56, 232, 255, .4); }
+.ng-zl .n { font-size: 15px; font-weight: 700; color: #fff; }
+.ng-zl .v { font-size: 12px; color: #c9d9ef; }
+.ng-zl .v b { font-size: 24px; font-weight: 700; color: #fff; line-height: 1.1; }
+.ng-zl .s { font-size: 11.5px; color: #b9cbe6; }
+.ng-zl .lk { display: flex; align-items: center; gap: 6px; margin-top: 2px; font-size: 11.5px; font-weight: 600; color: #ff9aa9; }
+.ng-zl .lk i { width: 8px; height: 8px; border-radius: 50%; background: #ff6b81; animation: nmalarm 1.2s ease-in-out infinite; }
+
+/* the pipes: they glow, as in the video */
+.ng-case { stroke: #031027; stroke-linecap: round; fill: none; }
+.ng-pipe { fill: none; stroke-linecap: round; transition: stroke .35s; filter: drop-shadow(0 0 5px var(--ng-glow)); cursor: crosshair; }
+.ng-flow { fill: none; stroke-linecap: round; pointer-events: none; animation: nmflow var(--dur, 1s) linear infinite; }
+.ng-flow.rev { animation-direction: reverse; }
+
+/* the plant, the pumps, the hub and the water tower */
+.ng-fac { width: 140px; height: 92px; display: grid; justify-items: center; align-content: start; gap: 1px; cursor: pointer; text-align: center; }
+.ng-fac .gi { width: 48px; height: 48px; display: grid; place-items: center; background: #082049; border: 3px solid var(--ng-cyan); border-radius: 50%; box-shadow: 0 0 16px var(--ng-glow), 0 3px 10px rgba(0, 10, 30, .5); transition: transform .2s; }
+.ng-fac:hover .gi { transform: scale(1.1); }
+.ng-fac .gi svg { width: 30px; height: 30px; display: block; }
+.ng-fac .gi svg * { fill: none; stroke: #9defff; stroke-width: 2.4; }
+.ng-fac .gi svg .ic { fill: #9defff; stroke: none; }
+.ng-fac .gi svg .ic.lvl { fill: var(--ng-cyan); }
+.ng-fac.pump .gi svg .ic { animation: nmspin 4s linear infinite; transform-box: fill-box; transform-origin: center; }
+.ng-fac b { margin-top: 2px; font-size: 12.5px; font-weight: 700; color: #fff; padding: 1px 8px; background: rgba(6, 20, 46, .85); border-radius: 4px; white-space: nowrap; }
+.ng-fac i { font-style: normal; font-size: 11px; color: #bcd6f3; padding: 0 7px; background: rgba(6, 20, 46, .78); border-radius: 4px; white-space: nowrap; }
+
+/* the controllers: a glowing pin with a ripple, and its reading beside it */
+.ng-pin { position: relative; width: 28px; height: 28px; cursor: pointer; }
+.ng-pin i { position: absolute; inset: 2px; z-index: 2; display: grid; place-items: center; border-radius: 50%; border: 2.5px solid #eaffff; font-style: normal; font-size: 10.5px; font-weight: 800; color: #031027; box-shadow: 0 0 10px var(--ng-glow), 0 2px 6px rgba(0, 10, 30, .5); transition: transform .15s; }
+.ng-pin:hover i { transform: scale(1.14); }
+.ng-pin u { position: absolute; inset: 4px; z-index: 1; border-radius: 50%; border: 2px solid var(--ng-cyan); animation: nmrip 2.2s ease-out infinite; }
+.ng-pin.sel i { box-shadow: 0 0 0 4px rgba(56, 232, 255, .55), 0 0 14px var(--ng-glow); }
+.ng-pin.bad u { border-color: #ff6b81; } .ng-pin.warn u { border-color: #ffc94d; }
+.ng-pin.dim { opacity: .3; }
+.ng-chip { position: absolute; z-index: 3; height: 24px; padding: 0 8px; display: flex; align-items: center; gap: 3px; font-size: 11px; color: #bcd6f3; white-space: nowrap; background: rgba(4, 14, 36, .92); border: 1px solid rgba(160, 215, 255, .55); border-radius: 999px; box-shadow: 0 2px 6px rgba(0, 10, 30, .5); }
+.ng-chip b { font-size: 12.5px; font-weight: 700; color: #fff; }
+
+/* the key, like the legend of the Egypt picture */
+.ng-key { position: absolute; right: 10px; bottom: 26px; z-index: 900; display: flex; align-items: center; gap: 16px; padding: 7px 14px; font-size: 12px; color: #fff; background: rgba(6, 20, 46, .88); border: 1px solid rgba(160, 215, 255, .4); border-radius: 8px; }
+.ng-key b { font-size: 12px; font-weight: 600; color: #bcd6f3; }
+.ng-key span { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; white-space: nowrap; }
+.ng-key i { width: 26px; height: 10px; border-radius: 3px; display: block; }
+.ng-key em { font-style: normal; font-weight: 400; color: #bcd6f3; font-size: 11px; }
+@media (max-width: 1250px) { .ng-key em { display: none; } .ng-key b { display: none; } }
+@media (prefers-reduced-motion: reduce) { .ng-flow, .ng-pin u, .ng-zl .lk i, .ng-fac.pump .gi svg .ic { animation: none; } }
+
+/* the colour key, in the bar above the map between the measure buttons and the layer buttons */
+.nm-key { display: flex; align-items: center; gap: 14px; padding: 6px 12px; font-size: 12.5px; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 6px; white-space: nowrap; }
+.nm-key b { font-size: 12px; font-weight: 600; color: var(--muted); }
+.nm-key span { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.nm-key i { width: 22px; height: 10px; border-radius: 3px; display: block; }
+.nm-key em { font-style: normal; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+@media (max-width: 1700px) { .nm-key b, .nm-key em { display: none; } .nm-key { gap: 12px; } }
+
+/* ================= Network Map on the New Cairo picture: sizes inside .ni-stage are picture pixels (the stage is scaled to fit) ================= */
+.ni { position: absolute; inset: 0; overflow: hidden; cursor: grab; touch-action: none; user-select: none; }
+.ni.drag { cursor: grabbing; }
+.ni-stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
+.ni.drag .ni-stage { transition: none; }
+.ni-svg { position: absolute; inset: 0; display: block; overflow: visible; }
+
+/* zones: darken the printed colour, put the live colour in its place, then a light wash and a glowing edge */
+.ni-z { cursor: pointer; outline: none; }
+.ni-z .mul, .ni-zoff .mul { fill: #8a8a8a; mix-blend-mode: multiply; }
+.ni-z .col { mix-blend-mode: color; transition: fill .35s; }
+.ni-z .tint { fill-opacity: .2; transition: fill .35s, fill-opacity .2s; }
+.ni-z .edge { fill: none; stroke-width: 2.4; stroke-linejoin: round; transition: stroke .35s; }
+.ni-z:hover .tint, .ni-z:focus-visible .tint { fill-opacity: .32; }
+.ni-z.on .edge { stroke-width: 3.6; }
+.ni-z .shade { fill: #04101f; fill-opacity: .5; }
+.ni-zoff .col { fill: #12355a; mix-blend-mode: color; }
+.ni-zoff .col { stroke: #12355a; stroke-width: 18; stroke-linejoin: round; }
+.ni-zoff .edge { fill: none; stroke: #0f2c49; stroke-width: 6; }
+
+/* what a switched-off layer leaves: the dark street colour, softened at the edges */
+.ni-cover .pipe, .ni-cover .lead { fill: none; stroke-width: 16; stroke-linecap: round; stroke-linejoin: round; }
+.ni-cover .lead { stroke-width: 6; }
+
+/* pipes */
+.ni-pipes .case { fill: none; stroke: #031027; stroke-width: 8.5; stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
+.ni-pipes .pipe { fill: none; stroke-width: 4.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .35s; }
+.ni-pipes .flow { fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 1 12; opacity: .95; pointer-events: none; animation: nmflow var(--dur, 1s) linear infinite; }
+.ni-pipes .flow.rev { animation-direction: reverse; }
+.ni-pipes .hit { fill: none; stroke: transparent; stroke-width: 12; stroke-linecap: round; cursor: crosshair; }
+.ni-pipes g { transition: opacity .25s; }
+.ni-pipes g.dim { opacity: .3; }
+
+/* the plant, pumps and reservoir printed on the picture */
+.ni-fac { cursor: pointer; outline: none; }
+.ni-fac .hit { fill: transparent; }
+.ni-fac:hover .hit, .ni-fac:focus-visible .hit { fill: rgba(120, 230, 255, .14); stroke: rgba(160, 240, 255, .7); stroke-width: 1.5; }
+.ni-fac .ring { fill: none; stroke: #38e8ff; stroke-width: 2.5; stroke-dasharray: 4 3; }
+
+/* controller badges */
+.ni-b { cursor: pointer; outline: none; transition: opacity .25s; }
+.ni-b .dot { stroke: #f2fff8; stroke-width: 2; filter: drop-shadow(0 0 4px rgba(120, 255, 170, .55)); transition: fill .3s; }
+.ni-b.warn .dot { filter: drop-shadow(0 0 4px rgba(255, 200, 80, .7)); }
+.ni-b.bad .dot { filter: drop-shadow(0 0 5px rgba(255, 90, 110, .85)); }
+.ni-b text { fill: #fff; font-size: 10.5px; font-weight: 800; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.ni-b:hover .dot, .ni-b:focus-visible .dot { stroke: #38e8ff; stroke-width: 2.6; }
+.ni-b .ring { fill: none; stroke: #38e8ff; stroke-width: 2.4; }
+.ni-b .rip { fill: none; stroke: #ff6b81; stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: nmrip 2.2s ease-out infinite; pointer-events: none; }
+.ni-b.dim { opacity: .35; }
+
+/* zone cards, gauges and the reservoir box: they sit exactly on the ones printed on the picture */
+.ni-card { position: absolute; display: grid; align-content: center; gap: 0; padding: 0 64px 0 17px; text-align: left; font: inherit; color: #fff; cursor: pointer;
+  background: #0a1a33; border: 1.6px solid #6f9fc2; border-radius: 7px; box-shadow: 0 0 10px rgba(56, 232, 255, .22); overflow: hidden; transition: opacity .25s, box-shadow .2s; }
+.ni-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: var(--c); }
+.ni-card:hover, .ni-card.on { box-shadow: 0 0 0 1.5px var(--c), 0 0 14px rgba(56, 232, 255, .35); }
+.ni-card.dim { opacity: .45; }
+.ni-card .n { font-size: 14px; font-weight: 700; line-height: 1.15; }
+.ni-card .v { font-size: 12.5px; color: #c9d9ef; white-space: nowrap; line-height: 1.15; }
+.ni-card .v b { font-size: 25px; font-weight: 800; color: #fff; letter-spacing: -.3px; }
+.ni-card .s { margin-right: -56px; font-size: 10.5px; color: #b9cbe6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
+.ni-card .sp { position: absolute; right: 8px; top: 24px; width: 56px; height: 26px; overflow: visible; }
+.ni-card .sp .ln { fill: none; stroke: var(--c); stroke-width: 1.8; stroke-linejoin: round; }
+.ni-card .sp .area { fill: var(--c); opacity: .18; }
+.ni-card .sp circle { fill: #fff; }
+
+.ni-pill { position: absolute; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; font: inherit; color: #fff; cursor: pointer; white-space: nowrap;
+  background: #081a34; border: 1.6px solid #5cc8ec; border-radius: 999px; box-shadow: 0 0 8px rgba(56, 232, 255, .3); transition: opacity .25s; }
+.ni-pill svg { width: 15px; height: 15px; flex: none; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ni-pill b { font-size: 12.5px; font-weight: 700; }
+.ni-pill.warn { border-color: #ffc94d; } .ni-pill.bad { border-color: #ff6b81; }
+.ni-pill.sel { box-shadow: 0 0 0 2px #38e8ff, 0 0 10px rgba(56, 232, 255, .5); }
+.ni-pill.dim { opacity: .4; }
+
+.ni-res { position: absolute; display: grid; justify-items: center; align-content: center; gap: 1px; padding: 0 8px; color: #fff; pointer-events: none;
+  background: #0a1a33; border: 1.4px solid #4c6f8f; border-radius: 6px; }
+.ni-res b { font-size: 13px; font-weight: 700; line-height: 1.1; }
+.ni-res span { font-size: 10.5px; color: #c9d9ef; line-height: 1.2; }
+.ni-res i { width: 100%; height: 6px; margin-top: 2px; border-radius: 3px; background: #3a4b62; overflow: hidden; display: block; }
+.ni-res u { display: block; height: 100%; border-radius: 3px; transition: width .4s; }
+
+/* the working zoom buttons, in the look of the ones printed on the picture */
+.ni-tools { position: absolute; left: 10px; top: 10px; z-index: 5; display: grid; gap: 8px; cursor: default; }
+.ni-tools .pair { display: grid; background: rgba(6, 20, 46, .9); border: 1.5px solid #6f9fc2; border-radius: 9px; overflow: hidden; }
+.ni-tools button { width: 36px; height: 34px; display: grid; place-items: center; padding: 0; font: inherit; font-size: 22px; line-height: 1; color: #fff; background: none; border: 0; cursor: pointer; }
+.ni-tools .pair button:first-child { color: #38e8ff; border-bottom: 1.5px solid rgba(111, 159, 194, .6); }
+.ni-tools button:hover:not(:disabled) { background: rgba(56, 232, 255, .18); }
+.ni-tools button:disabled { opacity: .35; cursor: default; }
+.ni-tools button:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.ni-tools .home { background: rgba(6, 20, 46, .9); border: 1.5px solid #6f9fc2; border-radius: 9px; }
+.ni-tools .home svg { width: 19px; height: 19px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.ni-tip { position: absolute; z-index: 6; transform: translate(14px, 14px); display: grid; gap: 2px; padding: 7px 10px; max-width: 280px; pointer-events: none; font-size: 12px; color: #c9d9ef;
+  background: rgba(4, 14, 36, .95); border: 1px solid rgba(160, 215, 255, .5); border-radius: 6px; box-shadow: 0 4px 14px rgba(0, 10, 30, .5); }
+.ni-tip b { color: #fff; font-size: 12.5px; }
+@media (prefers-reduced-motion: reduce) { .ni-stage { transition: none; } .ni-pipes .flow, .ni-b .rip { animation: none; } }

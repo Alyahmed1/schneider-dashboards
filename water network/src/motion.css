@@ -31,6 +31,23 @@
 .hm-rib-c { animation: mpop .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(150ms + var(--n, 0) * 50ms); }
 .hm-pie svg { animation: piein .9s cubic-bezier(.22, 1, .36, 1) backwards .6s; }
 
+/* ---------- Network Map: same entrance as Home ---------- */
+.nm-read { --i: 1; }
+.nm-tasks { --i: 2; }
+.nm-head > * { animation: mpop .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: 150ms; }
+/* the map picture enters as one piece; nothing inside it animates on its own */
+.nm-wrap { animation: mpop .6s cubic-bezier(.22, 1, .36, 1) backwards .2s; }
+.nm-time { animation: mrise .5s cubic-bezier(.22, 1, .36, 1) backwards .35s; }
+.nm-read-g, .nm-tasks li { animation: mslide .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(300ms + var(--n, 0) * 60ms); }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(2) { --n: 1; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(3) { --n: 2; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(4) { --n: 3; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(5) { --n: 4; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(6) { --n: 5; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(7) { --n: 6; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(8) { --n: 7; }
+:is(.nm-read-g, .nm-tasks li):nth-of-type(n+9) { --n: 8; }
+
 /* ---------- Overview ---------- */
 @keyframes ovbuild { from { opacity: 0; transform: translateY(18px); } }
 @keyframes ovdraw { from { stroke-dashoffset: 1; } }

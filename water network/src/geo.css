@@ -241,3 +241,28 @@
 .geo-network .geo-as .gi { width: 50px; height: 50px; border-width: 3px; box-shadow: 0 3px 12px rgba(20, 60, 120, .35); }
 .geo-network .geo-as .gi svg { width: 32px; height: 32px; }
 .geo-network .geo-as b { font-size: 13px; padding: 2px 8px; box-shadow: 0 1px 5px rgba(20, 60, 120, .25); }
+
+/* Home map: the box always has the picture's own shape (2614 x 887), so the whole picture shows edge to edge with no crop and no stretch.
+   The map row is as tall as the picture needs; the chart row below takes the rest of the screen. */
+.hm-ref-img { display: block; padding: 0; border: 0; background: #07172e; cursor: pointer; overflow: hidden; }
+.hm-ref-img img { width: 100%; height: 100%; object-fit: fill; display: block; user-select: none; }
+.hm-map-col.hm-ref { flex: none; display: flex; justify-content: center; }
+.hm-map-col.hm-ref .hm-dia.hm-ref-img { flex: none; width: 100%; height: auto; min-height: 0; aspect-ratio: 2614 / 887; }
+/* a short window: the map column is only as wide as the picture can be at that height, and the Summary column takes the rest, so there is never an empty strip beside the picture */
+@media (min-width: 1101px) {
+  .hm { grid-template-rows: auto minmax(165px, 1fr);
+    grid-template-columns: min(calc(100% - 340px - 10px), calc((100vh - var(--chrome, 150px) - 165px - 10px - 75px) * 2614 / 887 + 22px)) minmax(340px, 1fr); }
+}
+@media (max-width: 1100px) { .hm-map-col.hm-ref .hm-dia.hm-ref-img { max-width: none; } }
+
+/* Home bottom row: the two boxes in Water Loss and in Reservoir always fit, so Known leaks and Plant output are fully visible */
+.hm-loss .hm-box, .hm-feed .hm-box { padding: 5px 9px; gap: 1px; margin-bottom: 5px; flex: 1 1 0; min-height: 0; align-content: center; }
+.hm-loss .hm-box:last-child, .hm-feed .hm-box:last-child { margin-bottom: 0; }
+.hm-loss .hm-box > span, .hm-feed .hm-box > span { font-size: 11px; line-height: 1.2; }
+.hm-loss .hm-box b, .hm-feed .hm-box b { font-size: clamp(14px, 1.15vw, 18px); line-height: 1.15; }
+.hm-loss, .hm-feed { display: flex; flex-direction: column; }
+
+/* Home: the button that opens the full network map */
+.hm-open-net { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; font: inherit; font-size: 13px; font-weight: 600; color: #fff; background: var(--teal, #1f7ae0); border: 0; border-radius: 3px; cursor: pointer; white-space: nowrap; }
+.hm-open-net:hover { filter: brightness(1.1); }
+.hm-open-net:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }

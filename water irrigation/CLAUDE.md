@@ -1,19 +1,21 @@
-# Smart Agriculture dashboard: project notes
+# Smart Irrigation dashboard: project notes
 
-Own Vite app (port 4731; 4730 is used by the water network preview) in the schneider-dashboards repo. Look and layout copy the water dashboards (`../water network`), but the CSS is one clean set: `theme.css` (tokens, chrome, shared parts), `agri.css` (farm map), `pumps.css`, `pivots.css`, `views.css` (Weather, Energy, Landscape, Grey Water, tables, rings, assistant), `cover.css`. Do not add layered override files.
+Own Vite app (port 4731; 4730 is used by the water network preview) in the schneider-dashboards repo. Look and layout copy the water dashboards (`../water network`), but the CSS is one clean set: `theme.css` (tokens, chrome, shared parts), `agri.css` (farm map), `pumps.css`, `pivots.css`, `views.css` (Weather, Energy, Landscape, Process, tables, rings, assistant), `map.css` (the two real maps), `cover.css`. Do not add layered override files.
 
-## Structure (agreed with Aly, 2026-11-02)
-Only 3 dock tabs, each with sub-tabs in a bar under the breadcrumb. No Home or Maintenance tab.
+## Structure (agreed with Aly, 2026-11-02; changed 2026-11-04)
+Only 2 dock tabs, each with sub-tabs in a bar under the breadcrumb. No Home, Maintenance or Grey Water tab.
 
 | Tab | Sub-tabs |
 |---|---|
 | Agricultural | Farm map, Pivots, Pump stations, Weather & ET, Water & energy |
-| Landscape (sensors and controllers) | Zones, Sensors, Controllers |
-| Grey Water | Process, Reuse & savings |
+| Landscape | Zones, Sensors, Controllers, Grey water (view id `process`) |
+
+Farm map: the picture `public/farm-map.jpg` (3.21:1, stretched to fill its box, `FarmImage.tsx`) with click areas over the 8 pivots and 3 pump stations; clicking a pivot opens the Pivots tab on that pivot (`go("pivots", id)`), a station opens Pump stations. Pivots is the original page again. Landscape Zones is a night-style real map of the HQ grounds (OpenStreetMap tiles with a CSS colour filter; glowing amber zones, one callout card per controller, day timeline with play and Now; click a zone: floating card). Farm map page = picture + Summary only. Grey water (`Process.tsx`) = grey water diagram + 5 gauges + reuse tiles + monthly chart on one screen (old Reuse & savings merged in). Coordinates are in `geo.ts` (fictional farm placed at real Wadi El Natrun; the Zones map is the real Madinaty compound in New Cairo: zones are polygons traced in pixel coordinates of a zoom-17 picture, `poly` in landscape.ts + `px()` in geo.ts). In dark mode a veil in the page background colour sits over the tiles (`.lf-tint`).
 
 Alarms open from the bell (`ViewId "alarms"`, no tab). Routing: `App.tsx` holds `ViewId`, `go(view, target)`; the dock remembers the last sub-tab per tab.
 
 ## Decisions
+- Project renamed Smart Agriculture -> Smart Irrigation (2026-11-04; Vercel project is still `waterirrigation`).
 - Green accent (#4cc97a dark / #1f9d55 light) on navy-teal panels. Light/Dark chosen on the cover.
 - Fictional farm: Wadi El Natrun, wheat, maize, alfalfa, potatoes (2 pivots each, 150 feddan each). Landscape = HQ grounds, 12 zones, 3 controllers, 23 sensors. Grey water = 68 m³/day plant feeding the landscape and fodder alfalfa.
 - Cover: `public/cover.png` (done) and `public/cover.mp4` (Aly generates; the cover uses it automatically).
@@ -33,6 +35,7 @@ Alarms open from the bell (`ViewId "alarms"`, no tab). Routing: `App.tsx` holds 
 - [x] Phase 5: Landscape (Zones, Sensors, Controllers), Grey Water (Process, Reuse), assistant, export
 - [x] Change 2026-11-03: removed "Water applied by crop" (Summary fills the column); Controllers rebuilt as schedule + station panel + flow sensor from Aly's design (Update/Apply are message-only, flow limits are sample values)
 - [x] Controllers fit without scrolling at the 4 laptop sizes (dark; events table capped at 8 rows, compact rules at the end of `views.css`)
+- [x] Change 2026-11-04: rename, Farm map = picture (Pivots tab kept, map click goes to it), real map on Zones, Grey Water merged into Landscape · Process. Local only, not committed/deployed yet.
 - [ ] Final QA at 1280x720, 1366x768, 1536x864, 1920x1080 + phone width (see below), then deploy if Aly asks
 
 ## Rules for new screens

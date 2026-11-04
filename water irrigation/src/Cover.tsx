@@ -33,7 +33,7 @@ export default function Cover({ onEnter, setTheme }: { onEnter: () => void; setT
       <div className="cover-shade" aria-hidden />
       <div className="cover-body">
         <motion.span className="cover-tag" {...up(0)}><Sprout size={14} /> {FARM.tag}</motion.span>
-        <motion.h1 {...up(1)}>Smart Agriculture</motion.h1>
+        <motion.h1 {...up(1)}>Smart Irrigation</motion.h1>
         <motion.p {...up(2)}>Every pivot, pump and field of the farm on one live screen: soil moisture, water use, energy and alarms.</motion.p>
         <motion.div className="cover-stats" {...up(3)}>
           {STATS.map((s) => <div key={s.u}><b>{s.v}</b><span>{s.u}</span></div>)}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, Moon, Recycle, Sprout, Sun, TreePine, type LucideIcon } from "lucide-react";
+import { MessageCircle, Moon, Sprout, Sun, TreePine, type LucideIcon } from "lucide-react";
 import { FARM, type Filters } from "./farm";
 import Agricultural from "./Agricultural";
 import Pivots from "./Pivots";
@@ -10,25 +10,24 @@ import Energy from "./Energy";
 import Zones from "./Zones";
 import Sensors from "./Sensors";
 import Controllers from "./Controllers";
-import GreyProcess from "./GreyProcess";
-import GreyReuse from "./GreyReuse";
+import Process from "./Process";
 import Assistant from "./Assistant";
 import ExportMenu from "./ExportMenu";
+import UserMenu from "./UserMenu";
 import Cover from "./Cover";
 import ErrorBoundary from "./ErrorBoundary";
 import { AlarmsPage, AlertsBell } from "./alarms";
 
-export type TabId = "agri" | "landscape" | "grey";
-export type ViewId = "farm" | "pivots" | "pumps" | "weather" | "energy" | "zones" | "sensors" | "controllers" | "process" | "reuse" | "alarms";
+export type TabId = "agri" | "landscape";
+export type ViewId = "farm" | "pivots" | "pumps" | "weather" | "energy" | "zones" | "sensors" | "controllers" | "process" | "alarms";
 export type Go = (view: ViewId, target?: string) => void;
 export type Theme = "light" | "dark";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon; views: { id: ViewId; label: string }[] }[] = [
   { id: "agri", label: "Agricultural", icon: Sprout, views: [{ id: "farm", label: "Farm map" }, { id: "pivots", label: "Pivots" }, { id: "pumps", label: "Pump stations" }, { id: "weather", label: "Weather & ET" }, { id: "energy", label: "Water & energy" }] },
-  { id: "landscape", label: "Landscape", icon: TreePine, views: [{ id: "zones", label: "Zones" }, { id: "sensors", label: "Sensors" }, { id: "controllers", label: "Controllers" }] },
-  { id: "grey", label: "Grey Water", icon: Recycle, views: [{ id: "process", label: "Process" }, { id: "reuse", label: "Reuse & savings" }] },
+  { id: "landscape", label: "Landscape", icon: TreePine, views: [{ id: "zones", label: "Zones" }, { id: "sensors", label: "Sensors" }, { id: "controllers", label: "Controllers" }, { id: "process", label: "Grey water" }] },
 ];
-const TITLE = "Smart Agriculture";
+const TITLE = "Smart Irrigation";
 const tabOf = (v: ViewId) => TABS.find((t) => t.views.some((x) => x.id === v));
 
 const readTheme = (): Theme => {
@@ -40,7 +39,7 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>(readTheme);
   const [view, setView] = useState<ViewId>("farm");
   const [target, setTarget] = useState<string | undefined>();
-  const [last, setLast] = useState<Record<TabId, ViewId>>({ agri: "farm", landscape: "zones", grey: "process" });
+  const [last, setLast] = useState<Record<TabId, ViewId>>({ agri: "farm", landscape: "zones" });
   const [f, setF] = useState<Filters>({ range: "7D" });
   const [assistOpen, setAssistOpen] = useState(false);
   // the dashboard mounts a moment after "Enter dashboard", so every animation and count-up plays in front of the viewer
@@ -80,7 +79,7 @@ export default function App() {
               </button>
               <ExportMenu />
               <AlertsBell go={go} />
-              <div className="user"><span>A</span><div><b>Aly Ahmed</b><em>Farm manager</em></div></div>
+              <UserMenu theme={theme} setTheme={setTheme} go={go} toStart={() => setEntered(false)} />
             </div>
           </header>
           <nav className="crumbs" aria-label="Breadcrumb">
@@ -103,7 +102,8 @@ export default function App() {
           <AnimatePresence mode="wait">
             <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
               <ErrorBoundary key={view}>
-                {view === "farm" && <Agricultural f={f} setRange={(range) => setF({ range })} go={go} />}
+                {view === "farm" && <Agricultural f={f} setRange={(range) => setF({ range })} go={go} />
+                }
                 {view === "pivots" && <Pivots start={target} />}
                 {view === "pumps" && <Pumps start={target} />}
                 {view === "weather" && <Weather />}
@@ -111,9 +111,8 @@ export default function App() {
                 {view === "zones" && <Zones start={target} go={go} />}
                 {view === "sensors" && <Sensors start={target} />}
                 {view === "controllers" && <Controllers start={target} />}
-                {view === "process" && <GreyProcess go={go} />}
-                {view === "reuse" && <GreyReuse />}
-                {view === "alarms" && <AlarmsPage />}
+                {view === "process" && <Process />}
+                {view === "alarms" && <AlarmsPage go={go} />}
               </ErrorBoundary>
             </motion.div>
           </AnimatePresence>

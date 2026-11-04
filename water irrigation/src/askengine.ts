@@ -49,7 +49,7 @@ export function answer(q: string, hour: number): Answer {
     return { text: `Today ET₀ is ${f[0].et0} mm and the high is ${f[0].hi}°C. ${rain ? `Rain is forecast on ${rain.d} (${rain.rain} mm): skip that night's irrigation.` : "No rain is forecast this week."}`, view: "weather" };
   }
   if (/alarm|fault|problem|issue|wrong|critical|trip/.test(s)) {
-    return { text: `${ALARMS.length} open alarms. ${ALARMS.slice(0, 4).map((a) => `${a.source}: ${a.text}`).join(" ")}`, view: "alarms" };
+    return { text: `${ALARMS.filter((a) => !a.done).length} open alarms. ${ALARMS.filter((a) => !a.done).slice(0, 4).map((a) => `${a.source}: ${a.text}`).join(" ")}`, view: "alarms" };
   }
   if (/maint|work order|service|repair/.test(s)) {
     const open = ASSETS.filter((a) => a.wo && a.wo.status !== "Closed");

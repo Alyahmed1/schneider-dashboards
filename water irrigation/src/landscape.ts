@@ -9,20 +9,20 @@ const KC: Record<ZType, number> = { Lawn: 0.85, Shrubs: 0.55, Trees: 0.6, Flower
 const RATE: Record<ZType, number> = { Lawn: 30, Flowers: 25, Shrubs: 10, Trees: 6, Palms: 5 }; // mm of water per hour the emitters put on
 export const ZTYPES: ZType[] = ["Lawn", "Shrubs", "Trees", "Flowers", "Palms"];
 
-export interface LZone { id: string; name: string; type: ZType; ctrl: CtrlId; area: number; base: number; x: number; y: number; w: number; h: number; fault?: string }
+export interface LZone { id: string; name: string; type: ZType; ctrl: CtrlId; area: number; base: number; poly: [number, number][]; fault?: string } // poly: corners on the Madinaty map picture (see geo.ts)
 export const LZONES: LZone[] = [
-  { id: "Z1", name: "Gate lawn", type: "Lawn", ctrl: "C1", area: 600, base: 37, x: 30, y: 30, w: 250, h: 100 },
-  { id: "Z2", name: "Entrance flowers", type: "Flowers", ctrl: "C1", area: 250, base: 36, x: 30, y: 150, w: 120, h: 70 },
-  { id: "Z3", name: "Gate palms", type: "Palms", ctrl: "C1", area: 400, base: 35, x: 170, y: 150, w: 110, h: 70 },
-  { id: "Z4", name: "Entrance trees", type: "Trees", ctrl: "C1", area: 500, base: 34, x: 30, y: 240, w: 250, h: 45 },
-  { id: "Z5", name: "HQ front lawn", type: "Lawn", ctrl: "C2", area: 700, base: 38, x: 320, y: 30, w: 350, h: 95 },
-  { id: "Z6", name: "HQ shrub beds", type: "Shrubs", ctrl: "C2", area: 300, base: 36, x: 320, y: 145, w: 160, h: 65 },
-  { id: "Z7", name: "Flower court", type: "Flowers", ctrl: "C2", area: 260, base: 37, x: 500, y: 145, w: 170, h: 65 },
-  { id: "Z8", name: "Villas lawn A", type: "Lawn", ctrl: "C2", area: 650, base: 36, x: 320, y: 310, w: 170, h: 90 },
-  { id: "Z9", name: "Villas lawn B", type: "Lawn", ctrl: "C2", area: 650, base: 33, x: 500, y: 310, w: 170, h: 90, fault: "Valve will not open" },
-  { id: "Z10", name: "Road trees north", type: "Trees", ctrl: "C3", area: 800, base: 35, x: 710, y: 30, w: 260, h: 40 },
-  { id: "Z11", name: "Road palms", type: "Palms", ctrl: "C3", area: 700, base: 36, x: 710, y: 90, w: 260, h: 60 },
-  { id: "Z12", name: "Windbreak trees", type: "Trees", ctrl: "C3", area: 900, base: 34, x: 710, y: 170, w: 260, h: 230 },
+  { id: "Z1", name: "Villa lawn NW", type: "Lawn", ctrl: "C1", area: 600, base: 37, poly: [[215, 200], [440, 195], [500, 265], [475, 385], [235, 405], [175, 270]] },
+  { id: "Z2", name: "Mosque flower beds", type: "Flowers", ctrl: "C1", area: 250, base: 36, poly: [[100, 605], [250, 572], [262, 690], [112, 716]] },
+  { id: "Z3", name: "Park palms north", type: "Palms", ctrl: "C1", area: 400, base: 35, poly: [[262, 515], [505, 490], [525, 590], [430, 628], [305, 588]] },
+  { id: "Z4", name: "Park trees south", type: "Trees", ctrl: "C1", area: 500, base: 34, poly: [[190, 692], [430, 690], [485, 765], [205, 765]] },
+  { id: "Z5", name: "Club roundabout", type: "Lawn", ctrl: "C2", area: 700, base: 38, poly: [[520, 330], [585, 325], [600, 425], [540, 450], [517, 385]] },
+  { id: "Z6", name: "Villa hedges NE", type: "Shrubs", ctrl: "C2", area: 300, base: 36, poly: [[570, 205], [800, 205], [805, 285], [600, 335]] },
+  { id: "Z7", name: "Club gate flowers", type: "Flowers", ctrl: "C2", area: 260, base: 37, poly: [[640, 395], [760, 392], [765, 470], [645, 478]] },
+  { id: "Z8", name: "Tennis court lawn", type: "Lawn", ctrl: "C2", area: 650, base: 36, poly: [[768, 395], [885, 395], [885, 462], [772, 466]] },
+  { id: "Z9", name: "Football pitch", type: "Lawn", ctrl: "C2", area: 650, base: 33, poly: [[820, 497], [905, 497], [905, 592], [820, 592]], fault: "Valve will not open" },
+  { id: "Z10", name: "Pool-side trees", type: "Trees", ctrl: "C3", area: 800, base: 35, poly: [[650, 500], [812, 490], [812, 600], [648, 612]] },
+  { id: "Z11", name: "Club east palms", type: "Palms", ctrl: "C3", area: 700, base: 36, poly: [[915, 497], [1005, 497], [1005, 592], [915, 592]] },
+  { id: "Z12", name: "Southern villa trees", type: "Trees", ctrl: "C3", area: 900, base: 34, poly: [[625, 668], [1090, 650], [1090, 765], [625, 765]] },
 ];
 export const zoneById = (id: string) => LZONES.find((z) => z.id === id);
 

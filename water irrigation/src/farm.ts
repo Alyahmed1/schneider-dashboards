@@ -1,4 +1,4 @@
-/* ================= Smart Agriculture: the data model (all numbers are sample data) =================
+/* ================= Smart Irrigation: the data model (all numbers are sample data) =================
    A desert farm at Wadi El Natrun: 1,200 feddan under 8 centre pivots, fed by 3 pump stations.
    Every screen reads from here, so the map, the charts, the pumps and the alarms agree with each other.
    Soil moisture is worked out hour by hour from the crop's water use (ET) and the pivot's irrigation window. */
@@ -145,16 +145,29 @@ export function budget() {
 
 /* ---------- alarms ---------- */
 export type Sev = "Critical" | "Warning" | "Info";
-export interface Alarm { id: string; sev: Sev; source: string; text: string; time: string }
+/** day = how many days ago (0 = today); done = already marked done when the dashboard opens */
+export interface Alarm { id: string; sev: Sev; source: string; text: string; time: string; day: number; done?: boolean }
 export const ALARMS: Alarm[] = [
-  { id: "a1", sev: "Critical", source: "Pivot P4", text: "Tower 7 drive tripped, the pivot stopped at 03:12 and the field is not being irrigated", time: "03:12" },
-  { id: "a2", sev: "Warning", source: "Pivot P8", text: "Soil moisture fell below 28% at midday, bring the evening irrigation forward", time: "12:40" },
-  { id: "a3", sev: "Warning", source: "PS-A well 3", text: "Water level in the well is dropping faster than usual, check the draw-down", time: "09:05" },
-  { id: "a4", sev: "Info", source: "PS-B canal lift", text: "Intake screen pressure drop is rising, schedule a clean this week", time: "07:30" },
-  { id: "a5", sev: "Info", source: "Water budget", text: "Use is 4 points behind the year's plan, no action needed", time: "06:00" },
-  { id: "a6", sev: "Warning", source: "Landscape Z9", text: "Villas lawn B valve will not open and its soil probe S-09 is offline: the lawn is not being watered", time: "02:55" },
-  { id: "a7", sev: "Info", source: "Landscape S-04", text: "Soil probe battery is at 12%, replace it this week", time: "08:20" },
-  { id: "a8", sev: "Warning", source: "Grey water", text: "Free chlorine fell under 0.5 mg/L at 14:00, the dose was raised and it recovered", time: "14:00" },
+  { id: "a1", sev: "Critical", source: "Pivot P4", text: "Tower 7 drive tripped, the pivot stopped at 03:12 and the field is not being irrigated", time: "03:12", day: 0 },
+  { id: "a2", sev: "Warning", source: "Pivot P8", text: "Soil moisture fell below 28% at midday, bring the evening irrigation forward", time: "12:40", day: 0 },
+  { id: "a3", sev: "Warning", source: "PS-A well 3", text: "Water level in the well is dropping faster than usual, check the draw-down", time: "09:05", day: 0 },
+  { id: "a4", sev: "Info", source: "PS-B canal lift", text: "Intake screen pressure drop is rising, schedule a clean this week", time: "07:30", day: 0 },
+  { id: "a5", sev: "Info", source: "Water budget", text: "Use is 4 points behind the year's plan, no action needed", time: "06:00", day: 0 },
+  { id: "a6", sev: "Warning", source: "Landscape Z9", text: "Football pitch valve will not open and its soil probe S-09 is offline: the pitch is not being watered", time: "02:55", day: 0 },
+  { id: "a7", sev: "Info", source: "Landscape S-04", text: "Soil probe battery is at 12%, replace it this week", time: "08:20", day: 0 },
+  { id: "a8", sev: "Warning", source: "Grey water", text: "Free chlorine fell under 0.5 mg/L at 14:00, the dose was raised and it recovered", time: "14:00", day: 0 },
+  { id: "a9", sev: "Warning", source: "Pivot P2", text: "End gun pressure was low for 20 minutes, check the booster", time: "21:10", day: 1, done: true },
+  { id: "a10", sev: "Info", source: "PS-C pump 2", text: "Pump started on schedule, vibration 3.1 mm/s", time: "18:05", day: 1, done: true },
+  { id: "a11", sev: "Critical", source: "PS-A well 1", text: "Well pump tripped on overload, the standby pump took over", time: "04:40", day: 2, done: true },
+  { id: "a12", sev: "Warning", source: "Landscape Z12", text: "Southern villa trees ran 25 minutes longer than planned", time: "22:15", day: 2, done: true },
+  { id: "a13", sev: "Info", source: "Weather", text: "ET0 forecast raised to 5.2 mm/day for Thursday", time: "06:30", day: 2 },
+  { id: "a14", sev: "Warning", source: "Pivot P7", text: "Spray uniformity fell to 86%, check the nozzles on span 5", time: "11:20", day: 3 },
+  { id: "a15", sev: "Warning", source: "Grey water", text: "Turbidity out stayed above 4 NTU for one hour, a backwash was started", time: "15:45", day: 3, done: true },
+  { id: "a16", sev: "Info", source: "Landscape S-11", text: "Rain sensor has read 0 mm for 24 hours, check it is not blocked", time: "09:00", day: 4 },
+  { id: "a17", sev: "Warning", source: "PS-B canal lift", text: "Canal level dropped 30 cm, the pumps were throttled back", time: "13:30", day: 4, done: true },
+  { id: "a18", sev: "Info", source: "Water budget", text: "Weekly use is 3% over the plan", time: "06:00", day: 5, done: true },
+  { id: "a19", sev: "Warning", source: "Pivot P5", text: "Alfalfa moisture reached 29% before its window, irrigation brought forward", time: "02:50", day: 5, done: true },
+  { id: "a20", sev: "Warning", source: "Landscape C2", text: "Controller C2 lost its link for 12 minutes and caught up on reconnect", time: "20:35", day: 6 },
 ];
 
 /* ---------- pump stations ---------- */

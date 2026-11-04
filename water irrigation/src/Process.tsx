@@ -1,23 +1,27 @@
 import { useMemo, useState } from "react";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { fmt, MOMENT_LABELS, momentHour, type Moment } from "./farm";
-import { GW, gwAt, gwDay, PARAMS } from "./grey";
+import { FRESH_VALUE, GW, gwAt, gwDay, PARAMS, reuseYtd, TREAT_COST } from "./grey";
 import { useAspect } from "./useAspect";
 import { useGrow } from "./anim";
 import { useTick, wobble } from "./live";
-import { Panel, Ring, Segmented } from "./ui";
-import type { Go } from "./App";
+import { CountUp, Panel, Ring, Segmented, Tip } from "./ui";
 
 const W0 = 1250, H0 = 440, MY = 250; // drawing grid, and the height of the main pipe
 const BUBBLES = [0, 1, 2, 3, 4, 5];
 
-/** Grey Water · Process: a drawn process diagram, from showers and laundry through screen, membrane reactor, UV and chlorine to the storage tank and back out to the gardens and the farm */
-export default function GreyProcess({ go }: { go: Go }) {
+/** Landscape · Process (grey water):  a drawn process diagram, from showers and laundry through screen, membrane reactor, UV and chlorine to the storage tank and back out to the gardens and the farm */
+export default function Process() {
   const t = useTick();
   const grow = useGrow();
   const [moment, setMoment] = useState<Moment>("Morning");
   const hour = momentHour(moment);
   const p = gwAt(hour);
   const day = useMemo(() => gwDay(), []);
+  const ytd = useMemo(() => reuseYtd(), []);
+  const made = ytd.reduce((q, m) => q + m.gen, 0);
+  const reused = ytd.reduce((q, m) => q + m.reused, 0);
+  const net = reused * (FRESH_VALUE - TREAT_COST);
   const cl = PARAMS.find((x) => x.id === "cl")!.outlet;
   const [ref, asp] = useAspect<SVGSVGElement>(1.8, 5);
   const W = Math.max(W0, H0 * asp), H = Math.max(H0, W / asp), dy = (H - H0) / 2;
@@ -68,7 +72,7 @@ export default function GreyProcess({ go }: { go: Go }) {
   const outPipe = `M${sEdge + 55} 290 H${pumpX - 20} M${pumpX + 20} 290 H${colX} M${colX} 100 V360`;
 
   return (
-    <div className="vw ov">
+    <div className="vw ov pr">
       <Panel title="Grey water plant" className="ov-dia" i={0}
         right={<div className="ov-head"><span className="ov-leg"><i className="canal" />Grey water<i className="pump" />Treated water<i className="loss" />Overflow</span><Segmented<Moment> label="Time of day" value={moment} options={MOMENT_LABELS} onChange={setMoment} /></div>}>
         <div className="ov-wrap">
@@ -146,7 +150,7 @@ export default function GreyProcess({ go }: { go: Go }) {
 
               {/* storage tank and the reuse pump */}
               {tank("store", sEdge, 140, 110, 170, p.store / GW.store)}
-              {tag(sEdge, 92, `LIT ${fmt((p.store / GW.store) * 100)}%`, 140, () => go("reuse"))}
+              {tag(sEdge, 92, `LIT ${fmt((p.store / GW.store) * 100)}%`, 140)}
               {label(sEdge, 352, "Storage tank", `${fmt(p.store)} m³`)}
               {pump(pumpX, 290, 20, p.landscape > 0 || p.farm > 0)}
 
@@ -169,6 +173,14 @@ export default function GreyProcess({ go }: { go: Go }) {
         </div>
       </Panel>
 
+      <Panel title="Reuse and savings, this year" className="pr-sum" i={1}>
+        <div className="tiles">
+          <div className="tile"><span>Grey water reused</span><b><CountUp value={(reused / made) * 100} decimals={0} /> <small>% of what is made</small></b></div>
+          <div className="tile"><span>Money saved</span><b><CountUp value={net / 1000} decimals={0} /> <small>k LE</small></b></div>
+          <div className="tile"><span>Made today</span><b><CountUp value={day.gen} decimals={0} /> <small>m³</small></b></div>
+          <div className="tile"><span>Overflow to the sewer today</span><b><CountUp value={day.overflow} decimals={0} /> <small>m³</small></b></div>
+        </div>
+      </Panel>
       <div className="ov-gauges five">
         <Panel title="Collection tank" i={1}><Ring value={(p.coll / GW.collect) * 100} max={100} unit="% full" grow={grow} color="var(--water)" /></Panel>
         <Panel title="Storage tank" i={2}><Ring value={(p.store / GW.store) * 100} max={100} unit="% full" grow={grow} color="var(--teal)" /></Panel>
@@ -176,6 +188,21 @@ export default function GreyProcess({ go }: { go: Go }) {
         <Panel title="Turbidity out" i={4}><Ring value={wobble(1.1, 5, t, 0.03)} max={5} unit="NTU" decimals={1} grow={grow} color="var(--good)" /></Panel>
         <Panel title="Free chlorine" i={5}><Ring value={wobble(cl, 6, t, 0.03)} max={1.5} unit="mg/L" decimals={2} grow={grow} color="var(--water)" /></Panel>
       </div>
+      <Panel title="Made and reused, month by month" className="pr-year" i={6}
+        right={<span className="pm-leg"><span className="key"><i style={{ background: "var(--muted)", opacity: 0.6 }} />Made</span><span className="key"><i style={{ background: "var(--teal)" }} />Reused</span></span>}>
+        <div className="chart">
+          <ResponsiveContainer>
+            <BarChart data={ytd} margin={{ left: 0, right: 8, top: 6, bottom: 0 }} barGap={2}>
+              <CartesianGrid stroke="var(--line)" strokeDasharray="3 4" vertical={false} />
+              <XAxis dataKey="t" stroke="var(--muted)" fontSize={11} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+              <YAxis stroke="var(--muted)" fontSize={11} tickLine={false} axisLine={false} width={44} tickCount={4} />
+              <Tooltip content={<Tip unit="m³" />} cursor={{ fill: "var(--tint)" }} />
+              <Bar dataKey="gen" name="Made" fill="var(--muted)" fillOpacity={0.55} barSize={10} isAnimationActive animationDuration={900} />
+              <Bar dataKey="reused" name="Reused" fill="var(--teal)" barSize={10} isAnimationActive animationDuration={900} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Panel>
     </div>
   );
 }

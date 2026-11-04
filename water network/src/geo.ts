@@ -47,7 +47,7 @@ export const ALL_LL: LL[] = NODES.map((n) => toLL(n.x, n.y));
 export type Basemap = "Streets" | "Satellite";
 export const BASEMAPS = ["Streets", "Satellite"] as const;
 const ESRI = "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, USGS, OpenStreetMap contributors";
-/** the street map keeps its own yellow and orange roads in both themes */
+/** the street map keeps its own yellow and orange roads in both themes (dark mode recolours the land in geoDark.ts) */
 export function tileSpec(base: Basemap, _theme: "light" | "dark") {
   const E = "https://server.arcgisonline.com/ArcGIS/rest/services";
   if (base === "Satellite") return { url: `${E}/World_Imagery/MapServer/tile/{z}/{y}/{x}`, ref: `${E}/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}`, native: 18, attr: "Tiles &copy; Esri &mdash; Esri, Maxar, Earthstar Geographics" };

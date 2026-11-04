@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { SHOWS, type Metric } from "./mapcolor";
 import { INSTRUMENTS, LEAKS, networkAt, NODES, PIPES, pipeById, readInstrument, ZONES, type InstrumentType, type Pipe, type ZoneId } from "./network";
 import { TONE_COLOR } from "./ui";
+import { darkStreetLayer } from "./geoDark";
 import { ALL_LL, pipeColor, pipeLine, pipeMid, tileSpec, toLL, useTheme, zoneInfo, ZONE_AREA, nodeLL, type Basemap } from "./geo";
 
 export interface GeoLayers { areas: boolean; pipes: boolean; inst: boolean; leaks: boolean }
@@ -34,7 +35,7 @@ const svgTank = (pct: number) => { const h = 16 * (pct / 100); return `<svg view
 const HOME_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>`;
 
 interface Kit {
-  m: L.Map; tile: L.TileLayer | null; ref: L.TileLayer | null;
+  m: L.Map; tile: L.GridLayer | null; ref: L.TileLayer | null;
   g: { areas: L.LayerGroup; pipes: L.LayerGroup; inst: L.LayerGroup; leaks: L.LayerGroup; assets: L.LayerGroup };
   poly: Map<ZoneId, L.Polygon>; label: Map<ZoneId, L.Marker>;
   line: Map<string, { base: L.Polyline; flow: L.Polyline | null }>;
@@ -202,7 +203,7 @@ export default function GeoNetwork(props: Props) {
     const t = tileSpec(basemap, theme);
     if (k.tile) k.m.removeLayer(k.tile);
     if (k.ref) k.m.removeLayer(k.ref);
-    k.tile = L.tileLayer(t.url, { attribution: t.attr, maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true });
+    k.tile = basemap === "Streets" && theme === "dark" ? darkStreetLayer(t.url, t.attr, t.native) : L.tileLayer(t.url, { attribution: t.attr, maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true });
     k.tile.addTo(k.m); k.tile.bringToBack();
     // place names go above the zones and pipes
     k.m.getPane("tilePane")!.style.zIndex = "200";

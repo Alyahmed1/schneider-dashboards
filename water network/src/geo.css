@@ -158,3 +158,32 @@
 .nm-side > .hm-p.nm-detail { flex: 1 0 190px; }
 
 .geo[data-base="dark"] { background: #0f1e2e; }
+
+/* zone labels sit above their area, so they never cover the pipes inside it */
+.geo-zl { transform: translate(-50%, calc(-100% - 6px)); }
+.geo-zl:hover { transform: translate(-50%, calc(-100% - 6px)) scale(1.04); }
+/* Home: the reference map. Navy base, solid regions, plain white names */
+.geo[data-base="navy"] { background: #161e3a; }
+.geo-rl { transform: translate(-50%, calc(-100% - 4px)); width: max-content; pointer-events: none; }
+.geo-rl span { font-size: 12px; font-weight: 600; color: #fff; letter-spacing: .2px; text-shadow: 0 1px 3px rgba(10, 14, 34, .95), 0 0 6px rgba(10, 14, 34, .8); }
+.geo-home .leaflet-control-attribution { background: rgba(22, 30, 58, .8); color: #9fb0d6; }
+.geo-home .leaflet-control-attribution a { color: #9fb0d6; }
+
+/* Home map furniture, as in the reference: dropdown bottom-left, wide Good / Moderate / Bad bars along the bottom, one small button top-right */
+.hm-ref .hm-ref-select { position: absolute; left: 10px; bottom: 24px; z-index: 900; }
+.hm-ref .hm-ref-select select { height: 30px; min-width: 150px; font-size: 12.5px; background-color: #fff; color: #1a2036; border: 1px solid #aab4cf; }
+.hm-ref-key { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 900; display: flex; align-items: center; gap: 34px; padding: 6px 16px; background: rgba(22, 30, 58, .82); border-radius: 3px; }
+.hm-ref-key span { display: inline-flex; align-items: center; gap: 10px; color: #fff; font-size: 12.5px; font-weight: 500; }
+.hm-ref-key i { display: block; width: 110px; height: 15px; border-radius: 2px; }
+.hm-ref-key i.k0 { background: #3db8e0; } .hm-ref-key i.k1 { background: #f7b21d; } .hm-ref-key i.k2 { background: #c9467f; }
+.hm-ref-open { position: absolute; top: 10px; right: 10px; z-index: 900; width: 30px; height: 30px; display: grid; place-items: center; color: #fff; background: #3db8e0; border: 0; border-radius: 3px; cursor: pointer; }
+.hm-ref-open:hover { background: #5cc8ec; }
+@media (max-width: 1100px) {
+  .hm-ref-key { gap: 14px; padding: 5px 10px; bottom: 56px; }
+  .hm-ref-key i { width: 52px; }
+  .hm-ref .hm-ref-select { bottom: 14px; }
+}
+
+/* Home map: the reference picture itself, whole, on its own navy */
+.hm-ref-img { display: block; padding: 0; border: 0; background: #1c2040; cursor: pointer; overflow: hidden; }
+.hm-ref-img img { width: 100%; height: 100%; object-fit: contain; display: block; user-select: none; }

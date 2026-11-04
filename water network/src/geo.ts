@@ -4,44 +4,63 @@
 import { useEffect, useState } from "react";
 import { BAD, colorOf, type Metric } from "./mapcolor";
 import { NODES, PIPES, ZONES, type Pipe, type Snapshot, type ZoneId } from "./network";
+import { ZONE_RINGS, type Ring } from "./geoZones";
 
 export type LL = [number, number];
+const M_LAT = 111000, M_LNG = 111320 * Math.cos((30.03 * Math.PI) / 180);
+const shift = (p: LL, east: number, north: number): LL => [p[0] + north / M_LAT, p[1] + east / M_LNG];
 
-const CENTER = { lat: 30.0300, lng: 31.4700, x: 480, y: 325 };
-const D_LAT = 4 / 111000, D_LNG = 4 / (111320 * Math.cos((CENTER.lat * Math.PI) / 180));
-/** the drawing is stretched (wider 1.5x, taller 1.2x) so the plant, pumps, reservoir and zones sit well apart on screen */
-const SX = 1.5, SY = 1.2;
-export const toLL = (x: number, y: number): LL => [CENTER.lat - (y - CENTER.y) * SY * D_LAT, CENTER.lng + (x - CENTER.x) * SX * D_LNG];
+/* ---------- zones: each one sits on a real neighbourhood (see geoZones.ts) ---------- */
+const area = (r: Ring) => Math.abs(r.reduce((a, p, i) => { const q = r[(i + 1) % r.length]; return a + (p[1] * q[0] - q[1] * p[0]); }, 0)) / 2;
+const centroidOf = (r: Ring): LL => {
+  let A = 0, cx = 0, cy = 0;
+  r.forEach((p, i) => { const q = r[(i + 1) % r.length], f = p[1] * q[0] - q[1] * p[0]; A += f; cx += (p[1] + q[1]) * f; cy += (p[0] + q[0]) * f; });
+  return A ? [cy / (3 * A), cx / (3 * A)] : r[0];
+};
+const inRing = (pt: LL, r: Ring) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { if ((r[i][0] > pt[0]) !== (r[j][0] > pt[0]) && pt[1] < ((r[j][1] - r[i][1]) * (pt[0] - r[i][0])) / (r[j][0] - r[i][0]) + r[i][1]) c = !c; } return c; };
 
-/** convex hull (monotone chain) of [x, y] points */
-function hull(pts: [number, number][]): [number, number][] {
-  const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  const cross = (o: number[], a: number[], b: number[]) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-  const lo: [number, number][] = [], up: [number, number][] = [];
-  for (const q of p) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
-  for (const q of [...p].reverse()) { while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
-  return [...lo.slice(0, -1), ...up.slice(0, -1)];
-}
-
-/** where a zone label sits when the middle of the zone is taken by a pipe or a leak (drawing units) */
-const LABEL_AT: Partial<Record<ZoneId, [number, number]>> = { Z3: [752, 368], Z5: [384, 588] };
-
-/** the area of a zone: its nodes, padded by 28 units (about 110 m) and rounded */
-export const ZONE_AREA: Record<ZoneId, { poly: LL[]; centre: LL }> = Object.fromEntries(
+export const ZONE_AREA: Record<ZoneId, { rings: LL[][]; centre: LL; top: LL }> = Object.fromEntries(
   ZONES.map((z) => {
-    const ns = NODES.filter((n) => n.zone === z.id);
-    const pts: [number, number][] = [];
-    for (const n of ns) for (let k = 0; k < 14; k++) { const a = (k / 14) * Math.PI * 2; pts.push([n.x + Math.cos(a) * 28, n.y + Math.sin(a) * 28]); }
-    const cx = ns.reduce((a, n) => a + n.x, 0) / ns.length, cy = ns.reduce((a, n) => a + n.y, 0) / ns.length;
-    const at = LABEL_AT[z.id] ?? [cx, cy];
-    return [z.id, { poly: hull(pts).map(([x, y]) => toLL(x, y)), centre: toLL(at[0], at[1]) }];
+    const rings = ZONE_RINGS[z.id] as Ring[];
+    const big = rings.reduce((a, r) => (area(r) > area(a) ? r : a), rings[0]);
+    const c = centroidOf(big);
+    return [z.id, { rings, centre: c, top: [Math.max(...rings.flat().map((p) => p[0])), c[1]] as LL }];
   }),
-) as Record<ZoneId, { poly: LL[]; centre: LL }>;
+) as Record<ZoneId, { rings: LL[][]; centre: LL; top: LL }>;
 
-export const nodeLL = (id: string): LL => { const n = NODES.find((q) => q.id === id)!; return toLL(n.x, n.y); };
+/* ---------- where every node of the network sits on the map ---------- */
+const NODE_LL: Record<string, LL> = {};
+{
+  for (const z of ZONES) {
+    const rings = ZONE_AREA[z.id].rings as Ring[], ns = NODES.filter((n) => n.zone === z.id), c = ZONE_AREA[z.id].centre;
+    if (rings.length > 1) { ns.forEach((n, i) => { const r = rings[i % rings.length], rc = centroidOf(r); NODE_LL[n.id] = shift(rc, ((i * 37) % 5 - 2) * 25, ((i * 53) % 5 - 2) * 25); }); continue; }
+    // one neighbourhood: the zone's drawing is scaled to fill about 60% of it and pulled inside its edge
+    const all = rings[0], la = all.map((p) => p[0]), lo = all.map((p) => p[1]);
+    const tw = (Math.max(...lo) - Math.min(...lo)) * M_LNG, th = (Math.max(...la) - Math.min(...la)) * M_LAT;
+    const xs = ns.map((n) => n.x), ys = ns.map((n) => n.y), cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+    const cw = Math.max(...xs) - Math.min(...xs) || 1, ch = Math.max(...ys) - Math.min(...ys) || 1;
+    const k = Math.min((tw * 0.6) / cw, (th * 0.6) / ch);
+    for (const n of ns) {
+      let p = shift(c, (n.x - cx) * k, -(n.y - cy) * k);
+      for (let i = 0; i < 12 && !inRing(p, all); i++) p = [p[0] + (c[0] - p[0]) * 0.25, p[1] + (c[1] - p[1]) * 0.25];
+      NODE_LL[n.id] = p;
+    }
+  }
+  const zc = ZONES.map((z) => ZONE_AREA[z.id].centre);
+  const C: LL = [zc.reduce((a, p) => a + p[0], 0) / zc.length, zc.reduce((a, p) => a + p[1], 0) / zc.length];
+  const j0 = shift(C, -700, -400);
+  NODE_LL.j0 = j0;
+  NODE_LL.ps1 = shift(j0, -3300, 200);
+  NODE_LL.wtp = shift(j0, -5200, 200);
+  NODE_LL.res = shift(j0, -300, 2300);
+  NODE_LL.j1 = shift(j0, 1500, 0);
+  NODE_LL.ps2 = shift(j0, 2200, 1900);
+  NODE_LL.s0 = shift(NODE_LL.e1 ?? j0, -600, -500);
+}
+export const nodeLL = (id: string): LL => NODE_LL[id];
 export const pipeLine = (p: Pipe): LL[] => [nodeLL(p.from), nodeLL(p.to)];
 export const pipeMid = (p: Pipe, t = 0.5): LL => { const a = nodeLL(p.from), b = nodeLL(p.to); return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; };
-export const ALL_LL: LL[] = NODES.map((n) => toLL(n.x, n.y));
+export const ALL_LL: LL[] = [...Object.values(NODE_LL), ...ZONES.flatMap((z) => ZONE_AREA[z.id].rings.flat())];
 
 /* ---------- basemaps ---------- */
 export type Basemap = "Streets" | "Satellite";

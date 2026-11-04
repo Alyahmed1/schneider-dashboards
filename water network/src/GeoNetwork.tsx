@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { SHOWS, type Metric } from "./mapcolor";
+import { GOOD, MID, SHOWS, type Metric } from "./mapcolor";
 import { INSTRUMENTS, LEAKS, networkAt, NODES, PIPES, pipeById, readInstrument, ZONES, type InstrumentType, type Pipe, type ZoneId } from "./network";
 import { TONE_COLOR } from "./ui";
 import { darkStreetLayer } from "./geoDark";
-import { ALL_LL, pipeColor, pipeLine, pipeMid, tileSpec, toLL, useTheme, zoneInfo, ZONE_AREA, nodeLL, type Basemap } from "./geo";
+import { ALL_LL, pipeColor, pipeLine, pipeMid, tileSpec, useTheme, zoneInfo, ZONE_AREA, nodeLL, type Basemap } from "./geo";
 
 export interface GeoLayers { areas: boolean; pipes: boolean; inst: boolean; leaks: boolean }
 export interface GeoFocus { lat: number; lng: number; n: number; zoom?: number }
@@ -26,7 +26,10 @@ interface Props {
 
 const GLYPH: Record<InstrumentType, string> = { flow: "Q", pressure: "P", quality: "Cl", level: "H", pump: "M", leak: "Lk", prv: "V" };
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
-const dnW = (p: Pipe, mode: "home" | "network") => (mode === "home" ? (p.zone === "trunk" ? 5 : 3) : Math.min(8, 2.6 + p.dn / 150));
+const dnW = (p: Pipe, mode: "home" | "network") => (mode === "home" ? (p.zone === "trunk" ? 3 : 2) : Math.min(5.5, 2 + p.dn / 230));
+/** Home uses the colours of the reference map: blue is good, yellow is moderate, pink is bad */
+export const REGION = { good: "#3db8e0", moderate: "#f7b21d", bad: "#c9467f" } as const;
+const regionColour = (c: string) => (c === GOOD ? REGION.good : c === MID ? REGION.moderate : REGION.bad);
 
 const SVG_PLANT = `<svg viewBox="0 0 36 36"><rect x="3" y="6" width="30" height="24" rx="4"/><path class="ic" d="M18 10 C22 15 25 18 25 21.500 A7 7 0 0 1 11 21.500 C11 18 14 15 18 10Z"/></svg>`;
 const SVG_PUMP = `<svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="14"/><path class="ic" d="M13 11 L26 18 L13 25Z"/></svg>`;
@@ -87,7 +90,7 @@ export default function GeoNetwork(props: Props) {
 
     // zone areas and their labels
     for (const z of ZONES) {
-      const poly = L.polygon(ZONE_AREA[z.id].poly, { pane: "zones", weight: 2, className: "geo-zone", smoothFactor: 0.5 });
+      const poly = L.polygon(ZONE_AREA[z.id].rings, { pane: "zones", weight: 2, className: "geo-zone", smoothFactor: 0.5 });
       poly.on("click", (e) => {
         if (P.current.mode === "network") P.current.onZone?.(P.current.zone === z.id ? null : z.id);
         else k.label.get(z.id)?.openPopup(e.latlng);
@@ -98,7 +101,7 @@ export default function GeoNetwork(props: Props) {
       }, { sticky: true, className: "geo-tip", direction: "top", opacity: 1 });
       poly.addTo(g.areas); k.poly.set(z.id, poly);
 
-      const lab = L.marker(ZONE_AREA[z.id].centre, { icon: L.divIcon({ className: "geo-ico", html: "" }), keyboard: false, zIndexOffset: 100 });
+      const lab = L.marker(ZONE_AREA[z.id].top, { icon: L.divIcon({ className: "geo-ico", html: "" }), keyboard: false, zIndexOffset: 100 });
       lab.on("click", () => {
         if (P.current.mode === "network") P.current.onZone?.(P.current.zone === z.id ? null : z.id);
         else lab.openPopup();
@@ -143,7 +146,7 @@ export default function GeoNetwork(props: Props) {
 
     // plant, pumps, reservoir
     for (const n of NODES.filter((q) => q.kind === "plant" || q.kind === "pump" || q.kind === "tank")) {
-      const mk = L.marker(toLL(n.x, n.y), { icon: L.divIcon({ className: "geo-ico", html: "" }), zIndexOffset: 400, keyboard: false });
+      const mk = L.marker(nodeLL(n.id), { icon: L.divIcon({ className: "geo-ico", html: "" }), zIndexOffset: 400, keyboard: false });
       mk.bindPopup(() => {
         const s = snap(); const d = document.createElement("div"); d.className = "geo-pop";
         const f = P.current.flow ?? 0;
@@ -203,14 +206,15 @@ export default function GeoNetwork(props: Props) {
     const t = tileSpec(basemap, theme);
     if (k.tile) k.m.removeLayer(k.tile);
     if (k.ref) k.m.removeLayer(k.ref);
-    k.tile = basemap === "Streets" && theme === "dark" ? darkStreetLayer(t.url, t.attr, t.native) : L.tileLayer(t.url, { attribution: t.attr, maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true });
+    const navy = mode === "home" && basemap === "Streets"; // Home is always the navy map of the reference image
+    k.tile = basemap === "Streets" && (theme === "dark" || navy) ? darkStreetLayer(t.url, t.attr, t.native, navy ? "quiet" : "rich") : L.tileLayer(t.url, { attribution: t.attr, maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true });
     k.tile.addTo(k.m); k.tile.bringToBack();
     // place names go above the zones and pipes
     k.m.getPane("tilePane")!.style.zIndex = "200";
     k.ref = t.ref ? L.tileLayer(t.ref, { maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true, pane: "labels" }) : null;
     k.ref?.addTo(k.m);
-    k.m.getContainer().dataset.base = basemap === "Satellite" ? "sat" : theme;
-  }, [ready, basemap, theme]);
+    k.m.getContainer().dataset.base = basemap === "Satellite" ? "sat" : navy ? "navy" : theme;
+  }, [ready, basemap, theme, mode]);
 
   /* ---------- restyle as the hour, the colouring, the zone filter and the layers change ---------- */
   useEffect(() => {
@@ -231,9 +235,15 @@ export default function GeoNetwork(props: Props) {
     // areas
     for (const z of ZONES) {
       const i = zoneInfo(metric, s, z.id), d = dim(z.id), on = zone === z.id;
-      k.poly.get(z.id)!.setStyle({ color: i.c, fillColor: i.c, opacity: d ? 0.3 : 0.95, fillOpacity: d ? 0.07 : on ? 0.5 : net ? 0.32 : 0.4 });
+      const col = net ? i.c : regionColour(i.c);
+      k.poly.get(z.id)!.setStyle(net
+        ? { color: i.c, fillColor: i.c, weight: 2, opacity: d ? 0.3 : 0.95, fillOpacity: d ? 0.07 : on ? 0.5 : 0.34 }
+        : i.c === MID ? { color: "#ffd36b", fillColor: col, weight: 1, opacity: 0.9, fillOpacity: 0.96 }
+        : i.c === GOOD ? { color: "#8fd3ec", fillColor: col, weight: 1, opacity: 0.8, fillOpacity: 0.5 }
+        : { color: "#e583ad", fillColor: col, weight: 1, opacity: 0.8, fillOpacity: 0.45 });
       setHtml(`z${z.id}`, k.label.get(z.id)!,
-        `<div class="geo-zl ${d ? "dim" : ""} ${on ? "on" : ""}" style="--c:${i.c}"><span class="n">${esc(z.name)}</span><span class="v"><b>${i.big}</b> ${esc(i.unit)}</span><span class="s">${esc(i.sub)}</span></div>`,
+        net ? `<div class="geo-zl ${d ? "dim" : ""} ${on ? "on" : ""}" style="--c:${i.c}"><span class="n">${esc(z.name)}</span><span class="v"><b>${i.big}</b> ${esc(i.unit)}</span><span class="s">${esc(i.sub)}</span></div>`
+          : `<div class="geo-rl"><span>${esc(z.name)}</span></div>`,
         [0, 0], [0, 0]);
     }
 
@@ -241,7 +251,7 @@ export default function GeoNetwork(props: Props) {
     for (const p of PIPES) {
       const ln = k.line.get(p.id)!, st = s.pipes[p.id], d = dim(p.zone), w = dnW(p, mode);
       const tie = p.kind === "tie";
-      ln.base.setStyle({ color: pipeColor(metric, s, p), weight: tie ? 2 : w, opacity: d ? 0.2 : tie ? 0.8 : 0.95, dashArray: tie ? "5 6" : undefined });
+      ln.base.setStyle({ color: net ? pipeColor(metric, s, p) : "#9db4d6", weight: tie ? 1.5 : w, opacity: d ? 0.2 : tie ? 0.8 : net ? 0.95 : 0.9, dashArray: tie ? "5 6" : undefined });
       if (ln.flow) {
         const moving = !st.closed && st.flow > 0.5;
         ln.flow.setStyle({ weight: Math.max(1.6, w * 0.34), opacity: moving && !d ? 0.9 : 0 });
@@ -289,7 +299,7 @@ export default function GeoNetwork(props: Props) {
   /* a zone picked in the table: frame it */
   useEffect(() => {
     const k = kit.current; if (!k || mode !== "network") return;
-    if (zone) k.m.flyToBounds(L.latLngBounds(ZONE_AREA[zone].poly), { padding: [50, 50], duration: 0.6, maxZoom: 16 });
+    if (zone) k.m.flyToBounds(L.latLngBounds(ZONE_AREA[zone].rings.flat()), { padding: [50, 50], duration: 0.6, maxZoom: 16 });
     else if (ready) k.m.flyToBounds(L.latLngBounds(ALL_LL), { padding: [44, 44], duration: 0.6 });
   }, [zone]); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -5,8 +5,6 @@ import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, s
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
-import GeoNetwork from "./GeoNetwork";
-import { LEGEND, METRICS, type Metric } from "./mapcolor";
 import { NET, networkAt } from "./network";
 import { useTick, wobble } from "./live";
 import { Bars, niceMax, Panel, tick } from "./charts";
@@ -50,7 +48,6 @@ function Pie({ items }: { items: { name: string; value: number }[] }) {
 export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (r: Range) => void; go: Go; wos: WorkOrder[] }) {
   const t = useTick();
   const grow = useGrow();
-  const [metric, setMetric] = useState<Metric>("Consumption");
   const [moment, setMoment] = useState<(typeof MOMENTS)[number]["label"]>("Morning peak");
   const hour = MOMENTS.find((m) => m.label === moment)!.h;
   const series = useMemo(() => productionSeries(f), [f]);
@@ -85,25 +82,14 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
         <div className="hm-map-head">
           <div className="hm-map-lead">
             <button className={`hm-alarm ${critical ? "bad" : "ok"}`} onClick={() => go("alarms")}>{critical ? `${critical} critical alarm` : "All normal"}</button>
-            <label className="hm-select">
-              <span className="sr">Colour the map by</span>
-              <select value={metric} onChange={(e) => setMetric(e.target.value as Metric)}>
-                {METRICS.map((x) => <option key={x} value={x}>Colour by {x === "Leakage" ? "water lost" : x.toLowerCase()}</option>)}
-              </select>
-            </label>
             <Segmented label="Time of day" value={moment} options={MOMENTS.map((m) => m.label)} onChange={setMoment} />
           </div>
           <Segmented<Range> label="Time range" value={f.range} options={RANGES} onChange={setRange} />
         </div>
-        <div className="hm-map-wrap hm-map-col">
-          <div className="hm-dia">
-            <GeoNetwork mode="home" metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} label="Interactive map of the water network over New Cairo: the treatment plant, pump stations, reservoir and six supply zones. Click a zone, pump or reservoir for its numbers." />
-          </div>
-          <div className="hm-key geo-key" aria-label="Colour key">
-            <b>{LEGEND[metric].title}:</b>
-            {LEGEND[metric].items.map((i) => <span key={i.label}><i style={{ background: i.c }} />{i.label} <em>{i.note}</em></span>)}
-            <button className="nm-open" onClick={() => go("network")}>Open the full network map</button>
-          </div>
+        <div className="hm-map-wrap hm-map-col hm-ref">
+          <button className="hm-dia hm-ref-img" onClick={() => go("network")} aria-label="Regional map: Good, Moderate and Bad regions. Open the full network map.">
+            <img src="/home-map.png" alt="Map of regions coloured Good, Moderate and Bad, with a Water Quality and Water Consumption selector" draggable={false} />
+          </button>
         </div>
       </section>
 

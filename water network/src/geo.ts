@@ -45,10 +45,10 @@ export const ALL_LL: LL[] = NODES.map((n) => toLL(n.x, n.y));
 export type Basemap = "Streets" | "Satellite";
 export const BASEMAPS = ["Streets", "Satellite"] as const;
 const ESRI = "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, USGS, OpenStreetMap contributors";
-export function tileSpec(base: Basemap, theme: "light" | "dark") {
+/** the street map keeps its own yellow and orange roads in both themes */
+export function tileSpec(base: Basemap, _theme: "light" | "dark") {
   const E = "https://server.arcgisonline.com/ArcGIS/rest/services";
   if (base === "Satellite") return { url: `${E}/World_Imagery/MapServer/tile/{z}/{y}/{x}`, ref: `${E}/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}`, native: 18, attr: "Tiles &copy; Esri &mdash; Esri, Maxar, Earthstar Geographics" };
-  if (theme === "dark") return { url: `${E}/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, ref: `${E}/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, native: 16, attr: ESRI };
   return { url: `${E}/World_Street_Map/MapServer/tile/{z}/{y}/{x}`, ref: null, native: 18, attr: ESRI };
 }
 

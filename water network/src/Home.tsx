@@ -3,8 +3,7 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import { ArrowDown, ArrowUp, Maximize2 } from "lucide-react";
 import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
-import GeoNetwork from "./GeoNetwork";
-import { LEGEND, METRICS, type Metric } from "./mapcolor";
+import RegionMap, { REGION_METRICS, regionNotes, type RegionMetric } from "./RegionMap";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
 import { NET, networkAt } from "./network";
@@ -50,7 +49,7 @@ function Pie({ items }: { items: { name: string; value: number }[] }) {
 export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (r: Range) => void; go: Go; wos: WorkOrder[] }) {
   const t = useTick();
   const grow = useGrow();
-  const [metric, setMetric] = useState<Metric>("Consumption");
+  const [metric, setMetric] = useState<RegionMetric>("WaterQuality");
   const [moment, setMoment] = useState<(typeof MOMENTS)[number]["label"]>("Morning peak");
   const hour = MOMENTS.find((m) => m.label === moment)!.h;
   const series = useMemo(() => productionSeries(f), [f]);
@@ -91,21 +90,20 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
         </div>
         <div className="hm-map-wrap hm-map-col hm-ref">
           <div className="hm-dia">
-            <GeoNetwork mode="home" metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} label="Interactive map of Egypt centred on New Cairo: the six supply zones coloured good, moderate or bad, with the treatment plant, pump stations and reservoir. Drag and zoom; click a zone, pump or reservoir for its numbers." />
+            <RegionMap metric={metric} onOpen={() => go("network")} />
           </div>
-          <div className="hm-ref-country" aria-hidden><b>Egypt</b><span>مصر</span></div>
           <label className="hm-select hm-ref-select">
             <span className="sr">Colour the map by</span>
-            <select value={metric} onChange={(e) => setMetric(e.target.value as Metric)}>
-              {METRICS.map((x) => <option key={x} value={x}>{x === "Leakage" ? "WaterLoss" : x === "Consumption" ? "WaterConsumption" : "WaterPressure"}</option>)}
+            <select value={metric} onChange={(e) => setMetric(e.target.value as RegionMetric)}>
+              {REGION_METRICS.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
             </select>
           </label>
-          <div className="hm-ref-key" aria-label={`${LEGEND[metric].title}: ${LEGEND[metric].items.map((i) => `${i.label} ${i.note}`).join(", ")}`}>
+          <div className="hm-ref-key" aria-label="Colour key">
             {(["Good", "Moderate", "Bad"] as const).map((w, n) => (
-              <span key={w} title={`${LEGEND[metric].items[n].label}: ${LEGEND[metric].items[n].note}`}>{w}<i className={`k${n}`} /></span>
+              <span key={w} title={`${w}: ${regionNotes(metric)[n]}`}>{w}<i className={`k${n}`} /></span>
             ))}
           </div>
-          <button className="hm-ref-open" onClick={() => go("network")} title="Open the full network map" aria-label="Open the full network map"><Maximize2 size={15} /></button>
+          <button className="hm-ref-open" onClick={() => go("network")} title="Open the New Cairo network map" aria-label="Open the New Cairo network map"><Maximize2 size={15} /></button>
         </div>
       </section>
 

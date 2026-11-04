@@ -87,8 +87,8 @@
 .geo-pop button:hover { background: var(--teal); color: #fff; }
 
 /* Network Map extras: layer chips, loss panel, leak list */
-.nm-wrap .nm-legend { z-index: 900; top: auto; bottom: 26px; left: auto; right: 10px; }
-.nm-wrap .nm-legend.nm-legend-mini { top: auto; bottom: 26px; }
+.nm-wrap .nm-legend { z-index: 900; top: 10px; bottom: auto; left: auto; right: 10px; }
+.nm-wrap .nm-legend.nm-legend-mini { top: 10px; bottom: auto; }
 .nm-layers { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .nm-layers .nm-btn { padding: 5px 10px; }
 .nm-btn.on .sw { background: var(--teal); }
@@ -198,3 +198,23 @@
 .geo-home:not(.geo-z13) .geo-as b, .geo-home:not(.geo-z13) .geo-leak span { display: none; }
 .geo-home:not(.geo-z13) .geo-as .gi { width: 30px; height: 30px; }
 .geo-home:not(.geo-z13) .geo-as .gi svg { width: 19px; height: 19px; }
+
+/* Network Map: easy to read, easy to explain */
+.nm-how { flex: none; margin: 0; padding: 0 2px; font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.nm-how b { color: var(--ink); font-weight: 600; }
+.nm-how i { font-style: normal; color: var(--line); padding: 0 3px; }
+.geo-network .geo-zone { filter: drop-shadow(0 0 7px rgba(255, 255, 255, .22)); }
+.geo-network .geo-zl { box-shadow: 0 3px 12px rgba(0, 0, 0, .3); }
+
+.geo-zl.e { transform: translate(10px, -50%); }
+.geo-zl.w { transform: translate(calc(-100% - 10px), -50%); }
+.geo-zl.e:hover { transform: translate(10px, -50%) scale(1.04); }
+.geo-zl.w:hover { transform: translate(calc(-100% - 10px), -50%) scale(1.04); }
+
+/* Home region map */
+.geo-rl.big span { font-size: 13px; }
+.geo-dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; }
+.geo-dot.Good { background: #3db8e0; } .geo-dot.Moderate { background: #f7b21d; } .geo-dot.Bad { background: #c9467f; }
+.geo-pop small { color: var(--muted); font-size: 11px; }
+.geo-region .geo-zone { cursor: pointer; }
+.hm-ref-country { display: none; }

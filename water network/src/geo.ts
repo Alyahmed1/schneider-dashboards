@@ -19,14 +19,15 @@ const centroidOf = (r: Ring): LL => {
 };
 const inRing = (pt: LL, r: Ring) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { if ((r[i][0] > pt[0]) !== (r[j][0] > pt[0]) && pt[1] < ((r[j][1] - r[i][1]) * (pt[0] - r[i][0])) / (r[j][0] - r[i][0]) + r[i][1]) c = !c; } return c; };
 
-export const ZONE_AREA: Record<ZoneId, { rings: LL[][]; centre: LL; top: LL }> = Object.fromEntries(
+export const ZONE_AREA: Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; east: LL; west: LL }> = Object.fromEntries(
   ZONES.map((z) => {
     const rings = ZONE_RINGS[z.id] as Ring[];
     const big = rings.reduce((a, r) => (area(r) > area(a) ? r : a), rings[0]);
     const c = centroidOf(big);
-    return [z.id, { rings, centre: c, top: [Math.max(...rings.flat().map((p) => p[0])), c[1]] as LL }];
+    const pts = rings.flat();
+    return [z.id, { rings, centre: c, top: [Math.max(...pts.map((p) => p[0])), c[1]] as LL, east: [c[0], Math.max(...pts.map((p) => p[1]))] as LL, west: [c[0], Math.min(...pts.map((p) => p[1]))] as LL }];
   }),
-) as Record<ZoneId, { rings: LL[][]; centre: LL; top: LL }>;
+) as Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; east: LL; west: LL }>;
 
 /* ---------- where every node of the network sits on the map ---------- */
 const NODE_LL: Record<string, LL> = {};
@@ -46,16 +47,15 @@ const NODE_LL: Record<string, LL> = {};
       NODE_LL[n.id] = p;
     }
   }
-  const zc = ZONES.map((z) => ZONE_AREA[z.id].centre);
-  const C: LL = [zc.reduce((a, p) => a + p[0], 0) / zc.length, zc.reduce((a, p) => a + p[1], 0) / zc.length];
-  const j0 = shift(C, -700, -400);
-  NODE_LL.j0 = j0;
-  NODE_LL.ps1 = shift(j0, -3300, 200);
-  NODE_LL.wtp = shift(j0, -5200, 200);
-  NODE_LL.res = shift(j0, -300, 2300);
-  NODE_LL.j1 = shift(j0, 1500, 0);
-  NODE_LL.ps2 = shift(j0, 2200, 1900);
-  NODE_LL.s0 = shift(NODE_LL.e1 ?? j0, -600, -500);
+  // the hub sits on the road between the two columns of blocks; the reservoir is the real Banafseg water tower on that road
+  const j1: LL = [30.0480, 31.4681];
+  NODE_LL.j1 = j1;
+  NODE_LL.j0 = shift(j1, -800, -150);
+  NODE_LL.ps1 = shift(NODE_LL.j0, -450, 0);
+  NODE_LL.wtp = shift(NODE_LL.j0, -950, 0);
+  NODE_LL.res = [30.0518, 31.4683];
+  NODE_LL.ps2 = [30.0352, 31.4640];
+  NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
 }
 export const nodeLL = (id: string): LL => NODE_LL[id];
 export const pipeLine = (p: Pipe): LL[] => [nodeLL(p.from), nodeLL(p.to)];

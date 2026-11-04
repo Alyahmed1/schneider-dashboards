@@ -3,12 +3,14 @@
 import L from "leaflet";
 
 type RGB = [number, number, number];
-export type DarkLook = "quiet" | "rich";
+export type DarkLook = "quiet" | "rich" | "sky";
 const mix = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 const smooth = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
 /** quiet: a navy backdrop with nothing but faint outlines and names (Home). rich: a lighter blue with the streets drawn in light blue (Network Map). */
 const LOOK: Record<DarkLook, { stops: [number, RGB][]; roads: boolean }> = {
+  /** light mode: a pale blue-grey background, white side streets, main roads in light blue, dark names */
+  sky: { roads: true, stops: [[0, [38, 52, 72]], [0.45, [104, 122, 146]], [0.7, [188, 200, 214]], [0.8, [226, 235, 244]], [0.94, [233, 241, 248]], [0.965, [235, 242, 249]], [1, [255, 255, 255]]] },
   quiet: { roads: false, stops: [[0, [196, 210, 240]], [0.45, [112, 130, 178]], [0.68, [40, 48, 86]], [0.76, [22, 30, 58]], [1, [22, 30, 58]]] },
   rich: { roads: true, stops: [[0, [226, 238, 250]], [0.45, [160, 192, 226]], [0.68, [84, 124, 170]], [0.76, [42, 78, 116]], [0.965, [42, 78, 116]], [1, [74, 114, 156]]] },
 };
@@ -28,7 +30,8 @@ function recolour(d: Uint8ClampedArray, look: DarkLook) {
     if (roads) {
       const k = smooth(0.12, 0.26, s) * (1 - smooth(0.8, 0.9, l)); // coloured roads (pale tan patches count as land)
       const warm = r >= g * 0.95 && r > b;
-      if (warm) out = mix(base, [96 + l * 50, 146 + l * 50, 196 + l * 40], k);
+      if (warm) out = look === "sky" ? mix(base, [96, 178, 240], Math.min(1, k * 1.4)) : mix(base, [96 + l * 50, 146 + l * 50, 196 + l * 40], k);
+      else if (look === "sky") out = mix(base, [r, g, b], k * 0.85); // parks and water keep their own colour
     }
     d[i] = out[0]; d[i + 1] = out[1]; d[i + 2] = out[2];
   }

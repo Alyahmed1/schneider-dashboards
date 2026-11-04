@@ -211,7 +211,7 @@ export default function GeoNetwork(props: Props) {
     if (k.tile) k.m.removeLayer(k.tile);
     if (k.ref) k.m.removeLayer(k.ref);
     const navy = mode === "home" && basemap === "Streets"; // Home is always the navy map of the reference image
-    k.tile = basemap === "Streets" && (theme === "dark" || navy) ? darkStreetLayer(t.url, t.attr, t.native, navy ? "quiet" : "rich") : L.tileLayer(t.url, { attribution: t.attr, maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true });
+    k.tile = basemap === "Streets" ? darkStreetLayer(t.url, t.attr, t.native, navy ? "quiet" : theme === "dark" ? "rich" : "sky") : L.tileLayer(t.url, { attribution: t.attr, maxZoom: 18, maxNativeZoom: t.native, crossOrigin: true });
     k.tile.addTo(k.m); k.tile.bringToBack();
     // place names go above the zones and pipes
     k.m.getPane("tilePane")!.style.zIndex = "200";

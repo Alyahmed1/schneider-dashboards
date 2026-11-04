@@ -234,6 +234,4 @@
 .nm-wrap .nm-legend .row em { display: none; }
 .nm-wrap .nm-legend b { margin-bottom: 4px; font-size: 12px; }
 
-/* a light blue wash over the street map in light mode */
-.geo[data-base="light"] .leaflet-tile-pane { filter: sepia(.35) hue-rotate(165deg) saturate(1.45) brightness(1.05) contrast(.96); }
-.geo[data-base="light"] { background: #dcecfa; }
+.geo[data-base="light"] { background: #e9f2fa; }

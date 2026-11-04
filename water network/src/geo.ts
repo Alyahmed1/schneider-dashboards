@@ -55,7 +55,7 @@ const NODE_LL: Record<string, LL> = {};
   NODE_LL.j0 = [30.0295, R];
   NODE_LL.res = [30.0360, R];
   NODE_LL.j1 = [30.0440, 31.4850];
-  NODE_LL.ps2 = [30.0170, 31.4440];
+  NODE_LL.ps2 = [30.0232, 31.4760];
   NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
 }
 export const nodeLL = (id: string): LL => NODE_LL[id];

@@ -5,7 +5,7 @@ import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, s
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
-import HomeDiagram from "./HomeDiagram";
+import GeoNetwork from "./GeoNetwork";
 import { LEGEND, METRICS, type Metric } from "./mapcolor";
 import { NET, networkAt } from "./network";
 import { useTick, wobble } from "./live";
@@ -97,7 +97,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
         </div>
         <div className="hm-map-wrap hm-map-col">
           <div className="hm-dia">
-            <HomeDiagram metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} />
+            <GeoNetwork mode="home" metric={metric} hour={hour} flow={Math.round(wobble(flow[1].flow, 3, t, 0.004))} onOpen={() => go("network")} label="Interactive map of the water network over New Cairo: the treatment plant, pump stations, reservoir and six supply zones. Click a zone, pump or reservoir for its numbers." />
           </div>
           <div className="hm-key" aria-label="Colour key">
             <b>{LEGEND[metric].title}:</b>

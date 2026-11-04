@@ -187,3 +187,14 @@
 /* Home map: the reference picture itself, whole, on its own navy */
 .hm-ref-img { display: block; padding: 0; border: 0; background: #1c2040; cursor: pointer; overflow: hidden; }
 .hm-ref-img img { width: 100%; height: 100%; object-fit: contain; display: block; user-select: none; }
+
+/* the country name, set like "United States of America" in the reference */
+.hm-ref-country { position: absolute; left: 7%; top: 52%; z-index: 800; display: grid; justify-items: center; gap: 2px; pointer-events: none; color: rgba(255, 255, 255, .85); text-align: center; letter-spacing: 3px; text-shadow: 0 1px 4px rgba(10, 14, 34, .9); }
+.hm-ref-country b { font-size: 17px; font-weight: 600; text-transform: uppercase; }
+.hm-ref-country span { font-size: 15px; letter-spacing: 1px; }
+@media (max-width: 1100px) { .hm-ref-country { top: 40%; } }
+
+/* Home starts wide: names of the pumps and leak rates appear once you zoom in, so the region names stay readable */
+.geo-home:not(.geo-z13) .geo-as b, .geo-home:not(.geo-z13) .geo-leak span { display: none; }
+.geo-home:not(.geo-z13) .geo-as .gi { width: 30px; height: 30px; }
+.geo-home:not(.geo-z13) .geo-as .gi svg { width: 19px; height: 19px; }

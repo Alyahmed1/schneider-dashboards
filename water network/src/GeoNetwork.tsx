@@ -61,14 +61,16 @@ export default function GeoNetwork(props: Props) {
   useEffect(() => {
     const el = box.current!;
     const m = L.map(el, {
-      zoomSnap: 0.25, zoomDelta: 0.5, minZoom: 12, maxZoom: 18, zoomControl: true, attributionControl: true,
+      zoomSnap: 0.25, zoomDelta: 0.5, minZoom: P.current.mode === "home" ? 6 : 12, maxZoom: 18, zoomControl: true, attributionControl: true,
       dragging: P.current.mode === "network" || !L.Browser.mobile, // on a phone the Home map must not trap the page scroll
     });
     m.attributionControl.setPrefix(false);
     m.createPane("zones").style.zIndex = "410";
     m.createPane("pipes").style.zIndex = "420";
     const lp = m.createPane("labels"); lp.style.zIndex = "430"; lp.style.pointerEvents = "none";
-    const fit = () => m.fitBounds(L.latLngBounds(ALL_LL), { padding: [44, 44], animate: false });
+    // Home starts a little wider than the zones so the country around them shows, as in the reference
+    const home = P.current.mode === "home", bounds = L.latLngBounds(ALL_LL);
+    const fit = () => { m.fitBounds(bounds, { padding: [44, 44], animate: false }); if (home) m.setZoom(m.getZoom() - 0.5, { animate: false }); };
     fit();
 
     const homeBtn = new L.Control({ position: "topleft" });
@@ -78,7 +80,7 @@ export default function GeoNetwork(props: Props) {
       a.href = "#"; a.title = "Show the whole network"; a.setAttribute("role", "button"); a.setAttribute("aria-label", "Show the whole network");
       a.innerHTML = HOME_SVG;
       L.DomEvent.disableClickPropagation(d);
-      L.DomEvent.on(a, "click", (e) => { L.DomEvent.preventDefault(e); m.flyToBounds(L.latLngBounds(ALL_LL), { padding: [44, 44], duration: 0.6 }); });
+      L.DomEvent.on(a, "click", (e) => { L.DomEvent.preventDefault(e); m.flyToBounds(L.latLngBounds(ALL_LL), { padding: [44, 44], duration: 0.6 }); if (home) m.once("moveend", () => m.setZoom(m.getZoom() - 0.5)); });
       return d;
     };
     homeBtn.addTo(m);
@@ -190,7 +192,7 @@ export default function GeoNetwork(props: Props) {
     }
 
     for (const key of ["areas", "pipes", "assets", "leaks", "inst"] as const) g[key].addTo(m);
-    const zc = () => { el.classList.toggle("geo-z15", m.getZoom() >= 15); el.classList.toggle("geo-z155", m.getZoom() >= 15.5); };
+    const zc = () => { el.classList.toggle("geo-z15", m.getZoom() >= 15); el.classList.toggle("geo-z155", m.getZoom() >= 15.5); el.classList.toggle("geo-z13", m.getZoom() >= 13); };
     m.on("zoomend", zc); zc();
     // the box has no size until the page has laid it out, so frame the network the first time it has one
     let framed = false;

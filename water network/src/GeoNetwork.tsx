@@ -71,7 +71,7 @@ export default function GeoNetwork(props: Props) {
     const lp = m.createPane("labels"); lp.style.zIndex = "430"; lp.style.pointerEvents = "none";
     // Home starts a little wider than the zones so the country around them shows, as in the reference
     const home = P.current.mode === "home", bounds = L.latLngBounds(ALL_LL);
-    const fit = () => { m.fitBounds(bounds, home ? { padding: [44, 44], animate: false } : { padding: [50, 40], animate: false }); if (home) m.setZoom(m.getZoom() - 0.5, { animate: false }); };
+    const fit = () => { m.fitBounds(bounds, home ? { padding: [44, 44], animate: false } : { paddingTopLeft: [50, 40], paddingBottomRight: [50, 80], animate: false }); if (home) m.setZoom(m.getZoom() - 0.5, { animate: false }); };
     fit();
 
     const homeBtn = new L.Control({ position: "topleft" });
@@ -81,7 +81,7 @@ export default function GeoNetwork(props: Props) {
       a.href = "#"; a.title = "Show the whole network"; a.setAttribute("role", "button"); a.setAttribute("aria-label", "Show the whole network");
       a.innerHTML = HOME_SVG;
       L.DomEvent.disableClickPropagation(d);
-      L.DomEvent.on(a, "click", (e) => { L.DomEvent.preventDefault(e); m.flyToBounds(L.latLngBounds(ALL_LL), home ? { padding: [44, 44], duration: 0.6 } : { padding: [50, 40], duration: 0.6 }); if (home) m.once("moveend", () => m.setZoom(m.getZoom() - 0.5)); });
+      L.DomEvent.on(a, "click", (e) => { L.DomEvent.preventDefault(e); m.flyToBounds(L.latLngBounds(ALL_LL), home ? { padding: [44, 44], duration: 0.6 } : { paddingTopLeft: [50, 40], paddingBottomRight: [50, 80], duration: 0.6 }); if (home) m.once("moveend", () => m.setZoom(m.getZoom() - 0.5)); });
       return d;
     };
     homeBtn.addTo(m);
@@ -309,7 +309,7 @@ export default function GeoNetwork(props: Props) {
   useEffect(() => {
     const k = kit.current; if (!k || mode !== "network") return;
     if (zone) k.m.flyToBounds(L.latLngBounds(ZONE_AREA[zone].rings.flat()), { padding: [50, 50], duration: 0.6, maxZoom: 16 });
-    else if (ready) k.m.flyToBounds(L.latLngBounds(ALL_LL), { padding: [50, 40], duration: 0.6 });
+    else if (ready) k.m.flyToBounds(L.latLngBounds(ALL_LL), { paddingTopLeft: [50, 40], paddingBottomRight: [50, 80], duration: 0.6 });
   }, [zone]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div ref={box} className={`geo geo-${mode}`} role="application" aria-label={props.label ?? "Interactive map of the water network over New Cairo. Drag to move, scroll or use the plus and minus to zoom."} />;

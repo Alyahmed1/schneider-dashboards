@@ -8,7 +8,7 @@ export interface WorkOrder {
 export const WORK_ORDERS: WorkOrder[] = [
   { id: "WO-3117", title: "Raise pressure in First Settlement", asset: "PRV, First Settlement inlet", area: "First Settlement", prio: "High", due: "Today", status: "In progress", type: "Unplanned", crew: "Network crew", hours: 6, note: "Pressure falls to 1.8 bar at the morning peak. Check the inlet valve position and the pipe on the way from the east hub." },
   { id: "WO-3121", title: "Repair burst on DN300 main", asset: "Main C2-C4, Rehab", area: "Rehab", prio: "High", due: "Today", status: "In progress", type: "Unplanned", crew: "Repair crew 1", hours: 10, note: "A joint failed and about 12 L/s is lost. Isolate the section, replace the joint and flush before returning to service." },
-  { id: "WO-3109", title: "Restore pressure sensor PT-06", asset: "Pressure sensor PT-06", area: "Yasmeen", prio: "Medium", due: "Yesterday", status: "Open", type: "Unplanned", crew: "I&C crew", hours: 3, late: true, note: "No signal for 2 hours. Check the radio link and the battery at the pole." },
+  { id: "WO-3109", title: "Restore pressure sensor PT-06", asset: "Pressure sensor PT-06", area: "Narges", prio: "Medium", due: "Yesterday", status: "Open", type: "Unplanned", crew: "I&C crew", hours: 3, late: true, note: "No signal for 2 hours. Check the radio link and the battery at the pole." },
   { id: "WO-3125", title: "Locate leak in Narges", asset: "Mains, Narges", area: "Narges", prio: "Medium", due: "Tomorrow", status: "Open", type: "Unplanned", crew: "Leak team", hours: 8, note: "Night flow rose by 4 L/s. Run the acoustic survey on the pipes east of the zone meter." },
   { id: "WO-3131", title: "Repair service line burst near the mall", asset: "Main B1-B3, First Settlement", area: "First Settlement", prio: "High", due: "Today", status: "Open", type: "Unplanned", crew: "Repair crew 2", hours: 5, note: "Logger LK-01 confirms a burst of about 6.5 L/s." },
   { id: "WO-3102", title: "Replace corroded cast iron, Lotus", asset: "Main D1-D3, Lotus", area: "Lotus", prio: "High", due: "30 Oct", status: "Open", type: "Planned", crew: "Network crew", hours: 24, late: true, note: "This pipe has leaked for 6 days. Replace 180 m with ductile iron." },
@@ -16,7 +16,7 @@ export const WORK_ORDERS: WorkOrder[] = [
   { id: "WO-3133", title: "Service high-lift pump 2", asset: "High-lift pump 2", area: "All network", prio: "Medium", due: "06 Nov", status: "Open", type: "Planned", crew: "Mechanical crew", hours: 12, note: "Change the bearings and check the alignment. Pump 4 takes the duty while it is out." },
   { id: "WO-3138", title: "Inspect the reservoir roof and vents", asset: "Elevated reservoir", area: "All network", prio: "Medium", due: "12 Nov", status: "Open", type: "Planned", crew: "Civil crew", hours: 8, note: "Yearly inspection of the roof, vents and the overflow screen." },
   { id: "WO-3098", title: "Calibrate zone meter FT-03", asset: "Flow meter FT-03", area: "First Settlement", prio: "Low", due: "20 Oct", status: "Done", type: "Planned", crew: "I&C crew", hours: 2, note: "Verified against the clamp-on meter, error 0.4%." },
-  { id: "WO-3095", title: "Replace PRV diaphragm, Yasmeen", asset: "PRV-02", area: "Yasmeen", prio: "High", due: "16 Oct", status: "Done", type: "Unplanned", crew: "Mechanical crew", hours: 6, note: "The valve was hunting. Diaphragm replaced and set-point checked." },
+  { id: "WO-3095", title: "Replace PRV diaphragm, Narges", asset: "PRV-02", area: "Narges", prio: "High", due: "16 Oct", status: "Done", type: "Unplanned", crew: "Mechanical crew", hours: 6, note: "The valve was hunting. Diaphragm replaced and set-point checked." },
   { id: "WO-3090", title: "Flush the dead-end mains", asset: "Dead ends, Narges", area: "Narges", prio: "Low", due: "12 Oct", status: "Done", type: "Planned", crew: "Operations", hours: 4, note: "Routine flushing to keep the chlorine up." },
 ];
 export const woInArea = (w: WorkOrder, f: Filters) => f.area === "All network" || w.area === "All network" || w.area === f.area;
@@ -26,14 +26,14 @@ export const ASSETS: Asset[] = [
   { name: "High-lift pump 1", area: "All network", health: 91, rul: 420, lastService: "03 Sep", nextPm: "03 Dec", crit: "A" },
   { name: "High-lift pump 2", area: "All network", health: 68, rul: 52, lastService: "11 Jul", nextPm: "06 Nov", crit: "A" },
   { name: "High-lift pump 3", area: "All network", health: 86, rul: 300, lastService: "21 Aug", nextPm: "21 Nov", crit: "A" },
-  { name: "Booster pump 1", area: "Yasmeen", health: 82, rul: 240, lastService: "30 Aug", nextPm: "30 Nov", crit: "B" },
+  { name: "Booster pump 1", area: "Narges", health: 82, rul: 240, lastService: "30 Aug", nextPm: "30 Nov", crit: "B" },
   { name: "PRV, Lotus", area: "Lotus", health: 77, rul: 120, lastService: "14 Sep", nextPm: "14 Dec", crit: "B" },
-  { name: "PRV-02, Yasmeen", area: "Yasmeen", health: 93, rul: 500, lastService: "16 Oct", nextPm: "16 Jan", crit: "B" },
+  { name: "PRV-02, Narges", area: "Narges", health: 93, rul: 500, lastService: "16 Oct", nextPm: "16 Jan", crit: "B" },
   { name: "Main C2-C4, Rehab", area: "Rehab", health: 41, rul: 4, lastService: "2019", nextPm: "Replace", crit: "A" },
   { name: "Main D1-D3, Lotus", area: "Lotus", health: 38, rul: 9, lastService: "2018", nextPm: "30 Oct", crit: "A" },
   { name: "Main B1-B3, First Settlement", area: "First Settlement", health: 55, rul: 15, lastService: "2020", nextPm: "Replace", crit: "B" },
   { name: "Elevated reservoir", area: "All network", health: 92, rul: 3000, lastService: "12 Nov 2025", nextPm: "12 Nov", crit: "A" },
-  { name: "Pressure sensor PT-06", area: "Yasmeen", health: 58, rul: 14, lastService: "05 Jun", nextPm: "Overdue", crit: "C" },
+  { name: "Pressure sensor PT-06", area: "Narges", health: 58, rul: 14, lastService: "05 Jun", nextPm: "Overdue", crit: "C" },
   { name: "Chlorinator", area: "All network", health: 89, rul: 380, lastService: "12 Oct", nextPm: "12 Jan", crit: "A" },
 ];
 export const assetsIn = (f: Filters) => ASSETS.filter((a) => f.area === "All network" || a.area === "All network" || a.area === f.area);
@@ -78,7 +78,7 @@ const PRED: Record<string, Pred> = {
   "High-lift pump 3": { signal: "Vibration", value: "3.1 mm/s", trend: "up", confidence: 84, action: "Re-check the alignment at the next PM." },
   "Booster pump 1": { signal: "Motor current", value: "212 A", trend: "flat", confidence: 85, action: "No action. Routine lubrication is enough." },
   "PRV, Lotus": { signal: "Valve hunting", value: "0.3 bar", trend: "up", confidence: 80, action: "Check the pilot and the diaphragm at the next visit." },
-  "PRV-02, Yasmeen": { signal: "Outlet pressure", value: "4.8 bar", trend: "flat", confidence: 88, action: "No action. New diaphragm fitted." },
+  "PRV-02, Narges": { signal: "Outlet pressure", value: "4.8 bar", trend: "flat", confidence: 88, action: "No action. New diaphragm fitted." },
   "Main C2-C4, Rehab": { signal: "Burst noise", value: "71 dB", trend: "up", confidence: 96, action: "Repair in progress. Replace the joint and 12 m of pipe." },
   "Main D1-D3, Lotus": { signal: "Leak noise", value: "66 dB", trend: "up", confidence: 92, action: "Replace 180 m of corroded cast iron within 2 weeks." },
   "Main B1-B3, First Settlement": { signal: "Leak noise", value: "62 dB", trend: "up", confidence: 89, action: "Repair the burst, then survey the rest of the zone." },

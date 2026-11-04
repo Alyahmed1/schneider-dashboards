@@ -4,7 +4,7 @@
    (Hazen-Williams head loss), so every map colour is consistent with every other number. */
 import type { Tone } from "./data";
 
-export type ZoneId = "Z1" | "Z2" | "Z3" | "Z4" | "Z5" | "Z6";
+export type ZoneId = "Z1" | "Z2" | "Z3" | "Z4" | "Z5";
 export type Profile = "residential" | "commercial" | "mixed";
 
 export interface Zone {
@@ -23,7 +23,6 @@ export const ZONES: Zone[] = [
   { id: "Z3", name: "Rehab", profile: "residential", daily: 34000, nrw: 0.17, ground: 62, label: { x: 760, y: 280 } },
   { id: "Z4", name: "Lotus", profile: "residential", daily: 20000, nrw: 0.21, ground: 58, label: { x: 620, y: 560 } },
   { id: "Z5", name: "Narges", profile: "mixed", daily: 16000, nrw: 0.12, ground: 74, label: { x: 440, y: 612 } },
-  { id: "Z6", name: "Yasmeen", profile: "residential", daily: 12000, nrw: 0.15, ground: 76, label: { x: 110, y: 380 } },
 ];
 export const zoneById = (id: ZoneId) => ZONES.find((z) => z.id === id)!;
 
@@ -65,8 +64,6 @@ export const NODES: WNode[] = [
   n("d1", 520, 420, "demand", "Z4", 2), n("d2", 620, 470, "demand", "Z4", 3), n("d3", 520, 510, "demand", "Z4", 3), n("d4", 720, 460, "demand", "Z4", 3), n("d5", 730, 540, "demand", "Z4", 2),
   // Z5 Narges
   n("s0", 290, 520, "junction"), n("e1", 400, 540, "demand", "Z5", 3), n("e2", 500, 595, "demand", "Z5", 3), n("e3", 330, 595, "demand", "Z5", 2),
-  // Z6 Yasmeen
-  n("f1", 180, 430, "demand", "Z6", 2), n("f2", 100, 490, "demand", "Z6", 3), n("f3", 190, 550, "demand", "Z6", 3), n("f4", 110, 400, "demand", "Z6", 2),
 ];
 export const nodeById = (id: string) => NODES.find((x) => x.id === id)!;
 
@@ -101,8 +98,6 @@ export const PIPES: Pipe[] = [
   pipe("j1", "d1", "Z4"), pipe("d1", "d2", "Z4"), pipe("d1", "d3", "Z4"), pipe("d2", "d4", "Z4"), pipe("d4", "d5", "Z4"), pipe("d3", "d2", "Z4", "loop"),
   // Z5
   pipe("s0", "e1", "Z5"), pipe("e1", "e2", "Z5"), pipe("s0", "e3", "Z5"), pipe("e3", "e2", "Z5", "loop"),
-  // Z6
-  pipe("ps2", "f1", "Z6"), pipe("f1", "f2", "Z6"), pipe("f1", "f3", "Z6"), pipe("f1", "f4", "Z6"),
   // closed ties between zones (isolation valves, no flow)
   pipe("a5", "c2", "Z1", "tie"), pipe("d2", "c4", "Z4", "tie"), pipe("e1", "d3", "Z5", "tie"),
 ];
@@ -329,13 +324,12 @@ export const INSTRUMENTS: Instrument[] = [
   { id: "FT-04", type: "flow", name: "Z3 inlet flow", at: onPipe("j1", "c1") },
   { id: "FT-05", type: "flow", name: "Z4 inlet flow", at: onPipe("j1", "d1") },
   { id: "FT-06", type: "flow", name: "Z5 inlet flow", at: onPipe("ps2", "s0") },
-  { id: "FT-07", type: "flow", name: "Z6 inlet flow", at: onPipe("ps2", "f1") },
   { id: "PT-01", type: "pressure", name: "PS-1 discharge pressure", at: { node: "j0" } },
   { id: "PT-02", type: "pressure", name: "Banafseg pressure", at: { node: "a4" } },
   { id: "PT-03", type: "pressure", name: "Rehab pressure", at: { node: "c6" } },
   { id: "PT-04", type: "pressure", name: "Lotus pressure", at: { node: "d5" } },
   { id: "PT-05", type: "pressure", name: "Narges pressure", at: { node: "e2" } },
-  { id: "PT-06", type: "pressure", name: "Yasmeen pressure", at: { node: "f2" }, forced: "offline" },
+  { id: "PT-06", type: "pressure", name: "Narges pressure (west)", at: { node: "e3" }, forced: "offline" },
   { id: "AT-01", type: "quality", name: "Chlorine after reservoir", at: { node: "j0" } },
   { id: "AT-02", type: "quality", name: "Chlorine, Rehab", at: { node: "c6" } },
   { id: "AT-03", type: "quality", name: "Chlorine, Narges", at: { node: "e2" } },
@@ -346,7 +340,7 @@ export const INSTRUMENTS: Instrument[] = [
   { id: "LK-02", type: "leak", name: "Acoustic logger, Rehab", at: onPipe("c2", "c4") },
   { id: "LK-03", type: "leak", name: "Acoustic logger, Lotus", at: onPipe("d1", "d3") },
   { id: "PRV-01", type: "prv", name: "PRV, Lotus inlet", at: onPipe("j1", "d1") },
-  { id: "PRV-02", type: "prv", name: "PRV, Yasmeen inlet", at: onPipe("ps2", "f1") },
+  { id: "PRV-02", type: "prv", name: "PRV, Narges inlet", at: onPipe("ps2", "s0") },
 ];
 
 export interface Reading { value: number; unit: string; text: string; tone: Tone; detail: string }
@@ -376,7 +370,7 @@ export function readInstrument(inst: Instrument, hour: number): Reading {
       return { value: l, unit: "%", text: `${l.toFixed(0)} %`, tone: l < 25 ? "bad" : l < 35 ? "warn" : "good", detail: s.tankFlow >= 0 ? `Filling at ${s.tankFlow.toFixed(0)} L/s` : `Emptying at ${(-s.tankFlow).toFixed(0)} L/s` };
     }
     case "pump": {
-      const run = inst.id === "PU-01" ? s.plant : s.zones.Z5.supplied + s.zones.Z6.supplied;
+      const run = inst.id === "PU-01" ? s.plant : s.zones.Z5.supplied;
       return { value: run, unit: "L/s", text: "Running", tone: "good", detail: `${run.toFixed(0)} L/s delivered` };
     }
     case "leak": {

@@ -21,7 +21,7 @@ const NODES: NodeDef[] = [
   { id: "blowers", feeder: "blowers", kind: "load", name: "PS-1 high-lift pumps", sub: "4 × pumps · 11 kV", icon: Gauge, kv: 11, rated: LOADS[0].rated, pf: LOADS[0].pf, note: "The biggest user, about half of the network power. Running fewer pumps at the right speed brings this load down." },
   { id: "influent", feeder: "influent", kind: "load", name: "Raw water pumps", sub: "River intake lift · 11 kV", icon: Anchor, kv: 11, rated: LOADS[1].rated, pf: LOADS[1].pf, note: "Three pumps, one on standby." },
   { id: "tertiary", feeder: "tertiary", kind: "load", name: "Treatment plant", sub: "Settling · filters · chlorine · 0.4 kV", icon: Filter, kv: 0.4, rated: LOADS[2].rated, pf: LOADS[2].pf, note: "Fed through an 11 / 0.4 kV transformer and the low-voltage MCC. The filter backwash pumps are the main user." },
-  { id: "sludge", feeder: "sludge", kind: "load", name: "Booster & storage", sub: "PS-2 boosters · valves · 0.4 kV", icon: Container, kv: 0.4, rated: LOADS[3].rated, pf: LOADS[3].pf, note: "The PS-2 booster pumps for Narges and Yasmeen, plus the valve actuators at the reservoir and the PRVs." },
+  { id: "sludge", feeder: "sludge", kind: "load", name: "Booster & storage", sub: "PS-2 boosters · valves · 0.4 kV", icon: Container, kv: 0.4, rated: LOADS[3].rated, pf: LOADS[3].pf, note: "The PS-2 booster pumps for Narges and Narges, plus the valve actuators at the reservoir and the PRVs." },
   { id: "aux", feeder: "aux", kind: "load", name: "Buildings & SCADA", sub: "Control room · lab · 0.4 kV", icon: Building2, kv: 0.4, rated: LOADS[4].rated, pf: LOADS[4].pf, note: "Control rooms, the SCADA servers, the lab and lighting." },
 ];
 const nodeOf = (id: string) => NODES.find((n) => n.id === id)!;

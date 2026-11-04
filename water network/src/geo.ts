@@ -48,14 +48,14 @@ const NODE_LL: Record<string, LL> = {};
       NODE_LL[n.id] = p;
     }
   }
-  // the trunk sits in the open ground between Banafseg, Rehab and Lotus; the hub is one short spoke away from each of them, the second pump station serves Narges and Yasmeen
+  // the trunk sits in the open ground between Banafseg, Rehab and Lotus; the hub is one short spoke away from each of them, the second pump station serves Narges
   const R = 31.4870;
-  NODE_LL.wtp = [30.0150, R];
-  NODE_LL.ps1 = [30.0215, R];
+  NODE_LL.wtp = [30.0105, R];
+  NODE_LL.ps1 = [30.0200, R];
   NODE_LL.j0 = [30.0295, R];
   NODE_LL.res = [30.0360, R];
   NODE_LL.j1 = [30.0440, 31.4850];
-  NODE_LL.ps2 = [30.0285, 31.4565];
+  NODE_LL.ps2 = [30.0170, 31.4440];
   NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
 }
 export const nodeLL = (id: string): LL => NODE_LL[id];

@@ -10,8 +10,8 @@ import type { Go } from "./App";
 interface Msg { who: "me" | "bot"; text: string; go?: Answer["go"]; chips?: string[] }
 
 const HELLO = ownsTab("overview")
-  ? "Hi, I'm the plant assistant. Ask me about alarms, the aeration lanes, effluent quality, work orders or what to fix first."
-  : "Hi, I'm the plant assistant. Ask me about the water treated, energy and power, treatment cost or compliance.";
+  ? "Hi, I'm the plant assistant. Ask me about alarms, the aeration lanes, the biogas line, work orders or what to fix first."
+  : "Hi, I'm the plant assistant. Ask me about the water treated, the network, energy, the pumps or compliance.";
 
 /** A small chat assistant. Free and offline: it answers from the same sample data as the screens, in the browser. */
 export default function Assistant({ go }: { go: Go }) {

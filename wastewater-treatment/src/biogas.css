@@ -1,0 +1,255 @@
+/* BIOGAS: dark control-room look over the plant photo (loaded after boards.css) */
+body:has(.bio) {
+  --bg: #04111a; --card: rgba(8, 26, 38, .58); --ink: #eaf8fb; --muted: #86a8b4; --text-2: #b4d3dc;
+  --line: rgba(86, 220, 235, .22); --surface-0: rgba(5, 20, 30, .62); --surface-2: rgba(20, 70, 90, .45); --surface-3: #1b4658;
+  --tint: rgba(43, 196, 192, .2); --track: rgba(2, 10, 16, .7); --eq-edge: rgba(130, 230, 240, .55);
+  --teal: #2bd4d0; --teal-d: #0a8f95; --aqua: #5cf0ea; --blue: #3aa0ff; --good: #38e08a; --warn: #ff9a2e; --bad: #ff5468;
+  background: #04111a;
+}
+body:has(.bio)::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(1100px 520px at 80% -10%, rgba(43, 212, 208, .22), transparent 70%),
+    linear-gradient(180deg, rgba(3, 12, 20, .8), rgba(3, 14, 22, .88)),
+    url("/cover.jpg") center / cover no-repeat;
+  filter: saturate(.8);
+  animation: biodrift 38s ease-in-out infinite alternate;
+}
+@keyframes biodrift { from { transform: scale(1.04) translate(0, 0); } to { transform: scale(1.12) translate(-1.2%, -.8%); } }
+body:has(.bio) #root { position: relative; z-index: 1; }
+body:has(.bio) .topbar { background: rgba(4, 16, 24, .78); backdrop-filter: blur(14px); border-color: var(--line); }
+
+.bio { position: relative; }
+.bio .bio-defs { position: absolute; width: 0; height: 0; }
+.bio .hm-p {
+  background: linear-gradient(160deg, rgba(14, 48, 66, .62), rgba(5, 20, 30, .66));
+  border: 1px solid rgba(86, 220, 235, .28); border-radius: 14px;
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(180, 250, 255, .14), 0 0 22px -8px rgba(43, 212, 208, .45), 0 18px 34px -22px #000;
+}
+.bio .hm-p h3 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--aqua); font-weight: 500; text-shadow: 0 0 10px rgba(92, 240, 234, .55); }
+.bio .mcard, .bio .hm-tile, .bio .bg-tanks button {
+  border-radius: 10px; background: linear-gradient(180deg, rgba(20, 64, 84, .5), rgba(4, 16, 26, .55)); border: 1px solid rgba(86, 220, 235, .2);
+  box-shadow: inset 0 1px 0 rgba(180, 250, 255, .1);
+}
+.bio .mcard span, .bio .mcard em, .bio .hm-tile > span { text-transform: uppercase; letter-spacing: .08em; font-size: 9.5px; color: var(--muted); }
+.bio .mcard b, .bio .hm-tile b, .bio .bd-big, .bio .bg-frac b { color: #fff; text-shadow: 0 0 14px rgba(92, 240, 234, .55); }
+.bio .mcard .xl, .bio .bd-big { color: var(--aqua); }
+.bio .bd-unit { color: var(--muted); }
+.bio .bd-lvl { border-radius: 6px; border-color: rgba(86, 220, 235, .3); overflow: hidden; }
+.bio .bd-lvl i { background: linear-gradient(90deg, #0a8f95, #5cf0ea); box-shadow: 0 0 12px #2bd4d0; position: relative; overflow: hidden; }
+.bio .bd-lvl i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%); animation: biosheen 2.8s linear infinite; }
+@keyframes biosheen { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.bio .bd-semi .fg { stroke: url(#bio-arc); filter: drop-shadow(0 0 6px #2bd4d0); }
+.bio .bd-semi-n b { color: #fff; text-shadow: 0 0 12px #2bd4d0; }
+.bio .bg-tanks button.on { border-color: var(--aqua); box-shadow: 0 0 16px -2px #2bd4d0, inset 0 0 12px rgba(43, 212, 208, .25); }
+.bio .bg-tanks button:hover { border-color: var(--aqua); transform: translateY(-2px); transition: transform .15s; }
+.bio .bg-tanks b { color: var(--aqua); letter-spacing: .06em; }
+.bio .bg-tanks span { color: #fff; font-size: 11px; }
+
+/* equipment drawings: lit steel, glowing tops */
+.bio .eq { fill: url(#bio-steel); stroke: rgba(150, 235, 245, .6); }
+.bio .eq-top { fill: url(#bio-top); stroke: #8ff4f0; }
+.bio .eq-dome { fill: url(#bio-dome); stroke: #8ff4f0; }
+.bio .eq-line { stroke: #8ff4f0; }
+.bio .bg-stage svg:not(.bg-go), .bio .bg-tanks svg, .bio .bg-side svg, .bio .bg-ops svg { filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .55)) drop-shadow(0 0 7px rgba(43, 212, 208, .35)); }
+.bio .bg-stage svg:not(.bg-go) { height: 52px; width: min(100%, 92px); animation: biofloat 5s ease-in-out infinite; animation-delay: calc(var(--n, 0) * -.9s); }
+@keyframes biofloat { 50% { transform: translateY(-3px); } }
+.bio .bg-stage span { color: #fff; text-transform: uppercase; letter-spacing: .12em; font-size: 10px; }
+.bio .bg-go { width: 26px; right: -15px; top: 20px; color: #5cf0ea; }
+.bio .bg-go path { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.bio .bg-go .flow { stroke-dasharray: 3 3; animation: pipeflow 1s linear infinite; }
+
+/* side cards: icon + big number */
+.bio .bg-side .hm-p { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; column-gap: 14px; row-gap: 2px; padding-left: 18px; }
+.bio .bg-side .hm-p h3 { flex: 0 0 100%; margin-bottom: 0; }
+.bio .bg-side .ico { width: 46px; height: 46px; flex: none; }
+.bio .bg-side div.ico svg { width: 46px; height: 38px; }
+.bio .bg-side .num { display: grid; gap: 0; min-width: 0; }
+.bio .bg-side .bd-big { font-size: clamp(22px, 2vw, 34px); }
+.bio .bg-side .bd-lvl { flex: 0 0 100%; }
+.bio .flame { transform-box: fill-box; transform-origin: 50% 90%; animation: biofl 1.3s ease-in-out infinite; }
+@keyframes biofl { 0%, 100% { transform: scale(1) rotate(-1.5deg); } 50% { transform: scale(1.08, 1.14) rotate(2deg); } }
+.bio .bg-frac { display: grid; justify-items: center; gap: 2px; }
+.bio .bg-frac span { color: var(--good); text-shadow: 0 0 8px var(--good); position: relative; padding-left: 12px; }
+.bio .bg-frac span::before { content: ""; position: absolute; left: 0; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: var(--good); animation: biopulse 1.6s ease-out infinite; }
+@keyframes biopulse { 0% { box-shadow: 0 0 0 0 rgba(56, 224, 138, .8); } 100% { box-shadow: 0 0 0 9px rgba(56, 224, 138, 0); } }
+.bio .bg-frac svg { width: 52px; height: 38px; }
+.bio .bg-engine { grid-template-columns: 84px minmax(96px, 140px) minmax(0, 1fr); }
+.bio .bg-boil { grid-template-columns: 84px repeat(3, minmax(0, 1fr)); }
+.bio .flap .fan { transform-box: fill-box; transform-origin: center; animation: sweep 1.6s linear infinite; }
+.bio .bg-foot .hm-tile:nth-child(2n) b { color: var(--warn); text-shadow: 0 0 12px rgba(255, 154, 46, .55); }
+.bio .bg-foot .hm-tile:nth-child(3n) b { color: var(--aqua); }
+.bio .hm-tile:hover { border-color: var(--aqua); }
+
+@media (max-width: 860px) { .bio .bg-side .hm-p { min-height: 110px; } }
+
+/* round 2: show more of the photo, bigger numbers and equipment */
+body:has(.bio)::before {
+  background:
+    radial-gradient(1100px 520px at 80% -10%, rgba(43, 212, 208, .2), transparent 70%),
+    linear-gradient(180deg, rgba(3, 12, 20, .55), rgba(3, 14, 22, .72)),
+    url("/cover.jpg") center / cover no-repeat;
+  filter: saturate(.9) blur(2px);
+}
+.bio .hm-p { background: linear-gradient(160deg, rgba(10, 40, 58, .5), rgba(4, 16, 26, .55)); backdrop-filter: blur(7px) saturate(1.2); }
+.bio .mcard b { font-size: clamp(18px, 1.65vw, 26px); }
+.bio .mcard b small { font-size: 11px; }
+.bio .mcard .xl { font-size: clamp(24px, 2vw, 32px); }
+.bio .bd-big { white-space: nowrap; }
+.bio .bg-stage svg:not(.bg-go) { height: 66px; width: min(100%, 118px); }
+.bio .bg-go { top: 28px; }
+.bio .bg-tanks svg { width: 44px; height: 38px; }
+.bio .bg-tanks span { font-size: 13px; }
+.bio .bg-frac b { font-size: clamp(24px, 2vw, 34px); }
+.bio .bg-foot .hm-tile b { font-size: clamp(17px, 1.5vw, 22px); }
+.bio .hm-tile > span { font-size: 10px; }
+
+/* round 3: number spans must not inherit the small uppercase label style */
+.bio .mcard b span, .bio .hm-tile b span, .bio .bd-big span { font-size: inherit; text-transform: none; letter-spacing: 0; color: inherit; }
+.bio .mcard { padding: 5px 9px; gap: 1px; }
+.bio .mcard b { font-size: clamp(16px, 1.35vw, 22px); line-height: 1.1; }
+.bio .mcard .xl { font-size: clamp(20px, 1.7vw, 28px); }
+.bio .bg-stage svg:not(.bg-go) { height: 58px; }
+.bio .bg-go { top: 24px; }
+.bio .bd-big span, .bio .bd-big { display: inline; white-space: nowrap; }
+.bio .bg-side .bd-big { display: block; }
+.bio .bg-side div.ico { width: 56px; }
+.bio .bg-side div.ico svg { width: 56px; height: 46px; }
+.bio .bg-side .bd-big { display: flex; align-items: baseline; gap: 2px; white-space: nowrap; }
+.bio .bg-side .bd-big > span { display: inline; }
+body:has(.bio)::before { filter: none; animation: none; }
+.bio .hm-p { backdrop-filter: blur(4px); }
+
+/* ===== round 4: natural-height layout (nothing clipped), colours, bubbles, shading ===== */
+body:has(.bio.bd-fit) { overflow-y: auto; overflow-x: hidden; }
+.page.prod.flow:has(.bio.bd-fit) { height: auto; max-height: none; overflow: visible; padding: 10px 12px calc(var(--dock-h, 56px) + 16px); }
+.page.prod.flow:has(.bio.bd-fit) > div { height: auto; }
+.bio.bd-fit { height: auto; max-height: none; overflow: visible; display: grid; grid-template-columns: minmax(0, 1fr) clamp(230px, 19vw, 290px); grid-template-rows: auto auto auto auto; gap: 10px; }
+.bio.bd-fit .hm-p { overflow: visible; min-height: 0; }
+.bio .bg-flow { grid-column: 1; grid-row: 1; }
+.bio .bg-side { grid-column: 2; grid-row: 1 / 3; grid-template-rows: repeat(3, 1fr); }
+.bio .bg-feed { grid-column: 1; grid-row: 2; }
+.bio .bg-ops { grid-column: 1 / -1; grid-row: 3; grid-template-columns: 1.5fr 1.2fr .7fr; align-items: stretch; }
+.bio .bg-foot { grid-column: 1 / -1; grid-row: 4; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bio .bg-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bio .bg-foot .hm-tile { padding: 8px 12px; gap: 3px; }
+
+.bio .hm-p.bg-flow { grid-template-rows: auto auto auto; row-gap: 6px; }
+.bio .bg-metrics { overflow: visible; align-items: stretch; }
+.bio .bg-col { grid-auto-rows: 1fr; align-content: stretch; }
+.bio .bg-col .mcard { align-content: center; }
+.bio .bg-stages { margin-top: 2px; }
+.bio .bg-feed-row { grid-template-columns: minmax(0, 1fr) 230px; }
+.bio .bg-feed-side { grid-template-rows: auto auto; align-content: start; }
+.bio .bg-tanks button { padding: 8px 2px; }
+
+.bio .bg-engine { grid-template-columns: 90px 140px minmax(0, 1fr); }
+.bio .bg-temps { grid-template-columns: 1fr 1fr; }
+.bio .bg-boil { grid-template-columns: 90px minmax(0, 1fr) minmax(0, 1fr); }
+.bio .bg-boil .bg-frac { grid-row: 1 / 3; }
+.bio .bg-boil > .mcard:nth-child(2) { grid-column: 2 / 4; }
+.bio .mcard.hot b { color: #ff6b6b; text-shadow: 0 0 12px rgba(255, 84, 104, .6); }
+.bio .mcard.cold b { color: #5cc8ff; text-shadow: 0 0 12px rgba(58, 160, 255, .6); }
+.bio .mcard.gas b { color: var(--warn); text-shadow: 0 0 12px rgba(255, 154, 46, .55); }
+.bio .bg-ops .hm-p { display: flex; flex-direction: column; }
+.bio .bg-ops .flap { width: 84px; height: 84px; }
+
+/* depth: highlight stripes + rising bubbles */
+.bio .spec { fill: none; stroke: rgba(255, 255, 255, .45); stroke-width: 2.4; stroke-linecap: round; }
+.bio .rise { fill: rgba(190, 250, 255, .85); stroke: none; transform-box: fill-box; animation: biorise 2.6s ease-in infinite; animation-delay: var(--d, 0s); }
+@keyframes biorise { 0% { transform: translateY(4px); opacity: 0; } 25% { opacity: .95; } 100% { transform: translateY(-14px); opacity: 0; } }
+
+@media (max-width: 1100px) {
+  .bio .bg-ops { grid-template-columns: 1fr 1fr; }
+  .bio .bg-ops > :first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 860px) {
+  .bio.bd-fit { display: flex; flex-direction: column; }
+  .bio .bg-stages { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 14px; }
+  .bio .bg-go { display: none; }
+  .bio .bg-metrics { grid-template-columns: 1fr 1fr; }
+  .bio .bg-col { display: contents; }
+  .bio .bg-tanks { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bio .bg-feed-row, .bio .bg-ops, .bio .bg-foot, .bio .bg-pair { grid-template-columns: 1fr; }
+  .bio .bg-side { grid-template-rows: none; grid-template-columns: 1fr 1fr 1fr; display: grid; }
+  .bio .bg-side .hm-p { min-height: 0; }
+  .bio .bg-engine, .bio .bg-boil { grid-template-columns: 1fr 1fr; }
+  .bio .bg-boil > .mcard:nth-child(2) { grid-column: auto; }
+  .bio .bg-boil .bg-frac { grid-row: auto; }
+}
+
+/* Light mode: the tab stays dark, so override the remaining theme variables too */
+body:has(.bio) {
+  --surface: rgba(8, 26, 38, .78); --surface-4: #2b4a58; --surface-src: #14303c; --line-2: rgba(86, 220, 235, .16);
+  --wire: rgba(86, 220, 235, .3); --pill-ink: #06141f; --tag-bg: #06141f; --tag-ink: #eaf8fb; --tag-edge: #2bd4d0;
+  --eq: #1b4658; --eq-line: rgba(130, 230, 240, .55); --eq-motor: #2a6176; --pipe-edge: #0a2230;
+  color-scheme: dark;
+}
+
+/* ===== round 5: desktop = one screen, no scrolling. Sizes step down on shorter screens. ===== */
+@media (min-width: 861px) {
+  body:has(.bio.bd-fit) { overflow: hidden; }
+  .page.prod.flow:has(.bio.bd-fit) {
+    height: calc(100vh - var(--top-h) - var(--crumb-h) - var(--dock-h)); max-height: calc(100vh - var(--top-h) - var(--crumb-h) - var(--dock-h));
+    padding: 8px 12px; overflow: hidden;
+  }
+  .page.prod.flow:has(.bio.bd-fit) > div { height: 100%; }
+  .bio.bd-fit { height: 100%; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  .bio .bg-ops .hm-p { justify-content: center; }
+}
+@media (min-width: 861px) and (max-height: 940px) {
+  .bio.bd-fit { gap: 8px; }
+  .bio .hm-p { padding: 7px 12px 8px; }
+  .bio .hm-p h3 { margin-bottom: 4px; font-size: 11px; }
+  .bio .hm-ph [role="tab"] { padding-block: 3px; }
+  .bio .bg-stage svg:not(.bg-go) { height: 42px; width: min(100%, 84px); }
+  .bio .bg-go { top: 14px; }
+  .bio .mcard { padding: 3px 8px; }
+  .bio .mcard b { font-size: clamp(15px, 1.2vw, 19px); }
+  .bio .mcard .xl { font-size: clamp(18px, 1.5vw, 22px); }
+  .bio .bg-tanks button { padding: 4px 2px; }
+  .bio .bg-tanks svg { width: 34px; height: 28px; }
+  .bio .bg-frac svg { width: 40px; height: 28px; }
+  .bio .bg-frac b { font-size: clamp(20px, 1.6vw, 26px); }
+  .bio .bg-foot .hm-tile { padding: 4px 10px; gap: 1px; }
+  .bio .bg-foot .hm-tile b { font-size: clamp(15px, 1.3vw, 19px); }
+  .bio .bg-ops .flap { width: 64px; height: 64px; }
+  .bio .bg-side .ico { width: 38px; height: 38px; }
+  .bio .bg-side .bd-big { font-size: clamp(20px, 1.7vw, 28px); }
+  .bio .bd-semi svg { width: min(100%, 120px); }
+}
+@media (min-width: 861px) and (max-height: 800px) {
+  .bio .mcard em { display: none; }
+  .bio .bg-stage svg:not(.bg-go) { height: 32px; }
+  .bio .bg-stage span { font-size: 9px; }
+  .bio .bg-go { top: 9px; }
+  .bio .bg-tanks svg, .bio .bg-frac svg { display: none; }
+  .bio .mcard span, .bio .hm-tile > span { font-size: 9px; }
+  .bio .bg-ops .flap { width: 50px; height: 50px; }
+  .bio .bg-side .ico { width: 30px; height: 30px; }
+  .bio .bg-side div.ico svg { width: 34px; height: 28px; }
+  .bio .bd-semi svg { width: min(100%, 92px); }
+  .bio .bg-foot .hm-tile { padding: 3px 10px; }
+}
+
+/* spare height is shared by all four rows instead of piling into the equipment row */
+@media (min-width: 861px) {
+  .bio.bd-fit { grid-template-rows: auto auto auto auto; align-content: stretch; }
+  .bio .hm-p.bg-flow { align-content: space-evenly; }
+  .bio .bg-feed-row { align-items: stretch; }
+  .bio .bg-ops .hm-p > :not(h3) { margin-block: auto; }
+}
+@media (min-width: 861px) { .bio .bg-foot .hm-p > .bg-pair { margin-block: auto; } }
+
+/* feed per digester: a symbol on every tank at every screen height */
+@media (min-width: 861px) {
+  .bio .bg-tanks svg, .bio .bg-frac svg { display: block; }
+  .bio .bg-tanks button { gap: 2px; align-content: center; }
+}
+@media (min-width: 861px) and (max-height: 800px) {
+  .bio .bg-tanks svg { width: 30px; height: 24px; }
+  .bio .bg-frac svg { width: 34px; height: 24px; }
+  .bio .bg-tanks span { font-size: 11px; }
+}
+.bio .bg-feed-side .mcard > div svg { width: 34px; height: 24px; }

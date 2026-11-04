@@ -18,7 +18,7 @@ export function Panel({ title, className = "", i = 0, right, children }: { title
 }
 
 /** dark bars with a cyan fill, the value on top and a left scale */
-export function Bars({ labels, values, unit, grow, max: fixed, compact }: { labels: string[]; values: number[]; unit: string; grow: boolean; max?: number; compact?: boolean }) {
+export function Bars({ labels, values, unit, grow, max: fixed, compact, onBar }: { labels: string[]; values: number[]; unit: string; grow: boolean; max?: number; compact?: boolean; onBar?: boolean }) {
   const max = fixed ?? niceMax(Math.max(...values) * 1.1);
   return (
     <div className={`hm-bars ${compact ? "compact" : ""}`}>
@@ -26,9 +26,9 @@ export function Bars({ labels, values, unit, grow, max: fixed, compact }: { labe
       <div className="hm-cols">
         {values.map((v, i) => (
           <div key={i} className="hm-col">
-            <b>{tick(v)}</b>
-            <div className="hm-track"><i style={{ height: `${grow ? Math.max(2, (v / max) * 100) : 2}%`, transitionDelay: `${i * 90}ms` }} /></div>
-            <span>{labels[i]}</span>
+            {!onBar && <b>{tick(v)}</b>}
+            <div className="hm-track" style={onBar ? { gridRow: "2" } : undefined}><i style={{ height: `${grow ? Math.max(2, (v / max) * 100) : 2}%`, transitionDelay: `${i * 90}ms` }}>{onBar && <b>{tick(v)}</b>}</i></div>
+            <span style={onBar ? { gridRow: "3" } : undefined}>{labels[i]}</span>
           </div>
         ))}
       </div>

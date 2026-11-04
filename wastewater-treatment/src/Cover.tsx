@@ -13,9 +13,9 @@ const STATS = SITE.id === "kpi" ? [
   { v: "45%", u: "energy self-generated" },
 ] : [
   { v: "Process", u: "flow and stages" },
-  { v: "Alarms", u: "live faults" },
+  { v: "Electrical", u: "single-line power" },
+  { v: "Biogas", u: "digesters and gas" },
   { v: "CMMS", u: "work orders" },
-  { v: "Assets", u: "health and service" },
 ];
 
 const ease = [0.22, 1, 0.36, 1] as const;

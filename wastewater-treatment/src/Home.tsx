@@ -12,7 +12,7 @@ import { Bars, niceMax, Panel, tick } from "./charts";
 import type { Go, TabId } from "./App";
 
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, energy: 0.004, cost: 0.004, avail: 0.0008, wo: 0, mem: 0 };
-const KPI_TO: Record<string, TabId> = { water: "production", energy: "electrical", cost: "overview", avail: "maintenance", wo: "maintenance", mem: "overview" };
+const KPI_TO: Record<string, TabId> = { water: "production", energy: "energy", cost: "overview", avail: "maintenance", wo: "maintenance", mem: "overview" };
 
 /** the four pumping stations (in) and four reuse zones (out) on the map, and what each ring can show */
 const ZONES = [

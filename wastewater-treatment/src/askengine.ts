@@ -17,15 +17,15 @@ const F: Filters = { range: "7D", area: "All plant" };
 const SUGGEST_PROCESS = [
   "What should I fix first?",
   "How is Lane B doing?",
-  "Is the effluent within limits?",
+  "How is the biogas line?",
   "Which asset is most likely to fail?",
   "Which work orders are overdue?",
 ];
 const SUGGEST_KPI = [
   "How much water do we treat?",
+  "How is the network doing?",
   "How much energy do we use?",
-  "How much power does the plant make?",
-  "How much does treatment cost?",
+  "How are the pumps doing?",
   "Is the plant compliant?",
 ];
 export const SUGGESTED = ownsTab("overview") ? SUGGEST_PROCESS : SUGGEST_KPI;
@@ -81,8 +81,8 @@ const answer = (raw: string, c: Ctx): Answer => {
   // ---- greetings and help ----
   if (/^\s*(hi|hello|hey|help|thanks|thank you)\b/.test(q) || has(q, "what can you")) {
     return ownsTab("overview")
-      ? { text: "Hi! I'm the demo assistant. I read the sample data on this site, so I can tell you what to fix first, how each aeration lane is doing, whether the effluent meets its limits, which work orders are late and which machines are at risk. Try one of the questions below.", chips: SUGGESTED }
-      : { text: "Hi! I'm the demo assistant. I read the sample data on this site, so I can tell you how much water the plant treats, how much energy it uses and makes, what treatment costs and whether the plant is compliant. Try one of the questions below.", chips: SUGGESTED };
+      ? { text: "Hi! I'm the demo assistant. I read the sample data on this site, so I can tell you what to fix first, how each aeration lane is doing, how the biogas line is running, which work orders are late and which machines are at risk. Try one of the questions below.", chips: SUGGESTED }
+      : { text: "Hi! I'm the demo assistant. I read the sample data on this site, so I can tell you how much water the plant treats, how the network, energy and pumps are doing, what treatment costs and whether the plant is compliant. Try one of the questions below.", chips: SUGGESTED };
   }
 
   // ---- compare the lanes ----
@@ -170,13 +170,40 @@ const answer = (raw: string, c: Ctx): Answer => {
     };
   }
 
+  // ---- pumps (KPI site) ----
+  if (ownsTab("pumps") && has(q, "pump")) {
+    return {
+      text: "Ten process pumps are on the Pumps board. Influent pumps 1 to 3 are running, influent pump 4 is on standby, and sludge pump 2 (P-10) is in alarm with a high bearing temperature. Pick a pump to see its power curve, efficiency and predictive events.",
+      go: { tab: "pumps", label: "Open Pumps" },
+      chips: ["How much energy do we use?"],
+    };
+  }
+
+  // ---- network (KPI site) ----
+  if (ownsTab("network") && has(q, "lift", "collection", "distribution", "network", "reuse zone")) {
+    return {
+      text: "Four lift stations feed the plant: New Cairo, Rehab, Shorouk and Badr. Treatment capacity is 150 ML a day. About 58% of the effluent is reused across farm irrigation, the green belt, industrial cooling and the parks. The rest leaves by the outfall.",
+      go: { tab: "network", label: "Open Network" },
+      chips: ["How much water do we treat?"],
+    };
+  }
+
+  // ---- biogas line (Process site) ----
+  if (has(q, "biogas", "digester", "gas holder", "gas yield", "belt press") && !has(q, "power", "electric", "kwh", "mw", "energy")) {
+    return {
+      text: `The biogas line takes thickened sludge into eight digester feeds and produces about ${fmt(520 * 24)} m³ of gas a day, yield 0.81. The gas holder sits near 72%. The CHP engine makes ${fmt(GEN_KW)} kW from that gas, and the digester boilers heat the loop to about 92°C out and 76°C back.`,
+      go: { tab: "biogas", label: "Open Biogas" },
+      chips: ["How much energy do we use?", "Which work orders are overdue?"],
+    };
+  }
+
   // ---- energy and power ----
   if (has(q, "energy", "power", "electric", "kwh", "solar", "chp", "generat", "load", "grid", "mw", "biogas power")) {
     const total = LOADS.reduce((a, l) => a + l.kw, 0), bl = LOADS[0];
     const k = overviewKpis(F, WORK_ORDERS).find((x) => x.id === "energy")!;
     return {
       text: `The plant draws about ${fmt(total)} kW. The blowers use ${fmt(bl.kw)} kW, ${Math.round((bl.kw / total) * 100)}% of it. Specific energy is ${k.value.toFixed(2)} kWh per m³ treated. The biogas CHP engine gives ${fmt(GEN_KW)} kW and the solar field up to ${fmt(SOLAR_KW)} kW at midday, together up to ${Math.round(((GEN_KW + SOLAR_KW) / total) * 100)}% of the load. The CHP burns ${st[7].readings[1].value} Nm³/h of digester biogas.`,
-      go: { tab: "electrical", label: "Open Electrical" },
+      go: { tab: ownsTab("energy") ? "energy" : "electrical", label: ownsTab("energy") ? "Open Energy" : "Open Electrical" },
       chips: ["How much does treatment cost?", "How much water do we treat?"],
     };
   }
@@ -212,8 +239,8 @@ const answer = (raw: string, c: Ctx): Answer => {
 
   return {
     text: ownsTab("overview")
-      ? "I can answer questions about alarms and what to fix first, the three aeration lanes, effluent quality, the process stages, work orders and asset health. For example:"
-      : "I can answer questions about the water treated, energy and power, the biogas CHP, treatment cost, reuse revenue and compliance. For example:",
+      ? "I can answer questions about alarms and what to fix first, the three aeration lanes, the biogas line, effluent quality, the process stages, work orders and asset health. For example:"
+      : "I can answer questions about the water treated, the network, energy and the pumps, treatment cost, reuse and compliance. For example:",
     chips: SUGGESTED,
   };
 };

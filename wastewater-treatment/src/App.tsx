@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Droplets, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
+import { Activity, ArrowUpRight, Droplets, Factory, Fan, Flame, Hammer, Moon, Network, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
 import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Home from "./Home";
@@ -9,6 +9,11 @@ import Overview from "./Overview";
 import AlarmsPage from "./AlarmsPage";
 import Electrical from "./Electrical";
 import Maintenance from "./Maintenance";
+import Biogas from "./Biogas";
+import NetworkBoard from "./NetworkBoard";
+import PlantBoard from "./PlantBoard";
+import EnergyBoard from "./EnergyBoard";
+import Pumps from "./Pumps";
 import ErrorBoundary from "./ErrorBoundary";
 import Cover from "./Cover";
 import { useTick } from "./live";
@@ -19,7 +24,7 @@ import { OTHER, otherHref, otherUrl, ownsTab, readDeepLink, SITE } from "./site"
 import "./site.css";
 import Assistant from "./Assistant";
 
-export type TabId = "home" | "overview" | "alarms" | "production" | "electrical" | "maintenance";
+export type TabId = "home" | "network" | "plant" | "energy" | "pumps" | "overview" | "alarms" | "production" | "electrical" | "biogas" | "maintenance";
 export type Go = (tab: TabId, target?: string) => void;
 export type Theme = "light" | "dark";
 
@@ -33,11 +38,17 @@ const readTheme = (): Theme => {
 
 const ALL_TABS: { id: TabId; label: string; icon: LucideIcon; sub: string }[] = [
   { id: "home", label: "Home", icon: Gauge, sub: "The whole plant at a glance" },
+  { id: "network", label: "Network", icon: Network, sub: "Treatment, distribution and collection" },
+  { id: "plant", label: "Plant", icon: Factory, sub: "Capacity, solids and the pump yard" },
+  { id: "energy", label: "Energy", icon: Activity, sub: "Power and heat against target" },
+  { id: "pumps", label: "Pumps", icon: Fan, sub: "Pump health, power and predictive events" },
   { id: "overview", label: "Overview", icon: Workflow, sub: "The whole process, sea to network" },
   { id: "production", label: "Production", icon: Waves, sub: "Follow the water from sea to network" },
   { id: "electrical", label: "Electrical", icon: Zap, sub: "Single-line diagram and power use" },
+  { id: "biogas", label: "Biogas", icon: Flame, sub: "Sludge line, digesters and gas" },
   { id: "maintenance", label: "Maintenance", icon: Hammer, sub: "Work orders, downtime and asset health" },
 ];
+const FLOW = new Set<TabId>(["overview", "electrical", "home", "alarms", "maintenance", "biogas", "network", "plant", "energy", "pumps"]);
 const TABS = ALL_TABS.filter((t) => ownsTab(t.id));
 
 export default function App() {
@@ -98,8 +109,8 @@ export default function App() {
         </nav>
       </motion.div>
 
-      <main className={`page ${shown === "production" ? "prod" : ""} ${shown === "overview" ? "prod flow" : ""} ${shown === "electrical" ? "prod flow elec" : ""} ${shown === "home" ? "prod flow cc-page" : ""} ${shown === "alarms" ? "prod flow al-page" : ""} ${shown === "maintenance" ? "prod flow mt-page" : ""}`}>
-        {tab !== "production" && tab !== "overview" && tab !== "electrical" && tab !== "home" && tab !== "maintenance" && tab !== "alarms" && <div className="page-head">
+      <main className={`page ${shown === "production" ? "prod" : ""} ${FLOW.has(shown) ? "prod flow" : ""} ${shown === "electrical" ? "elec" : ""} ${shown === "home" ? "cc-page" : ""} ${shown === "alarms" ? "al-page" : ""} ${shown === "maintenance" ? "mt-page" : ""}`}>
+        {tab !== "production" && !FLOW.has(tab) && <div className="page-head">
           <div>
             <h1>{cur.label}</h1>
             <p>{cur.sub}</p>
@@ -123,7 +134,12 @@ export default function App() {
               {tab === "overview" && <Overview f={{ ...f, area: "All plant" }} go={go} t={tick} />}
               {tab === "production" && <Production f={{ ...f, area: "All plant" }} start={stageTarget} />}
               {tab === "electrical" && <Electrical f={{ ...f, area: "All plant" }} />}
+              {tab === "biogas" && <Biogas />}
               {tab === "maintenance" && <Maintenance f={{ ...f, area: "All plant" }} wos={wos} />}
+              {tab === "network" && <NetworkBoard />}
+              {tab === "plant" && <PlantBoard />}
+              {tab === "energy" && <EnergyBoard />}
+              {tab === "pumps" && <Pumps go={go} />}
             </ErrorBoundary>
           </motion.div>
         </AnimatePresence>

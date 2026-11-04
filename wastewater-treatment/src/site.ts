@@ -1,6 +1,9 @@
 import type { TabId } from "./App";
 
-/** One codebase, two websites. VITE_SITE picks which one this build is; unset means the Process & CMMS site. */
+/** One codebase, two websites. VITE_SITE picks which one this build is; unset means the Process & CMMS site.
+ *  Process & CMMS: wastewater-treatment-dashboard.vercel.app
+ *  KPIs & Dashboards: wastewater-kpis-dashboard.vercel.app */
+
 export type SiteId = "process" | "kpi";
 
 interface Site {
@@ -16,14 +19,14 @@ interface Site {
 
 const SITES: Record<SiteId, Site> = {
   process: {
-    id: "process", title: "Smart Wastewater: Process & CMMS", tag: "Process and maintenance · activated sludge",
-    blurb: "The whole treatment process, stage by stage, with alarms, work orders and asset health.",
-    tabs: ["overview", "production", "alarms", "maintenance"], start: "overview", other: "kpi",
+    id: "process", title: "Smart Wastewater: Process & CMMS", tag: "Process, power and biogas",
+    blurb: "The treatment process, the electrical single-line, the biogas line, alarms and work orders.",
+    tabs: ["overview", "production", "electrical", "biogas", "alarms", "maintenance"], start: "overview", other: "kpi",
   },
   kpi: {
     id: "kpi", title: "Smart Wastewater: KPIs & Dashboards", tag: "KPIs and dashboards · activated sludge",
-    blurb: "One live view of water, energy, reuse and cost, with the power single-line diagram.",
-    tabs: ["home", "electrical"], start: "home", other: "process",
+    blurb: "Live boards for the network, the plant, energy and the pumps.",
+    tabs: ["home", "network", "plant", "energy", "pumps"], start: "home", other: "process",
   },
 };
 

@@ -27,6 +27,7 @@ import "./export.css";
 import "./motion.css";
 import "./cover-dark.css";
 import "./assistant.css";
+import "./boards.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

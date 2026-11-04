@@ -1,5 +1,5 @@
 /* The Esri street map, recoloured for dark mode: the land becomes the dashboard's own dark blue, text and outlines turn light,
-   and the saturated roads (yellow and orange) keep their colour. Done per tile on a canvas, so it needs no extra map service. */
+   and the yellow and orange roads become a lighter blue, so the map is blue only. Done per tile on a canvas, so it needs no extra map service. */
 import L from "leaflet";
 
 type RGB = [number, number, number];
@@ -21,12 +21,13 @@ function recolour(d: Uint8ClampedArray) {
     const s = mx === 0 ? 0 : (mx - mn) / mx, l = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     const k = smooth(0.12, 0.26, s) * (1 - smooth(0.8, 0.9, l)); // 0 = land, text and white roads, 1 = coloured road (pale tan patches count as land)
     const base = ramp(l);
-    // coloured pixels: yellow and orange roads stay bright, green parks and blue water go dark
+    // coloured roads (they were yellow and orange) become a blue a few steps lighter than the land; parks and water melt into the land
     const warm = r >= g * 0.95 && r > b;
-    const keep = warm ? 1 : 0.5;
-    d[i] = base[0] * (1 - k) + r * keep * k;
-    d[i + 1] = base[1] * (1 - k) + g * keep * k;
-    d[i + 2] = base[2] * (1 - k) + b * keep * k;
+    const road: RGB = [52 + l * 40, 88 + l * 55, 126 + l * 60];
+    const to = warm ? road : base;
+    d[i] = base[0] * (1 - k) + to[0] * k;
+    d[i + 1] = base[1] * (1 - k) + to[1] * k;
+    d[i + 2] = base[2] * (1 - k) + to[2] * k;
   }
 }
 

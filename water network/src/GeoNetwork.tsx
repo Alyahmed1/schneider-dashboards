@@ -278,7 +278,7 @@ export default function GeoNetwork(props: Props) {
       const v = n.kind === "tank" ? `${s.tank.toFixed(0)}% full` : n.kind === "plant" || n.id === "ps1" ? (flow ? `${flow.toLocaleString("en-US")} m³/h` : `${s.plant.toFixed(0)} L/s`) : "Booster +14 m";
       const nm = n.id === "ps1" ? "PS-1 pumps" : n.id === "ps2" ? "PS-2 booster" : n.kind === "plant" ? "Treatment plant" : "Reservoir";
       const svg = n.kind === "plant" ? SVG_PLANT : n.kind === "tank" ? svgTank(s.tank) : SVG_PUMP;
-      setHtml(`a${n.id}`, mk, `<div class="geo-as ${n.kind}${n.id === "ps2" ? " up" : ""}"><span class="gi">${svg}</span><b>${nm}</b><i>${v}</i></div>`, [112, 70], [56, n.id === "ps2" ? 50 : 20]);
+      setHtml(`a${n.id}`, mk, `<div class="geo-as ${n.kind}"><span class="gi">${svg}</span><b>${nm}</b><i>${v}</i></div>`, [130, 84], [65, 25]);
     }
 
     // instruments

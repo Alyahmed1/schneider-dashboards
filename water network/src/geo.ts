@@ -48,14 +48,14 @@ const NODE_LL: Record<string, LL> = {};
       NODE_LL[n.id] = p;
     }
   }
-  // the trunk sits in the open ground between Banafseg, Rehab and Lotus; the hub is one short spoke away from each of them, the second pump station serves Narges
-  const R = 31.4870;
-  NODE_LL.wtp = [30.0105, R];
-  NODE_LL.ps1 = [30.0200, R];
-  NODE_LL.j0 = [30.0295, R];
-  NODE_LL.res = [30.0360, R];
+  // the supply chain reads left to right and bottom to top with room around every piece:
+  // treatment plant, then PS-1, then the junction, which feeds the reservoir, the hub next to the zones and PS-2 (for Narges)
+  NODE_LL.wtp = [30.0030, 31.4660];
+  NODE_LL.ps1 = [30.0120, 31.4800];
+  NODE_LL.j0 = [30.0295, 31.4880];
+  NODE_LL.res = [30.0395, 31.4950];
   NODE_LL.j1 = [30.0440, 31.4850];
-  NODE_LL.ps2 = [30.0232, 31.4760];
+  NODE_LL.ps2 = [30.0238, 31.4805];
   NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
 }
 export const nodeLL = (id: string): LL => NODE_LL[id];

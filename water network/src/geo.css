@@ -234,4 +234,10 @@
 .nm-wrap .nm-legend .row em { display: none; }
 .nm-wrap .nm-legend b { margin-bottom: 4px; font-size: 12px; }
 
-.geo[data-base="light"] { background: #e9f2fa; }
+.geo[data-base="light"] { background: #dcebf8; }
+
+/* the supply chain: bigger, clearer pieces */
+.geo-network .geo-as { width: 130px; }
+.geo-network .geo-as .gi { width: 50px; height: 50px; border-width: 3px; box-shadow: 0 3px 12px rgba(20, 60, 120, .35); }
+.geo-network .geo-as .gi svg { width: 32px; height: 32px; }
+.geo-network .geo-as b { font-size: 13px; padding: 2px 8px; box-shadow: 0 1px 5px rgba(20, 60, 120, .25); }

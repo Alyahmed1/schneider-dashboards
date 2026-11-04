@@ -224,3 +224,12 @@
 .geo-network .geo-zl .v b { font-size: 24px; }
 .geo-network .geo-zl .n { font-size: 13.5px; }
 .geo-network .geo-zone { filter: drop-shadow(0 0 9px rgba(255, 255, 255, .3)); }
+
+.geo-zl.c { transform: translate(-50%, -50%); }
+.geo-zl.c:hover { transform: translate(-50%, -50%) scale(1.05); }
+
+/* a smaller key, out of the way */
+.nm-wrap .nm-legend { width: auto; padding: 7px 10px; }
+.nm-wrap .nm-legend .row { grid-template-columns: 20px auto; padding: 1px 0; }
+.nm-wrap .nm-legend .row em { display: none; }
+.nm-wrap .nm-legend b { margin-bottom: 4px; font-size: 12px; }

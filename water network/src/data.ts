@@ -86,10 +86,10 @@ export function overviewKpis(f: Filters, wos: WorkOrder[]): Kpi[] {
 
 export interface Alarm { id: string; sev: "Critical" | "Warning" | "Info"; text: string; where: string; time: string; wo?: string; area: Area | "All network" }
 const ALARMS: Alarm[] = [
-  { id: "a1", sev: "Critical", text: "Banafseg 6 pressure below 2.5 bar at peak", where: "Banafseg 6", time: "12 min ago", wo: "WO-3117", area: "Banafseg 6" },
-  { id: "a2", sev: "Critical", text: "Burst on a DN300 main, Banafseg 9 (12 L/s)", where: "Banafseg 9", time: "41 min ago", wo: "WO-3121", area: "Banafseg 9" },
-  { id: "a3", sev: "Warning", text: "Pressure sensor PT-06 offline, Banafseg Apartments", where: "Banafseg Apartments", time: "2 h ago", wo: "WO-3109", area: "Banafseg Apartments" },
-  { id: "a4", sev: "Warning", text: "Night flow rising in Banafseg 12, possible leak", where: "Banafseg 12", time: "3 h ago", wo: "WO-3125", area: "Banafseg 12" },
+  { id: "a1", sev: "Critical", text: "First Settlement pressure below 2.5 bar at peak", where: "First Settlement", time: "12 min ago", wo: "WO-3117", area: "First Settlement" },
+  { id: "a2", sev: "Critical", text: "Burst on a DN300 main, Rehab (12 L/s)", where: "Rehab", time: "41 min ago", wo: "WO-3121", area: "Rehab" },
+  { id: "a3", sev: "Warning", text: "Pressure sensor PT-06 offline, Yasmeen", where: "Yasmeen", time: "2 h ago", wo: "WO-3109", area: "Yasmeen" },
+  { id: "a4", sev: "Warning", text: "Night flow rising in Narges, possible leak", where: "Narges", time: "3 h ago", wo: "WO-3125", area: "Narges" },
   { id: "a5", sev: "Info", text: "Reservoir refilled to 87% on the night tariff", where: "Reservoir", time: "5 h ago", area: "All network" },
 ];
 export function alarms(f: Filters): Alarm[] {
@@ -108,7 +108,7 @@ export const zoneRows = (f: Filters): ZoneRow[] => {
 };
 /** share of the water-quality checks that pass, in percent */
 export function complianceScore(f: Filters) {
-  return f.area === "All network" ? 99.4 : f.area === "Banafseg 12" ? 98.6 : 99.5;
+  return f.area === "All network" ? 99.4 : f.area === "Narges" ? 98.6 : 99.5;
 }
 
 export interface Stage {
@@ -135,10 +135,10 @@ export function stages(f: Filters): Stage[] {
     { id: "res", name: "Elevated reservoir", short: "Storage tower · level control", flow: fl(out), unit: "m³/h", tone: "warn", note: "Level 77%, draining through the morning peak",
       readings: [{ label: "Level", value: "77", unit: "%" }, { label: "Stored", value: "34,600", unit: "m³" }, { label: "Chlorine out", value: "0.77", unit: "mg/L" }],
       equipment: [{ name: "Inlet valve", state: "Running", load: 60 }, { name: "Outlet valve", state: "Running", load: 100 }, { name: "Level sensor", state: "Running", load: 77 }] },
-    { id: "trunk", name: "Trunk mains & booster", short: "DN1200 mains · PS-2 · PRVs", flow: fl(out), unit: "m³/h", tone: "good", note: "Booster PS-2 lifts pressure for Banafseg 12 and Banafseg Apartments",
+    { id: "trunk", name: "Trunk mains & booster", short: "DN1200 mains · PS-2 · PRVs", flow: fl(out), unit: "m³/h", tone: "good", note: "Booster PS-2 lifts pressure for Narges and Yasmeen",
       readings: [{ label: "Hub pressure", value: "4.6", unit: "bar" }, { label: "Booster flow", value: "608", unit: "L/s" }, { label: "Mains length", value: "17", unit: "km" }],
-      equipment: [{ name: "Booster pump 1", state: "Running", load: 74 }, { name: "Booster pump 2", state: "Standby", load: 0 }, { name: "PRV Banafseg 11", state: "Running", load: 68 }, { name: "PRV Banafseg Apartments", state: "Running", load: 61 }] },
-    { id: "zones", name: "Supply zones", short: "9 zones · meters · pressure", flow: fl(out), unit: "m³/h", tone: "bad", note: "Banafseg 6 pressure drops below 2.5 bar at the morning peak",
+      equipment: [{ name: "Booster pump 1", state: "Running", load: 74 }, { name: "Booster pump 2", state: "Standby", load: 0 }, { name: "PRV Lotus", state: "Running", load: 68 }, { name: "PRV Yasmeen", state: "Running", load: 61 }] },
+    { id: "zones", name: "Supply zones", short: "6 zones · meters · pressure", flow: fl(out), unit: "m³/h", tone: "bad", note: "First Settlement pressure drops below 2.5 bar at the morning peak",
       readings: [{ label: "Lowest pressure", value: "1.8", unit: "bar" }, { label: "Zones in range", value: "5 of 6", unit: "" }, { label: "Open faults", value: "8", unit: "" }],
       equipment: [{ name: "Zone meter Z1", state: "Running", load: 69 }, { name: "Zone meter Z2", state: "Alarm", load: 92 }, { name: "Zone meter Z3", state: "Running", load: 77 }, { name: "Zone meter Z4", state: "Running", load: 63 }] },
     { id: "meters", name: "Customer metering", short: "Smart meters · billing", flow: fl(billed), unit: "m³/h", tone: "good", note: "98.2% of meters reported in the last 24 hours",

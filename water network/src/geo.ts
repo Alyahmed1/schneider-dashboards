@@ -19,15 +19,16 @@ const centroidOf = (r: Ring): LL => {
 };
 const inRing = (pt: LL, r: Ring) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++) { if ((r[i][0] > pt[0]) !== (r[j][0] > pt[0]) && pt[1] < ((r[j][1] - r[i][1]) * (pt[0] - r[i][0])) / (r[j][0] - r[i][0]) + r[i][1]) c = !c; } return c; };
 
-export const ZONE_AREA: Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; east: LL; west: LL }> = Object.fromEntries(
+export const ZONE_AREA: Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; upper: LL; east: LL; west: LL }> = Object.fromEntries(
   ZONES.map((z) => {
     const rings = ZONE_RINGS[z.id] as Ring[];
     const big = rings.reduce((a, r) => (area(r) > area(a) ? r : a), rings[0]);
     const c = centroidOf(big);
     const pts = rings.flat();
-    return [z.id, { rings, centre: c, top: [Math.max(...pts.map((p) => p[0])), c[1]] as LL, east: [c[0], Math.max(...pts.map((p) => p[1]))] as LL, west: [c[0], Math.min(...pts.map((p) => p[1]))] as LL }];
+    const lo = Math.min(...pts.map((p) => p[0])), hi = Math.max(...pts.map((p) => p[0]));
+    return [z.id, { rings, centre: c, upper: [hi - 0.14 * (hi - lo), c[1]] as LL, top: [Math.max(...pts.map((p) => p[0])), c[1]] as LL, east: [c[0], Math.max(...pts.map((p) => p[1]))] as LL, west: [c[0], Math.min(...pts.map((p) => p[1]))] as LL }];
   }),
-) as Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; east: LL; west: LL }>;
+) as Record<ZoneId, { rings: LL[][]; centre: LL; top: LL; upper: LL; east: LL; west: LL }>;
 
 /* ---------- where every node of the network sits on the map ---------- */
 const NODE_LL: Record<string, LL> = {};
@@ -40,21 +41,21 @@ const NODE_LL: Record<string, LL> = {};
     const tw = (Math.max(...lo) - Math.min(...lo)) * M_LNG, th = (Math.max(...la) - Math.min(...la)) * M_LAT;
     const xs = ns.map((n) => n.x), ys = ns.map((n) => n.y), cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
     const cw = Math.max(...xs) - Math.min(...xs) || 1, ch = Math.max(...ys) - Math.min(...ys) || 1;
-    const k = Math.min((tw * 0.6) / cw, (th * 0.6) / ch);
+    const k = Math.min((tw * 0.5) / cw, (th * 0.42) / ch);
     for (const n of ns) {
-      let p = shift(c, (n.x - cx) * k, -(n.y - cy) * k);
+      let p = shift(c, (n.x - cx) * k, -(n.y - cy) * k - th * 0.06);
       for (let i = 0; i < 12 && !inRing(p, all); i++) p = [p[0] + (c[0] - p[0]) * 0.25, p[1] + (c[1] - p[1]) * 0.25];
       NODE_LL[n.id] = p;
     }
   }
-  // everything on the trunk sits in one short line along the road between the two columns of blocks (the reservoir is the real Banafseg water tower)
-  const R = 31.4684;
-  NODE_LL.wtp = [30.0288, R];
-  NODE_LL.ps1 = [30.0338, R];
-  NODE_LL.j0 = [30.0452, R];
-  NODE_LL.j1 = [30.0482, R];
-  NODE_LL.res = [30.0518, 31.4683];
-  NODE_LL.ps2 = [30.0398, 31.4674];
+  // the trunk sits in the open ground between Banafseg, Rehab and Lotus; the hub is one short spoke away from each of them, the second pump station serves Narges and Yasmeen
+  const R = 31.4870;
+  NODE_LL.wtp = [30.0150, R];
+  NODE_LL.ps1 = [30.0215, R];
+  NODE_LL.j0 = [30.0295, R];
+  NODE_LL.res = [30.0360, R];
+  NODE_LL.j1 = [30.0440, 31.4850];
+  NODE_LL.ps2 = [30.0285, 31.4565];
   NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
 }
 export const nodeLL = (id: string): LL => NODE_LL[id];

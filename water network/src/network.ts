@@ -4,7 +4,7 @@
    (Hazen-Williams head loss), so every map colour is consistent with every other number. */
 import type { Tone } from "./data";
 
-export type ZoneId = "Z1" | "Z2" | "Z3" | "Z4" | "Z5" | "Z6" | "Z7" | "Z8" | "Z9";
+export type ZoneId = "Z1" | "Z2" | "Z3" | "Z4" | "Z5" | "Z6";
 export type Profile = "residential" | "commercial" | "mixed";
 
 export interface Zone {
@@ -18,15 +18,12 @@ export interface Zone {
 }
 
 export const ZONES: Zone[] = [
-  { id: "Z1", name: "Banafseg 7", profile: "mixed", daily: 21000, nrw: 0.11, ground: 66, label: { x: 540, y: 90 } },
-  { id: "Z2", name: "Banafseg 6", profile: "commercial", daily: 20000, nrw: 0.13, ground: 70, label: { x: 800, y: 60 } },
-  { id: "Z3", name: "Banafseg 9", profile: "residential", daily: 34000, nrw: 0.17, ground: 62, label: { x: 760, y: 280 } },
-  { id: "Z4", name: "Banafseg 11", profile: "residential", daily: 20000, nrw: 0.21, ground: 58, label: { x: 620, y: 560 } },
-  { id: "Z5", name: "Banafseg 12", profile: "mixed", daily: 16000, nrw: 0.12, ground: 74, label: { x: 440, y: 612 } },
-  { id: "Z6", name: "Banafseg Apartments", profile: "residential", daily: 12000, nrw: 0.15, ground: 76, label: { x: 110, y: 380 } },
-  { id: "Z7", name: "Banafseg 5", profile: "residential", daily: 18000, nrw: 0.14, ground: 68, label: { x: 940, y: 120 } },
-  { id: "Z8", name: "Banafseg 3", profile: "mixed", daily: 15000, nrw: 0.12, ground: 69, label: { x: 1100, y: 100 } },
-  { id: "Z9", name: "Banafseg 1", profile: "residential", daily: 17000, nrw: 0.16, ground: 70, label: { x: 1270, y: 100 } },
+  { id: "Z1", name: "Banafseg", profile: "mixed", daily: 21000, nrw: 0.11, ground: 66, label: { x: 540, y: 90 } },
+  { id: "Z2", name: "First Settlement", profile: "commercial", daily: 20000, nrw: 0.13, ground: 70, label: { x: 800, y: 60 } },
+  { id: "Z3", name: "Rehab", profile: "residential", daily: 34000, nrw: 0.17, ground: 62, label: { x: 760, y: 280 } },
+  { id: "Z4", name: "Lotus", profile: "residential", daily: 20000, nrw: 0.21, ground: 58, label: { x: 620, y: 560 } },
+  { id: "Z5", name: "Narges", profile: "mixed", daily: 16000, nrw: 0.12, ground: 74, label: { x: 440, y: 612 } },
+  { id: "Z6", name: "Yasmeen", profile: "residential", daily: 12000, nrw: 0.15, ground: 76, label: { x: 110, y: 380 } },
 ];
 export const zoneById = (id: ZoneId) => ZONES.find((z) => z.id === id)!;
 
@@ -58,21 +55,17 @@ export const NODES: WNode[] = [
   n("res", 290, 200, "tank", undefined, 0, "Elevated reservoir"),
   n("ps2", 290, 420, "pump", undefined, 0, "Booster station PS-2"),
   n("j1", 420, 300, "junction", undefined, 0, "East hub"),
-  // Z1 Banafseg 7
+  // Z1 Banafseg
   n("a1", 500, 210, "demand", "Z1", 2), n("a2", 590, 160, "demand", "Z1", 3), n("a3", 500, 120, "demand", "Z1", 2), n("a4", 660, 230, "demand", "Z1", 3), n("a5", 600, 250, "demand", "Z1", 3),
-  // Z2 Banafseg 6
+  // Z2 First Settlement
   n("b1", 700, 120, "demand", "Z2", 3), n("b2", 800, 150, "demand", "Z2", 3), n("b3", 760, 70, "demand", "Z2", 2), n("b4", 860, 230, "demand", "Z2", 3),
-  // Z3 Banafseg 9
+  // Z3 Rehab
   n("c1", 540, 310, "demand", "Z3", 2), n("c2", 640, 300, "demand", "Z3", 3), n("c3", 740, 310, "demand", "Z3", 3), n("c4", 640, 380, "demand", "Z3", 3), n("c5", 760, 400, "demand", "Z3", 3), n("c6", 860, 330, "demand", "Z3", 3),
-  // Z4 Banafseg 11
+  // Z4 Lotus
   n("d1", 520, 420, "demand", "Z4", 2), n("d2", 620, 470, "demand", "Z4", 3), n("d3", 520, 510, "demand", "Z4", 3), n("d4", 720, 460, "demand", "Z4", 3), n("d5", 730, 540, "demand", "Z4", 2),
-  // Z5 Banafseg 12
+  // Z5 Narges
   n("s0", 290, 520, "junction"), n("e1", 400, 540, "demand", "Z5", 3), n("e2", 500, 595, "demand", "Z5", 3), n("e3", 330, 595, "demand", "Z5", 2),
-  // Z7 Banafseg 5, Z8 Banafseg 3, Z9 Banafseg 1 (the next blocks north, fed one after the other from Banafseg 7)
-  n("g1", 880, 150, "demand", "Z7", 3), n("g2", 960, 110, "demand", "Z7", 3), n("g3", 900, 60, "demand", "Z7", 2), n("g4", 990, 170, "demand", "Z7", 2),
-  n("h1", 1060, 150, "demand", "Z8", 3), n("h2", 1130, 110, "demand", "Z8", 3), n("h3", 1080, 60, "demand", "Z8", 2),
-  n("k1", 1230, 150, "demand", "Z9", 3), n("k2", 1300, 110, "demand", "Z9", 3), n("k3", 1250, 60, "demand", "Z9", 2),
-  // Z6 Banafseg Apartments
+  // Z6 Yasmeen
   n("f1", 180, 430, "demand", "Z6", 2), n("f2", 100, 490, "demand", "Z6", 3), n("f3", 190, 550, "demand", "Z6", 3), n("f4", 110, 400, "demand", "Z6", 2),
 ];
 export const nodeById = (id: string) => NODES.find((x) => x.id === id)!;
@@ -112,10 +105,6 @@ export const PIPES: Pipe[] = [
   pipe("ps2", "f1", "Z6"), pipe("f1", "f2", "Z6"), pipe("f1", "f3", "Z6"), pipe("f1", "f4", "Z6"),
   // closed ties between zones (isolation valves, no flow)
   pipe("a5", "c2", "Z1", "tie"), pipe("d2", "c4", "Z4", "tie"), pipe("e1", "d3", "Z5", "tie"),
-  // Z7, Z8, Z9: the blocks to the north, each fed from the one before
-  pipe("a4", "g1", "Z7"), pipe("g1", "g2", "Z7"), pipe("g1", "g3", "Z7"), pipe("g2", "g4", "Z7"),
-  pipe("g2", "h1", "Z8"), pipe("h1", "h2", "Z8"), pipe("h1", "h3", "Z8"),
-  pipe("h2", "k1", "Z9"), pipe("k1", "k2", "Z9"), pipe("k1", "k3", "Z9"),
 ];
 export const pipeById = (id: string) => PIPES.find((p) => p.id === id)!;
 export const pipeBetween = (a: string, b: string) => PIPES.find((p) => (p.from === a && p.to === b) || (p.from === b && p.to === a))!;
@@ -123,10 +112,10 @@ export const pipeBetween = (a: string, b: string) => PIPES.find((p) => (p.from =
 /* ---------- bursts and leaks that are known today ---------- */
 export interface Leak { id: string; pipe: string; rate: number; since: string; status: "Suspected" | "Confirmed" | "Crew assigned"; note: string }
 export const LEAKS: Leak[] = [
-  { id: "LK-A", pipe: pipeBetween("c2", "c4").id, rate: 12, since: "3 days", status: "Crew assigned", note: "DN300 main, Banafseg 9, joint failure" },
+  { id: "LK-A", pipe: pipeBetween("c2", "c4").id, rate: 12, since: "3 days", status: "Crew assigned", note: "DN300 main, Rehab, joint failure" },
   { id: "LK-B", pipe: pipeBetween("b1", "b3").id, rate: 6.5, since: "9 hours", status: "Confirmed", note: "Service line burst near the mall" },
-  { id: "LK-C", pipe: pipeBetween("d1", "d3").id, rate: 9, since: "6 days", status: "Confirmed", note: "Corroded cast iron, Banafseg 11" },
-  { id: "LK-D", pipe: pipeBetween("e1", "e2").id, rate: 4.2, since: "1 day", status: "Suspected", note: "Night flow rise in Banafseg 12" },
+  { id: "LK-C", pipe: pipeBetween("d1", "d3").id, rate: 9, since: "6 days", status: "Confirmed", note: "Corroded cast iron, Lotus" },
+  { id: "LK-D", pipe: pipeBetween("e1", "e2").id, rate: 4.2, since: "1 day", status: "Suspected", note: "Night flow rise in Narges" },
 ];
 
 /* ---------- the solver ---------- */
@@ -342,22 +331,22 @@ export const INSTRUMENTS: Instrument[] = [
   { id: "FT-06", type: "flow", name: "Z5 inlet flow", at: onPipe("ps2", "s0") },
   { id: "FT-07", type: "flow", name: "Z6 inlet flow", at: onPipe("ps2", "f1") },
   { id: "PT-01", type: "pressure", name: "PS-1 discharge pressure", at: { node: "j0" } },
-  { id: "PT-02", type: "pressure", name: "Banafseg 7 pressure", at: { node: "a4" } },
-  { id: "PT-03", type: "pressure", name: "Banafseg 9 pressure", at: { node: "c6" } },
-  { id: "PT-04", type: "pressure", name: "Banafseg 11 pressure", at: { node: "d5" } },
-  { id: "PT-05", type: "pressure", name: "Banafseg 12 pressure", at: { node: "e2" } },
-  { id: "PT-06", type: "pressure", name: "Banafseg Apartments pressure", at: { node: "f2" }, forced: "offline" },
+  { id: "PT-02", type: "pressure", name: "Banafseg pressure", at: { node: "a4" } },
+  { id: "PT-03", type: "pressure", name: "Rehab pressure", at: { node: "c6" } },
+  { id: "PT-04", type: "pressure", name: "Lotus pressure", at: { node: "d5" } },
+  { id: "PT-05", type: "pressure", name: "Narges pressure", at: { node: "e2" } },
+  { id: "PT-06", type: "pressure", name: "Yasmeen pressure", at: { node: "f2" }, forced: "offline" },
   { id: "AT-01", type: "quality", name: "Chlorine after reservoir", at: { node: "j0" } },
-  { id: "AT-02", type: "quality", name: "Chlorine, Banafseg 9", at: { node: "c6" } },
-  { id: "AT-03", type: "quality", name: "Chlorine, Banafseg 12", at: { node: "e2" } },
+  { id: "AT-02", type: "quality", name: "Chlorine, Rehab", at: { node: "c6" } },
+  { id: "AT-03", type: "quality", name: "Chlorine, Narges", at: { node: "e2" } },
   { id: "LT-01", type: "level", name: "Reservoir level", at: { node: "res" } },
   { id: "PU-01", type: "pump", name: "PS-1 duty pump", at: { node: "ps1" } },
   { id: "PU-02", type: "pump", name: "PS-2 booster pump", at: { node: "ps2" } },
-  { id: "LK-01", type: "leak", name: "Acoustic logger, Banafseg 6", at: onPipe("b1", "b3") },
-  { id: "LK-02", type: "leak", name: "Acoustic logger, Banafseg 9", at: onPipe("c2", "c4") },
-  { id: "LK-03", type: "leak", name: "Acoustic logger, Banafseg 11", at: onPipe("d1", "d3") },
-  { id: "PRV-01", type: "prv", name: "PRV, Banafseg 11 inlet", at: onPipe("j1", "d1") },
-  { id: "PRV-02", type: "prv", name: "PRV, Banafseg Apartments inlet", at: onPipe("ps2", "f1") },
+  { id: "LK-01", type: "leak", name: "Acoustic logger, First Settlement", at: onPipe("b1", "b3") },
+  { id: "LK-02", type: "leak", name: "Acoustic logger, Rehab", at: onPipe("c2", "c4") },
+  { id: "LK-03", type: "leak", name: "Acoustic logger, Lotus", at: onPipe("d1", "d3") },
+  { id: "PRV-01", type: "prv", name: "PRV, Lotus inlet", at: onPipe("j1", "d1") },
+  { id: "PRV-02", type: "prv", name: "PRV, Yasmeen inlet", at: onPipe("ps2", "f1") },
 ];
 
 export interface Reading { value: number; unit: string; text: string; tone: Tone; detail: string }

@@ -303,10 +303,10 @@ function Trunk() {
       <Cap x={300} y={62}>East hub</Cap>
       <Cap x={520} y={72}>Pressure-reducing valve</Cap>
       <Cap x={420} y={292}>Booster pumps</Cap>
-      <Cap x={850} y={102} a="end">To Banafseg 11</Cap>
-      <Cap x={850} y={217} a="end">To Banafseg 9</Cap>
-      <Cap x={850} y={332} a="end">To Banafseg 12</Cap>
-      <Cap x={850} y={402} a="end">To Banafseg Apartments</Cap>
+      <Cap x={850} y={102} a="end">To Lotus</Cap>
+      <Cap x={850} y={217} a="end">To Rehab</Cap>
+      <Cap x={850} y={332} a="end">To Narges</Cap>
+      <Cap x={850} y={402} a="end">To Yasmeen</Cap>
     </g>
   );
 }
@@ -314,7 +314,7 @@ function Trunk() {
 /* ---------- 6. supply zones: six zones with their own inlet meters ---------- */
 function Zones() {
   const rows = [105, 225, 345];
-  const names = [["Banafseg 7", "Banafseg 6"], ["Banafseg 9", "Banafseg 11"], ["Banafseg 12", "Banafseg Apartments"]];
+  const names = [["Banafseg", "First Settlement"], ["Rehab", "Lotus"], ["Narges", "Yasmeen"]];
   return (
     <g>
       <Pipe d="M-900 225 H80 M80 105 V345" kind="product" w={13} />
@@ -464,22 +464,22 @@ export const SCENES: Record<string, Scene> = {
     Art: withStage("trunk", Trunk),
     tags: [
       { id: "hub", tag: "PT-HUB", name: "East hub pressure", x: 300, y: 160, show: { v: 4.6, unit: " bar", d: 1 }, state: "Normal", rows: [r("Pressure", 4.6, "bar", 1), r("Flow", 1560, "L/s"), r("Pipe size", "DN1200")] },
-      { id: "prv", tag: "PRV-01", name: "Banafseg 11 pressure-reducing valve", kind: "valve", x: 520, y: 150, show: { v: 4.2, unit: " bar", d: 1 }, state: "Normal", rows: [r("Set-point", 4.2, "bar", 1), r("Inlet", 5.7, "bar", 1), r("Outlet", 4.2, "bar", 1)], note: "Brings the pressure down so the villas do not see more than 4.5 bar." },
-      { id: "fit", tag: "FT-04", name: "Banafseg 9 flow", x: 656, y: 190, show: { v: 739, unit: " L/s" }, state: "Normal", rows: [r("Flow", 739, "L/s"), r("Velocity", 1.4, "m/s", 1), r("Pipe size", "DN800")] },
-      { id: "p1", tag: "P-501A", kind: "pump", name: "Booster pump 1", x: 420, y: 296, show: { v: 74, unit: "%" }, state: "Running", load: 74, rows: [r("Speed", 74, "%"), r("Flow", 608, "L/s"), r("Head added", 14, "m"), r("Power", 380, "kW")], note: "Lifts the pressure for Banafseg 12 and Banafseg Apartments, which sit higher up the slope." },
+      { id: "prv", tag: "PRV-01", name: "Lotus pressure-reducing valve", kind: "valve", x: 520, y: 150, show: { v: 4.2, unit: " bar", d: 1 }, state: "Normal", rows: [r("Set-point", 4.2, "bar", 1), r("Inlet", 5.7, "bar", 1), r("Outlet", 4.2, "bar", 1)], note: "Brings the pressure down so the villas do not see more than 4.5 bar." },
+      { id: "fit", tag: "FT-04", name: "Rehab flow", x: 656, y: 190, show: { v: 739, unit: " L/s" }, state: "Normal", rows: [r("Flow", 739, "L/s"), r("Velocity", 1.4, "m/s", 1), r("Pipe size", "DN800")] },
+      { id: "p1", tag: "P-501A", kind: "pump", name: "Booster pump 1", x: 420, y: 296, show: { v: 74, unit: "%" }, state: "Running", load: 74, rows: [r("Speed", 74, "%"), r("Flow", 608, "L/s"), r("Head added", 14, "m"), r("Power", 380, "kW")], note: "Lifts the pressure for Narges and Yasmeen, which sit higher up the slope." },
       { id: "p2", tag: "P-501B", kind: "pump", name: "Booster pump 2", x: 420, y: 366, show: { v: 0, unit: "%" }, state: "Standby", load: 0, rows: [r("Speed", 0, "%"), r("Ready to start", "Yes"), r("Hours run", 2410, "h")] },
-      { id: "pt2", tag: "PT-05", name: "Banafseg 12 pressure", x: 650, y: 380, show: { v: 3.4, unit: " bar", d: 1 }, state: "Normal", rows: [r("Pressure", 3.4, "bar", 1), r("Allowed", "2.5 to 7", "bar")] },
+      { id: "pt2", tag: "PT-05", name: "Narges pressure", x: 650, y: 380, show: { v: 3.4, unit: " bar", d: 1 }, state: "Normal", rows: [r("Pressure", 3.4, "bar", 1), r("Allowed", "2.5 to 7", "bar")] },
     ],
   },
   zones: {
     Art: withStage("zones", Zones),
     tags: [
-      { id: "z1", tag: "FT-02", name: "Banafseg 7 inlet", x: 124, y: 105, show: { v: z("Z1").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z1").supplied, "L/s"), r("Pressure", z("Z1").pressure, "bar", 1), r("Water lost", z("Z1").nrw * 100, "%", 1)] },
-      { id: "z2", tag: "FT-03", name: "Banafseg 6 inlet", x: 454, y: 105, show: { v: z("Z2").supplied, unit: " L/s" }, state: "Alarm", special: "zones", rows: [r("Flow", z("Z2").supplied, "L/s"), r("Pressure", z("Z2").pressure, "bar", 1), r("Lowest pressure", z("Z2").minPressure, "bar", 1), r("Water lost", z("Z2").nrw * 100, "%", 1)], note: "Pressure at the far end drops below 2.5 bar at the morning peak (WO-3117)." },
-      { id: "z3", tag: "FT-04", name: "Banafseg 9 inlet", x: 124, y: 225, show: { v: z("Z3").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z3").supplied, "L/s"), r("Pressure", z("Z3").pressure, "bar", 1), r("Water lost", z("Z3").nrw * 100, "%", 1)] },
-      { id: "z4", tag: "FT-05", name: "Banafseg 11 inlet", x: 454, y: 225, show: { v: z("Z4").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z4").supplied, "L/s"), r("Pressure", z("Z4").pressure, "bar", 1), r("Water lost", z("Z4").nrw * 100, "%", 1)], note: "The highest water loss in the network. A corroded main is leaking 9 L/s." },
-      { id: "z5", tag: "FT-06", name: "Banafseg 12 inlet", x: 124, y: 345, show: { v: z("Z5").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z5").supplied, "L/s"), r("Pressure", z("Z5").pressure, "bar", 1), r("Water lost", z("Z5").nrw * 100, "%", 1)] },
-      { id: "z6", tag: "FT-07", name: "Banafseg Apartments inlet", x: 454, y: 345, show: { v: z("Z6").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z6").supplied, "L/s"), r("Pressure", z("Z6").pressure, "bar", 1), r("Water lost", z("Z6").nrw * 100, "%", 1)] },
+      { id: "z1", tag: "FT-02", name: "Banafseg inlet", x: 124, y: 105, show: { v: z("Z1").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z1").supplied, "L/s"), r("Pressure", z("Z1").pressure, "bar", 1), r("Water lost", z("Z1").nrw * 100, "%", 1)] },
+      { id: "z2", tag: "FT-03", name: "First Settlement inlet", x: 454, y: 105, show: { v: z("Z2").supplied, unit: " L/s" }, state: "Alarm", special: "zones", rows: [r("Flow", z("Z2").supplied, "L/s"), r("Pressure", z("Z2").pressure, "bar", 1), r("Lowest pressure", z("Z2").minPressure, "bar", 1), r("Water lost", z("Z2").nrw * 100, "%", 1)], note: "Pressure at the far end drops below 2.5 bar at the morning peak (WO-3117)." },
+      { id: "z3", tag: "FT-04", name: "Rehab inlet", x: 124, y: 225, show: { v: z("Z3").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z3").supplied, "L/s"), r("Pressure", z("Z3").pressure, "bar", 1), r("Water lost", z("Z3").nrw * 100, "%", 1)] },
+      { id: "z4", tag: "FT-05", name: "Lotus inlet", x: 454, y: 225, show: { v: z("Z4").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z4").supplied, "L/s"), r("Pressure", z("Z4").pressure, "bar", 1), r("Water lost", z("Z4").nrw * 100, "%", 1)], note: "The highest water loss in the network. A corroded main is leaking 9 L/s." },
+      { id: "z5", tag: "FT-06", name: "Narges inlet", x: 124, y: 345, show: { v: z("Z5").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z5").supplied, "L/s"), r("Pressure", z("Z5").pressure, "bar", 1), r("Water lost", z("Z5").nrw * 100, "%", 1)] },
+      { id: "z6", tag: "FT-07", name: "Yasmeen inlet", x: 454, y: 345, show: { v: z("Z6").supplied, unit: " L/s" }, state: "Normal", special: "zones", rows: [r("Flow", z("Z6").supplied, "L/s"), r("Pressure", z("Z6").pressure, "bar", 1), r("Water lost", z("Z6").nrw * 100, "%", 1)] },
     ],
   },
   meters: {
@@ -495,9 +495,9 @@ export const SCENES: Record<string, Scene> = {
   leak: {
     Art: withStage("leak", Leak),
     tags: [
-      { id: "lk1", tag: "LK-01", name: "Acoustic logger, Banafseg 6", x: 170, y: 118, show: { v: 62, unit: " dB" }, state: "Alarm", load: 62, rows: [r("Noise level", 62, "dB"), r("Normal", "under 40", "dB"), r("Leak", 6.5, "L/s", 1)] },
-      { id: "lk2", tag: "LK-02", name: "Acoustic logger, Banafseg 9", x: 480, y: 88, show: { v: 71, unit: " dB" }, state: "Alarm", load: 71, rows: [r("Noise level", 71, "dB"), r("Normal", "under 40", "dB"), r("Leak", 12, "L/s")], note: "A DN300 joint has failed. Crew on site (WO-3121)." },
-      { id: "lk3", tag: "LK-03", name: "Acoustic logger, Banafseg 11", x: 700, y: 118, show: { v: 66, unit: " dB" }, state: "Alarm", load: 66, rows: [r("Noise level", 66, "dB"), r("Normal", "under 40", "dB"), r("Leak", 9, "L/s")] },
+      { id: "lk1", tag: "LK-01", name: "Acoustic logger, First Settlement", x: 170, y: 118, show: { v: 62, unit: " dB" }, state: "Alarm", load: 62, rows: [r("Noise level", 62, "dB"), r("Normal", "under 40", "dB"), r("Leak", 6.5, "L/s", 1)] },
+      { id: "lk2", tag: "LK-02", name: "Acoustic logger, Rehab", x: 480, y: 88, show: { v: 71, unit: " dB" }, state: "Alarm", load: 71, rows: [r("Noise level", 71, "dB"), r("Normal", "under 40", "dB"), r("Leak", 12, "L/s")], note: "A DN300 joint has failed. Crew on site (WO-3121)." },
+      { id: "lk3", tag: "LK-03", name: "Acoustic logger, Lotus", x: 700, y: 118, show: { v: 66, unit: " dB" }, state: "Alarm", load: 66, rows: [r("Noise level", 66, "dB"), r("Normal", "under 40", "dB"), r("Leak", 9, "L/s")] },
       { id: "burst", tag: "BURST", name: "Active burst", x: 335, y: 285, show: { v: 12, unit: " L/s" }, state: "Alarm", rows: [r("Loss", 12, "L/s"), r("Since", "3 days"), r("Water lost so far", 3100, "m³"), r("Repair", "In progress")] },
       { id: "crew", tag: "CREW-1", name: "Repair crew 1", x: 798, y: 300, show: { v: 100, unit: "%" }, state: "Running", load: 100, rows: [r("Task", "WO-3121"), r("Time on site", 5, "h"), r("Estimated finish", "16:30")] },
       { id: "nrw", tag: "NRW", name: "Non-revenue water", x: 600, y: 345, show: { v: 16.8, unit: " %", d: 1 }, state: "Normal", rows: [r("Supplied", 147900, "m³/d"), r("Billed", 123000, "m³/d"), r("Lost", 24900, "m³/d")], note: "A fifth of the zones lose more than 20%. The map shows where." },

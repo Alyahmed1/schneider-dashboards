@@ -13,8 +13,8 @@ import { downloadCsv, downloadPdf, type ReportSpec } from "./exportReport";
 
 type AssetStatus = "Running" | "Idle" | "Under maintenance";
 /** which asset a work order is about, and the few assets that are not simply running (sample data) */
-const WO_OF: Record<string, string> = { "WO-3117": "PRV, Banafseg 11", "WO-3121": "Main C2-C4, Banafseg 9", "WO-3109": "Pressure sensor PT-06", "WO-3133": "High-lift pump 2", "WO-3102": "Main D1-D3, Banafseg 11", "WO-3131": "Main B1-B3, Banafseg 6", "WO-3095": "PRV-02, Banafseg Apartments" };
-const STATUS: Record<string, AssetStatus> = { "Pressure sensor PT-06": "Idle", "Main C2-C4, Banafseg 9": "Under maintenance", "Main B1-B3, Banafseg 6": "Under maintenance" };
+const WO_OF: Record<string, string> = { "WO-3117": "PRV, Lotus", "WO-3121": "Main C2-C4, Rehab", "WO-3109": "Pressure sensor PT-06", "WO-3133": "High-lift pump 2", "WO-3102": "Main D1-D3, Lotus", "WO-3131": "Main B1-B3, First Settlement", "WO-3095": "PRV-02, Yasmeen" };
+const STATUS: Record<string, AssetStatus> = { "Pressure sensor PT-06": "Idle", "Main C2-C4, Rehab": "Under maintenance", "Main B1-B3, First Settlement": "Under maintenance" };
 const PILL = { Running: "run", Idle: "idle", "Under maintenance": "under" } as const;
 const MONTHS = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 const woText = (w?: WorkOrder) => (!w ? "" : w.status === "Done" ? "Closed" : w.late ? "Delayed" : w.status);

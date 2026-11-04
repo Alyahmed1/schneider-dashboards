@@ -67,7 +67,7 @@ export default function NetworkMap({ preset }: { preset?: { hour: number; metric
           </div>
         </div>
 
-        <p className="nm-how"><b>How to read it:</b> each block is a supply zone <i>·</i> thick lines are the main pipes <i>·</i> red dots are leaks <i>·</i> click a zone to see its street pipes.</p>
+        <p className="nm-how"><b>How to read it:</b> each coloured area is a supply zone <i>·</i> thick lines are the main pipes <i>·</i> red dots are leaks <i>·</i> click a zone to see its street pipes.</p>
 
         <div className="nm-wrap">
           <GeoNetwork mode="network" metric={metric} hour={hour} basemap={base} zone={zone} onZone={setZone} layers={lay} sel={sel} onSel={setSel} focus={focus}

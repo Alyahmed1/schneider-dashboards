@@ -47,14 +47,14 @@ const NODE_LL: Record<string, LL> = {};
       NODE_LL[n.id] = p;
     }
   }
-  // the hub sits on the road between the two columns of blocks; the reservoir is the real Banafseg water tower on that road
-  const j1: LL = [30.0480, 31.4681];
-  NODE_LL.j1 = j1;
-  NODE_LL.j0 = shift(j1, -800, -150);
-  NODE_LL.ps1 = shift(NODE_LL.j0, -450, 0);
-  NODE_LL.wtp = shift(NODE_LL.j0, -950, 0);
+  // everything on the trunk sits in one short line along the road between the two columns of blocks (the reservoir is the real Banafseg water tower)
+  const R = 31.4684;
+  NODE_LL.wtp = [30.0288, R];
+  NODE_LL.ps1 = [30.0338, R];
+  NODE_LL.j0 = [30.0452, R];
+  NODE_LL.j1 = [30.0482, R];
   NODE_LL.res = [30.0518, 31.4683];
-  NODE_LL.ps2 = [30.0352, 31.4640];
+  NODE_LL.ps2 = [30.0398, 31.4674];
   NODE_LL.s0 = shift(NODE_LL.e1, -250, -120);
 }
 export const nodeLL = (id: string): LL => NODE_LL[id];

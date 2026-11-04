@@ -26,7 +26,7 @@ export default function NetworkMap({ preset }: { preset?: { hour: number; metric
   useEffect(() => { if (preset) { setMetric(preset.metric); setHour(preset.hour); setPlay(false); } }, [preset?.n]); // eslint-disable-line react-hooks/exhaustive-deps
   const [zone, setZone] = useState<ZoneId | null>(null);
   const [sel, setSel] = useState<string | null>("FT-04");
-  const [lay, setLay] = useState<GeoLayers>({ areas: true, pipes: true, inst: true, leaks: true });
+  const [lay, setLay] = useState<GeoLayers>({ areas: true, pipes: true, inst: false, leaks: true });
   const [base, setBase] = useState<Basemap>("Streets");
   const [focus, setFocus] = useState<GeoFocus | null>(null);
 
@@ -67,7 +67,7 @@ export default function NetworkMap({ preset }: { preset?: { hour: number; metric
           </div>
         </div>
 
-        <p className="nm-how"><b>How to read it:</b> each block is a supply zone <i>·</i> thick lines are the main pipes <i>·</i> red dots are leaks <i>·</i> click a zone, or zoom in, to see its street pipes.</p>
+        <p className="nm-how"><b>How to read it:</b> each block is a supply zone <i>·</i> thick lines are the main pipes <i>·</i> red dots are leaks <i>·</i> click a zone to see its street pipes.</p>
 
         <div className="nm-wrap">
           <GeoNetwork mode="network" metric={metric} hour={hour} basemap={base} zone={zone} onZone={setZone} layers={lay} sel={sel} onSel={setSel} focus={focus}

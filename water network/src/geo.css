@@ -218,3 +218,9 @@
 .geo-pop small { color: var(--muted); font-size: 11px; }
 .geo-region .geo-zone { cursor: pointer; }
 .hm-ref-country { display: none; }
+
+/* Network Map: bold and simple */
+.geo-network .geo-zl { min-width: 128px; }
+.geo-network .geo-zl .v b { font-size: 24px; }
+.geo-network .geo-zl .n { font-size: 13.5px; }
+.geo-network .geo-zone { filter: drop-shadow(0 0 9px rgba(255, 255, 255, .3)); }

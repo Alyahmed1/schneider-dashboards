@@ -26,7 +26,7 @@ interface Props {
 
 const GLYPH: Record<InstrumentType, string> = { flow: "Q", pressure: "P", quality: "Cl", level: "H", pump: "M", leak: "Lk", prv: "V" };
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
-const dnW = (p: Pipe, mode: "home" | "network") => (mode === "home" ? (p.zone === "trunk" ? 3 : 2) : Math.min(5.5, 2 + p.dn / 230));
+const dnW = (p: Pipe, mode: "home" | "network") => (mode === "home" ? (p.zone === "trunk" ? 3 : 2) : Math.min(6.5, 3 + p.dn / 260));
 /** which side of its block a zone label sits on in the Network Map (blocks are stacked, so labels go to the side) */
 const SIDE: Record<string, "e" | "w"> = { Z2: "w", Z5: "w" };
 /** Home uses the colours of the reference map: blue is good, yellow is moderate, pink is bad */
@@ -73,7 +73,7 @@ export default function GeoNetwork(props: Props) {
     const lp = m.createPane("labels"); lp.style.zIndex = "430"; lp.style.pointerEvents = "none";
     // Home starts a little wider than the zones so the country around them shows, as in the reference
     const home = P.current.mode === "home", bounds = L.latLngBounds(ALL_LL);
-    const fit = () => { m.fitBounds(bounds, home ? { padding: [44, 44], animate: false } : { paddingTopLeft: [40, 40], paddingBottomRight: [200, 40], animate: false }); if (home) m.setZoom(m.getZoom() - 0.5, { animate: false }); };
+    const fit = () => { m.fitBounds(bounds, home ? { padding: [44, 44], animate: false } : { paddingTopLeft: [170, 30], paddingBottomRight: [170, 30], animate: false }); if (home) m.setZoom(m.getZoom() - 0.5, { animate: false }); };
     fit();
 
     const homeBtn = new L.Control({ position: "topleft" });
@@ -83,7 +83,7 @@ export default function GeoNetwork(props: Props) {
       a.href = "#"; a.title = "Show the whole network"; a.setAttribute("role", "button"); a.setAttribute("aria-label", "Show the whole network");
       a.innerHTML = HOME_SVG;
       L.DomEvent.disableClickPropagation(d);
-      L.DomEvent.on(a, "click", (e) => { L.DomEvent.preventDefault(e); m.flyToBounds(L.latLngBounds(ALL_LL), home ? { padding: [44, 44], duration: 0.6 } : { paddingTopLeft: [40, 40], paddingBottomRight: [200, 40], duration: 0.6 }); if (home) m.once("moveend", () => m.setZoom(m.getZoom() - 0.5)); });
+      L.DomEvent.on(a, "click", (e) => { L.DomEvent.preventDefault(e); m.flyToBounds(L.latLngBounds(ALL_LL), home ? { padding: [44, 44], duration: 0.6 } : { paddingTopLeft: [170, 30], paddingBottomRight: [170, 30], duration: 0.6 }); if (home) m.once("moveend", () => m.setZoom(m.getZoom() - 0.5)); });
       return d;
     };
     homeBtn.addTo(m);
@@ -259,10 +259,10 @@ export default function GeoNetwork(props: Props) {
       const ln = k.line.get(p.id)!, st = s.pipes[p.id], d = dim(p.zone), tie = p.kind === "tie";
       const inner = p.zone !== "trunk" && !tie && nodeZone(p.from) === p.zone && nodeZone(p.to) === p.zone;
       const open = !net || deep || zone === p.zone;
-      const faint = net && inner && !open; // street pipe, seen from far away
+      const faint = net && inner && !open; // street pipe: hidden until you open the zone or zoom in
       const hidden = net && tie && !deep;
-      const w = faint ? 1.6 : dnW(p, mode);
-      ln.base.setStyle({ color: net ? pipeColor(metric, s, p) : "#9db4d6", weight: tie ? 1.5 : w, opacity: hidden ? 0 : d ? 0.2 : faint ? 0.4 : tie ? 0.8 : net ? 0.95 : 0.9, dashArray: tie ? "5 6" : undefined });
+      const w = dnW(p, mode);
+      ln.base.setStyle({ color: net ? pipeColor(metric, s, p) : "#9db4d6", weight: tie ? 1.5 : w, opacity: hidden || faint ? 0 : d ? 0.2 : tie ? 0.8 : net ? 0.95 : 0.9, dashArray: tie ? "5 6" : undefined });
       if (ln.flow) {
         const moving = !st.closed && st.flow > 0.5 && !faint;
         ln.flow.setStyle({ weight: Math.max(1.6, w * 0.34), opacity: moving && !d ? 0.9 : 0 });
@@ -280,7 +280,7 @@ export default function GeoNetwork(props: Props) {
       const v = n.kind === "tank" ? `${s.tank.toFixed(0)}% full` : n.kind === "plant" || n.id === "ps1" ? (flow ? `${flow.toLocaleString("en-US")} m³/h` : `${s.plant.toFixed(0)} L/s`) : "Booster +14 m";
       const nm = n.id === "ps1" ? "PS-1 pumps" : n.id === "ps2" ? "PS-2 booster" : n.kind === "plant" ? "Treatment plant" : "Reservoir";
       const svg = n.kind === "plant" ? SVG_PLANT : n.kind === "tank" ? svgTank(s.tank) : SVG_PUMP;
-      setHtml(`a${n.id}`, mk, `<div class="geo-as ${n.kind}${n.id === "ps1" ? " up" : ""}"><span class="gi">${svg}</span><b>${nm}</b><i>${v}</i></div>`, [112, 70], [56, n.id === "ps1" ? 50 : 20]);
+      setHtml(`a${n.id}`, mk, `<div class="geo-as ${n.kind}"><span class="gi">${svg}</span><b>${nm}</b><i>${v}</i></div>`, [112, 70], [56, 20]);
     }
 
     // instruments
@@ -311,7 +311,7 @@ export default function GeoNetwork(props: Props) {
   useEffect(() => {
     const k = kit.current; if (!k || mode !== "network") return;
     if (zone) k.m.flyToBounds(L.latLngBounds(ZONE_AREA[zone].rings.flat()), { padding: [50, 50], duration: 0.6, maxZoom: 16 });
-    else if (ready) k.m.flyToBounds(L.latLngBounds(ALL_LL), { paddingTopLeft: [40, 40], paddingBottomRight: [200, 40], duration: 0.6 });
+    else if (ready) k.m.flyToBounds(L.latLngBounds(ALL_LL), { paddingTopLeft: [170, 30], paddingBottomRight: [170, 30], duration: 0.6 });
   }, [zone]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div ref={box} className={`geo geo-${mode}`} role="application" aria-label={props.label ?? "Interactive map of the water network over New Cairo. Drag to move, scroll or use the plus and minus to zoom."} />;

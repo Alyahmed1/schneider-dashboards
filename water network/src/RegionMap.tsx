@@ -17,7 +17,6 @@ type Level = keyof typeof REGION_COLOUR;
 interface Region { name: string; label: [number, number]; quality: number; consumption: number; loss: number }
 const REGIONS: Region[] = [
   { name: "Cairo", label: [30.02, 31.58], quality: 99.4, consumption: 285, loss: 16.1 },
-  { name: "Giza", label: [29.45, 30.9], quality: 98.1, consumption: 245, loss: 24 },
   { name: "Sharqia", label: [30.7, 31.95], quality: 99.2, consumption: 205, loss: 19 },
   { name: "Ismailia", label: [30.62, 32.4], quality: 97.9, consumption: 188, loss: 13 },
   { name: "Suez", label: [29.7, 32.3], quality: 96.2, consumption: 176, loss: 18 },
@@ -47,7 +46,7 @@ export default function RegionMap({ metric, onOpen }: { metric: RegionMetric; on
     m.attributionControl.setPrefix(false);
     const t = tileSpec("Streets", "dark");
     darkStreetLayer(t.url, t.attr, t.native, "quiet").addTo(m);
-    const bounds = L.latLngBounds([[28.95, 30.45], [31.25, 33.0]]);
+    const bounds = L.latLngBounds([[28.95, 31.0], [31.1, 32.9]]);
     const fit = () => m.fitBounds(bounds, { padding: [14, 14], animate: false });
     fit();
 

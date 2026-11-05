@@ -43,9 +43,13 @@ export default function Pumps({ go }: { go: Go }) {
 
   const trend = useMemo(() => {
     const r = rng(pump.seed);
+    // predicted: the smooth daily load shape the model expects; actual sits clearly apart from it (below when the pump is struggling)
     return Array.from({ length: 18 }, (_, i) => {
-      const on = running ? 0.72 + r() * 0.3 : 0.04 + r() * 0.03;
-      return { t: `${i}h`, active: Math.round(pump.kw * on), expected: Math.round(pump.kw * 0.8), loss: Math.round(pump.kw * (pump.hot ? 0.18 : 0.04) * (0.6 + r())) };
+      const base = running ? 0.8 + 0.07 * Math.sin((i / 17) * Math.PI * 2 - 0.8) : 0.05;
+      const gap = running ? (pump.hot ? -0.2 : 0.1) : 0.025;
+      const predicted = pump.kw * base;
+      const actual = pump.kw * (base + gap + (r() - 0.5) * (running ? 0.05 : 0.01));
+      return { t: `${i}h`, actual: Math.round(actual), predicted: Math.round(predicted) };
     });
   }, [pump, running]);
   const health = useMemo(() => {
@@ -96,11 +100,10 @@ export default function Pumps({ go }: { go: Go }) {
         ))}
       </section>
 
-      <Panel title="Power trends (kW)" className="a-trend" i={2}>
+      <Panel title="Power trends (kW)" className="a-trend" i={2} right={<span className="kp-leg"><i /> Actual <i className="pred" style={{ marginLeft: 6 }} /> Predicted</span>}>
         <Trend data={trend} unit=" kW" lines={[
-          { key: "active", name: "Active power", color: "var(--teal)" },
-          { key: "expected", name: "Expected", color: "var(--blue)", dash: "4 3" },
-          { key: "loss", name: "Shortfall", color: "var(--warn)" },
+          { key: "actual", name: "Actual power", color: "var(--teal)" },
+          { key: "predicted", name: "Predicted power", color: "var(--warn)", dash: "5 4" },
         ]} />
       </Panel>
       <Panel title="Predictive health score" className="a-health" i={3}>

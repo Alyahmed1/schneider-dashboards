@@ -34,17 +34,17 @@ export default function EnergyBoard() {
     return [
       { title: "Aeration", rows: [
         row(A("Actual electrical", mwh(1480)), T("Target electrical", mwh(1400))),
-        row(A("Actual process air", mwh(980)), T("Target process air", undefined, "empty")),
-        row(A("Actual heat recovery", undefined, "live"), T("Target heat recovery", undefined, "empty")),
+        row(A("Actual process air", mwh(980)), T("Target process air", mwh(940))),
+        row(A("Actual heat recovery", mwh(260)), T("Target heat recovery", mwh(300))),
       ]},
       { title: "Pumping", rows: [
-        row(A("Actual electrical", undefined, "live"), T("Target electrical", undefined, "live")),
-        row(A("Actual power", mwh(540)), T("Target power", undefined, "empty")),
+        row(A("Actual electrical", mwh(610)), T("Target electrical", mwh(580))),
+        row(A("Actual power", mwh(540)), T("Target power", mwh(520))),
       ]},
       { title: "Other equipment", rows: [
         row(A("Actual electrical", mwh(710)), T("Target electrical", mwh(520))),
-        row(A("Actual sludge line", mwh(290)), T("Target sludge line", undefined, "empty")),
-        row(A("Actual buildings", undefined, "live"), T("Target buildings", 0)),
+        row(A("Actual sludge line", mwh(290)), T("Target sludge line", mwh(310))),
+        row(A("Actual buildings", mwh(175)), T("Target buildings", mwh(160))),
       ]},
     ];
   }, [h]);

@@ -6,7 +6,7 @@ import { useTick, wobble } from "./live";
 import { CountUp } from "./ui";
 import { Bars, Panel } from "./charts";
 import { Gauge, KpDefs, Ring } from "./kpiui";
-import { PlantArt, PumpArt } from "./PlantArt";
+import { PumpArt } from "./PlantArt";
 import "./kpi.css";
 
 const UNITS = [
@@ -56,9 +56,6 @@ export default function PlantBoard() {
   const sDay = wobble(62, 16, t, 0.01);
   const sMonth = wobble(60, 19, t, 0.008);
   const sAll = wobble(61, 20, t, 0.006);
-  const inflow = wobble(6209, 21, t, 0.01);
-  const o2 = wobble(2.1, 22, t, 0.02);
-  const gasD = wobble(12500, 23, t, 0.008);
   const stages = [["Screens", wobble(18, 24, t, 0.02)], ["Primaries", wobble(62, 25, t, 0.01)], ["Secondaries", wobble(28, 26, t, 0.02)]] as const;
 
   return (
@@ -104,7 +101,8 @@ export default function PlantBoard() {
       </Panel>
 
       <section className="hm-p a-iso pl2-iso" style={{ ["--i" as string]: 8 }} aria-label="Plant">
-        <PlantArt inflow={`${Math.round(inflow).toLocaleString("en-US")} m³/h`} o2={`${o2.toFixed(1)} mg/L`} gas={`${Math.round(gasD).toLocaleString("en-US")} m³/d`} />
+        <img className="pl2-photo bg" src="/plant-night.jpg" alt="" aria-hidden />
+        <img className="pl2-photo" src="/plant-night.jpg" alt="Treatment plant at night: influent 6,350 m³/h, aeration O₂ 2.2 mg/L, biogas 12,592 m³/d" />
       </section>
 
       <Panel title="Pump units" className="a-pump" i={9}>

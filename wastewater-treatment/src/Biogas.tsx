@@ -14,45 +14,64 @@ type Phase = (typeof PHASES)[number];
 const SLUDGE_D = 190 * 24;
 const GAS_H = 520;
 
+/* Material-flow symbols: one 120x72 canvas each, same shading classes as the rest of the tab */
+const SPARK = (x: number, y: number, d: number) => <circle cx={x} cy={y} r="1.6" className="rise" style={{ ["--d" as string]: `${d}s` }} />;
 function Daf() {
   return (
-    <svg viewBox="0 0 92 58" aria-hidden>
-      <ellipse cx="28" cy="40" rx="20" ry="7" className="eq" />
-      <path d="M8 40 V26 a20 7 0 0 1 40 0 V40" className="eq" />
-      <ellipse cx="28" cy="26" rx="20" ry="7" className="eq-top" />
-      <circle cx="22" cy="24" r="1.4" className="hm-bub" style={{ ["--d" as string]: "0s" }} />
-      <circle cx="32" cy="22" r="1.1" className="hm-bub" style={{ ["--d" as string]: ".6s" }} />
-      <ellipse cx="68" cy="42" rx="16" ry="6" className="eq" />
-      <path d="M52 42 V30 a16 6 0 0 1 32 0 V42" className="eq" />
-      <ellipse cx="68" cy="30" rx="16" ry="6" className="eq-top" />
+    <svg viewBox="0 0 120 72" aria-hidden>
+      {/* flotation tank with skimmer and air bubbles */}
+      <ellipse cx="32" cy="58" rx="26" ry="8" className="eq" />
+      <path d="M6 58 V28 a26 8 0 0 1 52 0 V58" className="eq" />
+      <path d="M6 42 a26 8 0 0 0 52 0 V58 a26 8 0 0 1 -52 0Z" className="eq-liq" />
+      <ellipse cx="32" cy="28" rx="26" ry="8" className="eq-top" />
+      <path d="M14 27 H50" className="eq-line" />
+      <g className="bd-spin slow"><path d="M32 22 V34" className="eq-line" /></g>
+      {SPARK(22, 54, 0)}{SPARK(32, 56, 0.7)}{SPARK(43, 53, 1.4)}{SPARK(27, 50, 0.4)}
+      <path d="M12 34 Q15 26 19 24" className="spec" />
+      {/* thickener with rake */}
+      <ellipse cx="94" cy="58" rx="22" ry="7" className="eq" />
+      <path d="M72 58 V38 a22 7 0 0 1 44 0 V58" className="eq" />
+      <ellipse cx="94" cy="38" rx="22" ry="7" className="eq-top" />
+      <path d="M94 24 V38" className="eq-line" /><circle cx="94" cy="23" r="3" className="eq-dome" />
+      <g className="bd-spin slow"><path d="M76 38 H112" className="eq-line" /></g>
+      <path d="M75 46 Q77 40 80 38" className="spec" />
+      {/* link pipe */}
+      <path d="M58 46 H72" className="pipe" /><path d="M58 46 H72" className="pipe-flow" />
     </svg>
   );
 }
 function Mix() {
   return (
-    <svg viewBox="0 0 72 58" aria-hidden>
-      <ellipse cx="36" cy="44" rx="22" ry="7" className="eq" />
-      <path d="M14 44 V24 a22 8 0 0 1 44 0 V44" className="eq" />
-      <ellipse cx="36" cy="24" rx="22" ry="8" className="eq-top" />
-      <path d="M18 28 V42" className="spec" />
-      <g className="bd-spin slow">
-        <path d="M36 14 V34 M28 28 H44" className="eq-line" />
-      </g>
+    <svg viewBox="0 0 120 72" aria-hidden>
+      <ellipse cx="60" cy="60" rx="30" ry="8" className="eq" />
+      <path d="M30 60 V26 a30 9 0 0 1 60 0 V60" className="eq" />
+      <path d="M30 42 a30 9 0 0 0 60 0 V60 a30 9 0 0 1 -60 0Z" className="eq-liq" />
+      <ellipse cx="60" cy="26" rx="30" ry="9" className="eq-top" />
+      {/* motor, shaft, impeller */}
+      <rect x="51" y="4" width="18" height="12" rx="3" className="eq-dome" />
+      <path d="M60 16 V50" className="eq-line" strokeWidth="2.4" />
+      <g className="bd-spin slow"><path d="M44 50 H76" className="eq-line" strokeWidth="3" /><path d="M48 46 H72" className="eq-line" /></g>
+      <path d="M34 34 V56" className="spec" />
+      {SPARK(46, 54, 0)}{SPARK(74, 52, 0.9)}{SPARK(60, 56, 1.7)}
+      <path d="M90 32 H104" className="pipe" /><path d="M16 44 H30" className="pipe" />
     </svg>
   );
 }
 function Domes() {
   return (
-    <svg viewBox="0 0 92 58" aria-hidden>
-      {[16, 46, 76].map((x, i) => (
+    <svg viewBox="0 0 120 72" aria-hidden>
+      <path d="M22 10 H98" className="pipe" />
+      {[22, 60, 98].map((x, i) => (
         <g key={x}>
-          <ellipse cx={x} cy="44" rx="14" ry="6" className="eq" />
-          <path d={`M${x - 14} 44 V34 a14 10 0 0 1 28 0 V44`} className="eq" />
-          <path d={`M${x - 14} 34 Q${x} 14 ${x + 14} 34`} className="eq-dome" />
-          <circle cx={x - 2} cy="30" r="1.2" className="hm-bub" style={{ ["--d" as string]: `${i * 0.4}s` }} />
-          <circle cx={x + 3} cy="40" r="1.7" className="rise" style={{ ["--d" as string]: `${i * 0.5}s` }} />
-          <circle cx={x - 5} cy="42" r="1.3" className="rise" style={{ ["--d" as string]: `${i * 0.5 + 0.9}s` }} />
-          <path d={`M${x - 9} 33 Q${x - 6} 21 ${x - 1} 18`} className="spec" />
+          <path d={`M${x} 10 V22`} className="pipe" />
+          <ellipse cx={x} cy="62" rx="17" ry="7" className="eq" />
+          <path d={`M${x - 17} 62 V40 a17 8 0 0 1 34 0 V62`} className="eq" />
+          <path d={`M${x - 17} 40 Q${x} 14 ${x + 17} 40`} className="eq-dome" />
+          <path d={`M${x - 11} 38 Q${x - 7} 24 ${x - 1} 20`} className="spec" />
+          <path d={`M${x - 17} 54 H${x + 17}`} className="eq-line" />
+          <circle cx={x - 5} cy="48" r="1.7" className="rise" style={{ ["--d" as string]: `${i * 0.5}s` }} />
+          <circle cx={x + 5} cy="56" r="1.5" className="rise" style={{ ["--d" as string]: `${i * 0.5 + 0.9}s` }} />
+          <circle cx={x} cy="34" r="1.6" className="hm-bub" style={{ ["--d" as string]: `${i * 0.4}s` }} />
         </g>
       ))}
     </svg>
@@ -60,23 +79,36 @@ function Domes() {
 }
 function Store() {
   return (
-    <svg viewBox="0 0 64 58" aria-hidden>
-      <ellipse cx="32" cy="46" rx="20" ry="6" className="eq" />
-      <path d="M12 46 V18 a20 8 0 0 1 40 0 V46" className="eq" />
-      <ellipse cx="32" cy="18" rx="20" ry="8" className="eq-dome" />
-      <path d="M14 36 H50" className="eq-line" />
-      <path d="M17 22 V43" className="spec" />
+    <svg viewBox="0 0 120 72" aria-hidden>
+      <ellipse cx="60" cy="62" rx="28" ry="8" className="eq" />
+      <path d="M32 62 V20 a28 9 0 0 1 56 0 V62" className="eq" />
+      <path d="M32 40 a28 9 0 0 0 56 0 V62 a28 9 0 0 1 -56 0Z" className="eq-liq" />
+      <ellipse cx="60" cy="20" rx="28" ry="9" className="eq-dome" />
+      <rect x="55" y="8" width="10" height="7" rx="2" className="eq-top" />
+      {/* level window and ladder */}
+      <rect x="66" y="26" width="8" height="30" rx="4" className="eq-top" />
+      <path d="M78 24 V58 M84 26 V58 M78 32 H84 M78 40 H84 M78 48 H84 M78 56 H84" className="eq-line" strokeWidth="1.2" />
+      <path d="M37 22 V58" className="spec" />
     </svg>
   );
 }
 function Press() {
   return (
-    <svg viewBox="0 0 80 58" aria-hidden>
-      <rect x="8" y="28" width="64" height="16" rx="2" className="eq" />
-      <circle cx="22" cy="36" r="7" className="eq-top" />
-      <circle cx="40" cy="36" r="7" className="eq-top" />
-      <circle cx="58" cy="36" r="7" className="eq-top" />
-      <g className="bd-spin slow"><circle cx="40" cy="36" r="2" className="eq-dome" /></g>
+    <svg viewBox="0 0 120 72" aria-hidden>
+      <rect x="10" y="22" width="92" height="30" rx="15" className="eq" />
+      <rect x="14" y="26" width="84" height="22" rx="11" className="eq-line-fill" />
+      {[26, 44, 62, 80].map((x, i) => (
+        <g key={x}>
+          <circle cx={x} cy="37" r="7" className="eq-top" />
+          <g className="bd-spin slow" style={{ animationDelay: `${-i * 0.3}s` }}><circle cx={x} cy="37" r="2.4" className="eq-dome" /></g>
+        </g>
+      ))}
+      <path d="M14 22 H98" className="eq-line" />
+      {/* sludge in, cake pile out */}
+      <path d="M12 8 V20" className="pipe" />
+      <path d="M96 66 L108 46 L120 66Z" className="eq-dome" />
+      {SPARK(32, 56, 0)}{SPARK(58, 58, 0.8)}
+      <circle cx="40" cy="58" r="1.6" className="rise" style={{ ["--d" as string]: "0.4s" }} />
     </svg>
   );
 }
@@ -147,7 +179,7 @@ function Boiler() {
 const ICONS = [Daf, Mix, Domes, Store, Press];
 const NAMES = ["DAF + thickening", "Mixing tank", "Digesters", "Storage tank", "Belt presses"];
 
-/** Biogas operations: the sludge line, eight digester feeds, CHP and digester heat. Same motion as the rest of the plant. */
+/** Biogas operations: the sludge line, three digester feeds, CHP and digester heat. Same motion as the rest of the plant. */
 export default function Biogas() {
   const t = useTick();
   const grow = useGrow();
@@ -160,8 +192,8 @@ export default function Biogas() {
   const mix = daf + thk;
   const feed = wobble(mix * 2100 / 2170, 5, t, 0.006);
   const balance = mix - feed;
-  const shares = [0.98, 1.02, 1, 0.99, 1.01, 1, 0.97, 1.03];
-  const feeds = shares.map((s, i) => wobble((feed / 8) * s, 10 + i, t, 0.01));
+  const shares = [0.99, 1.02, 0.99];
+  const feeds = shares.map((s, i) => wobble((feed / 3) * s, 10 + i, t, 0.01));
   const gas = wobble(GAS_H * 24 * k, 21, t, 0.008);
   const holder = wobble(phase === "Phase 2" ? 72 : 61, 22, t, 0.006);
   const store = wobble(phase === "Phase 2" ? 72 : 64, 23, t, 0.006);
@@ -214,7 +246,7 @@ export default function Biogas() {
             <div className="mcard bd-pop" style={{ ["--n" as string]: 2 }}><span>Total to mixing tank</span><b><CountUp value={mix} /> <small>m³</small></b><em>Concentration 45%</em></div>
           </div>
           <div className="bg-col">
-            <div className="mcard bd-pop" style={{ ["--n" as string]: 3 }}><span>Total feed to tanks</span><b><CountUp value={feed} /> <small>m³</small></b><em>8 tanks</em></div>
+            <div className="mcard bd-pop" style={{ ["--n" as string]: 3 }}><span>Total feed to tanks</span><b><CountUp value={feed} /> <small>m³</small></b><em>3 tanks</em></div>
           </div>
           <div className="bg-col">
             <div className="mcard bd-pop" style={{ ["--n" as string]: 4 }}><span>Storage tank level</span><b className="xl"><CountUp value={store} decimals={0} />%</b><div className="bd-lvl"><i style={{ width: `${grow ? store : 0}%` }} /></div></div>
@@ -242,7 +274,7 @@ export default function Biogas() {
             {feeds.map((v, i) => (
               <button key={i} className={tank === i ? "on" : ""} style={{ ["--n" as string]: i }} onClick={() => setTank(tank === i ? null : i)} aria-pressed={tank === i}>
                 <MiniDome />
-                <b>T{i + 1}</b>
+                <b>Tank {i + 1}</b>
                 <span><CountUp value={v} decimals={0} /> m³</span>
               </button>
             ))}

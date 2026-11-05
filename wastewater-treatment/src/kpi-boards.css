@@ -120,6 +120,8 @@
 .pu2-kpis .chip.bad b { color: #ff8a98; }
 .pu2-img { padding: 0 !important; position: relative; display: block !important; }
 .ph-art { width: 100%; height: 100%; display: block; }
+.pu2-img { background: #000917 !important; overflow: hidden; }
+.pu2-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transform: scale(.86); -webkit-mask-image: linear-gradient(#0000, #000 9%, #000 91%, #0000), linear-gradient(90deg, #0000, #000 6%, #000 94%, #0000); -webkit-mask-composite: source-in; mask-image: linear-gradient(#0000, #000 9%, #000 91%, #0000), linear-gradient(90deg, #0000, #000 6%, #000 94%, #0000); mask-composite: intersect; }
 .ph-t { font-size: 9px; letter-spacing: .14em; fill: var(--muted); }
 .ph-bear { fill: #5f7f95; }
 .ph-bear.hot { fill: #ff5468; filter: drop-shadow(0 0 6px #ff5468); animation: alarmblink 1.1s ease-in-out infinite; }

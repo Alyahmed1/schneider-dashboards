@@ -8,7 +8,7 @@ import { CountUp, Replay, Tip } from "./ui";
 import { Panel } from "./charts";
 import { Trend } from "./boardui";
 import { KpDefs } from "./kpiui";
-import { PumpArt, PumpHero } from "./PlantArt";
+import { PumpArt } from "./PlantArt";
 import type { Go } from "./App";
 import "./kpi.css";
 import "./kpi-boards.css";
@@ -110,7 +110,7 @@ export default function Pumps({ go }: { go: Go }) {
       </Panel>
 
       <section className="hm-p a-img pu2-img" style={{ ["--i" as string]: 4 }} aria-label={pump.name}>
-        <PumpHero running={running} hot={pump.hot} />
+        <img className="pu2-photo" src="/pump-cutaway.jpg" alt={`${pump.name} cutaway`} />
         <button className="pu2-alerts" onClick={() => go("alarms")}><AlertTriangle size={14} /> View alerts</button>
       </section>
 

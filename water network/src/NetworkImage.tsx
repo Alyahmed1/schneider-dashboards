@@ -80,7 +80,8 @@ const HIDE_DOTS: { x: number; y: number; bg: string }[] = [
 const HIDE_PILLS: { id: string; r: Rect; from: P }[] = [
   { id: "g1", r: { x: 271, y: 124, w: 90, h: 27 }, from: [-60, 250] },
   { id: "g2", r: { x: 468, y: 129, w: 86, h: 26 }, from: [420, 120] },
-  { id: "g3", r: { x: 726, y: 317, w: 94, h: 28 }, from: [120, 60] },
+  { id: "g3", r: { x: 726, y: 317, w: 94, h: 28 }, from: [0, 42] },
+  { id: "g4", r: { x: 704, y: 331, w: 30, h: 28 }, from: [0, 42] }, /* the printed pipe's end dot and stub beside Lotus */
 ];
 /** the plant, the pumps and the reservoir printed on the picture, and the meters that belong to each */
 const FACS: { id: string; name: string; x: number; y: number; r: number; meters: string[] }[] = [

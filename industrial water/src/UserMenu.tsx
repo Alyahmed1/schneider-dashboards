@@ -1,0 +1,64 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Bell, Hammer, Home, Moon, Sun } from "lucide-react";
+import { PLANT } from "./data";
+import { CountUp } from "./ui";
+import { useStore } from "./store";
+import type { Go, Theme } from "./App";
+
+/** the "A" account: who is signed in, what is on their plate, and a few quick actions */
+export default function UserMenu({ go, theme, setTheme, onStart, onWork }: { go: Go; theme: Theme; setTheme: (t: Theme) => void; onStart: () => void; onWork: () => void }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const { alarms, done, openWorkOrders } = useStore();
+  const mine = done.filter((a) => a.by === "A").length;
+  const signedIn = useMemo(() => new Date(new Date().setHours(7, 42, 0, 0)).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const down = (e: MouseEvent) => { if (box.current && !box.current.contains(e.target as Node)) setOpen(false); };
+    const key = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", down);
+    document.addEventListener("keydown", key);
+    return () => { document.removeEventListener("mousedown", down); document.removeEventListener("keydown", key); };
+  }, [open]);
+
+  const jump = (fn: () => void) => { setOpen(false); fn(); };
+
+  return (
+    <div className="user-wrap" ref={box}>
+      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label="Account: A, network manager">
+        <span>A</span>
+        <div><b>A</b><em>Network manager</em></div>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div className="me-panel" role="dialog" aria-label="Account" initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.18 }}>
+            <div className="me-top">
+              <div className="me-av" aria-hidden>A</div>
+              <div><b>A</b><span>Network manager</span></div>
+              <i className="me-online">Online</i>
+            </div>
+            <div className="me-info">
+              <div><span>Network</span><b>{PLANT.name}</b></div>
+              <div><span>Shift</span><b>Day · 07:00 to 15:00</b></div>
+              <div><span>Signed in</span><b>Today, {signedIn}</b></div>
+              <div><span>Access</span><b>Operate and approve</b></div>
+            </div>
+            <div className="me-stats">
+              <button onClick={() => jump(() => go("alarms"))}><b><CountUp value={alarms.length} /></b><span>Active alarms</span></button>
+              <button onClick={() => jump(() => go("alarms"))}><b><CountUp value={mine} /></b><span>Done by you</span></button>
+              <button onClick={() => jump(onWork)}><b><CountUp value={openWorkOrders.length} /></b><span>Open work orders</span></button>
+            </div>
+            <div className="me-actions">
+              <button onClick={() => jump(() => go("alarms"))}><Bell size={16} /> My alarms</button>
+              <button onClick={() => jump(onWork)}><Hammer size={16} /> Work orders</button>
+              <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />} {theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}</button>
+              <button onClick={() => jump(onStart)}><Home size={16} /> Back to the start screen</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

@@ -1,0 +1,47 @@
+/* ---------- the "Ask the assistant" button and its chat panel ---------- */
+.crumbs { align-items: center; }
+.crumb-ai { margin: auto 12px auto auto; flex: none; display: inline-flex; align-items: center; gap: 9px; height: 28px; padding: 0 16px; font-size: 13.5px; font-weight: 600; color: #06202a; background: #35b8d4; border-radius: 999px; box-shadow: 0 6px 18px -8px rgba(53, 184, 212, .9); transition: filter .15s, transform .15s; }
+.crumb-ai:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.crumb-ai.on { background: var(--ink); color: var(--bg); box-shadow: none; }
+.crumb-ai svg { flex: none; width: 16px; height: 16px; }
+@media (max-width: 720px) { .crumb-ai span { display: none; } .crumb-ai { padding: 0 9px; } }
+
+.as-panel { position: fixed; top: calc(var(--top-h) + var(--crumb-h)); right: 0; bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px)); z-index: 60; width: min(390px, 100vw); display: flex; flex-direction: column; background: var(--card); border-left: 1px solid var(--line); box-shadow: -18px 0 50px -22px rgba(0, 0, 0, .6); }
+.as-panel header { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); border-top: 2px solid var(--teal); color: var(--teal); }
+.as-panel header div { flex: 1; display: grid; line-height: 1.2; }
+.as-panel header b { color: var(--ink); font-size: 14px; }
+.as-panel header small { color: var(--muted); font-size: 11.5px; }
+.as-panel header button { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 3px; color: var(--muted); }
+.as-panel header button:hover { background: var(--surface-2); color: var(--ink); }
+.as-log { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; background: var(--surface-0, var(--bg)); }
+.as-msg { max-width: 94%; display: grid; gap: 8px; }
+.as-msg.me { align-self: flex-end; }
+.as-msg p { margin: 0; padding: 9px 12px; font-size: 13.5px; line-height: 1.45; border: 1px solid var(--line); border-radius: 4px; background: var(--card); color: var(--ink); white-space: pre-line; }
+.as-msg.me p { background: var(--teal); border-color: var(--teal); color: #fff; }
+html[data-theme="dark"] .as-msg.me p { color: #06141f; }
+.as-acts { display: flex; flex-wrap: wrap; gap: 6px; }
+.as-go { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; font-size: 12.5px; font-weight: 600; border: 1px solid var(--teal); border-radius: 3px; color: var(--teal-d); background: transparent; }
+.as-go:hover { background: var(--tint); }
+.as-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.as-chips button { padding: 6px 10px; font-size: 12.5px; border: 1px solid var(--line); background: var(--card); color: var(--text-2); border-radius: 999px; text-align: left; }
+.as-chips button:hover { border-color: var(--teal); color: var(--ink); }
+.as-dots { display: inline-flex; gap: 4px; }
+.as-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: asdot 1s ease-in-out infinite; }
+.as-dots i:nth-child(2) { animation-delay: .15s; } .as-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes asdot { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+.as-panel form { flex: none; display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); }
+.as-panel input { flex: 1; min-width: 0; padding: 9px 12px; font-size: 13.5px; border: 1px solid var(--line); border-radius: 3px; background: var(--surface-0, var(--bg)); color: var(--ink); }
+.as-panel input:focus { outline: none; border-color: var(--teal); }
+.as-panel form button { width: 38px; display: grid; place-items: center; border-radius: 3px; background: var(--teal); color: #fff; }
+html[data-theme="dark"] .as-panel form button { color: #06141f; }
+.as-panel form button:disabled { opacity: .45; }
+@media (prefers-reduced-motion: reduce) { .as-dots i { animation: none; } }
+/* small screens: the assistant opens as a sheet over the page */
+@media (max-width: 760px) { .as-panel { top: auto; width: 100%; height: 72dvh; border-left: 0; border-top: 1px solid var(--line); } }
+
+/* wide screens: the assistant docks as a column and the page makes room, so nothing is covered */
+@media (min-width: 1700px) {
+  .as-panel { top: 0; width: 390px; }
+  .app.as-open { padding-right: 390px; }
+  .app.as-open .dock { right: 390px; }
+}

@@ -126,6 +126,11 @@ interface Props {
   layers: GeoLayers;
   sel: string | null; onSel: (id: string) => void;
 }
+/** what the crew is doing about each known leak (work orders and advice come from the Maintenance data) */
+const LEAK_ACT: Record<string, { wo: string; crew: string; action: string }> = {
+  "LK-A": { wo: "WO-3121", crew: "Repair crew 1", action: "Repair in progress. Replace the failed joint and 12 m of pipe, then re-pressurise." },
+  "LK-C": { wo: "WO-3102", crew: "Network crew", action: "Replace 180 m of corroded cast iron with ductile iron within 2 weeks. Keep the logger on until then." },
+};
 type View = { z: number; cx: number; cy: number };
 type Tip = { x: number; y: number; title: string; rows: string[] } | null;
 
@@ -276,7 +281,7 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
               const p = pipeById(g.id), st = s.pipes[g.id], d = dimZ(p.zone === "trunk" ? null : p.zone), moving = !st.closed && st.flow > 0.5;
               const zn = p.zone === "trunk" ? "Trunk main" : ZONES.find((z) => z.id === p.zone)!.name;
               return (
-                <g key={i} className={d ? "dim" : ""} {...hover(`${p.id} · DN${p.dn} · ${zn}`, [`Flow ${st.flow.toFixed(0)} L/s · ${st.velocity.toFixed(2)} m/s`, `Pressure ${st.pressure.toFixed(1)} bar · ${p.length} m long`, ...(st.leak > 0 ? [`Leak ${st.leak} L/s`] : [])])}>
+                <g key={i} className={`${d ? "dim" : ""} ${st.leak > 0 && zone === p.zone ? "leaky" : ""}`} {...hover(`${p.id} · DN${p.dn} · ${zn}`, [`Flow ${st.flow.toFixed(0)} L/s · ${st.velocity.toFixed(2)} m/s`, `Pressure ${st.pressure.toFixed(1)} bar · ${p.length} m long`, ...(st.leak > 0 ? [`Leak ${st.leak} L/s`] : [])])}>
                   <path d={line(g.pts)} className="case" style={g.brown ? { stroke: "#8a5a32" } : undefined} />
                   <path d={line(g.pts)} className="pipe" style={{ stroke: g.brown ? "#8a5a32" : pipeColor(metric, s, p) }} filter="url(#ni-glow)" />
                   {moving && <path d={line(g.pts)} className={`flow ${st.reverse ? "rev" : ""}`} style={{ ["--dur" as string]: `${Math.max(0.35, Math.min(4, 13 / (Math.max(st.velocity, 0.05) * 14)))}s` }} />}
@@ -346,6 +351,7 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
           );
         })}
 
+
         {/* the reservoir level */}
         <div className="ni-res" style={{ left: RES_CARD.x, top: RES_CARD.y, width: RES_CARD.w, height: RES_CARD.h }}>
           <b>Reservoir</b>
@@ -353,6 +359,34 @@ export default function NetworkImage({ metric, hour, zone, onZone, layers, sel, 
           <i><u style={{ width: `${Math.max(0, Math.min(100, s.tank))}%`, background: s.tank < 25 ? BAD : s.tank < 35 ? MID : "#3ad7f0" }} /></i>
         </div>
       </div>
+
+    {/* the leak card: opens when a zone with a known leak is focused */}
+    {zone && (() => {
+      const zl = LEAKS.filter((l) => pipeById(l.pipe).zone === zone);
+      if (!zl.length) return null;
+      const zs = s.zones[zone], zn = ZONES.find((z) => z.id === zone)!.name;
+      return (
+        <aside className="ni-leak" aria-label={`Leaks in ${zn}`} onPointerDown={(e) => e.stopPropagation()} onWheel={(e) => e.stopPropagation()}>
+          <header><b>{zn}: {zl.length} known leak{zl.length > 1 ? "s" : ""}</b><button type="button" onClick={() => onZone(null)} aria-label="Close">×</button></header>
+          {zl.map((l) => {
+            const p = pipeById(l.pipe), a = LEAK_ACT[l.id], share = zs.loss > 0 ? Math.min(100, (l.rate / zs.loss) * 100) : 0;
+            return (
+              <div key={l.id} className="lk">
+                <div className="top"><span className="id">{l.id} · {p.id} · DN{p.dn} · {p.length} m</span><em className={l.status === "Suspected" ? "mid" : "bad"}>{l.status}</em></div>
+                <p className="nt">{l.note}</p>
+                <dl>
+                  <div><dt>Loss</dt><dd>{l.rate} L/s</dd></div>
+                  <div><dt>Per day</dt><dd>{(l.rate * 86.4).toFixed(0)} m³</dd></div>
+                  <div><dt>Of zone loss</dt><dd>{share.toFixed(0)}%</dd></div>
+                  <div><dt>Leaking for</dt><dd>{l.since}</dd></div>
+                </dl>
+                {a && <p className="do"><b>Recommended:</b> {a.action}<span>{a.wo} · {a.crew}</span></p>}
+              </div>
+            );
+          })}
+        </aside>
+      );
+    })()}
 
       <div className="ni-tools" role="group" aria-label="Zoom">
         <div className="pair">

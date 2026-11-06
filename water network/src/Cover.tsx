@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Droplets, Moon, Sun } from "lucide-react";
+import { ArrowRight, Moon, Sun } from "lucide-react";
 import type { Theme } from "./App";
 import { SITE } from "./site";
 import { NET, ZONES } from "./network";
@@ -35,7 +35,6 @@ export default function Cover({ onEnter, setTheme }: { onEnter: () => void; them
         onError={() => setVideo("failed")} onLoadedData={() => setVideo("ok")} />
       <div className="cover-shade" aria-hidden />
       <div className="cover-body">
-        <motion.span className="cover-tag" {...up(0)}><Droplets size={14} /> {SITE.tag}</motion.span>
         <motion.h1 {...up(1)}>{SITE.title}</motion.h1>
         <motion.p {...up(2)}>{SITE.blurb}.</motion.p>
         <motion.div className="cover-stats" {...up(3)}>

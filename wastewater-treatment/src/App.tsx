@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Activity, ArrowUpRight, Droplets, Factory, Fan, Flame, Hammer, Moon, Network, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
+import { Activity, ArrowUpRight, Droplets, Factory, Fan, Flame, Hammer, LayoutDashboard, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
 import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Home from "./Home";
@@ -38,7 +38,7 @@ const readTheme = (): Theme => {
 
 const ALL_TABS: { id: TabId; label: string; icon: LucideIcon; sub: string }[] = [
   { id: "home", label: "Home", icon: Gauge, sub: "The whole plant at a glance" },
-  { id: "network", label: "Network", icon: Network, sub: "Treatment, distribution and collection" },
+  { id: "network", label: "Dashboard", icon: LayoutDashboard, sub: "Treatment, distribution and collection" },
   { id: "plant", label: "Plant", icon: Factory, sub: "Capacity, solids and the pump yard" },
   { id: "energy", label: "Energy", icon: Activity, sub: "Power and heat against target" },
   { id: "pumps", label: "Pumps", icon: Fan, sub: "Pump health, power and predictive events" },

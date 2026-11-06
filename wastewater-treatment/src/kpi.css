@@ -198,3 +198,8 @@ body:has(.kp) .dock { background: rgba(4, 16, 24, .86); }
 .pl2-prod span:not(b span) { }
 .pl2-mini .kp-gw { width: 100%; }
 .pump-art { max-height: clamp(34px, 11vh, 88px); }
+
+/* Plant photo card hugs the photo's own shape (1673x940): whole image, no crop, no bars */
+.pl2 .a-iso.pl2-iso { align-self: center; width: 100%; height: auto; min-height: 0; aspect-ratio: 1673 / 940; }
+.pl2-photo.bg { display: none; }
+.pl2-photo { object-fit: fill; }

@@ -141,9 +141,9 @@ body:has(.kp) .dock { background: rgba(4, 16, 24, .86); }
 .pl2-stage span { color: var(--text-2); }
 .pl2-stage b { text-align: right; color: #fff; font-weight: 500; }
 
-.pl2-iso { padding: 0 !important; display: block !important; position: relative; background: linear-gradient(160deg, rgba(10, 40, 58, .35), rgba(4, 16, 26, .4)) !important; }
+.pl2-iso { padding: 0 !important; display: block !important; position: relative; overflow: hidden; background: linear-gradient(160deg, rgba(10, 40, 58, .35), rgba(4, 16, 26, .4)) !important; }
 .pl2-svg { width: 100%; height: 100%; display: block; }
-.pl2-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 50%; display: block; border-radius: inherit; transform: scale(1.1); }
+.pl2-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 50%; display: block; border-radius: inherit; }
 .pl2-photo.bg { object-fit: cover; filter: blur(18px) brightness(.55); transform: scale(1.1); }
 .pl2-svg text.l { font-size: 9px; fill: var(--muted); letter-spacing: .1em; }
 .pl2-svg text.v { font-size: 12.5px; fill: #fff; font-weight: 600; }

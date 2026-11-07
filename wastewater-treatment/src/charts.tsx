@@ -8,10 +8,11 @@ export const niceMax = (v: number) => {
 };
 export const tick = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)}k` : `${+v.toFixed(1)}`);
 
-export function Panel({ title, className = "", i = 0, right, children }: { title: string; className?: string; i?: number; right?: ReactNode; children: ReactNode }) {
+export function Panel({ title, className = "", i = 0, right, icon, children }: { title: string; className?: string; i?: number; right?: ReactNode; icon?: ReactNode; children: ReactNode }) {
+  const h = <h3>{icon && <span className="mx-hic" aria-hidden>{icon}</span>}{title}</h3>;
   return (
     <section className={`hm-p ${className}`} style={{ ["--i" as string]: i }}>
-      {right ? <div className="hm-ph"><h3>{title}</h3>{right}</div> : <h3>{title}</h3>}
+      {right ? <div className="hm-ph">{h}{right}</div> : h}
       {children}
     </section>
   );

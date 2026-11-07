@@ -124,3 +124,48 @@ button.mx-chip.big.dim { opacity: .72; }
 .mx-table.filtered tbody tr { height: 46px; }
 .mx-table td.title { text-align: left; white-space: normal; min-width: 170px; }
 .mx-table.filtered tbody tr { height: 42px; }
+
+/* ---- Maintenance: symbols ---- */
+.mx-hic { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; vertical-align: -5px; color: var(--teal); background: var(--tint); border: 1px solid var(--line); border-radius: 6px; }
+.mx-hic svg { width: 14px; height: 14px; }
+.mx-i { flex: none; vertical-align: -2px; margin-right: 5px; }
+.mx-i.dim { color: var(--muted); }
+.mx-i.lead { color: var(--teal); margin-right: 8px; vertical-align: -3px; }
+
+/* stat tiles: a round badge on the left, label and number on the right */
+.mx-stat { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 9px; align-items: center; }
+.mx-stat .mx-badge { grid-row: 1 / span 2; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--teal); background: var(--tint); border: 1px solid var(--teal); box-shadow: 0 0 12px -4px var(--teal); }
+.mx-stat .mx-badge .mx-i { margin: 0; vertical-align: 0; }
+.mx-stat .mx-lab { font-size: 12px; color: var(--text-2); line-height: 1.15; align-self: end; }
+.mx-stat b { align-self: start; }
+
+.mx-center small { display: inline-flex; align-items: center; }
+.mx-box > span, .mx-chip > span { display: flex; align-items: center; gap: 5px; }
+.mx-box > span svg { color: var(--teal); flex: none; }
+.mx-chip > span .mx-i { margin: 0; color: var(--teal); vertical-align: 0; }
+.mx-chip.big > span .mx-i { color: var(--pill-ink); }
+
+/* pills with their own symbol */
+.mx-pill { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.mx-pill .mx-i { margin: 0; vertical-align: 0; }
+.mx-pill.run::before { display: none; }
+.mx-pill.run .mx-i { animation: mxdot 2s ease-in-out infinite; animation-delay: calc(var(--n, 0) * -.3s); }
+.mx-pill.under .mx-i { animation: mxspin 3.2s linear infinite; }
+@keyframes mxspin { to { transform: rotate(360deg); } }
+
+.mx-name { display: inline-flex; align-items: center; }
+.mx-name .mx-i { margin-right: 8px; }
+.mx-table td > .mx-i.dim, .mx-table td.over > .mx-i { margin-right: 4px; }
+
+/* priority: a coloured flag dot */
+.mx-prio { display: inline-flex; align-items: center; gap: 6px; }
+.mx-prio i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.mx-prio.hi i { background: var(--bad); box-shadow: 0 0 8px var(--bad); }
+.mx-prio.md i { background: var(--warn); }
+.mx-prio.lo i { background: var(--teal); }
+.mx-prio.hi { color: var(--bad); font-weight: 600; }
+
+@media (max-height: 800px) {
+  .mx-stat .mx-badge { width: 28px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { .mx-pill.under .mx-i, .mx-pill.run .mx-i { animation: none; } }

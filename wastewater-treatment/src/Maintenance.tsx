@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, ArrowUp, Eye, FileText, X } from "lucide-react";
+import {
+  AlertTriangle, ArrowDown, ArrowUp, CalendarClock, CheckCircle2, CircleDollarSign, ClipboardCheck, ClipboardList, Clock, Cog, Droplets, Eye, Fan, FileText, Filter,
+  FlaskConical, Flame, Hourglass, Inbox, Layers, ListChecks, Package, PackageCheck, PauseCircle, PlayCircle, ShieldCheck, Timer, TrendingUp, Wrench, X, Zap,
+  type LucideIcon,
+} from "lucide-react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PLANT, rng, type Filters } from "./data";
 import { assetsIn, woInArea, type Asset, type WorkOrder } from "./cmms";
@@ -22,6 +26,29 @@ const woClass = (s: string) => (s === "Closed" ? "closed" : s === "Delayed" ? "l
 
 const STATUS_TONE: Record<string, "teal" | "ink" | "warn" | "bad" | "mute"> = { Running: "teal", Open: "teal", Idle: "ink", "In progress": "ink", "Under maintenance": "warn", Delayed: "bad", Closed: "mute" };
 
+/** a symbol for each kind of machine, picked from its name */
+function assetIcon(name: string): LucideIcon {
+  const n = name.toLowerCase();
+  if (n.includes("blower")) return Fan;
+  if (n.includes("diffuser")) return Layers;
+  if (n.includes("dosing")) return FlaskConical;
+  if (n.includes("pump")) return Droplets;
+  if (n.includes("grit")) return Filter;
+  if (n.includes("chp")) return Flame;
+  if (n.includes("transformer")) return Zap;
+  return Cog;
+}
+const STATUS_ICON: Record<AssetStatus, LucideIcon> = { Running: PlayCircle, Idle: PauseCircle, "Under maintenance": Wrench };
+const WO_ICON: Record<string, LucideIcon> = { Closed: CheckCircle2, Delayed: AlertTriangle, "In progress": Timer, Open: ClipboardList };
+const PRIO_CLASS = { High: "hi", Medium: "md", Low: "lo" } as const;
+
+/** a small round symbol in front of a text */
+function Ic({ i: I, size = 14, className = "" }: { i: LucideIcon; size?: number; className?: string }) {
+  return <I size={size} className={`mx-i ${className}`} aria-hidden />;
+}
+const Pill = ({ cls, icon, children }: { cls: string; icon: LucideIcon; children: string }) => <span className={`mx-pill ${cls}`}><Ic i={icon} size={12} />{children}</span>;
+const Prio = ({ p }: { p: "High" | "Medium" | "Low" }) => <span className={`mx-prio ${PRIO_CLASS[p]}`}><i />{p}</span>;
+
 interface Row { a: Asset; status: AssetStatus; wo?: WorkOrder }
 /** the work-order boxes filter the table too; then it lists work orders instead of assets, so the numbers match */
 type WoFilter = "All" | WorkOrder["status"];
@@ -42,10 +69,11 @@ function Ring({ frac, label, up, good = true, grow }: { frac: number; label: str
   );
 }
 
-function Stat({ label, value, i }: { label: string; value: number; i: number }) {
+function Stat({ label, value, i, icon }: { label: string; value: number; i: number; icon: LucideIcon }) {
   return (
     <section className="hm-p mx-stat" style={{ ["--i" as string]: i }}>
-      <span>{label}</span>
+      <span className="mx-badge" aria-hidden><Ic i={icon} size={17} /></span>
+      <span className="mx-lab">{label}</span>
       <b><CountUp value={value} decimals={0} /></b>
     </section>
   );
@@ -101,15 +129,15 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
   const stock = wobble(87.4, 93, t, 0.003);
   const used = wobble(41, 94, t, 0.006);
 
-  const chips: { label: string; value: number; big?: boolean; status?: AssetStatus; wo?: WoFilter; all?: boolean }[] = [
-    { label: "Total", value: rows.length, big: true, all: true },
-    { label: "Running", value: running, status: "Running" },
-    { label: "Idle", value: idle, status: "Idle" },
-    { label: "Under maintenance", value: under, status: "Under maintenance" },
-    { label: "Total work orders", value: list.length, wo: "All" },
-    { label: "Open", value: open, wo: "Open" },
-    { label: "In progress", value: prog, wo: "In progress" },
-    { label: "Closed", value: done, wo: "Done" },
+  const chips: { label: string; value: number; icon: LucideIcon; big?: boolean; status?: AssetStatus; wo?: WoFilter; all?: boolean }[] = [
+    { label: "Total", value: rows.length, icon: Cog, big: true, all: true },
+    { label: "Running", value: running, icon: PlayCircle, status: "Running" },
+    { label: "Idle", value: idle, icon: PauseCircle, status: "Idle" },
+    { label: "Under maintenance", value: under, icon: Wrench, status: "Under maintenance" },
+    { label: "Total work orders", value: list.length, icon: ListChecks, wo: "All" },
+    { label: "Open", value: open, icon: Inbox, wo: "Open" },
+    { label: "In progress", value: prog, icon: Clock, wo: "In progress" },
+    { label: "Closed", value: done, icon: CheckCircle2, wo: "Done" },
   ];
 
   /** what the table shows right now, as a report: the same filter, the same rows */
@@ -140,22 +168,22 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
     <div className="mx">
       <div className="mx-col">
         <div className="mx-stats">
-          <Stat label="Maintenance activity" value={list.length} i={0} />
-          <Stat label="Open work orders" value={open + prog} i={1} />
-          <Stat label="Pending requests" value={open} i={2} />
-          <Stat label="Completed tasks" value={done} i={3} />
+          <Stat label="Maintenance activity" value={list.length} i={0} icon={Wrench} />
+          <Stat label="Open work orders" value={open + prog} i={1} icon={ClipboardList} />
+          <Stat label="Pending requests" value={open} i={2} icon={Hourglass} />
+          <Stat label="Completed tasks" value={done} i={3} icon={ClipboardCheck} />
         </div>
-        <Panel title="Compliance with regulatory standards" className="mx-grow" i={4}>
+        <Panel title="Compliance with regulatory standards" className="mx-grow" i={4} icon={<ShieldCheck size={15} />}>
           <div className="mx-row">
             <Ring frac={compliance / 100} label={`${Math.round(compliance)}%`} up grow={grow} />
             <Bars labels={["6 am", "12 pm", "6 pm", "12 am"]} values={sample.comp} unit="%" max={100} grow={grow} />
           </div>
         </Panel>
         <div className="mx-pair">
-          <Panel title="MTTR" i={5}><div className="mx-center"><Ring frac={mttr / 6} label={`${mttr.toFixed(1)} h`} up={false} grow={grow} /></div></Panel>
-          <Panel title="MTBF" i={6}><div className="mx-center"><Ring frac={mtbf / 600} label={`${Math.round(mtbf)} h`} up grow={grow} /></div></Panel>
+          <Panel title="MTTR" i={5} icon={<Timer size={15} />}><div className="mx-center"><Ring frac={mttr / 6} label={`${mttr.toFixed(1)} h`} up={false} grow={grow} /><small>time to repair</small></div></Panel>
+          <Panel title="MTBF" i={6} icon={<CalendarClock size={15} />}><div className="mx-center"><Ring frac={mtbf / 600} label={`${Math.round(mtbf)} h`} up grow={grow} /><small>between failures</small></div></Panel>
         </div>
-        <Panel title="Downtime" className="mx-grow2" i={7}>
+        <Panel title="Downtime" className="mx-grow2" i={7} icon={<PauseCircle size={15} />}>
           <div className="mx-down">
             <div className="mx-center"><Ring frac={0.65} label="65%" up={false} good={false} grow={grow} /><small>planned share</small></div>
             <div><small>Top 5 by hours</small><Bars labels={["Blw", "Dos", "Dif", "Grt", "Inf"]} values={[14, 11, 9, 6, 4]} unit="h" compact grow={grow} /></div>
@@ -165,14 +193,14 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
       </div>
 
       <div className="mx-col">
-        <Panel title="Spare parts inventory" i={8}>
+        <Panel title="Spare parts inventory" i={8} icon={<Package size={15} />}>
           <div className="mx-two">
-            <div className="mx-box"><span>Stock availability</span><b><CountUp value={stock} decimals={0} /> %<ArrowUp size={14} className="up" /></b></div>
-            <div className="mx-box"><span>Consumed this month</span><b><CountUp value={used} decimals={0} /> %<ArrowDown size={14} className="up" /></b></div>
+            <div className="mx-box"><span><PackageCheck size={13} aria-hidden />Stock availability</span><b><CountUp value={stock} decimals={0} /> %<ArrowUp size={14} className="up" /></b></div>
+            <div className="mx-box"><span><Package size={13} aria-hidden />Consumed this month</span><b><CountUp value={used} decimals={0} /> %<ArrowDown size={14} className="up" /></b></div>
           </div>
         </Panel>
-        <Panel title="Operating cost of treatment" className="mx-grow" i={9}><Bars labels={["Q1", "Q2", "Q3", "Q4"]} values={sample.cost} unit="LE/m³" max={8} grow={grow} /></Panel>
-        <Panel title="Preventive maintenance done on time (%)" className="mx-grow" i={10}>
+        <Panel title="Operating cost of treatment" className="mx-grow" i={9} icon={<CircleDollarSign size={15} />}><Bars labels={["Q1", "Q2", "Q3", "Q4"]} values={sample.cost} unit="LE/m³" max={8} grow={grow} /></Panel>
+        <Panel title="Preventive maintenance done on time (%)" className="mx-grow" i={10} icon={<TrendingUp size={15} />}>
           <div className="mx-line">
             <ResponsiveContainer>
               <LineChart data={sample.pm} margin={{ left: -10, right: 10, top: 8, bottom: 0 }}>
@@ -187,10 +215,10 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
         </Panel>
       </div>
 
-      <Panel title="Equipment info" className="mx-eq" i={11} right={<ExportMenu onPdf={() => downloadPdf(buildReport())} onCsv={() => downloadCsv(buildReport())} />}>
+      <Panel title="Equipment info" className="mx-eq" i={11} icon={<Cog size={15} />} right={<ExportMenu onPdf={() => downloadPdf(buildReport())} onCsv={() => downloadCsv(buildReport())} />}>
         <div className="mx-chips">
           {chips.map((c, n) => {
-            const inner = <><span>{c.label}</span><b><CountUp value={c.value} decimals={0} /></b></>;
+            const inner = <><span><Ic i={c.icon} size={13} />{c.label}</span><b><CountUp value={c.value} decimals={0} /></b></>;
             const style = { ["--n" as string]: n };
             if (c.all) return <button key={c.label} className={`mx-chip big ${filter === null && woFilter === null ? "" : "dim"}`} style={style} onClick={clearAll} aria-label="Show all assets" title="Show all assets">{inner}</button>;
             if (c.status) {
@@ -222,12 +250,12 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
                   const wt = woText(w);
                   return (
                     <motion.tr key={w.id} style={{ ["--n" as string]: n }} {...rowMotion(n)}>
-                      <td className="id">{w.id}</td>
+                      <td className="id"><span className="mx-name"><Ic i={w.type === "Planned" ? CalendarClock : Wrench} size={15} className="lead" />{w.id}</span></td>
                       <td className="title">{w.title}</td>
                       <td>{w.asset}</td>
-                      <td><span className={`mx-pill ${woClass(wt)}`}>{wt}</span></td>
-                      <td className={w.late ? "over" : ""}>{w.due}</td>
-                      <td>{w.prio}</td>
+                      <td><Pill cls={woClass(wt)} icon={WO_ICON[wt] ?? ClipboardList}>{wt}</Pill></td>
+                      <td className={w.late ? "over" : ""}>{w.late && <Ic i={AlertTriangle} size={12} />}{w.due}</td>
+                      <td><Prio p={w.prio} /></td>
                       <td><span className="mx-act"><button onClick={() => setSelWo(w)} aria-label={`${w.id}: details`} title="Details"><Eye size={16} /></button></span></td>
                     </motion.tr>
                   );
@@ -235,12 +263,12 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
                   const wt = woText(r.wo);
                   return (
                     <motion.tr key={r.a.name} style={{ ["--n" as string]: n }} {...rowMotion(n)}>
-                      <td className="id">{r.a.name}</td>
-                      <td><span className={`mx-pill ${PILL[r.status]}`}>{r.status}</span></td>
-                      <td>{r.a.lastService}</td>
-                      <td className={r.a.nextPm === "Overdue" ? "over" : ""}>{r.a.nextPm}</td>
-                      <td>{wt ? <span className={`mx-pill ${woClass(wt)}`}>{wt}</span> : "—"}</td>
-                      <td>{r.wo && r.wo.status !== "Done" ? r.wo.prio : "—"}</td>
+                      <td className="id"><span className="mx-name"><Ic i={assetIcon(r.a.name)} size={16} className="lead" />{r.a.name}</span></td>
+                      <td><Pill cls={PILL[r.status]} icon={STATUS_ICON[r.status]}>{r.status}</Pill></td>
+                      <td><Ic i={ClipboardCheck} size={12} className="dim" />{r.a.lastService}</td>
+                      <td className={r.a.nextPm === "Overdue" ? "over" : ""}><Ic i={r.a.nextPm === "Overdue" ? AlertTriangle : CalendarClock} size={12} className={r.a.nextPm === "Overdue" ? "" : "dim"} />{r.a.nextPm}</td>
+                      <td>{wt ? <Pill cls={woClass(wt)} icon={WO_ICON[wt] ?? ClipboardList}>{wt}</Pill> : "—"}</td>
+                      <td>{r.wo && r.wo.status !== "Done" ? <Prio p={r.wo.prio} /> : "—"}</td>
                       <td>
                         <span className="mx-act">
                           <button onClick={() => setSel(r)} aria-label={`${r.a.name}: details`} title="Details"><Eye size={16} /></button>

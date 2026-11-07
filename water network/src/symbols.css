@@ -18,23 +18,19 @@
 .ov-hi, .ov-ri { flex: none; color: var(--teal); }
 .mx-chip > span svg { display: none; }
 
-/* narrow boxes: no label icon, and the value shrinks with the box so it never leaves it */
-.hm-feed .hm-box { container-type: inline-size; min-width: 0; overflow: hidden; }
-.hm-feed .hm-box > span svg { display: none; }
-.hm-p.hm-feed .hm-box b { font-size: clamp(11px, 15cqw, 18px); }
-.hm-tiles .hm-tile { container-type: inline-size; }
-@container (max-width: 175px) { .hm-tiles .hm-tile > span svg { display: none; } .hm-tiles .hm-tile > span { font-size: 11px; } }
-
-/* wide screens: give the Reservoir box a little more room so its numbers stay readable */
-@media (min-width: 1451px) { .hm > .hm-pair { grid-template-columns: .85fr 1.15fr; } }
-
-/* Power Monitoring: in a narrow panel the pie sits above the legend, so every name is shown in full */
-.hm-pair > .hm-p { container-type: inline-size; }
-@media (min-height: 800px) {
-@container (max-width: 280px) {
-  .hm-p .hm-pie { flex-direction: column; justify-content: center; gap: 10px; }
-  .hm-p .hm-pie svg { width: 96px; height: 96px; max-width: none; }
-  .hm-p .hm-pie ul { width: 100%; gap: 4px; font-size: 11.5px; }
-  .hm-p .hm-pie li span { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2; }
-}
+/* FULL SCREEN ONLY (wide AND tall: browser full screen, F11); a normal window is not changed.
+   Water Loss and Reservoir get the same width (room comes from the chart strip, the map and Summary keep their size),
+   and Power Monitoring shows its pie above the legend so every name is in full. Nothing else is touched. */
+@media (min-width: 1500px) and (min-height: 800px) {
+  div.hm { --eq: clamp(160px, 11vw, 205px); --sh: calc(var(--eq) - 80px); }
+  div.hm > .hm-strip { margin-right: var(--sh); grid-template-columns: 1.15fr 1fr 1fr var(--eq); }
+  div.hm > .hm-pair { margin-left: calc(var(--sh) * -1); grid-template-columns: var(--eq) 1fr; }
+  div.hm .hm-feed .hm-box { min-width: 0; overflow: hidden; }
+  div.hm > .hm-pair > .hm-p { container-type: inline-size; }
+  @container (max-width: 280px) {
+    div.hm .hm-p .hm-pie { flex-direction: column; justify-content: center; gap: 10px; }
+    div.hm .hm-p .hm-pie svg { width: 96px; height: 96px; max-width: none; }
+    div.hm .hm-p .hm-pie ul { width: 100%; gap: 4px; font-size: 11.5px; }
+    div.hm .hm-p .hm-pie li span { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2; }
+  }
 }

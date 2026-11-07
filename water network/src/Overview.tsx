@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUp, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Droplets, FlaskConical, Gauge, Mountain, TestTube, Thermometer, Waves, X, type LucideIcon } from "lucide-react";
 import { fmt, QUALITY, stages, zoneRows, type Filters, type Stage } from "./data";
 import { StageKpis, PlayPauseIcon } from "./StageView";
 import { wobble } from "./live";
@@ -113,6 +113,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
   const zr = zoneRows(f);
   const snap = networkAt(8);
 
+  const RING_ICON: Record<string, LucideIcon> = { "Free chlorine": FlaskConical, Turbidity: Droplets, pH: TestTube, "Average pressure": Gauge };
   const q = (name: string) => QUALITY.find((x) => x.name === name)!;
   const rings = [
     { n: "Free chlorine", v: wobble(q("Free chlorine").value, 51, t, 0.01), unit: "mg/L", d: 2, frac: (v: number) => v },
@@ -270,16 +271,16 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
 
       <section className="ov-gauges">
         <div className="ov-g wide">
-          <h3>Source</h3>
-          <div className="ov-gr"><span>{src.readings[0].label}</span><b>{live(src.readings[0], 61, t)}<ArrowUp size={15} className="up" /></b></div>
-          <div className="ov-gr"><span>{src.readings[2].label}</span><b>{live(src.readings[2], 62, t)}<ArrowUp size={15} className="up" /></b></div>
+          <h3><Mountain size={16} className="ov-hi" aria-hidden />Source</h3>
+          <div className="ov-gr"><span><Waves size={14} className="ov-ri" aria-hidden />{src.readings[0].label}</span><b>{live(src.readings[0], 61, t)}<ArrowUp size={15} className="up" /></b></div>
+          <div className="ov-gr"><span><Thermometer size={14} className="ov-ri" aria-hidden />{src.readings[2].label}</span><b>{live(src.readings[2], 62, t)}<ArrowUp size={15} className="up" /></b></div>
         </div>
         {rings.map((r, n) => {
           const C = 2 * Math.PI * 44;
           const fr = Math.max(0.03, Math.min(1, r.frac(r.v)));
           return (
             <div className="ov-g" key={r.n} style={{ ["--n" as string]: n }}>
-              <h3>{r.n}</h3>
+              <h3>{(() => { const I = RING_ICON[r.n]; return <I size={16} className="ov-hi" aria-hidden />; })()}{r.n}</h3>
               <div className="ov-ring">
                 <svg viewBox="0 0 120 120" aria-hidden>
                   <circle className="bg" cx="60" cy="60" r="44" />

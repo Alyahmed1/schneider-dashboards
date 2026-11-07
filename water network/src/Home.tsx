@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, Droplet, DropletOff, Droplets, Gauge, LayoutGrid, PlugZap, ReceiptText, Ruler, ShieldCheck, Waves, Wrench, Zap, type LucideIcon } from "lucide-react";
 import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
@@ -12,6 +12,7 @@ import { useGrow } from "./anim";
 import type { Go, TabId } from "./App";
 
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, nrw: 0.004, press: 0.006, energy: 0.004, wo: 0, mem: 0 };
+const KPI_ICON: Record<string, LucideIcon> = { water: Droplets, nrw: DropletOff, press: Gauge, energy: Zap, wo: Wrench, mem: ShieldCheck };
 const KPI_TO: Record<string, TabId> = { water: "network", nrw: "network", press: "network", energy: "electrical", wo: "maintenance", mem: "overview" };
 
 
@@ -92,14 +93,14 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       </section>
 
       <div className="hm-side">
-        <Panel title="Summary" className="hm-sum" i={1}>
+        <Panel title="Summary" icon={LayoutGrid} className="hm-sum" i={1}>
           <div className="hm-tiles">
             {kpis.map((k, n) => {
               const good = k.goodWhenDown ? k.delta <= 0 : k.delta >= 0;
               const Arrow = k.delta >= 0 ? ArrowUp : ArrowDown;
               return (
                 <button key={k.id} className="hm-tile" style={{ ["--n" as string]: n }} onClick={() => go(KPI_TO[k.id])} aria-label={`${k.label}: open ${KPI_TO[k.id]}`}>
-                  <span>{k.label}</span>
+                  <span>{(() => { const I = KPI_ICON[k.id]; return I ? <I size={15} className="sy-i" aria-hidden /> : null; })()}{k.label}</span>
                   <b><CountUp value={k.value} decimals={k.decimals} />{k.suffix}{k.unit ? ` ${k.unit}` : ""}<Arrow size={16} className={good ? "up" : "down"} aria-label={good ? "good" : "needs attention"} /></b>
                 </button>
               );
@@ -109,7 +110,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       </div>
 
       <div className="hm-strip">
-        <Panel title="Supplied and Billed" i={3}>
+        <Panel title="Supplied and Billed" icon={ReceiptText} i={3}>
           <div className="hm-line">
             <ResponsiveContainer>
               <LineChart data={lineData} margin={{ left: -8, right: 12, top: 10, bottom: 0 }}>
@@ -123,20 +124,20 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Total Water Supplied" i={4}><Bars labels={ql} values={supplied} unit="k m³" grow={grow} /></Panel>
-        <Panel title="Total Energy Consumed" i={5}><Bars labels={ql} values={energyMWh} unit="MWh" grow={grow} /></Panel>
-        <Panel title="Water Loss" className="hm-loss" i={6}>
-          <div className="hm-box"><span>Lost per day</span><b><CountUp value={lost} decimals={0} /> m³</b></div>
-          <div className="hm-box"><span>Known leaks</span><b><CountUp value={leaks} decimals={1} /> L/s</b></div>
+        <Panel title="Total Water Supplied" icon={Droplets} i={4}><Bars labels={ql} values={supplied} unit="k m³" grow={grow} /></Panel>
+        <Panel title="Total Energy Consumed" icon={Zap} i={5}><Bars labels={ql} values={energyMWh} unit="MWh" grow={grow} /></Panel>
+        <Panel title="Water Loss" icon={DropletOff} className="hm-loss" i={6}>
+          <div className="hm-box"><span><DropletOff size={13} className="sy-i" aria-hidden />Lost per day</span><b><CountUp value={lost} decimals={0} /> m³</b></div>
+          <div className="hm-box"><span><Droplet size={13} className="sy-i" aria-hidden />Known leaks</span><b><CountUp value={leaks} decimals={1} /> L/s</b></div>
         </Panel>
       </div>
 
       <div className="hm-pair">
-        <Panel title="Reservoir" className="hm-feed" i={7}>
-          <div className="hm-box"><span>Level now</span><b><CountUp value={tank} decimals={0} /> %</b></div>
-          <div className="hm-box"><span>Plant output</span><b><CountUp value={flow[1].flow} decimals={0} /> m³/h</b></div>
+        <Panel title="Reservoir" icon={Waves} className="hm-feed" i={7}>
+          <div className="hm-box"><span><Ruler size={13} className="sy-i" aria-hidden />Level now</span><b><CountUp value={tank} decimals={0} /> %</b></div>
+          <div className="hm-box"><span><Gauge size={13} className="sy-i" aria-hidden />Plant output</span><b><CountUp value={flow[1].flow} decimals={0} /> m³/h</b></div>
         </Panel>
-        <Panel title="Power Monitoring" i={8}><Pie items={power} /></Panel>
+        <Panel title="Power Monitoring" icon={PlugZap} i={8}><Pie items={power} /></Panel>
       </div>
     </div>
   );

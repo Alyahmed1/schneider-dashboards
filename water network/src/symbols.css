@@ -1,0 +1,19 @@
+/* symbols: small line icons beside titles, labels and values (Home, Maintenance, Overview gauges) */
+.hm-p h3 { display: flex; align-items: center; gap: 7px; }
+.sy-t, .sy-i { flex: none; color: var(--teal); }
+.hm-tile > span, .hm-box > span, .mx-box > span, .mx-stat > span, .mx-chip > span, .ov-gr span { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.hm-tile > span, .mx-chip > span { overflow: hidden; }
+.mx-stat > span { display: flex; }
+.mx-stat > span svg, .mx-chip > span svg { flex: none; }
+.ov-g h3 { display: flex; align-items: center; gap: 7px; }
+.mx-pill .sy-p { vertical-align: -2px; margin-right: 4px; }
+.mx-id { display: inline-flex; align-items: center; gap: 7px; }
+.sy-prio { display: inline-flex; align-items: center; gap: 5px; }
+.sy-prio i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.sy-prio.High i { background: var(--bad); }
+.sy-prio.Medium i { background: var(--warn); }
+.sy-prio.Low i { background: var(--teal); }
+/* narrow panels: drop the label icons so words do not wrap */
+@media (max-width: 1450px) { .hm-box > span svg, .mx-chip > span svg { display: none; } }
+.ov-hi, .ov-ri { flex: none; color: var(--teal); }
+.mx-chip > span svg { display: none; }

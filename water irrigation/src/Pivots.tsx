@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { CircleDot, Droplets, Layers, Target, Timer, Waves } from "lucide-react";
 import { CartesianGrid, Line, LineChart, ReferenceArea, ReferenceDot, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { areaM2, fmt, MOMENT_LABELS, moistAt, moistClass, momentHour, pivotById, pivotDetail, pivotPlan, pivotsAt, planMm, winHours, type Moment } from "./farm";
 import { moistColor, STATUS_COLOR } from "./farmColor";
@@ -37,12 +38,12 @@ export default function Pivots({ start }: { start?: string }) {
   const cls = moistClass(n.moist);
   const statusText = ctl.stopped && n.status === "Irrigating" ? "Stopped" : n.status;
   const kpis = [
-    { l: "Soil moisture", v: <><CountUp value={n.moist} decimals={1} /><small>%</small></>, s: CLASS_TEXT[cls], c: moistColor(n.moist) },
-    { l: "Status", v: <span className="txt">{statusText}</span>, s: `Window ${hh(w0)} to ${hh(w1)}`, c: STATUS_COLOR[n.status] },
-    { l: "Flow now", v: <><CountUp value={wobble(flow, 3, t, 0.006)} decimals={0} /><small>m³/h</small></>, s: running ? `Pressure ${fmt(wobble(2.8, 4, t, 0.01), 1)} bar` : "Not irrigating", c: "var(--water)" },
-    { l: "Water today", v: <><CountUp value={soFarM3} decimals={0} /><small>m³</small></>, s: `${fmt(n.applied, 1)} of ${fmt(planMm(n.p), 1)} mm`, c: "var(--water)" },
-    { l: "One pass takes", v: <><CountUp value={passH} decimals={1} /><small>h</small></>, s: `${fmt(mm, 1)} mm per pass`, c: "var(--teal)" },
-    { l: "Spray uniformity", v: <><CountUp value={det.uniformity} decimals={0} /><small>%</small></>, s: faulted ? "A tower has tripped" : "All towers aligned", c: faulted ? "var(--bad)" : "var(--good)" },
+    { l: "Soil moisture", icon: Layers, v: <><CountUp value={n.moist} decimals={1} /><small>%</small></>, s: CLASS_TEXT[cls], c: moistColor(n.moist) },
+    { l: "Status", icon: CircleDot, v: <span className="txt">{statusText}</span>, s: `Window ${hh(w0)} to ${hh(w1)}`, c: STATUS_COLOR[n.status] },
+    { l: "Flow now", icon: Waves, v: <><CountUp value={wobble(flow, 3, t, 0.006)} decimals={0} /><small>m³/h</small></>, s: running ? `Pressure ${fmt(wobble(2.8, 4, t, 0.01), 1)} bar` : "Not irrigating", c: "var(--water)" },
+    { l: "Water today", icon: Droplets, v: <><CountUp value={soFarM3} decimals={0} /><small>m³</small></>, s: `${fmt(n.applied, 1)} of ${fmt(planMm(n.p), 1)} mm`, c: "var(--water)" },
+    { l: "One pass takes", icon: Timer, v: <><CountUp value={passH} decimals={1} /><small>h</small></>, s: `${fmt(mm, 1)} mm per pass`, c: "var(--teal)" },
+    { l: "Spray uniformity", icon: Target, v: <><CountUp value={det.uniformity} decimals={0} /><small>%</small></>, s: faulted ? "A tower has tripped" : "All towers aligned", c: faulted ? "var(--bad)" : "var(--good)" },
   ];
 
   return (
@@ -61,7 +62,7 @@ export default function Pivots({ start }: { start?: string }) {
       <div className="pv-kpis">
         {kpis.map((k, i) => (
           <div key={k.l} className="pv-kpi" style={{ ["--c" as string]: k.c, ["--n" as string]: i }}>
-            <span>{k.l}</span><b>{k.v}</b><em>{k.s}</em>
+            <span><k.icon className="sym" size={16} aria-hidden />{k.l}</span><b>{k.v}</b><em>{k.s}</em>
           </div>
         ))}
       </div>

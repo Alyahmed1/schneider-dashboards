@@ -4,6 +4,7 @@ import { MessageCircle, Moon, Sprout, Sun, TreePine, type LucideIcon } from "luc
 import { FARM, type Filters } from "./farm";
 import Agricultural from "./Agricultural";
 import Pivots from "./Pivots";
+import Schedule from "./Schedule";
 import Pumps from "./Pumps";
 import Weather from "./Weather";
 import Energy from "./Energy";
@@ -19,12 +20,12 @@ import ErrorBoundary from "./ErrorBoundary";
 import { AlarmsPage, AlertsBell } from "./alarms";
 
 export type TabId = "agri" | "landscape";
-export type ViewId = "farm" | "pivots" | "pumps" | "weather" | "energy" | "zones" | "sensors" | "controllers" | "process" | "alarms";
+export type ViewId = "farm" | "pivots" | "schedule" | "pumps" | "weather" | "energy" | "zones" | "sensors" | "controllers" | "process" | "alarms";
 export type Go = (view: ViewId, target?: string) => void;
 export type Theme = "light" | "dark";
 
 const TABS: { id: TabId; label: string; icon: LucideIcon; views: { id: ViewId; label: string }[] }[] = [
-  { id: "agri", label: "Agricultural", icon: Sprout, views: [{ id: "farm", label: "Farm map" }, { id: "pivots", label: "Pivots" }, { id: "pumps", label: "Pump stations" }, { id: "weather", label: "Weather & ET" }, { id: "energy", label: "Water & energy" }] },
+  { id: "agri", label: "Agricultural", icon: Sprout, views: [{ id: "farm", label: "Farm map" }, { id: "pivots", label: "Pivots" }, { id: "schedule", label: "Irrigation schedule" }, { id: "pumps", label: "Pump stations" }, { id: "weather", label: "Weather & ET" }, { id: "energy", label: "Water & energy" }] },
   { id: "landscape", label: "Landscape", icon: TreePine, views: [{ id: "zones", label: "Zones" }, { id: "sensors", label: "Sensors" }, { id: "controllers", label: "Controllers" }, { id: "process", label: "Grey water" }] },
 ];
 const TITLE = "Smart Irrigation";
@@ -105,6 +106,7 @@ export default function App() {
                 {view === "farm" && <Agricultural f={f} setRange={(range) => setF({ range })} go={go} />
                 }
                 {view === "pivots" && <Pivots start={target} />}
+                {view === "schedule" && <Schedule go={go} />}
                 {view === "pumps" && <Pumps start={target} />}
                 {view === "weather" && <Weather />}
                 {view === "energy" && <Energy />}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { ArrowUp, Pause, Play, X } from "lucide-react";
+import { Droplets, Pause, Play, Radio, Sprout, Thermometer, Waves, Wind, X } from "lucide-react";
 import { fmt } from "./farm";
 import { LCTRLS, LZONES, runMin, flowLpm, SENSORS, siteWeather, zoneById, zonesAt, type CtrlId, type LCtrl, type ZoneNow } from "./landscape";
 import { gwAt } from "./grey";
@@ -8,7 +8,8 @@ import { useOpenAlarms } from "./alarms";
 import { useTick, wobble } from "./live";
 import { bounds, px } from "./geo";
 import LeafMap from "./LeafMap";
-import { CountUp, Panel } from "./ui";
+import { Panel } from "./ui";
+import SummaryTile, { type SumTileData } from "./SummaryTile";
 import type { Go } from "./App";
 
 // the compound is the Madinaty map: every place below is a pixel position on a picture of it (see geo.ts)
@@ -34,6 +35,12 @@ for (let i = 0; i <= STEPS; i++) {
 const CUM: Record<CtrlId, number[]> = { C1: [], C2: [], C3: [] }; // litres turned into m³ so far today, a point every half hour
 for (const c of LCTRLS) { let run = 0; DAY[c.id].forEach((v, i) => { if (i) run += (v * 30) / 1000; CUM[c.id].push(run); }); }
 const TOTAL = DAY.C1.map((_, i) => DAY.C1[i] + DAY.C2[i] + DAY.C3[i]);
+// the day in half-hour steps for the Summary charts: water so far, zones open, temperature, wind
+const WATER_CUM = TOTAL.map((_, i) => TOTAL.slice(1, i + 1).reduce((a, v) => a + (v * 30) / 1000, 0));
+const OPEN_N = Array.from({ length: STEPS + 1 }, (_, i) => zonesAt(i / 2).filter((n) => n.status === "Watering").length);
+const TEMP_D = Array.from({ length: STEPS + 1 }, (_, i) => siteWeather(i / 2).temp);
+const WIND_D = Array.from({ length: STEPS + 1 }, (_, i) => siteWeather(i / 2).wind);
+const TANK_D = Array.from({ length: STEPS + 1 }, (_, i) => gwAt(i / 2).store / 0.6);
 
 /** a small area graph as SVG text (it goes inside a map marker); the dot is where the clock is now */
 function spark(v: number[], hour: number, w = 92, h = 30) {
@@ -115,10 +122,15 @@ export default function Zones({ start, go }: { start?: string; go: Go }) {
     return () => window.clearInterval(id);
   }, [play]);
 
-  const tiles = [
-    { l: "Water today", v: wobble(snap.reduce((a, n) => a + (n.applied * n.z.area) / 1000, 0), 7, t, 0.003), d: 1, u: "m³" }, { l: "Zones watering now", v: watering, d: 0, u: `of ${LZONES.length}` },
-    { l: "Sensors online", v: online, d: 0, u: "%" }, { l: "Temperature", v: w.temp, d: 0, u: "°C" },
-    { l: "Wind", v: w.wind, d: 0, u: "km/h" }, { l: "Reuse tank", v: tank, d: 0, u: "%" },
+  const at = Math.min(STEPS, Math.max(0, Math.round(hour * 2)));
+  const was = <T extends number>(v: T[]) => v[at] - v[Math.max(0, at - 1)]; // change over the last half hour
+  const tiles: SumTileData[] = [
+    { id: "water", label: "Water today", icon: Droplets, value: wobble(snap.reduce((a, n) => a + (n.applied * n.z.area) / 1000, 0), 7, t, 0.003), decimals: 1, unit: "m³", delta: was(WATER_CUM), kind: "spark", series: WATER_CUM },
+    { id: "open", label: "Zones watering now", icon: Sprout, value: watering, unit: `of ${LZONES.length}`, delta: was(OPEN_N), kind: "bars", series: OPEN_N },
+    { id: "sensors", label: "Sensors online", icon: Radio, value: online, unit: "%", kind: "ring", pct: online },
+    { id: "temp", label: "Temperature", icon: Thermometer, value: w.temp, unit: "°C", delta: was(TEMP_D), goodWhenDown: true, kind: "line", series: TEMP_D },
+    { id: "wind", label: "Wind", icon: Wind, value: w.wind, unit: "km/h", delta: was(WIND_D), goodWhenDown: true, kind: "spark", series: WIND_D },
+    { id: "tank", label: "Reuse tank", icon: Waves, value: tank, unit: "%", delta: was(TANK_D), kind: "bar", pct: tank },
   ];
   const max = Math.max(1, ...TOTAL);
   const curve = TOTAL.map((n, i) => `${i ? "L" : "M"}${((i / STEPS) * 480).toFixed(1)} ${(34 - (n / max) * 28).toFixed(1)}`).join(" ");
@@ -167,11 +179,7 @@ export default function Zones({ start, go }: { start?: string; go: Go }) {
 
       <div className="ag-side solo">
         <Panel title="Summary" className="ag-sum" i={1}>
-          <div className="tiles">
-            {tiles.map((k, i) => (
-              <div key={k.l} className="tile" style={{ ["--n" as string]: i }}><span>{k.l}</span><b><CountUp value={k.v} decimals={k.d} /> <small>{k.u}</small>{i === 0 && <ArrowUp size={16} className="up" aria-hidden />}</b></div>
-            ))}
-          </div>
+          <div className="tiles">{tiles.map((k, n) => <SummaryTile key={k.id} d={k} n={n} />)}</div>
         </Panel>
       </div>
     </div>

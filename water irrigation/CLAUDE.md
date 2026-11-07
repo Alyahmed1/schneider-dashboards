@@ -2,15 +2,17 @@
 
 Own Vite app (port 4731; 4730 is used by the water network preview) in the schneider-dashboards repo. Look and layout copy the water dashboards (`../water network`), but the CSS is one clean set: `theme.css` (tokens, chrome, shared parts), `agri.css` (farm map), `pumps.css`, `pivots.css`, `views.css` (Weather, Energy, Landscape, Process, tables, rings, assistant), `map.css` (the two real maps), `cover.css`. Do not add layered override files.
 
-## Structure (agreed with Aly, 2026-11-02; changed 2026-11-04)
+## Structure (agreed with Aly, 2026-11-02; changed 2026-11-04 and 2026-11-07)
 Only 2 dock tabs, each with sub-tabs in a bar under the breadcrumb. No Home, Maintenance or Grey Water tab.
 
 | Tab | Sub-tabs |
 |---|---|
-| Agricultural | Farm map, Pivots, Pump stations, Weather & ET, Water & energy |
+| Agricultural | Farm map, Pivots, Irrigation schedule, Pump stations, Weather & ET, Water & energy |
 | Landscape | Zones, Sensors, Controllers, Grey water (view id `process`) |
 
 Farm map: the picture `public/farm-map.jpg` (3.21:1, stretched to fill its box, `FarmImage.tsx`) with click areas over the 8 pivots and 3 pump stations; clicking a pivot opens the Pivots tab on that pivot (`go("pivots", id)`), a station opens Pump stations. Pivots is the original page again. Landscape Zones is a night-style real map of the HQ grounds (OpenStreetMap tiles with a CSS colour filter; glowing amber zones, one callout card per controller, day timeline with play and Now; click a zone: floating card). Farm map page = picture + Summary only. Grey water (`Process.tsx`) = grey water diagram + 5 gauges + reuse tiles + monthly chart on one screen (old Reuse & savings merged in). Coordinates are in `geo.ts` (fictional farm placed at real Wadi El Natrun; the Zones map is the real Madinaty compound in New Cairo: zones are polygons traced in pixel coordinates of a zoom-17 picture, `poly` in landscape.ts + `px()` in geo.ts). In dark mode a veil in the page background colour sits over the tiles (`.lf-tint`).
+
+Irrigation schedule (`Schedule.tsx`, model in `irrplan.ts`, styles `schedule.css`): Today = 24 h Gantt with one draggable run window per pivot (tariff strip on top, pump power bars below, now line), impact tiles, suggestions (overload, dry soil, cheaper hours, rain, fault); Week = pivots x 7 days from the forecast with skip toggles. Apply plan writes the windows into `PIVOTS[].win`, so Farm map, Pivots and Pump stations follow it (Energy's module-level day totals refresh on reload). Edits not applied are lost when you leave the tab.
 
 Alarms open from the bell (`ViewId "alarms"`, no tab). Routing: `App.tsx` holds `ViewId`, `go(view, target)`; the dock remembers the last sub-tab per tab.
 
@@ -36,6 +38,7 @@ Alarms open from the bell (`ViewId "alarms"`, no tab). Routing: `App.tsx` holds 
 - [x] Change 2026-11-03: removed "Water applied by crop" (Summary fills the column); Controllers rebuilt as schedule + station panel + flow sensor from Aly's design (Update/Apply are message-only, flow limits are sample values)
 - [x] Controllers fit without scrolling at the 4 laptop sizes (dark; events table capped at 8 rows, compact rules at the end of `views.css`)
 - [x] Change 2026-11-04: rename, Farm map = picture (Pivots tab kept, map click goes to it), real map on Zones, Grey Water merged into Landscape · Process. Local only, not committed/deployed yet.
+- [x] Change 2026-11-07 (local only): cover tag removed + watermark cropped out of `cover.mp4` (top-right, baked in with ffmpeg: crop 948x512 from y=80, scaled 1280 wide); shared `SummaryTile.tsx` (icon + number + chart) on Farm map and Zones; Controllers made live (clock with Play/Now, valve ring + countdown, live rows, day-plan lanes, flow trace, timed manual runs; "Start 1..10" slots replaced by Start 1 + Day plan); new Agricultural · Irrigation schedule tab
 - [ ] Final QA at 1280x720, 1366x768, 1536x864, 1920x1080 + phone width (see below), then deploy if Aly asks
 
 ## Rules for new screens

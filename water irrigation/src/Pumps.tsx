@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { CartesianGrid, ComposedChart, Line, ReferenceDot, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Droplet, Gauge, Waves } from "lucide-react";
+import { Activity, Cog, Droplet, Factory, Gauge, HeartPulse, Thermometer, Timer, Waves, Zap } from "lucide-react";
 import { curve, fmt, MOMENT_LABELS, momentHour, STATIONS, stationNow, type Moment, type Override, type StationId } from "./farm";
 import { useTick, wobble } from "./live";
 import { CountUp, Panel, Segmented, Tip } from "./ui";
@@ -56,21 +56,21 @@ export default function Pumps({ start }: { start?: string }) {
       </Panel>
 
       <div className="pm-right">
-        <Panel title="This station" className="pm-read" i={2}>
+        <Panel title="This station" icon={Factory} className="pm-read" i={2}>
           <div className="pm-boxes">
-            <div className="box"><span>Flow</span><b><CountUp value={cur.flow} decimals={0} /> <small>m³/h</small></b></div>
-            <div className="box"><span>Pressure</span><b><CountUp value={cur.bar} decimals={1} /> <small>bar</small></b></div>
-            <div className="box"><span>Power</span><b><CountUp value={cur.kw} decimals={0} /> <small>kW</small></b></div>
-            <div className="box"><span>Energy per m³</span><b><CountUp value={cur.kwhPerM3} decimals={2} /> <small>kWh</small></b></div>
+            <div className="box"><span><Waves className="sym" size={15} aria-hidden />Flow</span><b><CountUp value={cur.flow} decimals={0} /> <small>m³/h</small></b></div>
+            <div className="box"><span><Gauge className="sym" size={15} aria-hidden />Pressure</span><b><CountUp value={cur.bar} decimals={1} /> <small>bar</small></b></div>
+            <div className="box"><span><Zap className="sym" size={15} aria-hidden />Power</span><b><CountUp value={cur.kw} decimals={0} /> <small>kW</small></b></div>
+            <div className="box"><span><Activity className="sym" size={15} aria-hidden />Energy / m³</span><b><CountUp value={cur.kwhPerM3} decimals={2} /> <small>kWh</small></b></div>
           </div>
         </Panel>
-        <Panel title={`Pump ${pump.def.id}`} className="pm-pump" i={3}
+        <Panel title={`Pump ${pump.def.id}`} icon={Cog} className="pm-pump" i={3}
           right={<div className="pm-act"><span className={`chip ${STATE_TONE[pump.state]}`}>{pump.state}</span><button className={`btn ${on ? "" : "pri"}`} onClick={toggle}>{on ? "Stop" : "Start"}</button></div>}>
           <div className="pm-boxes four">
-            <div className={`box ${pump.vib > 3.5 ? "warnbox" : ""}`}><span>Vibration</span><b>{fmt(pump.vib, 1)} <small>mm/s</small></b></div>
-            <div className={`box ${pump.temp > 70 ? "warnbox" : ""}`}><span>Motor temp</span><b>{fmt(pump.temp)} <small>°C</small></b></div>
-            <div className="box"><span>Run hours</span><b>{fmt(pump.def.hours)} <small>h</small></b></div>
-            <div className={`box ${pump.def.health < 75 ? "warnbox" : ""}`}><span>Health</span><b>{pump.def.health} <small>%</small></b></div>
+            <div className={`box ${pump.vib > 3.5 ? "warnbox" : ""}`}><span><Activity className="sym" size={15} aria-hidden />Vibration</span><b>{fmt(pump.vib, 1)} <small>mm/s</small></b></div>
+            <div className={`box ${pump.temp > 70 ? "warnbox" : ""}`}><span><Thermometer className="sym" size={15} aria-hidden />Motor temp</span><b>{fmt(pump.temp)} <small>°C</small></b></div>
+            <div className="box"><span><Timer className="sym" size={15} aria-hidden />Run hours</span><b>{fmt(pump.def.hours)} <small>h</small></b></div>
+            <div className={`box ${pump.def.health < 75 ? "warnbox" : ""}`}><span><HeartPulse className="sym" size={15} aria-hidden />Health</span><b>{pump.def.health} <small>%</small></b></div>
           </div>
         </Panel>
         <Panel title="Pump curve" className="pm-curve" i={4}

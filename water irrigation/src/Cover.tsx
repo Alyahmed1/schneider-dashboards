@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Moon, Sprout, Sun } from "lucide-react";
+import { ArrowRight, Moon, Sun } from "lucide-react";
 import type { Theme } from "./App";
 import { FARM, fmt, PIVOTS, farmFlow } from "./farm";
 
@@ -32,7 +32,6 @@ export default function Cover({ onEnter, setTheme }: { onEnter: () => void; setT
         onError={() => setVideo("failed")} onLoadedData={() => setVideo("ok")} />
       <div className="cover-shade" aria-hidden />
       <div className="cover-body">
-        <motion.span className="cover-tag" {...up(0)}><Sprout size={14} /> {FARM.tag}</motion.span>
         <motion.h1 {...up(1)}>Smart Irrigation</motion.h1>
         <motion.p {...up(2)}>Every pivot, pump and field of the farm on one live screen: soil moisture, water use, energy and alarms.</motion.p>
         <motion.div className="cover-stats" {...up(3)}>

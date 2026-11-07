@@ -1,14 +1,13 @@
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
-import { budget, FARM, fmt, MOMENT_LABELS, momentHour, pivotsAt, RANGES, series, SPECIFIC_ENERGY, type Filters, type Moment, type Range } from "./farm";
+import { Droplets, Gauge, Leaf, Layers, Sprout, Zap } from "lucide-react";
+import { budget, FARM, fmt, loadProfile, MOMENT_LABELS, momentHour, pivotsAt, RANGES, series, SPECIFIC_ENERGY, type Filters, type Moment, type Range } from "./farm";
 import { LEGEND } from "./farmColor";
 import { useOpenAlarms } from "./alarms";
 import { useTick, wobble } from "./live";
-import { CountUp, Panel, Segmented } from "./ui";
+import { Panel, Segmented } from "./ui";
+import SummaryTile, { type SumTileData } from "./SummaryTile";
 import FarmImage from "./FarmImage";
-import type { Go, ViewId } from "./App";
-
-interface Tile { id: string; label: string; value: number; decimals: number; unit: string; delta: number; goodWhenDown?: boolean; to: ViewId }
+import type { Go } from "./App";
 
 /** Agricultural · Farm map: the farm picture with the Summary beside it. Click a pivot to open it on the Pivots tab. */
 export default function Agricultural({ f, setRange, go }: { f: Filters; setRange: (r: Range) => void; go: Go }) {
@@ -27,13 +26,16 @@ export default function Agricultural({ f, setRange, go }: { f: Filters; setRange
   const avgMoist = snap.reduce((s, n) => s + n.moist, 0) / snap.length;
   const stress = snap.reduce((s, n) => s + n.stress, 0) / snap.length;
 
-  const tiles: Tile[] = [
-    { id: "water", label: "Water applied", value: big ? total / 1e6 : total / 1e3, decimals: big ? 2 : 1, unit: big ? "M m³" : "k m³", delta: 1.2, to: "energy" },
-    { id: "eff", label: "Irrigation efficiency", value: wobble(FARM.efficiency, 1, t, 0.004), decimals: 1, unit: "%", delta: 0.6, to: "pivots" },
-    { id: "moist", label: "Average soil moisture", value: avgMoist, decimals: 1, unit: "%", delta: -0.4, to: "pivots" },
-    { id: "stress", label: "Crop water stress", value: stress, decimals: 2, unit: "", delta: -0.02, goodWhenDown: true, to: "pivots" },
-    { id: "energy", label: "Specific energy", value: wobble(SPECIFIC_ENERGY, 4, t, 0.004), decimals: 2, unit: "kWh/m³", delta: -1.5, goodWhenDown: true, to: "energy" },
-    { id: "budget", label: "Water allocation used", value: bud.pct, decimals: 0, unit: "%", delta: -4, goodWhenDown: true, to: "energy" },
+  const stressDay = useMemo(() => Array.from({ length: 24 }, (_, h) => { const x = pivotsAt(h + 0.5); return x.reduce((q, n) => q + n.stress, 0) / x.length; }), []);
+  const pumpKw = useMemo(() => loadProfile().map((p) => p.pump), []);
+
+  const tiles: SumTileData[] = [
+    { id: "water", label: "Water applied", icon: Droplets, value: big ? total / 1e6 : total / 1e3, decimals: big ? 2 : 1, unit: big ? "M m³" : "k m³", delta: 1.2, kind: "spark", series: applied, onClick: () => go("energy"), hint: "Water applied: open Water & energy" },
+    { id: "eff", label: "Irrigation efficiency", icon: Leaf, value: wobble(FARM.efficiency, 1, t, 0.004), decimals: 1, unit: "%", delta: 0.6, kind: "ring", onClick: () => go("pivots"), hint: "Irrigation efficiency: open the pivots" },
+    { id: "moist", label: "Average soil moisture", icon: Layers, value: avgMoist, decimals: 1, unit: "%", delta: -0.4, kind: "bar", pct: avgMoist, onClick: () => go("pivots"), hint: "Average soil moisture: open the pivots" },
+    { id: "stress", label: "Crop water stress", icon: Sprout, value: stress, decimals: 2, delta: -0.02, goodWhenDown: true, kind: "line", series: stressDay, onClick: () => go("pivots"), hint: "Crop water stress: open the pivots" },
+    { id: "energy", label: "Specific energy", icon: Zap, value: wobble(SPECIFIC_ENERGY, 4, t, 0.004), decimals: 2, unit: "kWh/m³", delta: -1.5, goodWhenDown: true, kind: "bars", series: pumpKw, onClick: () => go("energy"), hint: "Specific energy: open Water & energy" },
+    { id: "budget", label: "Water allocation used", icon: Gauge, value: bud.pct, decimals: 0, unit: "%", delta: -4, goodWhenDown: true, kind: "bar", pct: bud.pct, onClick: () => go("energy"), hint: "Water allocation used: open Water & energy" },
   ];
 
   return (
@@ -58,18 +60,7 @@ export default function Agricultural({ f, setRange, go }: { f: Filters; setRange
 
       <div className="ag-side solo">
         <Panel title="Summary" className="ag-sum" i={1}>
-          <div className="tiles">
-            {tiles.map((k, n) => {
-              const good = k.goodWhenDown ? k.delta <= 0 : k.delta >= 0;
-              const Arrow = k.delta >= 0 ? ArrowUp : ArrowDown;
-              return (
-                <button key={k.id} className="tile" style={{ ["--n" as string]: n }} onClick={() => go(k.to)} aria-label={`${k.label}: open ${k.to}`}>
-                  <span>{k.label}</span>
-                  <b><CountUp value={k.value} decimals={k.decimals} />{k.unit ? ` ${k.unit}` : ""}<Arrow size={16} className={good ? "up" : "down"} aria-label={good ? "good" : "needs attention"} /></b>
-                </button>
-              );
-            })}
-          </div>
+          <div className="tiles">{tiles.map((k, n) => <SummaryTile key={k.id} d={k} n={n} />)}</div>
         </Panel>
       </div>
 

@@ -6,7 +6,6 @@
 .cover-video.on { opacity: 1; }
 .cover-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7, 22, 27, .82) 0%, rgba(7, 22, 27, .42) 34%, rgba(7, 22, 27, 0) 62%), linear-gradient(0deg, rgba(7, 22, 27, .55) 0%, transparent 30%); }
 .cover-body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; max-width: 560px; margin-left: clamp(20px, 6vw, 96px); padding: 24px 0; }
-.cover-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12px; border: 1px solid rgba(76, 201, 122, .35); background: rgba(76, 201, 122, .12); color: #8be0a9; }
 .cover h1 { font-size: clamp(36px, 5.4vw, 72px); line-height: 1.02; font-weight: 400; color: #fff; text-shadow: 0 2px 18px rgba(0, 0, 0, .45); }
 .cover p { font-size: clamp(13px, 1.25vw, 16px); color: rgba(234, 245, 239, .82); text-shadow: 0 1px 10px rgba(0, 0, 0, .5); max-width: 46ch; }
 .cover-stats { display: flex; flex-wrap: wrap; gap: 8px; }

@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import { animate, useInView, useMotionValue } from "framer-motion";
 import { fmt } from "./farm";
 
@@ -34,10 +35,11 @@ export function Segmented<T extends string>({ value, options, onChange, label }:
 }
 
 /** a titled box that rises in when the tab opens */
-export function Panel({ title, className = "", i = 0, right, children }: { title: string; className?: string; i?: number; right?: ReactNode; children: ReactNode }) {
+export function Panel({ title, className = "", i = 0, right, icon: Icon, children }: { title: string; className?: string; i?: number; right?: ReactNode; icon?: LucideIcon; children: ReactNode }) {
+  const h = <h3>{Icon && <Icon className="sym" size={16} aria-hidden />}{title}</h3>;
   return (
     <section className={`pn ${className}`} style={{ ["--i" as string]: i }}>
-      {right ? <div className="pn-h"><h3>{title}</h3>{right}</div> : <h3>{title}</h3>}
+      {right ? <div className="pn-h">{h}{right}</div> : h}
       {children}
     </section>
   );

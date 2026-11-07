@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
+import { BatteryLow, CheckCircle2, Radio, WifiOff, type LucideIcon } from "lucide-react";
 import { MOMENT_LABELS, momentHour, type Moment } from "./farm";
 import { SENSORS, sensorText, sensorValue, type SKind, type SStatus } from "./landscape";
 import { Panel, Segmented } from "./ui";
 
 const STATUSES: ("All" | SStatus)[] = ["All", "OK", "Low battery", "Offline"];
 const KINDS: ("All kinds" | SKind)[] = ["All kinds", "Soil moisture", "Rain", "Wind", "Air", "Solar", "Flow", "Pressure", "Tank level"];
+const ST_ICON: Record<"All" | SStatus, [LucideIcon, string]> = { All: [Radio, "var(--teal)"], OK: [CheckCircle2, "var(--good)"], "Low battery": [BatteryLow, "var(--warn)"], Offline: [WifiOff, "var(--bad)"] };
 const TONE: Record<SStatus, string> = { OK: "good", "Low battery": "warn", Offline: "bad" };
 
 /** Landscape · Sensors: one list of every probe and meter, with its reading, battery and link. Filter by status or type. */
@@ -24,7 +26,7 @@ export default function Sensors(_: { start?: string }) {
           <Segmented<Moment> label="Time of day" value={moment} options={MOMENT_LABELS} onChange={setMoment} />
         </div>}>
         <div className="fboxes">
-          {STATUSES.map((st) => <button key={st} className={`fbox ${st === status ? "on" : ""}`} onClick={() => setStatus(st)}><span>{st === "All" ? "All sensors" : st}</span><b className={st === "Offline" && count(st) ? "bad" : ""}>{count(st)}</b></button>)}
+          {STATUSES.map((st) => <button key={st} className={`fbox ${st === status ? "on" : ""}`} onClick={() => setStatus(st)}><span>{(() => { const [I, c] = ST_ICON[st]; return <I className="sym" size={18} style={{ color: c }} aria-hidden />; })()}{st === "All" ? "All sensors" : st}</span><b className={st === "Offline" && count(st) ? "bad" : ""}>{count(st)}</b></button>)}
         </div>
         <div className="tbl">
           <table>

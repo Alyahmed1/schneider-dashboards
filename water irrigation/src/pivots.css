@@ -14,6 +14,7 @@
 .pv-kpis { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
 .pv-kpi { display: grid; gap: 1px; padding: 8px 14px 9px; background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c, var(--teal)); min-width: 0; animation: pop .4s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(150ms + var(--n, 0) * 60ms); }
 .pv-kpi > span { font-size: 13.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-kpi .sym { color: var(--c, var(--teal)); }
 .pv-kpi b { font-size: clamp(24px, 2.1vw, 32px); font-weight: 400; line-height: 1.15; white-space: nowrap; }
 .pv-kpi b small { font-size: .46em; color: var(--muted); margin-left: 5px; }
 .pv-kpi b .txt { font-size: .85em; }

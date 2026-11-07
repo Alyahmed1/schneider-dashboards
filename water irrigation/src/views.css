@@ -155,6 +155,49 @@
 .ct-alarm { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--line); background: var(--surface-0); font-size: 12.5px; color: var(--text-2); }
 .ct-alarm b { font-size: 14px; letter-spacing: .04em; }
 .ct-alarm.good b { color: var(--good); } .ct-alarm.info b { color: var(--water); } .ct-alarm.warn b { color: var(--warn); } .ct-alarm.bad { border-color: var(--bad); } .ct-alarm.bad b { color: var(--bad); }
+
+/* controllers, alive: clock, valve ring, live rows, day plan, flow trace */
+.ct-clock { display: inline-flex; align-items: center; gap: 8px; }
+.ct-clock b { min-width: 48px; text-align: center; font-size: 15px; font-weight: 600; color: var(--ink); }
+.ct-play { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--teal); background: var(--card); color: var(--teal); }
+.ct-play:hover { background: var(--teal); color: #04180d; }
+.ct-clock .btn { padding: 3px 10px; font-size: 12px; }
+.ct-valve { position: relative; }
+.ct-ring { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); pointer-events: none; }
+.ct-ring circle { fill: none; stroke-width: 2.5; }
+.ct-ring .bg { stroke: transparent; }
+.ct-ring .fg { stroke: var(--water); stroke-linecap: round; transition: stroke-dasharray .25s linear; }
+.ct-valve.on::after { content: ""; position: absolute; inset: -1px; border: 1px solid var(--water); pointer-events: none; animation: ctpulse 1.6s ease-out infinite; }
+.ct-valve.on > svg:first-child { animation: ctdrip 1.1s ease-in-out infinite; }
+@keyframes ctpulse { from { opacity: .7; transform: scale(1); } to { opacity: 0; transform: scale(1.3); } }
+@keyframes ctdrip { 0%, 100% { transform: translateY(-1.5px); } 50% { transform: translateY(1.5px); } }
+@keyframes ctglow { 0%, 100% { opacity: 1; } 50% { opacity: .72; } }
+.ct .tbl tbody tr.live { background: linear-gradient(90deg, color-mix(in srgb, var(--water) 28%, transparent) var(--p), color-mix(in srgb, var(--water) 7%, transparent) var(--p)); }
+.ct .tbl tbody tr.live td:nth-child(4) { color: var(--water); font-weight: 600; }
+.ct .tbl tbody tr.fin td { color: var(--muted); }
+.ct .tbl tbody tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--teal); }
+.ct-scroll { grid-template-rows: auto auto minmax(0, 1fr); }
+.ct-planbox { min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+.ct-plan { flex: 1; min-height: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 8px; align-content: start; padding-right: 14px; }
+.ct-lab { grid-column: 1; align-self: center; font-size: 11.5px; font-weight: 600; color: var(--text-2); text-align: left; }
+.ct-lab.sel { color: var(--teal); }
+.ct-lane { grid-column: 2; position: relative; border-bottom: 1px solid var(--line); }
+.ct-blk { position: absolute; top: 2px; bottom: 2px; display: grid; place-items: center; padding: 0; overflow: hidden; font-size: 10.5px; font-weight: 600; color: var(--text-2); border: 1px solid var(--line); background: var(--surface-3); white-space: nowrap; }
+.ct-blk.info { background: var(--water); border-color: var(--water); color: #04180d; animation: ctglow 1.4s ease-in-out infinite; }
+.ct-blk.good { background: color-mix(in srgb, var(--good) 26%, var(--card)); border-color: var(--good); color: var(--ink); }
+.ct-blk.warn { background: color-mix(in srgb, var(--warn) 30%, var(--card)); border-color: var(--warn); color: var(--ink); }
+.ct-blk.bad { background: color-mix(in srgb, var(--bad) 30%, var(--card)); border-color: var(--bad); color: var(--ink); }
+.ct-blk.sel { box-shadow: 0 0 0 2px var(--ink); z-index: 1; }
+.ct-nowwrap { grid-column: 2; position: relative; pointer-events: none; }
+.ct-now { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); box-shadow: 0 0 6px var(--ink); transition: left .25s linear; z-index: 2; }
+.ct-plan-ax { grid-column: 2; position: relative; height: 16px; }
+.ct-plan-ax span { position: absolute; top: 3px; transform: translateX(-50%); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.ct-live { gap: 4px; }
+.ct-trace { display: block; width: 100%; height: 34px; border: 1px solid var(--line); background: var(--card); }
+.ct-trace .band { fill: color-mix(in srgb, var(--good) 14%, transparent); }
+.ct-trace .tgt { stroke: var(--good); stroke-width: 1; stroke-dasharray: 3 3; opacity: .75; }
+.ct-trace .ln { fill: none; stroke: var(--water); stroke-width: 1.8; stroke-linejoin: round; }
+@media (prefers-reduced-motion: reduce) { .ct-valve.on::after, .ct-valve.on > svg:first-child, .ct-blk.info { animation: none; } }
 .en-tariff .tbl td, .en-tariff .tbl th { padding-top: 4px; padding-bottom: 4px; }
 .rules { display: grid; gap: 4px; }
 .rules > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
@@ -292,6 +335,7 @@
   .ct-btns.end { margin-top: 4px; }
   .ct-prog { gap: 8px; }
   .ct-scroll { gap: 8px; }
+  .ct-trace { height: 24px; } .ct-plan-ax { height: 13px; }
   .ct .tbl td, .ct .tbl th { padding: 3px 8px; }
   .ct-days button { padding: 1px 6px; }
   .ct-tgl button { padding: 1px 8px; }
@@ -310,3 +354,13 @@
 .pr-sum .tile b { font-size: clamp(18px, 1.6vw, 26px); }
 .pr-sum .tile b small { font-size: 12.5px; color: var(--muted); }
 @container pg (max-width: 1100px) { .pr-sum .tiles { grid-template-columns: 1fr 1fr; } }
+
+/* the shortest laptop screens (720 high): the two least-used flow rows rest, and the day plan lanes get thinner */
+@media (max-height: 740px) {
+  .ct-opt { display: none; }
+  .ct-planbox { padding-top: 3px; padding-bottom: 3px; }
+  .ct-planbox h4 { margin: 0 0 2px; }
+  .ct-plan { --lane-min: 11px; }
+  .ct-blk { font-size: 0; }
+  .ct-plan-ax { height: 12px; } .ct-plan-ax span { top: 1px; }
+}

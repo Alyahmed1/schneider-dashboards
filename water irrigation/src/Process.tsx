@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Banknote, BarChart3, Beaker, Container, Droplets, FlaskConical, Recycle, Waves, Workflow, AlertTriangle, Factory } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { fmt, MOMENT_LABELS, momentHour, type Moment } from "./farm";
 import { FRESH_VALUE, GW, gwAt, gwDay, PARAMS, reuseYtd, TREAT_COST } from "./grey";
@@ -73,7 +74,7 @@ export default function Process() {
 
   return (
     <div className="vw ov pr">
-      <Panel title="Grey water plant" className="ov-dia" i={0}
+      <Panel title="Grey water plant" icon={Factory} className="ov-dia" i={0}
         right={<div className="ov-head"><span className="ov-leg"><i className="canal" />Grey water<i className="pump" />Treated water<i className="loss" />Overflow</span><Segmented<Moment> label="Time of day" value={moment} options={MOMENT_LABELS} onChange={setMoment} /></div>}>
         <div className="ov-wrap">
           <svg ref={ref} className="ov-svg gp" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="Grey water process: showers, laundry and kitchen into the collection tank, screen, membrane bioreactor, UV, chlorine, storage tank and reuse">
@@ -173,22 +174,22 @@ export default function Process() {
         </div>
       </Panel>
 
-      <Panel title="Reuse and savings, this year" className="pr-sum" i={1}>
+      <Panel title="Reuse and savings, this year" icon={Recycle} className="pr-sum" i={1}>
         <div className="tiles">
-          <div className="tile"><span>Grey water reused</span><b><CountUp value={(reused / made) * 100} decimals={0} /> <small>% of what is made</small></b></div>
-          <div className="tile"><span>Money saved</span><b><CountUp value={net / 1000} decimals={0} /> <small>k LE</small></b></div>
-          <div className="tile"><span>Made today</span><b><CountUp value={day.gen} decimals={0} /> <small>m³</small></b></div>
-          <div className="tile"><span>Overflow to the sewer today</span><b><CountUp value={day.overflow} decimals={0} /> <small>m³</small></b></div>
+          <div className="tile"><span><Recycle className="sym" size={15} aria-hidden />Grey water reused</span><b><CountUp value={(reused / made) * 100} decimals={0} /> <small>% of what is made</small></b></div>
+          <div className="tile"><span><Banknote className="sym" size={15} aria-hidden />Money saved</span><b><CountUp value={net / 1000} decimals={0} /> <small>k LE</small></b></div>
+          <div className="tile"><span><Droplets className="sym" size={15} aria-hidden />Made today</span><b><CountUp value={day.gen} decimals={0} /> <small>m³</small></b></div>
+          <div className="tile"><span><AlertTriangle className="sym" size={15} aria-hidden />Overflow to the sewer today</span><b><CountUp value={day.overflow} decimals={0} /> <small>m³</small></b></div>
         </div>
       </Panel>
       <div className="ov-gauges five">
-        <Panel title="Collection tank" i={1}><Ring value={(p.coll / GW.collect) * 100} max={100} unit="% full" grow={grow} color="var(--water)" /></Panel>
-        <Panel title="Storage tank" i={2}><Ring value={(p.store / GW.store) * 100} max={100} unit="% full" grow={grow} color="var(--teal)" /></Panel>
-        <Panel title="Treated flow" i={3}><Ring value={p.treat} max={5} unit="m³/h" decimals={1} grow={grow} color="var(--amber)" /></Panel>
-        <Panel title="Turbidity out" i={4}><Ring value={wobble(1.1, 5, t, 0.03)} max={5} unit="NTU" decimals={1} grow={grow} color="var(--good)" /></Panel>
-        <Panel title="Free chlorine" i={5}><Ring value={wobble(cl, 6, t, 0.03)} max={1.5} unit="mg/L" decimals={2} grow={grow} color="var(--water)" /></Panel>
+        <Panel title="Collection tank" icon={Container} i={1}><Ring value={(p.coll / GW.collect) * 100} max={100} unit="% full" grow={grow} color="var(--water)" /></Panel>
+        <Panel title="Storage tank" icon={Waves} i={2}><Ring value={(p.store / GW.store) * 100} max={100} unit="% full" grow={grow} color="var(--teal)" /></Panel>
+        <Panel title="Treated flow" icon={Workflow} i={3}><Ring value={p.treat} max={5} unit="m³/h" decimals={1} grow={grow} color="var(--amber)" /></Panel>
+        <Panel title="Turbidity out" icon={Beaker} i={4}><Ring value={wobble(1.1, 5, t, 0.03)} max={5} unit="NTU" decimals={1} grow={grow} color="var(--good)" /></Panel>
+        <Panel title="Free chlorine" icon={FlaskConical} i={5}><Ring value={wobble(cl, 6, t, 0.03)} max={1.5} unit="mg/L" decimals={2} grow={grow} color="var(--water)" /></Panel>
       </div>
-      <Panel title="Made and reused, month by month" className="pr-year" i={6}
+      <Panel title="Made and reused, month by month" icon={BarChart3} className="pr-year" i={6}
         right={<span className="pm-leg"><span className="key"><i style={{ background: "var(--muted)", opacity: 0.6 }} />Made</span><span className="key"><i style={{ background: "var(--teal)" }} />Reused</span></span>}>
         <div className="chart">
           <ResponsiveContainer>

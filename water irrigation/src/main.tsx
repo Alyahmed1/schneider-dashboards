@@ -7,6 +7,7 @@ import "./theme.css";
 import "./agri.css";
 import "./pumps.css";
 import "./pivots.css";
+import "./schedule.css";
 import "./map.css";
 import "./views.css";
 import "./cover.css";

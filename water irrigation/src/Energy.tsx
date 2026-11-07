@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { BarChart3, Coins, Droplets, PiggyBank, Zap } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { budget, energyToday, FARM, fmt, loadProfile, monthly, TARIFF } from "./farm";
 import { useTick, wobble } from "./live";
@@ -19,7 +20,7 @@ export default function Energy() {
     <div className="vw en">
       <div className="en-cards">
         <section className="big-card" style={{ ["--c" as string]: "var(--water)" }}>
-          <h3>Water used this year</h3>
+          <h3><Droplets className="sym" size={17} aria-hidden />Water used this year</h3>
           <b><CountUp value={usedM} decimals={1} /><small>M m³ of {fmt(FARM.allocation / 1e6)} M allowed</small></b>
           <div className="meter" role="img" aria-label={`${fmt(bud.pct)}% of the yearly water allowance used, ${bud.yearGone}% of the year gone`}>
             <i style={{ width: `${bud.pct}%` }} /><u style={{ left: `${bud.yearGone}%` }} />
@@ -27,18 +28,18 @@ export default function Energy() {
           <p>{fmt(bud.pct)}% used and {bud.yearGone}% of the year gone. {onTrack ? "You are on track." : "You are using water faster than planned."}</p>
         </section>
         <section className="big-card" style={{ ["--c" as string]: "var(--amber)" }}>
-          <h3>Electricity today</h3>
+          <h3><Zap className="sym" size={17} aria-hidden />Electricity today</h3>
           <b><CountUp value={wobble(en.cost, 2, t, 0.004)} decimals={0} /><small>LE</small></b>
           <p>{fmt(wobble(en.kwh, 1, t, 0.004))} kWh at an average of {fmt(en.avgRate, 2)} LE per kWh. Pumping uses almost all of it.</p>
         </section>
         <section className="big-card" style={{ ["--c" as string]: "var(--good)" }}>
-          <h3>You could save</h3>
+          <h3><PiggyBank className="sym" size={17} aria-hidden />You could save</h3>
           <b><CountUp value={en.shiftSaving} decimals={0} /><small>LE a day</small></b>
           <p>{fmt(en.peakShare * 100)}% of the pumping happens at the dearest hours (17:00 to 22:00). Moving half of it to the night saves about {fmt((en.shiftSaving * 365) / 1000)} k LE a year.</p>
         </section>
       </div>
 
-      <Panel title="When the pumps use power today" className="en-load" i={1}
+      <Panel title="When the pumps use power today" icon={Coins} className="en-load" i={1}
         right={<span className="pm-leg">{TARIFF.slice(0, 3).map((b, i) => <span key={i} className="key"><i style={{ background: BAND_C[b.name] }} />{b.name} {fmt(b.rate, 2)} LE</span>)}</span>}>
         <div className="chart">
           <ResponsiveContainer>
@@ -56,7 +57,7 @@ export default function Energy() {
         <p className="how">Each bar is one hour. Orange hours cost the most per kWh, green hours the least.</p>
       </Panel>
 
-      <Panel title="Water used each month" className="en-year" i={2}
+      <Panel title="Water used each month" icon={BarChart3} className="en-year" i={2}
         right={<span className="pm-leg"><span className="key"><i style={{ background: "var(--water)" }} />Used</span><span className="key"><i style={{ background: "var(--warn)" }} />Plan</span></span>}>
         <div className="chart">
           <ResponsiveContainer>

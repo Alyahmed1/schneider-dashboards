@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, ChartColumn, Coins, Droplets, DropletOff, Gauge, Info, Layers, PlugZap, Waves, Zap, Activity, ClipboardList, Factory, Droplet } from "lucide-react";
+import { IconBadge, Meter, MiniBars, MiniRing, Segments, Spark } from "./vizkit";
 import { alarms, membraneScore, METRICS, overviewKpis, productionSeries, RANGES, rng, stages, ZONES, type Filters, type Kpi, type Range } from "./data";
-import { LOADS, type WorkOrder } from "./cmms";
+import { LOADS, woInArea, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
 import { C, CountUp, Segmented, Tip } from "./ui";
 import EgyptMap, { type Region } from "./EgyptMap";
@@ -12,6 +13,7 @@ import { Bars, niceMax, Panel, tick } from "./charts";
 import type { Go, TabId } from "./App";
 
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, energy: 0.004, cost: 0.004, avail: 0.0008, wo: 0, mem: 0 };
+const TILE_ICON: Record<string, typeof Droplets> = { water: Droplets, energy: Zap, cost: Coins, avail: Activity, wo: ClipboardList, mem: Layers };
 const KPI_TO: Record<string, TabId> = { water: "production", energy: "electrical", cost: "overview", avail: "maintenance", wo: "maintenance", mem: "overview" };
 
 type MetricId = (typeof METRICS)[number]["id"];
@@ -60,6 +62,11 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
     { id: "mem", label: "Membrane health", value: score, decimals: 0, unit: "/100", delta: -1.2, note: "", spark: [] },
   ];
 
+  const openWo = wos.filter((w) => woInArea(w, f) && w.status !== "Done");
+  const woLate = openWo.filter((w) => w.late).length;
+  const woProg = openWo.filter((w) => !w.late && w.status === "In progress").length;
+  const woOpen = openWo.length - woLate - woProg;
+
   const m = METRICS.find((x) => x.id === metric)!;
   const regions: Region[] = ZONES.map((z, i) => {
     const v = Math.min(99, wobble(m.base[i], i + 11, t, 0.008));
@@ -96,15 +103,28 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       </section>
 
       <div className="hm-side">
-        <Panel title="Summary" className="hm-sum" i={1}>
+        <Panel title="Summary" icon={ChartColumn} className="hm-sum" i={1} right={<span title="Click a tile to open its tab"><Info size={15} /></span>}>
           <div className="hm-tiles">
             {kpis.map((k, n) => {
               const good = k.goodWhenDown ? k.delta <= 0 : k.delta >= 0;
               const Arrow = k.delta >= 0 ? ArrowUp : ArrowDown;
+              const ring = k.id === "avail";
               return (
-                <button key={k.id} className="hm-tile" style={{ ["--n" as string]: n }} onClick={() => go(KPI_TO[k.id])} aria-label={`${k.label}: open ${KPI_TO[k.id]}`}>
-                  <span>{k.label}</span>
-                  <b><CountUp value={k.value} decimals={k.decimals} />{k.suffix}{k.unit ? ` ${k.unit}` : ""}<Arrow size={16} className={good ? "up" : "down"} aria-label={good ? "good" : "needs attention"} /></b>
+                <button key={k.id} className={`hm-tile ${ring ? "has-ring" : ""}`} style={{ ["--n" as string]: n }} onClick={() => go(KPI_TO[k.id])} aria-label={`${k.label}: open ${KPI_TO[k.id]}`}>
+                  <div className="vz-head"><IconBadge icon={TILE_ICON[k.id]} tone={k.id === "wo" && woLate ? "warn" : "teal"} /><span>{k.label}</span></div>
+                  <div className="vz-val">
+                    <span><CountUp value={k.value} decimals={k.decimals} />{k.suffix}</span>{k.unit && <em>{k.unit}</em>}
+                    <Arrow size={16} className={good ? "up" : "down"} aria-label={good ? "good" : "needs attention"} />
+                  </div>
+                  {ring && <MiniRing frac={k.value / 100} label={`${k.value.toFixed(1)}%`} tone="good" />}
+                  <div className="vz-viz">
+                    {k.id === "water" && <Spark data={k.spark} dots />}
+                    {k.id === "energy" && <MiniBars data={k.spark} />}
+                    {k.id === "cost" && <Spark data={k.spark} fill={false} dots />}
+                    {ring && <span className="vz-note">{k.note}</span>}
+                    {k.id === "wo" && <div style={{ width: "100%", display: "grid", gap: 4 }}><Segments parts={[{ v: woProg, tone: "teal" }, { v: woOpen, tone: "ink" }, { v: woLate, tone: "bad" }]} /><span className="vz-note">{woLate} overdue · {woProg} in progress</span></div>}
+                    {k.id === "mem" && <Meter frac={k.value / 100} label={`${Math.round(k.value)}%`} tone={k.value < 80 ? "warn" : "teal"} />}
+                  </div>
                 </button>
               );
             })}
@@ -113,7 +133,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       </div>
 
       <div className="hm-strip">
-        <Panel title="Water Demand" i={3}>
+        <Panel title="Water Demand" icon={Droplet} i={3}>
           <div className="hm-line">
             <ResponsiveContainer>
               <LineChart data={lineData} margin={{ left: -8, right: 12, top: 10, bottom: 0 }}>
@@ -126,20 +146,20 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Total Water Production" i={4}><Bars labels={ql} values={prodML} unit="ML" grow={grow} /></Panel>
-        <Panel title="Total Energy Consumed" i={5}><Bars labels={ql} values={energyMWh} unit="MWh" grow={grow} /></Panel>
-        <Panel title="Water Loss" className="hm-loss" i={6}>
-          <div className="hm-box"><span>Water Losses</span><b><CountUp value={lossML} decimals={2} /> ML/d</b></div>
-          <div className="hm-box"><span>System Inputs</span><b><CountUp value={inputML} decimals={0} /> ML/d</b></div>
+        <Panel title="Total Water Production" icon={Factory} i={4}><Bars labels={ql} values={prodML} unit="ML" grow={grow} /></Panel>
+        <Panel title="Total Energy Consumed" icon={Zap} i={5}><Bars labels={ql} values={energyMWh} unit="MWh" grow={grow} /></Panel>
+        <Panel title="Water Loss" icon={DropletOff} className="hm-loss" i={6}>
+          <div className="hm-box"><IconBadge icon={DropletOff} tone="warn" /><span>Water Losses</span><b><CountUp value={lossML} decimals={2} /> ML/d</b></div>
+          <div className="hm-box"><IconBadge icon={Waves} /><span>System Inputs</span><b><CountUp value={inputML} decimals={0} /> ML/d</b></div>
         </Panel>
       </div>
 
       <div className="hm-pair">
-        <Panel title="RO Feed" className="hm-feed" i={7}>
-          <div className="hm-box"><span>Pressure</span><b><CountUp value={feed} decimals={1} /> bar</b></div>
-          <div className="hm-box"><span>Permeate flow</span><b><CountUp value={flow[3].flow} decimals={0} /> m³/h</b></div>
+        <Panel title="RO Feed" icon={Gauge} className="hm-feed" i={7}>
+          <div className="hm-box"><IconBadge icon={Gauge} /><span>Pressure</span><b><CountUp value={feed} decimals={1} /> bar</b></div>
+          <div className="hm-box"><IconBadge icon={Droplets} /><span>Permeate flow</span><b><CountUp value={flow[3].flow} decimals={0} /> m³/h</b></div>
         </Panel>
-        <Panel title="Power Monitoring" i={8}><Pie items={power} /></Panel>
+        <Panel title="Power Monitoring" icon={PlugZap} i={8}><Pie items={power} /></Panel>
       </div>
     </div>
   );

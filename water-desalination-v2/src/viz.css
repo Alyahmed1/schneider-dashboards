@@ -1,0 +1,112 @@
+/* ================= icons and mini charts for the summary tiles (loaded after motion.css) ================= */
+.vz-badge { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid color-mix(in srgb, var(--vz, var(--teal)) 45%, transparent); background: color-mix(in srgb, var(--vz, var(--teal)) 14%, transparent); color: var(--vz, var(--teal)); }
+.vz-badge.good { --vz: var(--good); } .vz-badge.warn { --vz: var(--warn); } .vz-badge.bad { --vz: var(--bad); }
+
+/* panel titles get a small teal icon */
+.hm-p h3 { display: flex; align-items: center; gap: 8px; }
+.hm-p h3 > svg { color: var(--teal); flex: none; }
+.hm-ph > svg { color: var(--muted); flex: none; margin-top: 2px; }
+
+/* summary tile: icon + label, value, then a drawing that fits the figure */
+.hm-tile { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head head" "val val" "viz viz"; align-content: stretch; gap: 4px 8px; position: relative; overflow: hidden; }
+.hm-tile::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: linear-gradient(90deg, var(--teal), transparent 70%); opacity: .55; }
+.hm-tile:hover::before { opacity: 1; }
+.hm-tile .vz-head { grid-area: head; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.hm-tile .vz-head > span { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-tile .vz-val { grid-area: val; display: flex; align-items: baseline; gap: 6px; min-width: 0; font-size: clamp(16px, 1.45vw, 21px); font-weight: 600; white-space: nowrap; }
+.hm-tile .vz-val em { font-style: normal; font-size: .58em; font-weight: 400; color: var(--muted); }
+.hm-tile .vz-val svg { margin-left: auto; align-self: center; flex: none; }
+.hm-tile .vz-val .up { color: var(--good); } .hm-tile .vz-val .down { color: var(--bad); }
+.hm-tile .vz-viz { grid-area: viz; min-height: 0; display: flex; align-items: flex-end; }
+.hm-tile .vz-note { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-tile.has-ring { grid-template-areas: "head head" "val ring" "viz ring"; }
+.hm-tile.has-ring .vz-ring { grid-area: ring; align-self: center; }
+.hm-tile.has-ring .vz-viz { align-items: flex-start; }
+
+/* sparkline */
+.vz-spark { position: relative; width: 100%; height: 100%; min-height: 26px; }
+.vz-spark svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.vz-line { stroke-dasharray: 1; animation: vzdraw 1.1s cubic-bezier(.22, 1, .36, 1) .35s backwards; }
+.vz-area { animation: vzfade .9s ease .7s backwards; }
+.vz-dot { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 2px var(--surface-0); animation: vzpop .35s ease backwards; }
+@keyframes vzdraw { from { stroke-dashoffset: 1; } }
+@keyframes vzfade { from { opacity: 0; } }
+@keyframes vzpop { from { opacity: 0; transform: scale(0); } }
+
+/* mini bars */
+.vz-bars { display: flex; align-items: flex-end; gap: 2px; width: 100%; height: 100%; min-height: 26px; }
+.vz-bars i { flex: 1; background: color-mix(in srgb, var(--teal) 55%, transparent); transform-origin: bottom; animation: vzgrow .5s cubic-bezier(.22, 1, .36, 1) backwards; }
+.vz-bars i.last { background: var(--teal); box-shadow: 0 0 8px -1px var(--teal); }
+@keyframes vzgrow { from { transform: scaleY(0); } }
+
+/* ring */
+.vz-ring { position: relative; width: clamp(46px, 5.2vw, 70px); aspect-ratio: 1; flex: none; display: grid; place-items: center; }
+.vz-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vz-ring .bg, .vz-ring .fg { fill: none; stroke-width: 10; }
+.vz-ring .bg { stroke: var(--track); }
+.vz-ring .fg { stroke: var(--teal); stroke-linecap: round; animation: vzring 1.1s cubic-bezier(.22, 1, .36, 1) .4s backwards; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--teal) 60%, transparent)); }
+.vz-ring .fg.good { stroke: var(--good); } .vz-ring .fg.warn { stroke: var(--warn); } .vz-ring .fg.bad { stroke: var(--bad); }
+.vz-ring b { position: relative; font-size: 11px; font-weight: 600; }
+@keyframes vzring { from { stroke-dasharray: 0 400; } }
+
+/* meter */
+.vz-meter { display: flex; align-items: center; gap: 8px; width: 100%; }
+.vz-meter .track { flex: 1; height: 8px; background: var(--track); border: 1px solid var(--line); overflow: hidden; }
+.vz-meter .track i { display: block; height: 100%; background: var(--teal); box-shadow: 0 0 8px -1px var(--teal); transform-origin: left; animation: vzgrowx .9s cubic-bezier(.22, 1, .36, 1) .45s backwards; }
+.vz-meter .track i.good { background: var(--good); } .vz-meter .track i.warn { background: var(--warn); } .vz-meter .track i.bad { background: var(--bad); }
+.vz-meter small { font-size: 11px; color: var(--text-2); }
+@keyframes vzgrowx { from { transform: scaleX(0); } }
+
+/* split bar */
+.vz-seg { display: flex; gap: 2px; width: 100%; height: 8px; }
+.vz-seg i { min-width: 4px; transform-origin: left; animation: vzgrowx .6s cubic-bezier(.22, 1, .36, 1) backwards; }
+.vz-seg .teal { background: var(--teal); } .vz-seg .ink { background: var(--muted); } .vz-seg .bad { background: var(--bad); } .vz-seg .warn { background: var(--warn); }
+
+/* ---- other Home boxes ---- */
+.hm-box { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ic lab" "ic val"; column-gap: 9px; align-items: center; }
+.hm-box > .vz-badge { grid-area: ic; width: 24px; height: 24px; }
+.hm-box > .vz-badge svg { width: 13px; height: 13px; }
+.hm-box { column-gap: 8px; }
+.hm-box > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-box > b { font-size: clamp(14px, 1.1vw, 18px); }
+.hm-strip { grid-template-columns: 1.1fr 1fr 1fr .8fr; }
+.hm-pair { grid-template-columns: .85fr 1.15fr; }
+.hm-pie { gap: 8px; }
+.hm-pie svg { width: 36%; }
+.hm-pie li { gap: 5px; }
+.hm-box > span { grid-area: lab; align-self: end; }
+.hm-box > b { grid-area: val; align-self: start; }
+
+/* ---- Maintenance ---- */
+.mx-stat, .mx-box, .hm-box { text-align: left; }
+.mx-stat { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ic lab" "ic val" "viz viz"; column-gap: 9px; align-items: center; position: relative; }
+.mx-stat > .vz-badge { grid-area: ic; width: 32px; height: 32px; }
+.mx-stat > span { grid-area: lab; align-self: end; }
+.mx-stat > b { grid-area: val; align-self: start; }
+.mx-stat > .vz-viz { grid-area: viz; height: 20px; margin-top: 4px; }
+.mx-stat::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: linear-gradient(90deg, var(--teal), transparent 70%); opacity: .55; }
+.mx-box { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ic lab" "ic val" "bar bar"; column-gap: 9px; align-items: center; }
+.mx-box > .vz-badge { grid-area: ic; width: 30px; height: 30px; }
+.mx-box > span { grid-area: lab; align-self: end; }
+.mx-box > b { grid-area: val; align-self: start; }
+.mx-box > .vz-meter { grid-area: bar; margin-top: 6px; }
+.mx-chip { position: relative; }
+.mx-chip > svg { position: absolute; bottom: 7px; right: 7px; opacity: .55; }
+.mx-chip.big > svg { opacity: .85; color: var(--pill-ink); }
+.mx-chip.pick.on > svg { opacity: 1; color: var(--teal); }
+.mx-chip.run > svg { color: var(--good); opacity: .9; }
+.mx-chip.under > svg { color: var(--warn); opacity: .95; }
+.mx-chip.late > svg { color: var(--bad); opacity: .95; }
+
+@media (max-height: 800px) {
+  .hm-tile .vz-head .vz-badge { width: 22px; height: 22px; }
+  .hm-tile .vz-head .vz-badge svg { width: 13px; height: 13px; }
+  .vz-ring { width: clamp(40px, 4.4vw, 54px); }
+  .vz-ring b { font-size: 10px; }
+  .vz-spark, .vz-bars { min-height: 18px; }
+  .hm-tile { gap: 2px 8px; }
+  .mx-stat > .vz-viz { height: 14px; margin-top: 2px; }
+  .mx-stat > .vz-badge { width: 26px; height: 26px; }
+}
+@media (max-width: 560px) { .hm-tile { min-height: 96px; } }
+@media (prefers-reduced-motion: reduce) { .vz-line, .vz-area, .vz-dot, .vz-bars i, .vz-ring .fg, .vz-meter .track i, .vz-seg i { animation: none; } }

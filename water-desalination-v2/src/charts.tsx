@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 /** shared pieces of the dashboard panels: a titled box, nice axis numbers, and dark bars with a cyan fill */
 export const niceMax = (v: number) => {
@@ -8,10 +8,11 @@ export const niceMax = (v: number) => {
 };
 export const tick = (v: number) => (v >= 1000 ? `${+(v / 1000).toFixed(1)}k` : `${+v.toFixed(1)}`);
 
-export function Panel({ title, className = "", i = 0, right, children }: { title: string; className?: string; i?: number; right?: ReactNode; children: ReactNode }) {
+export function Panel({ title, className = "", i = 0, right, icon: Ico, children }: { title: string; className?: string; i?: number; right?: ReactNode; icon?: ComponentType<{ size?: number; strokeWidth?: number }>; children: ReactNode }) {
+  const h = <h3>{Ico && <Ico size={16} strokeWidth={1.9} />}{title}</h3>;
   return (
     <section className={`hm-p ${className}`} style={{ ["--i" as string]: i }}>
-      {right ? <div className="hm-ph"><h3>{title}</h3>{right}</div> : <h3>{title}</h3>}
+      {right ? <div className="hm-ph">{h}{right}</div> : h}
       {children}
     </section>
   );

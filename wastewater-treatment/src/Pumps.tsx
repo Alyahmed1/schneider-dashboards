@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Flame, Gauge, Percent, Power, Zap, type LucideIcon } from "lucide-react";
 import { CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import { rng } from "./data";
 import { useGrow } from "./anim";
@@ -70,12 +70,12 @@ export default function Pumps({ go }: { go: Go }) {
     ? [{ name: "Bearing temperature", start: "Today 06:40", end: "Open" }, { name: "Efficiency drop", start: "Today 05:10", end: "Open" }]
     : [{ name: "Vibration check", start: "12 Oct 09:00", end: "12 Oct 09:40" }];
 
-  const chips: { l: string; v: ReactNode; tone?: string }[] = [
-    { l: "Daily energy", v: <><CountUp value={wobble(kwh, 2, t, 0.01)} decimals={0} /> kWh</> },
-    { l: "Capacity", v: <><CountUp value={wobble(pump.cap, 3, t, 0.01)} decimals={1} />%</> },
-    { l: "State", v: pump.state, tone: pump.state === "Alarm" ? "bad" : pump.state === "Running" ? "ok" : "" },
-    { l: "Operating efficiency", v: <><CountUp value={wobble(pump.eff, 4, t, 0.006)} decimals={1} />%</> },
-    { l: "Overheat alarm", v: pump.hot ? "High" : "Clear", tone: pump.hot ? "bad" : "ok" },
+  const chips: { l: string; v: ReactNode; tone?: string; I: LucideIcon }[] = [
+    { I: Zap, l: "Daily energy", v: <><CountUp value={wobble(kwh, 2, t, 0.01)} decimals={0} /> kWh</> },
+    { I: Gauge, l: "Capacity", v: <><CountUp value={wobble(pump.cap, 3, t, 0.01)} decimals={1} />%</> },
+    { I: Power, l: "State", v: pump.state, tone: pump.state === "Alarm" ? "bad" : pump.state === "Running" ? "ok" : "" },
+    { I: Percent, l: "Operating efficiency", v: <><CountUp value={wobble(pump.eff, 4, t, 0.006)} decimals={1} />%</> },
+    { I: Flame, l: "Overheat alarm", v: pump.hot ? "High" : "Clear", tone: pump.hot ? "bad" : "ok" },
   ];
 
   return (
@@ -94,9 +94,9 @@ export default function Pumps({ go }: { go: Go }) {
       </Panel>
 
       <section className="hm-p a-kpis pu2-kpis" style={{ ["--i" as string]: 1 }}>
-        <div className="pu2-title"><h2>{pump.name}</h2><p>{pump.duty} · {pump.id}</p></div>
+        <div className="pu2-title"><h2><Zap size={16} className="pu2-ti" />{pump.name}</h2><p>{pump.duty} · {pump.id}</p></div>
         {chips.map((c) => (
-          <div key={c.l} className={`chip ${c.tone ?? ""}`}><span>{c.l}</span><b>{c.v}</b></div>
+          <div key={c.l} className={`chip ${c.tone ?? ""}`}><span className="pu2-ci"><c.I size={12} />{c.l}</span><b>{c.v}</b></div>
         ))}
       </section>
 

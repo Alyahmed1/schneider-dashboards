@@ -213,3 +213,11 @@
 @media (max-width: 860px) { .nt2 .a-tank.nt2-photo { min-height: 0; height: auto; aspect-ratio: 586 / 582; } .nt2-photo-img { height: auto; } }
 
 .kp.bd-fit .nt2-photo.hm-p { border: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0; border-radius: 0; overflow: visible !important; padding: 0 !important; }
+
+/* Pumps: symbols */
+.pu2-kpis .chip > span.pu2-ci { display: inline-flex; align-items: center; gap: 5px; }
+.pu2-ci svg { flex: none; color: var(--teal); }
+.pu2-kpis .chip.ok .pu2-ci svg { color: #7dffb3; }
+.pu2-kpis .chip.bad .pu2-ci svg { color: #ff8a98; }
+.pu2-title h2 { display: flex; align-items: center; gap: 7px; }
+.pu2-ti { flex: none; color: var(--teal); }

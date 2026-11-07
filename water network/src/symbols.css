@@ -13,28 +13,92 @@
 .sy-prio.High i { background: var(--bad); }
 .sy-prio.Medium i { background: var(--warn); }
 .sy-prio.Low i { background: var(--teal); }
-/* narrow panels: drop the label icons so words do not wrap */
-@media (max-width: 1450px) { .hm-box > span svg, .mx-chip > span svg { display: none; } }
 .ov-hi, .ov-ri { flex: none; color: var(--teal); }
 .mx-chip > span svg { display: none; }
 
-/* narrow boxes: no label icon, and the value shrinks with the box so it never leaves it */
-.hm-feed .hm-box { container-type: inline-size; min-width: 0; overflow: hidden; }
-.hm-feed .hm-box > span svg { display: none; }
-.hm-p.hm-feed .hm-box b { font-size: clamp(11px, 15cqw, 18px); }
-.hm-tiles .hm-tile { container-type: inline-size; }
-@container (max-width: 175px) { .hm-tiles .hm-tile > span svg { display: none; } .hm-tiles .hm-tile > span { font-size: 11px; } }
-
-/* wide screens: give the Reservoir box a little more room so its numbers stay readable */
-@media (min-width: 1451px) { .hm > .hm-pair { grid-template-columns: .85fr 1.15fr; } }
-
-/* Power Monitoring: in a narrow panel the pie sits above the legend, so every name is shown in full */
-.hm-pair > .hm-p { container-type: inline-size; }
-@media (min-height: 800px) {
-@container (max-width: 280px) {
-  .hm-p .hm-pie { flex-direction: column; justify-content: center; gap: 10px; }
-  .hm-p .hm-pie svg { width: 96px; height: 96px; max-width: none; }
-  .hm-p .hm-pie ul { width: 100%; gap: 4px; font-size: 11.5px; }
-  .hm-p .hm-pie li span { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2; }
+/* Home on a big screen: the right-hand column gets more width, so every label, icon and number is full size and readable */
+@media (min-width: 1500px) {
+  div.hm { grid-template-columns: minmax(0, 1fr) clamp(480px, 30vw, 620px); }
+  div.hm > .hm-pair { grid-template-columns: .74fr 1.26fr; }
 }
+
+/* Home on a big screen: bigger, easier to read text and symbols */
+@media (min-width: 1500px) {
+  div.hm .hm-p h3 { font-size: 17px; gap: 9px; margin-bottom: 10px; }
+  div.hm .hm-p h3 svg { width: 19px; height: 19px; }
+  div.hm .hm-tiles .hm-tile > span { font-size: 15px; gap: 8px; }
+  div.hm .hm-tiles .hm-tile > span svg { width: 18px; height: 18px; }
+  div.hm .hm-tiles .hm-tile b { font-size: clamp(24px, 1.55vw, 30px); }
+  div.hm .hm-tiles .hm-tile b svg { width: 20px; height: 20px; }
+  div.hm .hm-loss .hm-box > span, div.hm .hm-feed .hm-box > span { font-size: 14px; gap: 7px; }
+  div.hm .hm-loss .hm-box > span svg, div.hm .hm-feed .hm-box > span svg { width: 16px; height: 16px; }
+  div.hm .hm-loss .hm-box b, div.hm .hm-feed .hm-box b { font-size: clamp(22px, 1.4vw, 28px); }
+  div.hm .hm-pie { gap: 16px; }
+  div.hm .hm-pie svg { max-width: 104px; }
+  div.hm .hm-pie ul { font-size: 14px; gap: 8px; }
+  div.hm .hm-pie li { gap: 8px; }
+  div.hm .hm-pie li i { width: 10px; height: 10px; }
+}
+
+/* 1500-1799px wide: a slightly smaller pie and legend text so no legend name is cut */
+@media (min-width: 1500px) and (max-width: 1799px) {
+  div.hm .hm-pie { gap: 10px; }
+  div.hm .hm-pie svg { width: 72px; max-width: 72px; }
+  div.hm .hm-pie ul { font-size: 12.5px; gap: 6px; }
+  div.hm .hm-pie li { gap: 6px; }
+  div.hm > .hm-pair { grid-template-columns: .66fr 1.34fr; }
+}
+
+/* 1200-1499px wide (laptops): the right-hand column is wider so labels, legend names and numbers all fit */
+@media (min-width: 1200px) and (max-width: 1499px) {
+  div.hm { grid-template-columns: minmax(0, 1fr) 460px; }
+  div.hm > .hm-pair { grid-template-columns: .62fr 1.38fr; }
+  div.hm .hm-pie { gap: 10px; }
+  div.hm .hm-pie svg { width: 66px; max-width: 66px; }
+  div.hm .hm-pie ul { font-size: 11.5px; gap: 5px; }
+}
+
+/* very large screens (2200px and up): scale the Home text and symbols up again */
+@media (min-width: 2200px) {
+  div.hm .hm-p h3 { font-size: 21px; }
+  div.hm .hm-p h3 svg { width: 24px; height: 24px; }
+  div.hm .hm-tiles .hm-tile > span { font-size: 19px; }
+  div.hm .hm-tiles .hm-tile > span svg { width: 22px; height: 22px; }
+  div.hm .hm-tiles .hm-tile b { font-size: 38px; }
+  div.hm .hm-tiles .hm-tile b svg { width: 24px; height: 24px; }
+  div.hm .hm-loss .hm-box > span, div.hm .hm-feed .hm-box > span { font-size: 18px; }
+  div.hm .hm-loss .hm-box > span svg, div.hm .hm-feed .hm-box > span svg { width: 20px; height: 20px; }
+  div.hm .hm-loss .hm-box b, div.hm .hm-feed .hm-box b { font-size: 34px; }
+  div.hm .hm-pie { gap: 12px; }
+  div.hm .hm-pie svg { width: 104px; max-width: 104px; }
+  div.hm .hm-pie ul { font-size: 16px; gap: 11px; }
+  div.hm .hm-pie li { gap: 6px; }
+  div.hm .hm-pie li i { width: 12px; height: 12px; }
+  div.hm > .hm-pair { grid-template-columns: .74fr 1.26fr; }
+}
+
+/* Maintenance on a big screen: larger labels, and the status-chip icons are back */
+@media (min-width: 1700px) {
+  div.mx .mx-stat > span { font-size: 14px; gap: 8px; }
+  div.mx .mx-stat > span svg { width: 18px; height: 18px; }
+  div.mx .mx-chip > span { font-size: 12.5px; gap: 6px; }
+  div.mx .mx-chip > span svg { display: block; width: 15px; height: 15px; }
+  div.mx .mx-chip b { font-size: 20px; }
+  div.mx .mx-chip.big b { font-size: 26px; }
+  div.mx .mx-box > span { font-size: 13.5px; }
+  div.mx .hm-p h3 { font-size: 17px; }
+  div.mx .hm-p h3 svg { width: 19px; height: 19px; }
+  div.mx .mx-filter { font-size: 12.5px; }
+}
+
+/* Overview gauges on a big screen: larger titles, labels, symbols and rings */
+@media (min-width: 1700px) {
+  div.ov .ov-g h3 { font-size: 17px; gap: 9px; margin-bottom: 4px; }
+  div.ov .ov-g h3 svg { width: 20px; height: 20px; }
+  div.ov .ov-gr span { font-size: 15px; gap: 8px; }
+  div.ov .ov-gr span svg { width: 17px; height: 17px; }
+  div.ov .ov-gr b { font-size: clamp(20px, 1.3vw, 26px); }
+  div.ov .ov-ring svg { max-height: 112px; }
+  div.ov .ov-ring b { font-size: 22px; }
+  div.ov .ov-ring span { font-size: 12.5px; }
 }

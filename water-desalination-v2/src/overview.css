@@ -64,7 +64,9 @@ html[data-theme="dark"] { --iso-edge: rgba(8, 10, 34, .55); --ov-pipe: #2f5b7c; 
 /* quality gauges */
 .ov-gauges { display: grid; grid-template-columns: 1.3fr repeat(4, minmax(0, 1fr)); gap: 10px; min-height: 0; }
 .ov-g { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 8px 14px 10px; background: var(--card); border: 1px solid var(--line); overflow: hidden; }
-.ov-g h3 { font-size: 14px; font-weight: 400; margin-bottom: 2px; }
+.ov-g h3 { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 400; margin-bottom: 2px; }
+.ov-g .ico { flex: none; color: var(--teal); }
+.ov-gr span { display: inline-flex; align-items: center; gap: 6px; }
 .ov-gr { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--surface-0); padding: 5px 10px; margin-top: 5px; }
 .ov-gr span { font-size: 12px; color: var(--text-2); }
 .ov-gr b { display: inline-flex; align-items: center; gap: 8px; font-size: clamp(15px, 1.3vw, 19px); font-weight: 400; white-space: nowrap; }

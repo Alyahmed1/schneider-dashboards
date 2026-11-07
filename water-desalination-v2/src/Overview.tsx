@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUp, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Atom, Droplets, Eye, FlaskConical, ShieldCheck, Thermometer, Waves, X } from "lucide-react";
 import { fmt, QUALITY, stages, type Filters, type Stage } from "./data";
 import { StageKpis, PlayPauseIcon } from "./StageView";
 import { wobble } from "./live";
@@ -105,10 +105,10 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
   // bottom gauges: the drinking-water quality of the product
   const q = (name: string) => QUALITY.find((x) => x.name === name)!;
   const rings = [
-    { n: "Product TDS", v: wobble(q("Salinity (TDS)").value, 51, t, 0.01), unit: "mg/L", d: 0, frac: (v: number) => v / 500, ok: true },
-    { n: "pH", v: wobble(q("pH").value, 52, t, 0.006), unit: "pH", d: 1, frac: (v: number) => (v - 6) / 3, ok: true },
-    { n: "Turbidity", v: wobble(q("Turbidity").value, 53, t, 0.02), unit: "NTU", d: 2, frac: (v: number) => v / 1, ok: true },
-    { n: "Free chlorine", v: wobble(q("Free chlorine").value, 54, t, 0.01), unit: "mg/L", d: 1, frac: (v: number) => v / 1.2, ok: true },
+    { n: "Product TDS", Icon: Atom, v: wobble(q("Salinity (TDS)").value, 51, t, 0.01), unit: "mg/L", d: 0, frac: (v: number) => v / 500, ok: true },
+    { n: "pH", Icon: FlaskConical, v: wobble(q("pH").value, 52, t, 0.006), unit: "pH", d: 1, frac: (v: number) => (v - 6) / 3, ok: true },
+    { n: "Turbidity", Icon: Eye, v: wobble(q("Turbidity").value, 53, t, 0.02), unit: "NTU", d: 2, frac: (v: number) => v / 1, ok: true },
+    { n: "Free chlorine", Icon: ShieldCheck, v: wobble(q("Free chlorine").value, 54, t, 0.01), unit: "mg/L", d: 1, frac: (v: number) => v / 1.2, ok: true },
   ];
   const temp = sea.readings[0], sal = sea.readings[1];
 
@@ -240,16 +240,16 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
 
       <section className="ov-gauges">
         <div className="ov-g wide">
-          <h3>Sea water</h3>
-          <div className="ov-gr"><span>{temp.label}</span><b>{live(temp, 61, t)}<ArrowUp size={15} className="up" /></b></div>
-          <div className="ov-gr"><span>{sal.label}</span><b>{live(sal, 62, t)}<ArrowUp size={15} className="up" /></b></div>
+          <h3><Waves size={17} className="ico" />Sea water</h3>
+          <div className="ov-gr"><span><Thermometer size={14} className="ico" />{temp.label}</span><b>{live(temp, 61, t)}<ArrowUp size={15} className="up" /></b></div>
+          <div className="ov-gr"><span><Droplets size={14} className="ico" />{sal.label}</span><b>{live(sal, 62, t)}<ArrowUp size={15} className="up" /></b></div>
         </div>
         {rings.map((r, n) => {
           const C = 2 * Math.PI * 44;
           const fr = Math.max(0.03, Math.min(1, r.frac(r.v)));
           return (
             <div className="ov-g" key={r.n} style={{ ["--n" as string]: n }}>
-              <h3>{r.n}</h3>
+              <h3><r.Icon size={17} className="ico" />{r.n}</h3>
               <div className="ov-ring">
                 <svg viewBox="0 0 120 120" aria-hidden>
                   <circle className="bg" cx="60" cy="60" r="44" />

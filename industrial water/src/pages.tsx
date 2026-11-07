@@ -1,4 +1,5 @@
 import { makeDiagram, type FlowCfg } from "./FlowDiagram";
+import { Bell, Droplet, Droplets, FlaskConical, Gem, GlassWater, PackageCheck, Recycle, RefreshCw, Repeat, Scale, ShieldCheck, Waves, Zap } from "lucide-react";
 import type { PageCfg } from "./diagram";
 import { EQUIP, metrics, SCENARIOS } from "./processData";
 import { MMM_EQUIP, mmmMetrics, MMM_SCENARIOS } from "./mmmData";
@@ -78,12 +79,12 @@ export const PAGES: Record<"process" | "mmm" | "cpg", PageCfg> = {
     legend: [{ cls: "k-raw", label: "Raw water" }, { cls: "k-treated", label: "Treated water" }, { cls: "k-reject", label: "Used water" }, { cls: "k-reuse", label: "Reuse loop" }],
     start: "ro",
     kpis: (c) => [
-      { label: "Raw water in", v: c.num("intake", "flow"), dec: 0, unit: "m³/h", tone: c.tone("intake", "flow") },
-      { label: "Treated water", v: c.num("tank", "flow"), dec: 0, unit: "m³/h", tone: c.tone("tank", "flow") },
-      { label: "RO recovery", v: c.num("ro", "rec"), dec: 1, unit: "%", tone: c.tone("ro", "rec") },
-      { label: "Reuse rate", v: c.num("etp", "reuse"), dec: 1, unit: "%", tone: c.tone("etp", "reuse") },
-      { label: "Energy per m³", v: c.num("ro", "sec"), dec: 2, unit: "kWh", tone: c.tone("ro", "sec") },
-      { label: "Equipment in alert", v: c.alerts, dec: 0, unit: `of ${c.total}`, tone: c.alerts === 0 ? "good" : c.alerts > 2 ? "bad" : "warn" },
+      { label: "Raw water in", icon: Droplets, v: c.num("intake", "flow"), dec: 0, unit: "m³/h", tone: c.tone("intake", "flow") },
+      { label: "Treated water", icon: ShieldCheck, v: c.num("tank", "flow"), dec: 0, unit: "m³/h", tone: c.tone("tank", "flow") },
+      { label: "RO recovery", icon: Recycle, v: c.num("ro", "rec"), dec: 1, unit: "%", tone: c.tone("ro", "rec") },
+      { label: "Reuse rate", icon: Repeat, v: c.num("etp", "reuse"), dec: 1, unit: "%", tone: c.tone("etp", "reuse") },
+      { label: "Energy per m³", icon: Zap, v: c.num("ro", "sec"), dec: 2, unit: "kWh", tone: c.tone("ro", "sec") },
+      { label: "Equipment in alert", icon: Bell, v: c.alerts, dec: 0, unit: `of ${c.total}`, tone: c.alerts === 0 ? "good" : c.alerts > 2 ? "bad" : "warn" },
     ],
   },
   mmm: {
@@ -99,12 +100,12 @@ export const PAGES: Record<"process" | "mmm" | "cpg", PageCfg> = {
     legend: [{ cls: "k-raw", label: "Fresh water" }, { cls: "k-slurry", label: "Slurry" }, { cls: "k-sludge", label: "Tailings" }, { cls: "k-conc", label: "Concentrate" }, { cls: "k-treated", label: "Return water" }, { cls: "k-reject", label: "Used water" }, { cls: "k-reuse", label: "Reuse" }],
     start: "tail",
     kpis: (c) => [
-      { label: "Fresh water make-up", v: c.num("pit", "make"), dec: 0, unit: "m³/h", tone: c.tone("pit", "make") },
-      { label: "Water recycled", v: c.num("pond", "recy"), dec: 1, unit: "%", tone: c.tone("pond", "recy") },
-      { label: "Water per tonne", v: c.num("mill", "wpt"), dec: 2, unit: "m³/t", tone: c.tone("mill", "wpt") },
-      { label: "Tailings freeboard", v: c.num("tail", "fb"), dec: 1, unit: "m", tone: c.tone("tail", "fb") },
-      { label: "Copper recovery", v: c.num("flot", "rec"), dec: 1, unit: "%", tone: c.tone("flot", "rec") },
-      { label: "Equipment in alert", v: c.alerts, dec: 0, unit: `of ${c.total}`, tone: c.alerts === 0 ? "good" : c.alerts > 2 ? "bad" : "warn" },
+      { label: "Fresh water make-up", icon: Droplet, v: c.num("pit", "make"), dec: 0, unit: "m³/h", tone: c.tone("pit", "make") },
+      { label: "Water recycled", icon: Recycle, v: c.num("pond", "recy"), dec: 1, unit: "%", tone: c.tone("pond", "recy") },
+      { label: "Water per tonne", icon: Scale, v: c.num("mill", "wpt"), dec: 2, unit: "m³/t", tone: c.tone("mill", "wpt") },
+      { label: "Tailings freeboard", icon: Waves, v: c.num("tail", "fb"), dec: 1, unit: "m", tone: c.tone("tail", "fb") },
+      { label: "Copper recovery", icon: Gem, v: c.num("flot", "rec"), dec: 1, unit: "%", tone: c.tone("flot", "rec") },
+      { label: "Equipment in alert", icon: Bell, v: c.alerts, dec: 0, unit: `of ${c.total}`, tone: c.alerts === 0 ? "good" : c.alerts > 2 ? "bad" : "warn" },
     ],
   },
   cpg: {
@@ -120,12 +121,12 @@ export const PAGES: Record<"process" | "mmm" | "cpg", PageCfg> = {
     legend: [{ cls: "k-raw", label: "Raw water" }, { cls: "k-treated", label: "Treated water" }, { cls: "k-sludge", label: "Backwash" }, { cls: "k-reject", label: "Used water" }, { cls: "k-reuse", label: "Recovered" }],
     start: "cip",
     kpis: (c) => [
-      { label: "Water per litre", v: c.num("fill", "wpl"), dec: 1, unit: "L/L", tone: c.tone("fill", "wpl") },
-      { label: "Line output", v: c.num("fill", "speed"), dec: 0, unit: "k bottles/h", tone: c.tone("fill", "speed") },
-      { label: "Water recovered", v: c.num("etp", "reuse"), dec: 1, unit: "%", tone: c.tone("etp", "reuse") },
-      { label: "RO permeate", v: c.num("ro", "cond"), dec: 0, unit: "µS/cm", tone: c.tone("ro", "cond") },
-      { label: "CIP cycles today", v: c.num("cip", "cyc"), dec: 0, unit: "cycles", tone: c.tone("cip", "cyc") },
-      { label: "Equipment in alert", v: c.alerts, dec: 0, unit: `of ${c.total}`, tone: c.alerts === 0 ? "good" : c.alerts > 2 ? "bad" : "warn" },
+      { label: "Water per litre", icon: GlassWater, v: c.num("fill", "wpl"), dec: 1, unit: "L/L", tone: c.tone("fill", "wpl") },
+      { label: "Line output", icon: PackageCheck, v: c.num("fill", "speed"), dec: 0, unit: "k bottles/h", tone: c.tone("fill", "speed") },
+      { label: "Water recovered", icon: Recycle, v: c.num("etp", "reuse"), dec: 1, unit: "%", tone: c.tone("etp", "reuse") },
+      { label: "RO permeate", icon: FlaskConical, v: c.num("ro", "cond"), dec: 0, unit: "µS/cm", tone: c.tone("ro", "cond") },
+      { label: "CIP cycles today", icon: RefreshCw, v: c.num("cip", "cyc"), dec: 0, unit: "cycles", tone: c.tone("cip", "cyc") },
+      { label: "Equipment in alert", icon: Bell, v: c.alerts, dec: 0, unit: `of ${c.total}`, tone: c.alerts === 0 ? "good" : c.alerts > 2 ? "bad" : "warn" },
     ],
   },
 };

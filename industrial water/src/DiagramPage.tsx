@@ -113,7 +113,7 @@ export default function DiagramPage({ cfg }: { cfg: PageCfg }) {
         <div className="pp-kpis">
           {kpis.map((k) => (
             <div key={k.label} className={`pk ${k.tone}`}>
-              <span>{k.label}</span>
+              <span>{k.icon && <i className="pk-ico"><k.icon size={11} /></i>}{k.label}</span>
               <b><CountUp value={k.v} decimals={k.dec} /> <em>{k.unit}</em></b>
             </div>
           ))}

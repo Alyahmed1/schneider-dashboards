@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { LucideIcon } from "lucide-react";
 import type { FlowCfg } from "./FlowDiagram";
 
 /** Shared types for the three diagram pages (Process, MMM, CPG) */
@@ -19,7 +20,7 @@ export type DiagramProps = {
   num: (id: string, k: string) => number;
 };
 
-export type Kpi = { label: string; v: number; dec: number; unit: string; tone: Tone };
+export type Kpi = { label: string; v: number; dec: number; unit: string; tone: Tone; icon?: LucideIcon };
 export type KpiCtx = { num: (id: string, k: string) => number; tone: (id: string, k: string) => Tone; alerts: number; total: number };
 
 export type PageCfg = {

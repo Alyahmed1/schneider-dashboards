@@ -17,3 +17,13 @@
 @media (max-width: 1450px) { .hm-box > span svg, .mx-chip > span svg { display: none; } }
 .ov-hi, .ov-ri { flex: none; color: var(--teal); }
 .mx-chip > span svg { display: none; }
+
+/* narrow boxes: no label icon, and the value shrinks with the box so it never leaves it */
+.hm-feed .hm-box { container-type: inline-size; min-width: 0; overflow: hidden; }
+.hm-feed .hm-box > span svg { display: none; }
+.hm-p.hm-feed .hm-box b { font-size: clamp(11px, 15cqw, 18px); }
+.hm-tiles .hm-tile { container-type: inline-size; }
+@container (max-width: 175px) { .hm-tiles .hm-tile > span svg { display: none; } .hm-tiles .hm-tile > span { font-size: 11px; } }
+
+/* wide screens: give the Reservoir box a little more room so its numbers stay readable */
+@media (min-width: 1451px) { .hm > .hm-pair { grid-template-columns: .85fr 1.15fr; } }

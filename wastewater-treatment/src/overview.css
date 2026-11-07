@@ -131,3 +131,9 @@ html[data-theme="dark"] { --ov-pipe: #2f6b5c; }
 
 /* Operations: the bottom row of pictures is mirrored so the water runs right to left; keep their text readable */
 .mirror text { transform-box: fill-box; transform-origin: center; transform: scaleX(-1); }
+
+/* Overview gauges: symbols */
+.ov-g h3 { display: flex; align-items: center; gap: 7px; }
+.ov-hi { flex: none; color: var(--teal); }
+.ov-gr span { display: inline-flex; align-items: center; gap: 6px; }
+.ov-ri { flex: none; color: var(--teal); }

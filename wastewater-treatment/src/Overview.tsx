@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUp, X } from "lucide-react";
+import { ArrowRight, ArrowUp, Atom, Droplets, FlaskConical, Layers, TestTube, Thermometer, Waves, X, type LucideIcon } from "lucide-react";
 import { fmt, QUALITY, stages, type Filters, type Stage } from "./data";
 import { StageKpis, PlayPauseIcon } from "./StageView";
 import { wobble } from "./live";
@@ -105,6 +105,7 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
 
   // bottom gauges: the effluent quality leaving the plant
   const q = (name: string) => QUALITY.find((x) => x.name === name)!;
+  const RING_ICON: Record<string, LucideIcon> = { "BOD₅": FlaskConical, pH: TestTube, "Suspended solids": Layers, Ammonia: Atom };
   const rings = [
     { n: "BOD₅", v: wobble(q("BOD₅").value, 51, t, 0.01), unit: "mg/L", d: 0, frac: (v: number) => v / 20, ok: true },
     { n: "pH", v: wobble(q("pH").value, 52, t, 0.006), unit: "pH", d: 1, frac: (v: number) => (v - 6) / 3, ok: true },
@@ -251,16 +252,16 @@ function PlantView({ f, go, t, flowOn }: { f: Filters; go: Go; t: number; flowOn
 
       <section className="ov-gauges">
         <div className="ov-g wide">
-          <h3>Raw sewage</h3>
-          <div className="ov-gr"><span>{lvl.label}</span><b>{live(lvl, 61, t)}<ArrowUp size={15} className="up" /></b></div>
-          <div className="ov-gr"><span>{temp.label}</span><b>{live(temp, 62, t)}<ArrowUp size={15} className="up" /></b></div>
+          <h3><Droplets size={15} className="ov-hi" />Raw sewage</h3>
+          <div className="ov-gr"><span><Waves size={14} className="ov-ri" />{lvl.label}</span><b>{live(lvl, 61, t)}<ArrowUp size={15} className="up" /></b></div>
+          <div className="ov-gr"><span><Thermometer size={14} className="ov-ri" />{temp.label}</span><b>{live(temp, 62, t)}<ArrowUp size={15} className="up" /></b></div>
         </div>
         {rings.map((r, n) => {
           const C = 2 * Math.PI * 44;
           const fr = Math.max(0.03, Math.min(1, r.frac(r.v)));
           return (
             <div className="ov-g" key={r.n} style={{ ["--n" as string]: n }}>
-              <h3>{r.n}</h3>
+              <h3>{(() => { const I = RING_ICON[r.n]; return <I size={15} className="ov-hi" />; })()}{r.n}</h3>
               <div className="ov-ring">
                 <svg viewBox="0 0 120 120" aria-hidden>
                   <circle className="bg" cx="60" cy="60" r="44" />

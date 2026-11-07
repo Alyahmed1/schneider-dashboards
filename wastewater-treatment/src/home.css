@@ -153,3 +153,57 @@ html[data-theme="dark"] .recharts-cartesian-grid line { stroke: var(--line); }
   .hm-rib-c:nth-child(4n) { border-right: 0; }
   .hm-rib-c:nth-child(n+5) { border-bottom: 0; }
 }
+
+/* ---- Home: symbols ---- */
+.hm-tile-l { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.hm-tile-l em { font-style: normal; overflow: hidden; text-overflow: ellipsis; }
+.hm-tile-i, .hm-rib-i { display: inline-grid; place-items: center; flex: none; color: var(--teal); }
+.hm-tile-i { width: 28px; height: 28px; border-radius: 50%; background: var(--tint); border: 1px solid var(--teal); box-shadow: 0 0 10px -4px var(--teal); transition: transform .2s, box-shadow .2s; }
+.hm-tile:hover .hm-tile-i { transform: scale(1.1); box-shadow: 0 0 14px -2px var(--teal); }
+.hm-rib-c > span { display: flex; align-items: center; gap: 5px; }
+.hm-rib-c > span svg { flex: none; }
+.hm-rib-c.warn .hm-rib-i { color: var(--warn); }
+.hm-rib-c.bad .hm-rib-i { color: var(--bad); }
+.hm-alarm { display: inline-flex; align-items: center; gap: 6px; }
+.hm-alarm.bad svg { animation: hmring 1.6s ease-in-out infinite; transform-origin: 50% 0; }
+@keyframes hmring { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(14deg); } 86% { transform: rotate(-12deg); } 94% { transform: rotate(8deg); } }
+.hm-select { position: relative; }
+.hm-sel-ic { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--teal); pointer-events: none; }
+.hm-select select { padding-left: 29px; }
+.hm-box > span { display: flex; align-items: center; gap: 6px; }
+.hm-box > span svg { color: var(--teal); flex: none; }
+.hm-lic { color: var(--teal); flex: none; }
+.hm-pie li { grid-template-columns: 9px auto minmax(0, 1fr) auto; }
+.hm-pie li:not(:has(.hm-lic)) { grid-template-columns: 9px minmax(0, 1fr) auto; }
+@media (max-width: 1500px) { .hm-rib-i svg { width: 11px; height: 11px; } .hm-rib-c > span { gap: 4px; } }
+@media (max-height: 800px) { .hm-tile-i { width: 24px; height: 24px; } .hm-tile-i svg { width: 14px; height: 14px; } }
+@media (prefers-reduced-motion: reduce) { .hm-alarm.bad svg { animation: none; } }
+.hm-pie > svg { max-width: 88px; }
+.hm-pie { gap: 8px; }
+.hm-pie li svg.hm-lic { width: 13px; height: 13px; max-width: none; aspect-ratio: auto; }
+.hm-pie ul { gap: 4px; font-size: 11px; }
+.hm-pie li { gap: 4px; }
+
+/* narrower desktops: keep every symbol, but make them smaller so no label wraps or truncates */
+@media (min-width: 1101px) and (max-width: 1450px) {
+  .hm .mx-hic { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; border: 0; background: none; }
+  .hm .mx-hic svg { width: 14px; height: 14px; }
+  .hm .hm-loss .mx-hic, .hm .hm-feed .mx-hic { display: none; }
+  .hm-rib-i { display: none; }
+  .hm-box > span svg { display: none; }
+  .hm-tile-l { gap: 6px; }
+  .hm-tile-i { width: 22px; height: 22px; }
+  .hm-tile-i svg { width: 13px; height: 13px; }
+  .hm-tile > span { font-size: 11px; }
+}
+
+/* Aeration: both boxes always readable */
+.hm-pair { grid-template-columns: .95fr 1.05fr; }
+.hm-feed { justify-content: center; }
+.hm-feed .hm-box { flex: 1; min-height: 0; align-content: center; padding: 6px 9px; margin-bottom: 6px; }
+.hm-feed .hm-box:last-child { margin-bottom: 0; }
+.hm-feed .hm-box > span { white-space: nowrap; font-size: 11px; }
+.hm-feed .hm-box b { font-size: clamp(14px, 1.2vw, 18px); }
+.hm-pair { grid-template-columns: .8fr 1.2fr; }
+.hm-pie > svg { max-width: 76px; }
+.hm-pie li { font-size: 10.5px; }

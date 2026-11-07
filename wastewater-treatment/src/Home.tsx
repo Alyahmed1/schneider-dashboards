@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import {
+  Activity, ArrowDown, ArrowUp, Bell, BellRing, Building2, CircleDollarSign, Disc3, Droplets, Factory, Fan, Filter, Flame, Gauge, Layers, PlugZap, ShieldCheck, Sprout, Sun, Waves,
+  Wind, Wrench, Zap, type LucideIcon,
+} from "lucide-react";
 import { alarms, complianceScore, overviewKpis, productionSeries, RANGES, rng, stages, type Filters, type Kpi, type Range } from "./data";
 import { LOADS, type WorkOrder } from "./cmms";
 import { useAlarmLog } from "./AlarmsContext";
@@ -13,6 +16,10 @@ import type { Go, TabId } from "./App";
 import "./kpi.css";
 
 const KPI_WOBBLE: Record<string, number> = { water: 0.0015, energy: 0.004, cost: 0.004, avail: 0.0008, wo: 0, mem: 0 };
+/** a symbol for each summary tile, each process stage and each power load */
+const KPI_ICON: Record<string, LucideIcon> = { water: Droplets, energy: Zap, cost: CircleDollarSign, avail: Gauge, wo: Wrench, mem: ShieldCheck };
+const STAGE_ICON: Record<string, LucideIcon> = { intake: Waves, pre: Filter, hp: Disc3, ro: Wind, erd: Layers, post: Sun, net: Sprout, tank: Flame };
+const LOAD_ICON: LucideIcon[] = [Fan, Droplets, Sun, Layers, Building2];
 const KPI_TO: Record<string, TabId> = { water: "production", energy: "energy", cost: "overview", avail: "maintenance", wo: "maintenance", mem: "overview" };
 
 /** the four pumping stations (in) and four reuse zones (out) on the map, and what each ring can show */
@@ -33,7 +40,7 @@ const quarters = (v: number[]) => {
   return [0, 1, 2, 3].map((q) => v.slice(q * n, q * n + n).reduce((a, b) => a + b, 0));
 };
 const PIE = ["#34b98f", "#3aa9c9", "#b8a23a", "#7d8f3e", "#8fa9b3"];
-function Pie({ items }: { items: { name: string; value: number }[] }) {
+function Pie({ items, icons }: { items: { name: string; value: number }[]; icons?: LucideIcon[] }) {
   const total = items.reduce((s, x) => s + x.value, 0);
   let a0 = -Math.PI / 2;
   return (
@@ -48,7 +55,7 @@ function Pie({ items }: { items: { name: string; value: number }[] }) {
         })}
       </svg>
       <ul>
-        {items.map((x, i) => <li key={x.name}><i style={{ background: PIE[i % PIE.length] }} /><span>{x.name}</span><b>{Math.round((x.value / total) * 100)}%</b></li>)}
+        {items.map((x, i) => { const I = icons?.[i]; return <li key={x.name}><i style={{ background: PIE[i % PIE.length] }} />{I && <I size={13} className="hm-lic" aria-hidden />}<span>{x.name}</span><b>{Math.round((x.value / total) * 100)}%</b></li>; })}
       </ul>
     </div>
   );
@@ -95,9 +102,10 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       <section className="hm-map-p" style={{ ["--i" as string]: 0 }}>
         <div className="hm-map-head">
           <div className="hm-map-lead">
-            <button className={`hm-alarm ${critical ? "bad" : "ok"}`} onClick={() => go("alarms")}>{critical ? `${critical} critical alarm` : "All normal"}</button>
+            <button className={`hm-alarm ${critical ? "bad" : "ok"}`} onClick={() => go("alarms")}>{critical ? <BellRing size={14} aria-hidden /> : <Bell size={14} aria-hidden />}{critical ? `${critical} critical alarm` : "All normal"}</button>
             <label className="hm-select">
               <span className="sr">Map metric</span>
+              <Activity size={14} className="hm-sel-ic" aria-hidden />
               <select value={metric} onChange={(e) => setMetric(e.target.value as MetricId)}>
                 {METRICS.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}
               </select>
@@ -108,7 +116,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
         <div className="hm-rib" role="list" aria-label="Treatment process, live flow per stage">
           {flow.map((st, i) => (
             <button key={st.id} role="listitem" className={`hm-rib-c ${st.tone}`} style={{ ["--n" as string]: i }} onClick={() => go("production", st.id)} aria-label={`${st.name}: open in Production`}>
-              <span>{st.name}</span>
+              <span><i className="hm-rib-i">{(() => { const I = STAGE_ICON[st.id] ?? Factory; return <I size={13} aria-hidden />; })()}</i>{st.name}</span>
               <b><CountUp value={wobble(st.flow, i + 41, t, 0.004)} decimals={0} /> <small>{st.unit}</small></b>
             </button>
           ))}
@@ -117,14 +125,14 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       </section>
 
       <div className="hm-side">
-        <Panel title="Summary" className="hm-sum" i={1}>
+        <Panel title="Summary" className="hm-sum" i={1} icon={<Gauge size={15} />}>
           <div className="hm-tiles">
             {kpis.map((k, n) => {
               const good = k.goodWhenDown ? k.delta <= 0 : k.delta >= 0;
               const Arrow = k.delta >= 0 ? ArrowUp : ArrowDown;
               return (
                 <button key={k.id} className="hm-tile" style={{ ["--n" as string]: n }} onClick={() => go(KPI_TO[k.id])} aria-label={`${k.label}: open ${KPI_TO[k.id]}`}>
-                  <span>{k.label}</span>
+                  <span className="hm-tile-l"><i className="hm-tile-i">{(() => { const I = KPI_ICON[k.id] ?? Gauge; return <I size={16} aria-hidden />; })()}</i><em>{k.label}</em></span>
                   <b><CountUp value={k.value} decimals={k.decimals} />{k.suffix}{k.unit ? ` ${k.unit}` : ""}<Arrow size={16} className={good ? "up" : "down"} aria-label={good ? "good" : "needs attention"} /></b>
                 </button>
               );
@@ -134,7 +142,7 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
       </div>
 
       <div className="hm-strip">
-        <Panel title="Sewage Received" i={3}>
+        <Panel title="Sewage Received" i={3} icon={<Waves size={15} />}>
           <div className="hm-line">
             <ResponsiveContainer>
               <LineChart data={lineData} margin={{ left: -8, right: 12, top: 10, bottom: 0 }}>
@@ -147,20 +155,20 @@ export default function Home({ f, setRange, go, wos }: { f: Filters; setRange: (
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Total Water Treated" i={4}><Bars labels={ql} values={prodML} unit="ML" grow={grow} /></Panel>
-        <Panel title="Total Energy Consumed" i={5}><Bars labels={ql} values={energyMWh} unit="MWh" grow={grow} /></Panel>
-        <Panel title="Sludge & Biogas" className="hm-loss" i={6}>
-          <div className="hm-box"><span>Dewatered sludge</span><b><CountUp value={sludge} decimals={0} /> t/d</b></div>
-          <div className="hm-box"><span>Biogas produced</span><b><CountUp value={biogas} decimals={0} /> m³/d</b></div>
+        <Panel title="Total Water Treated" i={4} icon={<Droplets size={15} />}><Bars labels={ql} values={prodML} unit="ML" grow={grow} /></Panel>
+        <Panel title="Total Energy Consumed" i={5} icon={<Zap size={15} />}><Bars labels={ql} values={energyMWh} unit="MWh" grow={grow} /></Panel>
+        <Panel title="Sludge & Biogas" className="hm-loss" i={6} icon={<Flame size={15} />}>
+          <div className="hm-box"><span><Layers size={13} aria-hidden />Dewatered sludge</span><b><CountUp value={sludge} decimals={0} /> t/d</b></div>
+          <div className="hm-box"><span><Flame size={13} aria-hidden />Biogas produced</span><b><CountUp value={biogas} decimals={0} /> m³/d</b></div>
         </Panel>
       </div>
 
       <div className="hm-pair">
-        <Panel title="Aeration" className="hm-feed" i={7}>
-          <div className="hm-box"><span>Dissolved oxygen</span><b><CountUp value={oxygen} decimals={1} /> mg/L</b></div>
-          <div className="hm-box"><span>Flow through lanes</span><b><CountUp value={flow[3].flow} decimals={0} /> m³/h</b></div>
+        <Panel title="Aeration" className="hm-feed" i={7} icon={<Fan size={15} />}>
+          <div className="hm-box"><span><Wind size={13} aria-hidden />Dissolved oxygen</span><b><CountUp value={oxygen} decimals={1} /> mg/L</b></div>
+          <div className="hm-box"><span><Waves size={13} aria-hidden />Flow through lanes</span><b><CountUp value={flow[3].flow} decimals={0} /> m³/h</b></div>
         </Panel>
-        <Panel title="Power Monitoring" i={8}><Pie items={power} /></Panel>
+        <Panel title="Power Monitoring" i={8} icon={<PlugZap size={15} />}><Pie items={power} icons={LOAD_ICON} /></Panel>
       </div>
     </div>
   );

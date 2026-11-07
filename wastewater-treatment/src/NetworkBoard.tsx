@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { QUALITY } from "./data";
 import { useGrow } from "./anim";
 import { useTick, wobble } from "./live";
@@ -6,7 +6,6 @@ import { CountUp } from "./ui";
 import { Bars, Panel } from "./charts";
 import { Trend } from "./boardui";
 import { Gauge, KpDefs, KpPie } from "./kpiui";
-import { ClarifierArt } from "./PlantArt";
 import "./kpi.css";
 import "./kpi-boards.css";
 
@@ -30,11 +29,26 @@ export default function NetworkBoard() {
   const cost = [5.7, 6.1, 5.8, 6.0, 5.9];
   const energy = wobble(68, 8, t, 0.01);
   const renewable = wobble(27, 9, t, 0.012);
+  // the picture's box is sized from the real height of its row, so it always has the picture's own shape (586 x 582): whole, no bars, no crop
+  const root = useRef<HTMLDivElement>(null);
+  const tank = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = root.current, tk = tank.current;
+    if (!el || !tk) return;
+    const fit = () => el.style.setProperty("--tankw", `${(tk.getBoundingClientRect().height * 586) / 582}px`);
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    window.addEventListener("resize", fit);
+    return () => { ro.disconnect(); window.removeEventListener("resize", fit); };
+  }, []);
 
   return (
-    <div className="bd-fit kp nt2">
+    <div className="bd-fit kp nt2" ref={root}>
       <KpDefs />
-      <Panel title="Waste water" className="a-tank" i={0}><div className="nt2-tank"><ClarifierArt /></div></Panel>
+      <section ref={tank} className="hm-p a-tank nt2-photo" style={{ ["--i" as string]: 0 }} aria-label="Waste water">
+        <img className="nt2-photo-img" src="/waste-water.png" alt="Waste water treatment: an illuminated circular clarifier tank with a walkway and steel pipes" />
+      </section>
 
       <section className="hm-p a-detail" style={{ ["--i" as string]: 1 }}>
         <h3>Detail</h3>

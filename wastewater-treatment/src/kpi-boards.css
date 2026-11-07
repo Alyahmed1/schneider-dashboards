@@ -17,7 +17,7 @@
 .kp-dial { margin: 0; display: flex; flex-direction: column; min-width: 0; min-height: 0; align-items: center; }
 .kp-dw { flex: 1; min-height: 0; width: 100%; container-type: size; display: grid; place-items: center; }
 .kp-d { position: relative; width: min(100cqw, 100cqh); aspect-ratio: 1; --w: min(100cqw, 100cqh); }
-.kp-d svg { width: 100%; height: 100%; overflow: visible; }
+.kp-d svg { width: 100%; height: 100%; overflow: visible !important; padding: 0 !important; }
 .kp-d .tr { fill: none; stroke: rgba(2, 10, 16, .8); stroke-width: 7; stroke-linecap: round; }
 .kp-d .fg { fill: none; stroke-width: 7; stroke-linecap: round; transition: stroke-dasharray 1s cubic-bezier(.22, 1, .36, 1); filter: drop-shadow(0 0 3px rgba(255, 120, 60, .7)); }
 .kp-dial.tone-cool .fg { filter: drop-shadow(0 0 3px rgba(58, 160, 255, .8)); }
@@ -35,7 +35,7 @@
 @media (min-width: 861px) {
   /* ================= NETWORK ================= */
   .kp.nt2 {
-    display: grid; gap: 8px; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: minmax(0, .78fr) minmax(0, 1.4fr);
+    display: grid; gap: 8px; grid-template-columns: minmax(0, min(var(--tankw, calc((100vh - var(--chrome, 150px) - 8px) / 2.3 * 1.0069)), 38vw)) repeat(5, minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr) minmax(0, 1.3fr);
     grid-template-areas: "tank detail detail detail detail detail" "treat treat dist dist coll coll";
   }
   .nt2 .a-tank { grid-area: tank; } .nt2 .a-detail { grid-area: detail; } .nt2 .a-treat { grid-area: treat; } .nt2 .a-dist { grid-area: dist; } .nt2 .a-coll { grid-area: coll; }
@@ -205,3 +205,11 @@
   .kp .pl2-mini .kp-gw { height: 100px; }
   .kp .nt2-sub .kp-gw { height: 130px; }
 }
+
+/* ---- Dashboard: the Waste water picture, whole (never cropped) on every screen ---- */
+.nt2-photo { position: relative; padding: 0; display: grid; place-items: center; isolation: isolate; }
+.nt2-photo-bg { display: none; position: absolute; inset: -20px; width: calc(100% + 40px); height: calc(100% + 40px); object-fit: cover; filter: blur(22px) brightness(.55) saturate(1.2); z-index: -1; }
+.nt2-photo-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+@media (max-width: 860px) { .nt2 .a-tank.nt2-photo { min-height: 0; height: auto; aspect-ratio: 586 / 582; } .nt2-photo-img { height: auto; } }
+
+.kp.bd-fit .nt2-photo.hm-p { border: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; padding: 0; border-radius: 0; overflow: visible !important; padding: 0 !important; }

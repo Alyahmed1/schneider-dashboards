@@ -1,0 +1,6 @@
+/* shared symbol styles: panel title icons and small inline icons (Maintenance, Home) */
+.mx-hic { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; vertical-align: -5px; color: var(--teal); background: var(--tint); border: 1px solid var(--line); border-radius: 6px; }
+.mx-hic svg { width: 14px; height: 14px; }
+.mx-i { flex: none; vertical-align: -2px; margin-right: 5px; }
+.mx-i.dim { color: var(--muted); }
+.mx-i.lead { color: var(--teal); margin-right: 8px; vertical-align: -3px; }

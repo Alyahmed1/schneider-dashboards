@@ -126,11 +126,6 @@ button.mx-chip.big.dim { opacity: .72; }
 .mx-table.filtered tbody tr { height: 42px; }
 
 /* ---- Maintenance: symbols ---- */
-.mx-hic { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; vertical-align: -5px; color: var(--teal); background: var(--tint); border: 1px solid var(--line); border-radius: 6px; }
-.mx-hic svg { width: 14px; height: 14px; }
-.mx-i { flex: none; vertical-align: -2px; margin-right: 5px; }
-.mx-i.dim { color: var(--muted); }
-.mx-i.lead { color: var(--teal); margin-right: 8px; vertical-align: -3px; }
 
 /* stat tiles: a round badge on the left, label and number on the right */
 .mx-stat { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 9px; align-items: center; }

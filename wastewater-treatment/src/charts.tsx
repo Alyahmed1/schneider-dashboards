@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import "./symbols.css";
 
 /** shared pieces of the dashboard panels: a titled box, nice axis numbers, and dark bars with a cyan fill */
 export const niceMax = (v: number) => {

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowUp, Check, ChevronLeft, ChevronRight, Search, Undo2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Bell, Check, CheckCircle2, ChevronLeft, ChevronRight, ListChecks, OctagonAlert, Search, Undo2 } from "lucide-react";
 import { fmtGrid, useStore, type AlarmItem } from "./store";
 import { CountUp } from "./ui";
 import Backdrop from "./Backdrop";
@@ -116,10 +116,10 @@ export default function AlarmsPage({ go, focus: focusId }: { go: Go; focus?: str
   const doMark = () => { markDone(todo); setChecked(new Set()); };
 
   const cards = [
-    { label: "Active alarms", value: alarms.length, note: "waiting for action", tone: "warn" },
-    { label: "Critical", value: critical, note: "need attention now", tone: "bad" },
-    { label: "Done in the last 24 h", value: doneToday, note: "marked as done", tone: "good" },
-    { label: "Total this week", value: all.length, note: "all alarms listed", tone: "info" },
+    { label: "Active alarms", value: alarms.length, note: "waiting for action", tone: "warn", Icon: Bell },
+    { label: "Critical", value: critical, note: "need attention now", tone: "bad", Icon: OctagonAlert },
+    { label: "Done in the last 24 h", value: doneToday, note: "marked as done", tone: "good", Icon: CheckCircle2 },
+    { label: "Total this week", value: all.length, note: "all alarms listed", tone: "info", Icon: ListChecks },
   ];
 
   return (
@@ -134,6 +134,7 @@ export default function AlarmsPage({ go, focus: focusId }: { go: Go; focus?: str
         <div className="al-cards">
           {cards.map((c, i) => (
             <motion.div key={c.label} className={`al-card ${c.tone}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, duration: 0.4 }}>
+              <i className="al-ico"><c.Icon size={20} /></i>
               <b><CountUp value={c.value} /></b>
               <div><strong>{c.label}</strong><span>{c.note}</span></div>
             </motion.div>

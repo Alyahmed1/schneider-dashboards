@@ -12,6 +12,8 @@ html[data-theme="light"] { --row-red: #d3202b; --row-blue: #1a64c8; }
 .al-card b { font-weight: 300; font-size: clamp(30px, 4.6vh, 42px); line-height: 1; min-width: 44px; }
 .al-card strong { display: block; font-weight: 600; font-size: 14px; }
 .al-card span { color: var(--muted); font-size: 12.5px; }
+.al-ico { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 8px; background: color-mix(in srgb, currentColor 15%, transparent); }
+.al-card.warn .al-ico { color: #f0a030; } .al-card.bad .al-ico { color: #ff4d5a; } .al-card.good .al-ico { color: #3ecf5a; } .al-card.info .al-ico { color: #4a9be8; }
 .al-card.warn { border-left-color: #f0a030; } .al-card.bad { border-left-color: #ff4d5a; } .al-card.good { border-left-color: #3ecf5a; } .al-card.info { border-left-color: #4a9be8; }
 
 .al-panel { padding: 0; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: color-mix(in srgb, var(--card) 90%, transparent); }

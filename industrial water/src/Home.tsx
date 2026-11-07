@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowRight, ArrowUp, Bell, CheckCircle2, Coins, Droplets, Recycle, ShieldCheck, Zap, type LucideIcon } from "lucide-react";
 import { dayFlow, KPIS, SEGMENTS, spark } from "./data";
 import { C, CountUp } from "./ui";
 import { useTick, wobble } from "./live";
@@ -49,6 +49,8 @@ const Balance = memo(function Balance({ data }: { data: ReturnType<typeof dayFlo
   );
 });
 
+const KPI_ICON: Record<string, LucideIcon> = { intake: Droplets, recycle: Recycle, quality: ShieldCheck, energy: Zap, saved: Coins, alarms: Bell };
+
 const SIMS: { area: AreaId; id: string; label: string }[] = [
   { area: "process", id: "storm", label: "Storm" },
   { area: "mmm", id: "rain", label: "Heavy rain" },
@@ -72,10 +74,11 @@ export default function Home({ go }: { go: Go }) {
             const base = isAlarm ? alarms.length : k.id === "quality" ? 99.2 - 0.5 * critical : k.value;
             const v = base * (isAlarm ? 1 : wobble(t, k.wobble, k.seed));
             const color = isAlarm && alarms.length ? C.warn : C.aqua;
+            const Icon = KPI_ICON[k.id];
             return (
               <motion.article key={k.id} className="kpi" {...stagger(i)} whileHover={{ y: -3 }}>
                 <div className="kpi-top">
-                  <span className="kpi-label">{k.label}</span>
+                  <span className="kpi-label">{Icon && <i className="kpi-ico" style={{ color }}><Icon size={14} /></i>}{k.label}</span>
                   {isAlarm
                     ? <span className={`delta ${alarms.length ? "down" : "up"}`}>{alarms.length ? `${critical} critical` : "all clear"}</span>
                     : <span className={`delta ${k.good ? "up" : "down"}`}>{k.delta > 0 ? <ArrowUp size={11} /> : <ArrowDown size={11} />}{Math.abs(k.delta)}%</span>}

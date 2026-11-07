@@ -84,7 +84,8 @@ button.crumb:hover { color: var(--ink); background: var(--surface-2); }
 .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px 0; min-height: 168px; display: flex; flex-direction: column; overflow: hidden; transition: border-color .2s; }
 .kpi:hover { border-color: var(--aqua); }
 .kpi-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-.kpi-label { font-weight: 600; font-size: 12px; color: var(--muted); }
+.kpi-label { font-weight: 600; font-size: 12px; color: var(--muted); display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+.kpi-ico { display: inline-grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 6px; background: color-mix(in srgb, currentColor 14%, transparent); }
 .kpi-val { display: flex; align-items: baseline; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
 .kpi-val b { font-weight: 400; font-size: clamp(24px, 2.1vw, 32px); letter-spacing: -.02em; line-height: 1; }
 .kpi-val > span { color: var(--muted); font-size: 12px; }

@@ -364,3 +364,7 @@
   .ct-blk { font-size: 0; }
   .ct-plan-ax { height: 12px; } .ct-plan-ax span { top: 1px; }
 }
+
+.sn-bat { display: inline-block; vertical-align: middle; width: 34px; height: 4px; margin-left: 6px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.sn-bat > i { display: block; height: 100%; background: var(--good); }
+.tbl td.warn .sn-bat > i { background: var(--warn); }

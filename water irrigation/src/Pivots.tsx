@@ -9,7 +9,8 @@ import { Bars, CountUp, Panel, Segmented, Tip } from "./ui";
 import PivotPlan, { DEFAULT_CTL, type Ctl } from "./PivotPlan";
 
 const CLASS_TEXT = { dry: "Dry, needs water", low: "Low, water soon", ok: "In the optimal range", wet: "Wet" } as const;
-const hh = (h: number) => `${String(h % 24).padStart(2, "0")}:00`;
+const CROP_ICON = { Wheat: "🌾", Maize: "🌽", Alfalfa: "🌿", Potatoes: "🥔" } as const;
+const hh =(h: number) => `${String(h % 24).padStart(2, "0")}:00`;
 
 /** Pivots: pick a pivot, read its six key numbers, see it from above, control it, and follow its soil moisture and schedule */
 export default function Pivots({ start }: { start?: string }) {
@@ -52,7 +53,8 @@ export default function Pivots({ start }: { start?: string }) {
         <div className="pv-chips">
           {snap.map((x) => (
             <button key={x.p.id} className={`pv-chip ${x.p.id === sel ? "on" : ""}`} onClick={() => setSel(x.p.id)} aria-pressed={x.p.id === sel}>
-              <i style={{ background: STATUS_COLOR[x.status] }} /><b>{x.p.id}</b><span>{x.p.crop}</span><em>{fmt(x.moist)}%</em>
+              <span className="pv-ico" aria-hidden="true">{CROP_ICON[x.p.crop]}</span>
+              <b><i style={{ background: STATUS_COLOR[x.status] }} />{x.p.id} {x.p.crop}</b>
             </button>
           ))}
         </div>

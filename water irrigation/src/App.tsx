@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Moon, Sprout, Sun, TreePine, type LucideIcon } from "lucide-react";
-import { FARM, type Filters } from "./farm";
+import { type Filters } from "./farm";
 import Agricultural from "./Agricultural";
 import Pivots from "./Pivots";
 import Schedule from "./Schedule";
@@ -85,7 +85,6 @@ export default function App() {
           </header>
           <nav className="crumbs" aria-label="Breadcrumb">
             <button className="crumb" onClick={() => go("farm")}>{TITLE}</button>
-            <span className="crumb">{FARM.name}</span>
             {tab && <button className="crumb" onClick={() => go(last[tab.id])}>{tab.label}</button>}
             <span className="crumb here" aria-current="page">{view === "alarms" ? "Alarms" : curView?.label}</span>
             <button className={`crumb-ai ${assistOpen ? "on" : ""}`} onClick={() => setAssistOpen((o) => !o)} aria-pressed={assistOpen} aria-label={assistOpen ? "Close the assistant" : "Open the assistant"}>

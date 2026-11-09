@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Droplets, MessageCircle, Map as MapIcon, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
-import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
+import { AREAS, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Home from "./Home";
 import NetworkMap from "./NetworkMap";
@@ -95,7 +95,6 @@ export default function App() {
         </header>
         <nav className="crumbs" aria-label="Breadcrumb">
           <button className="crumb" onClick={() => go(SITE.start)}>{SITE.title}</button>
-          <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
           <button className={`crumb-ai ${assistOpen ? "on" : ""}`} onClick={() => setAssistOpen((o) => !o)} aria-pressed={assistOpen} aria-label={assistOpen ? "Close the assistant" : "Open the assistant"}>
             <MessageCircle size={18} /><span>{assistOpen ? "Close the assistant" : "Ask the assistant"}</span>

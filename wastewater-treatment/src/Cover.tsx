@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Droplets, Moon, Sun } from "lucide-react";
 import type { Theme } from "./App";
-import { PLANT } from "./data";
 import { SITE } from "./site";
 
 // the headline numbers belong to the KPI site; the process site shows what is inside instead
@@ -43,7 +42,7 @@ export default function Cover({ onEnter, setTheme }: { onEnter: () => void; them
       <div className="cover-body">
         <motion.span className="cover-tag" {...up(0)}><Droplets size={14} /> {SITE.tag}</motion.span>
         <motion.h1 {...up(1)}>{SITE.title}</motion.h1>
-        <motion.p {...up(2)}>{SITE.blurb.replace(/\.$/, "")} for the {PLANT.name}.</motion.p>
+        <motion.p {...up(2)}>{SITE.blurb}</motion.p>
         <motion.div className="cover-stats" {...up(3)}>
           {STATS.map((s) => <div key={s.u}><b>{s.v}</b><span>{s.u}</span></div>)}
         </motion.div>

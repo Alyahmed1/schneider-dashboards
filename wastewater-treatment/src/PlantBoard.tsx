@@ -63,7 +63,7 @@ export default function PlantBoard() {
       <KpDefs />
       <Panel title="Treatment capacity" className="a-cap" i={0}><Gauge value={cap} max={200} unit="ML/d" grow={grow} /></Panel>
 
-      <Panel title="Cake produced" className="a-prod" i={1}>
+      <Panel title="Production" className="a-prod" i={1}>
         <div className="pl2-prod">
           {([["Last day", day], ["Last month", month], ["Last year", year]] as const).map(([l, v], n) => (
             <div key={l} className="bd-pop" style={{ ["--n" as string]: n }}>
@@ -77,7 +77,7 @@ export default function PlantBoard() {
       <Panel title="Power generation" className="a-pw" i={3}><Gauge value={gen} max={2000} unit="kW" grow={grow} tone="warm" /></Panel>
       <Panel title="Operation cost" className="a-op" i={4}><Gauge value={cost} max={10} unit="LE/m³" digits={1} grow={grow} tone="cool" /></Panel>
 
-      <Panel title="Cake cost" className="a-cost" i={5}><Gauge value={cake} max={80} unit="LE/t" grow={grow} tone="warm" /></Panel>
+      <Panel title="Cost" className="a-cost" i={5}><Gauge value={cake} max={80} unit="LE/t" grow={grow} tone="warm" /></Panel>
       <Panel title="Plant cost" className="a-plc" i={6}><Gauge value={cost} max={10} unit="LE/m³" digits={1} grow={grow} /></Panel>
 
       <Panel title="Removals" className="a-rem" i={7}>

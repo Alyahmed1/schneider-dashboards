@@ -6,7 +6,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { PLANT, rng, type Filters } from "./data";
+import { rng, type Filters } from "./data";
 import { assetsIn, woInArea, type Asset, type WorkOrder } from "./cmms";
 import { Bars, Panel } from "./charts";
 import { C, CountUp, Tip } from "./ui";
@@ -143,7 +143,7 @@ export default function Maintenance({ f, wos }: { f: Filters; wos: WorkOrder[] }
   /** what the table shows right now, as a report: the same filter, the same rows */
   const buildReport = (): ReportSpec => {
     const when = new Date().toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
-    const base = { subtitle: `${PLANT.name}  |  generated ${when}  |  sample data`, summary: chips.map((c): [string, string] => [c.label, String(c.value)]) };
+    const base = { subtitle: `Generated ${when}  |  sample data`, summary: chips.map((c): [string, string] => [c.label, String(c.value)]) };
     if (woFilter) {
       return {
         ...base, file: "work-orders", title: "Equipment info: work orders",

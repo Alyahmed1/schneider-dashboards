@@ -6,7 +6,6 @@ export const rng = (seed: number) => () => {
   return (seed - 1) / 2147483646;
 };
 
-export const PLANT = { name: "Industrial Water Complex", site: "Integrated site: process, mine and plant" };
 
 export type Kpi = { id: string; label: string; value: number; unit: string; decimals: number; delta: number; good: boolean; note: string; seed: number; wobble: number };
 

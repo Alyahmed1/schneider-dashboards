@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Droplets, Factory, Gauge, MessageCircle, Moon, Pickaxe, Sun, Workflow, type LucideIcon } from "lucide-react";
-import { PLANT } from "./data";
 import Cover from "./Cover";
 import Home from "./Home";
 import DiagramPage from "./DiagramPage";
@@ -78,7 +77,6 @@ export default function App() {
             </header>
             <nav className="crumbs" aria-label="Breadcrumb">
               <button className="crumb" onClick={() => go("home")}>Industrial Water</button>
-              <span className="crumb">{PLANT.name}</span>
               <span className="crumb here" aria-current="page">{cur.label}</span>
               <button className={`crumb-ai ${asOpen ? "on" : ""}`} onClick={() => setAsOpen((o) => !o)} aria-expanded={asOpen} aria-label="Ask the assistant"><MessageCircle /> <span>Ask the assistant</span></button>
             </nav>

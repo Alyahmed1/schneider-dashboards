@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Hammer, Home, Moon, Sun } from "lucide-react";
-import { PLANT } from "./data";
 import { CountUp } from "./ui";
 import { useStore } from "./store";
 import type { Go, Theme } from "./App";
@@ -40,7 +39,6 @@ export default function UserMenu({ go, theme, setTheme, onStart, onWork }: { go:
               <i className="me-online">Online</i>
             </div>
             <div className="me-info">
-              <div><span>Network</span><b>{PLANT.name}</b></div>
               <div><span>Shift</span><b>Day · 07:00 to 15:00</b></div>
               <div><span>Signed in</span><b>Today, {signedIn}</b></div>
               <div><span>Access</span><b>Operate and approve</b></div>

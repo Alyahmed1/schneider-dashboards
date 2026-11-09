@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Droplets, Hammer, Moon, Sun, Waves, Workflow, Zap, Gauge, type LucideIcon } from "lucide-react";
-import { AREAS, PLANT, RANGES, type Area, type Filters, type Range } from "./data";
+import { AREAS, RANGES, type Area, type Filters, type Range } from "./data";
 import { Segmented } from "./ui";
 import Home from "./Home";
 import Production from "./Production";
@@ -80,7 +80,6 @@ export default function App() {
         </header>
         <nav className="crumbs" aria-label="Breadcrumb">
           <button className="crumb" onClick={() => go("home")}>Smart Water Desalination</button>
-          <span className="crumb">{PLANT.name}</span>
           <span className="crumb here" aria-current="page">{tab === "alarms" ? "Alarms" : cur.label}</span>
           <Assistant go={go} />
         </nav>

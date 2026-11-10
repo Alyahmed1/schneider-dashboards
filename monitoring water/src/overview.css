@@ -1,0 +1,46 @@
+/* ================= Pivots overview (tab 1): fleet totals on top, four pivot circles in a fixed 2x2 grid, a chip under each ================= */
+.ov { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; height: 100%; min-height: 0; }
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.kpi { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 10px 14px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: var(--radius); backdrop-filter: blur(8px); animation: pop .45s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
+.kpi.warn { border-left-color: var(--warn); } .kpi.warn .kpi-ic { color: var(--warn); }
+.kpi-ic { color: var(--teal); flex: none; }
+.kpi > div { display: grid; min-width: 0; }
+.kpi span { font-size: 12.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi b { display: flex; align-items: baseline; gap: 5px; font-size: 24px; font-weight: 400; line-height: 1.15; white-space: nowrap; }
+.kpi small { font-size: 12.5px; color: var(--text-2); }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 10px 12px; min-height: 0; }
+
+/* one pivot: the circle (button) with its chip underneath */
+.pcard { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; justify-items: center; gap: 6px; min-width: 0; min-height: 0; padding: 4px 0 0; text-align: left; border-radius: var(--radius); animation: rise .55s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
+.pcard:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.pc-disc { min-height: 0; width: 100%; display: flex; justify-content: center; transition: transform .25s cubic-bezier(.22, 1, .36, 1); }
+.pcard:hover .pc-disc, .pcard:active .pc-disc { transform: translateY(-3px) scale(1.02); }
+.disc { height: 100%; width: auto; max-width: 100%; aspect-ratio: 1; display: block; overflow: visible; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .55)); }
+.disc-ring { fill: rgba(4, 16, 18, .55); stroke: var(--muted); stroke-width: 2; }
+.disc-ring.on { stroke: var(--good); } .disc-ring.fault { stroke: var(--bad); animation: blink 1.4s steps(2, jump-none) infinite; }
+.disc-rim { fill: none; stroke: #e8f4f0; stroke-width: 1.5; }
+
+.chip { width: min(100%, 470px); display: grid; gap: 8px; padding: 10px 14px 11px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); backdrop-filter: blur(8px); transition: border-color .2s; }
+.pcard:hover .chip { border-color: var(--teal); }
+.pcard.fault .chip { border-color: color-mix(in srgb, var(--bad) 60%, var(--line)); }
+.chip-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.chip-id { font-size: 22px; font-weight: 600; line-height: 1; }
+.chip-crop { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 13.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip-crop svg { color: var(--teal); flex: none; }
+.badge { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; font-size: 12.5px; font-weight: 600; border: 1px solid currentColor; border-radius: 999px; }
+.badge.on { color: var(--good); } .badge.off { color: var(--muted); } .badge.fault { color: var(--bad); }
+.chip-stats { display: flex; align-items: center; gap: 4px 16px; min-width: 0; }
+.stat { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.stat > svg { color: var(--teal); flex: none; }
+.stat > div { display: grid; min-width: 0; }
+.stat b { font-size: 17px; font-weight: 600; line-height: 1.1; white-space: nowrap; }
+.stat small { margin-left: 3px; font-size: 11.5px; font-weight: 400; color: var(--text-2); }
+.stat span { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.stat.al { margin-left: auto; } .stat.al > svg, .stat.al b { color: var(--warn); }
+
+/* portrait: tall cells, the chip is a little tighter */
+.stage[data-portrait="true"] .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stage[data-portrait="true"] .kpi:nth-child(n + 4) { grid-column: span 1; }
+.stage[data-portrait="true"] .chip-stats { flex-wrap: wrap; }
+.stage[data-portrait="true"] .chip-crop { font-size: 12.5px; }

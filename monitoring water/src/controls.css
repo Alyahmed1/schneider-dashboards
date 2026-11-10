@@ -1,0 +1,44 @@
+/* ================= step 2: user menu and roles, confirmations, lost signal, events log ================= */
+.um { position: relative; }
+.um-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); color: #04180d; font-weight: 700; font-size: 14px; display: grid; place-items: center; transition: filter .15s; }
+.um-btn:hover { filter: brightness(1.1); }
+.um-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; width: 340px; max-width: 92vw; padding: 14px; display: grid; gap: 10px; background: var(--card-solid); border: 1px solid var(--line-hi); border-radius: 6px; box-shadow: 0 14px 40px rgba(0, 0, 0, .55); animation: pop .2s cubic-bezier(.22, 1, .36, 1); }
+.um-head { display: flex; align-items: center; gap: 12px; }
+.um-av { width: 48px; height: 48px; border-radius: 50%; background: var(--teal); color: #04180d; font-weight: 700; font-size: 18px; display: grid; place-items: center; }
+.um-head b { display: block; font-size: 17px; font-weight: 600; }
+.um-head em { font-style: normal; font-size: 13px; color: var(--teal-d); }
+.um-lab { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-2); margin-top: 4px; }
+.um-lab svg, .um-note svg { color: var(--teal); flex: none; }
+.um-seg { width: 100%; } .um-seg button { flex: 1; }
+.um-note { display: flex; gap: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.um-note svg { margin-top: 2px; }
+.um-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.um-links .sw { padding: 0 14px; gap: 7px; }
+.um-links .sw.on { border-color: var(--warn); color: var(--warn); }
+.um-fine { font-size: 12px; color: var(--muted); }
+
+.lock { display: inline-flex; color: var(--warn); }
+.btn:disabled, .btn[disabled] { opacity: .55; cursor: not-allowed; border-color: var(--line); }
+.btn:disabled:hover { background: var(--surface-0); border-color: var(--line); }
+.cl-btn.off { cursor: not-allowed; opacity: .5; }
+.cl-btn.off:hover path { fill: rgba(10, 40, 44, .88); }
+
+.chk-list { list-style: none; display: grid; gap: 8px; }
+.chk-list li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 14px; background: var(--surface-0); border: 1px solid var(--line); border-radius: var(--radius); }
+.chk-list li.ok svg { color: var(--good); } .chk-list li.bad { border-color: color-mix(in srgb, var(--bad) 60%, var(--line)); color: #ffb3bb; } .chk-list li.bad svg { color: var(--bad); }
+
+/* lost signal: the last values stay on screen, greyed, and nothing can be commanded */
+.detail { position: relative; }
+.stale-bar { position: absolute; z-index: 5; top: 0; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; max-width: calc(100% - 24px); padding: 10px 18px; font-size: 14px; font-weight: 600; color: #ffe1a8; background: rgba(60, 38, 4, .94); border: 1px solid var(--warn); border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0, 0, 0, .5); }
+.stale-bar svg { color: var(--warn); flex: none; }
+.detail.stale .d-main, .detail.stale .d-side { filter: grayscale(.9) brightness(.8); opacity: .75; }
+.dot.lost { background: transparent; border: 2px solid var(--warn); }
+.pcard.lost .pc-disc { filter: grayscale(.9) brightness(.75); }
+.pcard.lost .chip-stats { opacity: .6; }
+.badge.lost { color: var(--warn); }
+.disc-ring.lost { stroke: var(--warn); stroke-dasharray: 6 6; }
+
+.alx-mode { margin-left: auto; }
+.alx.events { grid-template-rows: auto minmax(0, 1fr); }
+.alx-tbl.ev td { white-space: nowrap; }
+.stage[data-portrait="true"] .um-pop { right: -4px; }

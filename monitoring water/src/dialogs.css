@@ -1,0 +1,71 @@
+/* ---------- header: ask the assistant ---------- */
+.ask { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; font-size: 14px; font-weight: 600; color: #04180d; background: var(--teal); border-radius: 999px; white-space: nowrap; transition: filter .15s, transform .15s; }
+.ask:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.ask.on { background: var(--ink); color: var(--bg); }
+.stage[data-portrait="true"] .ask span { display: none; }
+.stage[data-portrait="true"] .ask { width: 40px; padding: 0; justify-content: center; }
+.cl-seg.click { cursor: pointer; outline: none; }
+.cl-seg.click:hover path, .cl-seg.click:focus-visible path { stroke: var(--teal); stroke-width: 2.5; }
+
+/* ---------- dialogs (open inside the stage) ---------- */
+.mdl-back { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(2, 10, 12, .62); backdrop-filter: blur(3px); animation: fade .2s ease-out; }
+.mdl { width: min(560px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--card-solid); border: 1px solid var(--line-hi); border-radius: 6px; box-shadow: 0 18px 50px rgba(0, 0, 0, .6); animation: pop .25s cubic-bezier(.22, 1, .36, 1); }
+.mdl header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.mdl h3 { font-size: 18px; display: flex; align-items: center; }
+.mdl-x { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--radius); color: var(--text-2); }
+.mdl-x:hover { background: var(--surface-2); color: var(--ink); }
+.mdl-body { display: grid; gap: 14px; padding: 16px; overflow: auto; min-height: 0; }
+.mdl footer { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.mdl-note { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--text-2); }
+.mdl-note svg { color: var(--teal); flex: none; margin-top: 2px; }
+.mdl-hint { font-size: 13px; color: var(--muted); } .mdl-hint.warn { color: var(--warn); }
+.mdl-ok { display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--good); }
+.mdl-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.mdl-sum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.mdl-sum span { display: grid; gap: 2px; padding: 8px 12px; background: var(--surface-0); border: 1px solid var(--line); font-size: 12.5px; color: var(--text-2); }
+.mdl-sum b { font-size: 18px; font-weight: 600; color: var(--ink); }
+.mtbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.mtbl th { text-align: left; font-weight: 600; font-size: 12.5px; color: var(--text-2); padding: 6px 8px; border-bottom: 1px solid var(--line-hi); }
+.mtbl td { padding: 8px; border-bottom: 1px solid var(--line); }
+.mtbl td svg { vertical-align: -3px; color: var(--water); }
+.mtbl tr.skip td { color: var(--muted); }
+.sld { display: grid; gap: 6px; }
+.sld > span { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-2); }
+.sld b { color: var(--ink); font-weight: 600; }
+.sld input { -webkit-appearance: none; appearance: none; width: 100%; height: 32px; background: transparent; cursor: pointer; }
+.sld input::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--teal) var(--p), var(--track) var(--p)); border: 1px solid var(--line); }
+.sld input::-moz-range-track { height: 8px; border-radius: 4px; background: var(--track); border: 1px solid var(--line); }
+.sld input::-moz-range-progress { height: 8px; border-radius: 4px; background: var(--teal); }
+.sld input::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -11px; border-radius: 50%; background: #fff; border: 3px solid var(--teal); box-shadow: 0 2px 6px rgba(0, 0, 0, .5); }
+.sld input::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid var(--teal); }
+.sld input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.sw { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 14px 0 8px; font-size: 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-0); text-align: left; }
+.sw i { position: relative; width: 38px; height: 22px; flex: none; border-radius: 11px; background: var(--track); border: 1px solid var(--line-hi); transition: background .2s; }
+.sw i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--muted); transition: left .2s, background .2s; }
+.sw.on { border-color: var(--teal); }
+.sw.on i { background: var(--tint); border-color: var(--teal); }
+.sw.on i::after { left: 18px; background: var(--teal); }
+.alist { list-style: none; display: grid; gap: 10px; }
+.alist li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; background: var(--surface-0); border: 1px solid var(--line); border-radius: var(--radius); }
+.alist b { display: block; font-size: 15px; font-weight: 600; }
+.alist span { font-size: 12.5px; color: var(--text-2); }
+.alist .bad { color: var(--bad); } .alist .warn { color: var(--warn); }
+@keyframes fade { from { opacity: 0; } }
+
+/* ---------- assistant panel (inside the stage, below the header) ---------- */
+.asst { position: absolute; z-index: 40; top: calc(var(--head-h) + 8px); right: 10px; bottom: 10px; width: 360px; display: flex; flex-direction: column; background: var(--card-solid); border: 1px solid var(--line-hi); border-radius: 6px; box-shadow: 0 14px 40px rgba(0, 0, 0, .55); animation: slide .25s cubic-bezier(.22, 1, .36, 1); }
+.asst header { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 14px; border-bottom: 1px solid var(--line); }
+.asst h3 { display: flex; align-items: center; font-size: 16px; }
+.asst h3 em { margin-left: 10px; font-style: normal; font-size: 12.5px; color: var(--teal-d); }
+.as-msgs { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.as-msgs p { max-width: 92%; padding: 8px 12px; font-size: 13.5px; line-height: 1.45; white-space: pre-line; border-radius: 10px; }
+.as-msgs p.bot { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--line); }
+.as-msgs p.me { align-self: flex-end; background: var(--teal); color: #04180d; font-weight: 600; }
+.as-sug { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 12px; }
+.as-sug button { min-height: 34px; padding: 0 12px; font-size: 12.5px; color: var(--text-2); border: 1px solid var(--line-hi); border-radius: 999px; background: var(--surface-0); }
+.as-sug button:hover { border-color: var(--teal); color: var(--ink); }
+.asst form { display: flex; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--line); }
+.asst input { flex: 1; min-width: 0; min-height: 40px; padding: 0 12px; font-size: 14px; border: 1px solid var(--line-hi); border-radius: var(--radius); background: var(--surface-0); }
+.asst input:focus { outline: 2px solid var(--teal); outline-offset: -1px; }
+.stage[data-portrait="true"] .asst { left: 10px; width: auto; top: auto; height: 58%; animation-name: rise; }
+@keyframes slide { from { opacity: 0; transform: translateX(24px); } }

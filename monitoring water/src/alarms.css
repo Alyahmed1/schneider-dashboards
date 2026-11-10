@@ -1,0 +1,78 @@
+/* ================= alarms: the bell and the full alarm list, same look as the other water dashboards ================= */
+.head { position: relative; z-index: 20; }
+.icon-btn { position: relative; width: 40px; height: 40px; border-radius: var(--radius); border: 1px solid var(--line-hi); background: var(--surface-0); display: grid; place-items: center; }
+.icon-btn:hover { border-color: var(--teal); }
+.icon-btn i { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 4px; background: var(--bad); color: #fff; font-size: 12px; font-style: normal; font-weight: 700; display: grid; place-items: center; }
+.bell { position: relative; }
+.bell-pop { position: absolute; right: 0; top: calc(100% + 8px); width: 380px; max-width: 92vw; padding: 12px; background: var(--card-solid); border: 1px solid var(--line-hi); border-radius: 6px; box-shadow: 0 14px 40px rgba(0, 0, 0, .55); display: grid; gap: 10px; z-index: 60; animation: pop .2s cubic-bezier(.22, 1, .36, 1); }
+.bell-pop ul { list-style: none; display: grid; gap: 10px; }
+.bell-pop li { display: grid; grid-template-columns: auto 1fr auto; gap: 3px 10px; align-items: center; font-size: 13.5px; }
+.bell-pop li p { grid-column: 1 / -1; color: var(--text-2); font-size: 13px; }
+.bell-pop li em { font-style: normal; color: var(--muted); font-size: 12.5px; }
+.bell-pop li.none { color: var(--muted); display: block; }
+.sev { padding: 1px 8px; font-size: 12px; font-weight: 600; border: 1px solid currentColor; border-radius: 2px; }
+.sev.bad { color: var(--bad); } .sev.warn { color: var(--warn); } .sev.info { color: var(--water); }
+.alist .info { color: var(--water); }
+.alist .ackd { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--good); white-space: nowrap; }
+.kpi.click { text-align: left; cursor: pointer; transition: border-color .15s, background .15s, transform .15s; }
+.kpi.click:hover { border-color: var(--teal); background: var(--surface-2); transform: translateY(-2px); }
+
+.select select { appearance: none; height: 40px; min-width: 170px; padding: 0 30px 0 12px; font-size: 14px; border: 1px solid var(--line-hi); border-radius: var(--radius); color: var(--ink); background: var(--surface-0) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2392a9b4' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center; }
+.select select option { background: var(--card-solid); color: var(--ink); }
+
+/* ---------- the Alarms page: title, four cards, then one panel (filters, grid, description bar, status bar) ---------- */
+.alx { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 10px; height: 100%; min-height: 0; --al-red: #ff6a6a; --al-blue: #7db8ff; }
+.alx-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.alx-head h1 { font-size: 26px; font-weight: 400; line-height: 1.1; }
+.alx-head p { color: var(--muted); font-size: 13px; }
+.alx-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.alx-card { display: flex; align-items: center; gap: 14px; padding: 8px 16px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: var(--radius); backdrop-filter: blur(8px); min-width: 0; animation: pop .4s cubic-bezier(.22, 1, .36, 1) backwards; }
+.alx-card b { font-size: 30px; font-weight: 400; line-height: 1; }
+.alx-card div { display: grid; min-width: 0; }
+.alx-card div > span { font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alx-card em { font-style: normal; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alx-card.tone-warn { border-left-color: var(--warn); } .alx-card.tone-bad { border-left-color: var(--bad); } .alx-card.tone-good { border-left-color: var(--good); } .alx-card.tone-info { border-left-color: var(--water); }
+.alx-main { padding: 12px 14px 0; gap: 0; min-height: 0; }
+.alx-filters { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
+.alx-chips { display: flex; gap: 6px; }
+.alx-chip { min-height: 40px; padding: 0 16px; border: 1px solid var(--line-hi); background: var(--surface-0); border-radius: 20px; font-size: 14px; color: var(--text-2); }
+.alx-chip:hover { border-color: var(--teal); color: var(--ink); }
+.alx-chip.on { background: var(--teal); border-color: var(--teal); color: #04180d; font-weight: 600; }
+.alx-search { margin-left: auto; display: flex; align-items: center; gap: 8px; width: min(240px, 100%); padding: 0 12px; height: 40px; border: 1px solid var(--line-hi); border-radius: 20px; background: var(--surface-0); color: var(--muted); }
+.alx-search:focus-within { border-color: var(--teal); }
+.alx-search input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--ink); font-size: 14px; }
+.alx-wrap { scrollbar-color: var(--line-hi) var(--track); scrollbar-width: thin; flex: 1; min-height: 90px; overflow: auto; border: 1px solid var(--line); background: var(--surface-0); }
+.alx-tbl { border-collapse: collapse; min-width: 100%; font-size: 14px; }
+.alx-tbl th { position: sticky; top: 0; z-index: 1; text-align: left; font-weight: 600; font-size: 13px; padding: 7px 10px; color: var(--ink); background: var(--surface-3); border-bottom: 1px solid var(--muted); border-right: 1px solid var(--line); white-space: nowrap; cursor: pointer; user-select: none; }
+.alx-tbl th svg { vertical-align: -1px; margin-left: 5px; color: var(--teal); }
+.alx-tbl th.chk, .alx-tbl td.chk { width: 52px; text-align: center; padding: 3px 0; cursor: default; }
+.alx-tbl td { padding: 6px 10px; white-space: nowrap; border-bottom: 1px solid color-mix(in srgb, var(--line) 45%, transparent); }
+.alx-tbl tr.unack td { color: var(--al-red); }
+.alx-tbl tr.ack td { color: var(--al-blue); }
+.alx-tbl tbody tr { cursor: pointer; }
+.alx-tbl tbody tr:hover td { background: var(--tint); }
+.alx-tbl tbody tr.sel td { background: color-mix(in srgb, var(--teal) 20%, transparent); }
+.alx-tbl tr.none td { color: var(--muted); text-align: center; padding: 28px; cursor: default; }
+.alx-tbl input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--teal); cursor: pointer; vertical-align: middle; }
+.alx-tbl input[type="checkbox"]:disabled { cursor: default; opacity: .6; }
+.alx-detail { flex: none; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 8px 12px; margin-top: 8px; background: var(--surface-0); border: 1px solid var(--line); font-size: 13.5px; }
+.alx-detail.empty { color: var(--muted); justify-content: flex-start; padding: 12px; }
+.alx-d-main b { display: block; font-weight: 600; font-size: 14px; }
+.alx-d-meta { display: flex; flex-wrap: wrap; gap: 2px 18px; margin-top: 3px; color: var(--text-2); font-size: 12.5px; }
+.alx-d-meta i { font-style: normal; color: var(--muted); margin-right: 6px; }
+.alx-d-act { display: flex; gap: 8px; flex: none; }
+.alx-status { flex: none; display: flex; flex-wrap: wrap; margin: 8px -14px 0; border-top: 1px solid var(--line); background: var(--surface-0); font-size: 12.5px; color: var(--text-2); }
+.alx-status span { padding: 6px 14px; border-right: 1px solid var(--line); }
+.stage[data-portrait="true"] .alx-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stage[data-portrait="true"] .alx-search { margin-left: 0; width: 100%; }
+
+/* ---------- symbols on the alarm screens ---------- */
+.cell-i { display: inline-flex; align-items: center; gap: 7px; }
+.ai { flex: none; }
+.sev { display: inline-flex; align-items: center; gap: 5px; }
+.alx-chip { display: inline-flex; align-items: center; gap: 6px; }
+.alx-head h1 { display: flex; align-items: center; }
+.alx-head h1 .sym { color: var(--teal); }
+.alx-ic { flex: none; color: var(--teal); }
+.alx-card.tone-warn .alx-ic { color: var(--warn); } .alx-card.tone-bad .alx-ic { color: var(--bad); } .alx-card.tone-good .alx-ic { color: var(--good); } .alx-card.tone-info .alx-ic { color: var(--water); }
+.alx-d-act .btn svg { flex: none; }

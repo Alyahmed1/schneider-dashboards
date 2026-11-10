@@ -1,0 +1,76 @@
+/* ================= theme: same control-room look as the other water dashboards (green accent on deep navy-teal panels, dark) =================
+   Every size below is in design pixels of the stage (see stage.ts); the stage is scaled as a whole, so nothing here uses vw/vh. */
+:root {
+  --bg: #0d1a21;
+  --card: rgba(19, 38, 48, .82);
+  --card-solid: #132630;
+  --ink: #ffffff;
+  --muted: #92a9b4;
+  --text-2: #bdd0d9;
+  --line: #2a424d;
+  --line-hi: #3f6272;
+  --teal: #4cc97a;       /* the accent (green) */
+  --teal-d: #8be0a9;
+  --water: #3db8ff;
+  --water-d: #1f6fd0;
+  --amber: #e0b64a;
+  --good: #3ecf5a;
+  --warn: #f0b429;
+  --bad: #ef5a6a;
+  --surface-0: rgba(8, 19, 26, .72);
+  --surface-2: #1a323e;
+  --surface-3: #21404e;
+  --track: #08131a;
+  --tint: rgba(76, 201, 122, .16);
+  --radius: 4px;
+  --font: "Segoe UI", "Open Sans", system-ui, sans-serif;
+  --head-h: 56px;
+  --pad: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.4 var(--font); -webkit-font-smoothing: antialiased; overflow: hidden; font-variant-numeric: tabular-nums; -webkit-tap-highlight-color: transparent; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; touch-action: manipulation; }
+button:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+h1, h2, h3 { font-weight: 400; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- background: the aerial farmland picture fills the whole screen (also the bars outside the stage), dimmed so widgets stay readable ---------- */
+.bg { position: fixed; inset: 0; z-index: 0; background: #07120f url("/bg.jpg") center / cover no-repeat; }
+.bg::after { content: ""; position: absolute; inset: 0; background:
+  radial-gradient(ellipse at 50% 45%, rgba(4, 12, 16, 0) 0%, rgba(4, 12, 16, .5) 100%),
+  linear-gradient(180deg, rgba(4, 12, 16, .4) 0, rgba(4, 12, 16, 0) 16%, rgba(4, 12, 16, 0) 84%, rgba(4, 12, 16, .4) 100%); }
+.bg { filter: brightness(1.45) saturate(1.1); }
+
+/* ---------- the stage: a fixed-shape canvas, scaled to fit, centred ---------- */
+.stage { position: fixed; z-index: 1; left: 0; top: 0; transform-origin: 0 0; display: grid; grid-template-rows: var(--head-h) minmax(0, 1fr); overflow: hidden; }
+.stage > * { min-width: 0; min-height: 0; }
+
+/* ---------- top bar: brand, the two tabs, actions ---------- */
+.head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 0 var(--pad); background: linear-gradient(180deg, rgba(8, 19, 26, .9), rgba(8, 19, 26, .55)); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark { width: 32px; height: 32px; border-radius: var(--radius); background: var(--teal); color: #04180d; display: grid; place-items: center; flex: none; }
+.brand b { font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand em { font-style: normal; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.tabs { justify-self: center; display: flex; gap: 6px; padding: 4px; border: 1px solid var(--line); background: var(--surface-0); border-radius: var(--radius); }
+.tabs button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 20px; font-size: 15px; color: var(--text-2); border-radius: 3px; white-space: nowrap; transition: background .15s, color .15s; }
+.tabs button:hover { color: var(--ink); background: var(--surface-2); }
+.tabs button.on { background: var(--teal); color: #04180d; font-weight: 600; }
+.acts { display: flex; justify-content: flex-end; align-items: center; gap: 8px; min-width: 0; }
+
+/* ---------- shared parts ---------- */
+.page { padding: var(--pad); min-width: 0; min-height: 0; }
+.pn { position: relative; overflow: hidden; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); backdrop-filter: blur(8px); animation: rise .55s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
+.pn h3 { font-size: 16px; color: var(--ink); line-height: 1.2; }
+.sym { display: inline-block; vertical-align: -3px; margin-right: 7px; color: var(--teal); flex: none; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 1px solid var(--line-hi); background: var(--surface-0); border-radius: var(--radius); font-size: 14px; white-space: nowrap; transition: border-color .15s, background .15s; }
+.btn:hover { border-color: var(--teal); background: var(--surface-2); }
+.btn.pri { background: var(--teal); border-color: var(--teal); color: #04180d; font-weight: 600; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pop { from { opacity: 0; transform: scale(.94); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

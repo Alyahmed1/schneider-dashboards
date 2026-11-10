@@ -77,7 +77,7 @@ export function PumpDialog({ pumps, onApply, onClose }: { pumps: Pumps; onApply:
   const night = d.from === 22 && d.to === 6;
   return (
     <Modal title="Pumping schedule" icon={<Waves size={20} />} onClose={onClose} onApply={() => { onApply(d); onClose(); }}>
-      <p className="mdl-note"><Container size={16} />The pumps fill the tanks inside this window. Night hours are the cheapest and keep the day free for irrigation.</p>
+      <p className="mdl-note"><Container size={16} />The pumps fill the tanks inside this window.</p>
       <Slider label="Pumping starts" value={d.from} min={0} max={23} show={hour} onChange={(v) => setD({ ...d, from: v })} />
       <Slider label="Pumping ends" value={d.to} min={0} max={23} show={hour} onChange={(v) => setD({ ...d, to: v })} />
       <div className="mdl-row">{d.on.map((on, i) => <Switch key={i} on={on} label={`Tank ${i + 1}`} onChange={(v) => setD({ ...d, on: d.on.map((x, j) => (j === i ? v : x)) })} />)}</div>

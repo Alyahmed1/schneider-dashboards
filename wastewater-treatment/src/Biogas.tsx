@@ -129,10 +129,10 @@ function Defs() {
   return (
     <svg className="bio-defs" aria-hidden focusable="false">
       <defs>
-        <linearGradient id="bio-steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#0d2a38" /><stop offset=".35" stopColor="#4d8fa3" /><stop offset=".6" stopColor="#2a6176" /><stop offset="1" stopColor="#0a2230" /></linearGradient>
-        <linearGradient id="bio-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7fe9ee" /><stop offset="1" stopColor="#1f8d9b" /></linearGradient>
-        <linearGradient id="bio-dome" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#9ff6ee" /><stop offset=".55" stopColor="#25a9a6" /><stop offset="1" stopColor="#0b5d66" /></linearGradient>
-        <linearGradient id="bio-arc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#0a8f95" /><stop offset="1" stopColor="#7ff7ee" /></linearGradient>
+        <linearGradient id="bio-steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#0e2a26" /><stop offset=".35" stopColor="#4f9a8a" /><stop offset=".6" stopColor="#2a6a5e" /><stop offset="1" stopColor="#0a221e" /></linearGradient>
+        <linearGradient id="bio-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7fe9c6" /><stop offset="1" stopColor="#1f9a78" /></linearGradient>
+        <linearGradient id="bio-dome" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#9ff6d6" /><stop offset=".55" stopColor="#25a984" /><stop offset="1" stopColor="#0b6656" /></linearGradient>
+        <linearGradient id="bio-arc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#0f9b78" /><stop offset="1" stopColor="#6ff0c2" /></linearGradient>
         <linearGradient id="bio-fire" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stopColor="#ff5a1f" /><stop offset=".6" stopColor="#ff9a2e" /><stop offset="1" stopColor="#ffe08a" /></linearGradient>
         <linearGradient id="bio-ice" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stopColor="#1f6fd1" /><stop offset=".6" stopColor="#3aa0ff" /><stop offset="1" stopColor="#bfeaff" /></linearGradient>
       </defs>

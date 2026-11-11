@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { PhoneContext } from "./stage";
 import { NOZZLES, type Nz, type PivotState } from "./model";
 
 /** side view of the span with its 16 nozzles (click one to open/close it) and the application depth profile below */
@@ -7,9 +9,10 @@ const nzX = (i: number) => X0 + 36 + ((X1 - X0 - 50) * i) / (NOZZLES - 1);
 const COL: Record<Nz, string> = { on: "#2bff6a", off: "#6f8790", fault: "#ff9a1f" };
 
 export default function SpanView({ p, onNozzle }: { p: PivotState; onNozzle: (i: number) => void }) {
+  const phone = useContext(PhoneContext);
   const slot = (X1 - X0 - 50) / (NOZZLES - 1);
   const BASE = 184, TOP = 124;
-  return (
+  const svg = (
     <svg className="sv" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="group" aria-label="Span and nozzles">
       <line x1={W / 2} y1={0} x2={W / 2} y2={H} className="link" />
 
@@ -58,4 +61,6 @@ export default function SpanView({ p, onNozzle }: { p: PivotState; onNozzle: (i:
       <text x={X1} y={TOP} textAnchor="end" className="sv-cap">{p.nozzles.filter((n) => n === "on").length} of {NOZZLES} open</text>
     </svg>
   );
+  // phone: the span keeps its real width (the 16 nozzles stay about 40 px wide, easy to tap) and is swiped sideways
+  return phone ? <div className="sv-scroll" tabIndex={0} role="region" aria-label="Span and nozzles, scroll sideways">{svg}</div> : svg;
 }

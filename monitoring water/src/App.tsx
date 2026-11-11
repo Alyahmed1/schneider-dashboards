@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Clock, Gauge, LayoutGrid, MessageCircle } from "lucide-react";
-import { useStage } from "./stage";
+import { PhoneContext, useStage } from "./stage";
 import { PIVOTS, type PivotId } from "./pivots";
 import { hhmm, statusOf, useFleet, type Role, type Who } from "./model";
 import Detail from "./Detail";
@@ -28,7 +28,8 @@ export default function App() {
   return (
     <RoleProvider who={who}>
       <div className="bg" aria-hidden />
-      <div className="stage" data-portrait={st.portrait} style={{ width: st.w, height: st.h, transform: `translate(${st.x}px, ${st.y}px) scale(${st.scale})` }}>
+      <PhoneContext.Provider value={st.phone}>
+      <div className="stage" data-portrait={st.portrait} data-phone={st.phone} style={st.phone ? undefined : { width: st.w, height: st.h, transform: `translate(${st.x}px, ${st.y}px) scale(${st.scale})` }}>
         <header className="head">
           <div className="brand">
             <img className="brand-logo" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
@@ -70,8 +71,9 @@ export default function App() {
           </AnimatePresence>
         </main>
         <Assistant open={ask} onClose={() => setAsk(false)} fleet={fleet} scope={sel} detail={tab === "detail" && !alarms} />
-        {debug && <p className="dbg">stage {st.w}×{st.h} · scale {st.scale.toFixed(3)}</p>}
+        {debug && <p className="dbg">stage {st.w}×{st.h} · scale {st.scale.toFixed(3)}{st.phone ? " · phone" : ""}</p>}
       </div>
+      </PhoneContext.Provider>
     </RoleProvider>
   );
 }

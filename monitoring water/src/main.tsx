@@ -7,6 +7,7 @@ import "./overview.css";
 import "./dialogs.css";
 import "./alarms.css";
 import "./controls.css";
+import "./phone.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

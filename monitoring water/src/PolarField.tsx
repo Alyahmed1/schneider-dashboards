@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
+import { PhoneContext } from "./stage";
 import { annular, pt, compass } from "./geo";
 import { statusOf, type PivotState } from "./model";
 import { RINGS, cellKind, underRings } from "./field";
@@ -18,6 +19,7 @@ export default function PolarField({ p, label }: { p: PivotState; label: string 
     return out;
   }, []);
 
+  const phone = useContext(PhoneContext);
   const under = underRings(p);
   const st = statusOf(p);
   const fill = (ring: number, c: number) => cellKind(p, under, ring, c);
@@ -27,8 +29,10 @@ export default function PolarField({ p, label }: { p: PivotState; label: string 
   const towers = Array.from({ length: 7 }, (_, i) => pt(0, 0, R * (0.2 + 0.8 * ((i + 1) / 7)), compass(p.angle)));
   const cyc = Math.round((p.angle / 360) * 100);
 
-  return (
-    <svg className="pf" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label={`${label} seen from above, span at ${Math.round(p.angle)} degrees`}>
+  const LEG = [["ok", "Applied"], ["under", "Under-applied"], ["wet", "Watering"], ["pend", "Pending"]] as const;
+  const pos = Math.round(p.angle);
+  const svg = (
+    <svg className="pf" viewBox={phone ? `24 22 612 ${H - 22}` : `0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label={`${label} seen from above, span at ${Math.round(p.angle)} degrees`}>
       <ellipse cx={CX} cy={CY + 10} rx={R + 8} ry={(R + 8) * SQ} fill="rgba(0,0,0,.45)" />
       <g transform={`translate(${CX} ${CY}) scale(1 ${SQ})`}>
         <circle r={R + 6} className="pf-rim" />
@@ -38,9 +42,9 @@ export default function PolarField({ p, label }: { p: PivotState; label: string 
         {towers.map(([x, y], i) => <circle key={i} cx={x} cy={y} r={4.5} className="arm-t" />)}
         <circle r={9} className="pf-hub" />
       </g>
-      <line x1={CX} y1={0} x2={CX} y2={CY} className="link" />
+      <line x1={CX} y1={phone ? 22 : 0} x2={CX} y2={CY} className="link" />
       <circle cx={CX} cy={CY} r={4} className="link-dot" />
-
+      {!phone && <>
       <text x={10} y={22} className="pf-t">{label}</text>
       <text x={W - 10} y={22} textAnchor="end" className="pf-t">Cycle <tspan className="pf-v">{cyc}%</tspan></text>
       <text x={W - 10} y={H - 8} textAnchor="end" className="pf-t">Position <tspan className="pf-v">{Math.round(p.angle)}°</tspan></text>
@@ -49,6 +53,16 @@ export default function PolarField({ p, label }: { p: PivotState; label: string 
           <rect width={9} height={9} y={-8} className={`cell ${k}`} /><text x={15} y={0} className="pf-lg">{t}</text>
         </g>
       ))}
+      </>}
     </svg>
+  );
+  // phone: the captions and the legend are plain text under and over the picture, so they keep a readable size
+  if (!phone) return svg;
+  return (
+    <div className="pf-wrap">
+      <p className="pf-cap"><b>{label}</b><span>Cycle <b>{cyc}%</b></span><span>Position <b>{pos}°</b></span></p>
+      {svg}
+      <ul className="pf-leg">{LEG.map(([k, t]) => <li key={k}><i className={k} />{t}</li>)}</ul>
+    </div>
   );
 }

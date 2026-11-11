@@ -63,6 +63,9 @@ h1, h2, h3 { font-weight: 400; }
 .topbar { height: var(--top-h); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 clamp(10px, 1.4vw, 18px); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .brand b { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-logo { height: 44px; width: auto; display: block; flex: none; }
+.brand .brand-sep { display: block; width: 1px; height: 32px; background: var(--line); flex: none; }
+@media (max-width: 720px) { .brand-logo { height: 30px; } .brand .brand-sep { display: none; } }
 .brand-mark { width: 22px; height: 22px; border-radius: 3px; background: var(--teal); color: #04180d; display: grid; place-items: center; flex: none; }
 .top-actions { display: flex; align-items: center; gap: 8px; }
 .icon-btn { position: relative; width: 28px; height: 28px; border-radius: 3px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; }

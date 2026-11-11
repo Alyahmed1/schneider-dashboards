@@ -4,7 +4,7 @@
   --teal: #1a9fc2; --teal-d: #12708c; --aqua: #3dbcdc; --good: #25a244; --warn: #e8921c; --bad: #d63a6e;
   --surface: #ffffff; --surface-2: #f1f3fa; --surface-3: #e9ecf7; --tint: rgba(26, 159, 194, .12); --track: #dfe3f1; --text-2: #3d4470;
   --radius: 4px; --body: "Segoe UI", "Open Sans", system-ui, sans-serif;
-  --top-h: 40px; --crumb-h: 38px; --dock-h: 46px;
+  --top-h: 52px; --crumb-h: 38px; --dock-h: 46px;
   --eq-bg: #ffffff; --eq-edge: #8794bd; --eq-fill: #e3e7f4; --eq-line: #5f6ea0; --pipe: #c3cde4; --pipe-edge: #97a6c9; --tag-bg: #ffffff;
 }
 html[data-theme="dark"] {

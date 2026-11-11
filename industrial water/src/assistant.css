@@ -45,3 +45,8 @@ html[data-theme="dark"] .as-panel form button { color: #06141f; }
   .app.as-open { padding-right: 390px; }
   .app.as-open .dock { right: 390px; }
 }
+
+/* Schneider Electric logo in the top bar */
+.brand-logo { height: 44px; width: auto; display: block; flex: none; }
+.brand .brand-sep { display: block; width: 1px; height: 32px; background: var(--line); flex: none; }
+@media (max-width: 720px) { .brand-logo { height: 30px; } .brand .brand-sep { display: none; } }

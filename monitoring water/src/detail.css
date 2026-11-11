@@ -127,3 +127,11 @@
 .wc-col.now .act { outline: 1px solid #fff; }
 .wc-now { position: absolute; top: 0; bottom: 0; border-left: 1.5px solid rgba(255, 255, 255, .85); pointer-events: none; transition: left 1s linear; }
 .wc-x { grid-column: 2; display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); line-height: 1; }
+
+/* ---------- portrait tablet: the span and the field sit on their own dark cards, so the picture behind (its own pivot arm and circle) no longer cuts through the bars and captions ---------- */
+.stage[data-portrait="true"]:not([data-phone="true"]) .d-main { gap: 8px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .sv,
+.stage[data-portrait="true"]:not([data-phone="true"]) .pf { background: rgba(4, 16, 17, .72); border: 1px solid var(--line); border-radius: 6px; backdrop-filter: blur(4px); }
+.stage[data-portrait="true"]:not([data-phone="true"]) .sv .link { display: none; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .nz-t { font-size: 12px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .sv-cap { font-size: 13px; fill: var(--ink); }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CircleDot, Clock, Gauge, LayoutGrid, MessageCircle } from "lucide-react";
+import { Clock, Gauge, LayoutGrid, MessageCircle } from "lucide-react";
 import { useStage } from "./stage";
 import { PIVOTS, type PivotId } from "./pivots";
 import { hhmm, statusOf, useFleet, type Role, type Who } from "./model";
@@ -31,7 +31,8 @@ export default function App() {
       <div className="stage" data-portrait={st.portrait} style={{ width: st.w, height: st.h, transform: `translate(${st.x}px, ${st.y}px) scale(${st.scale})` }}>
         <header className="head">
           <div className="brand">
-            <span className="brand-mark" aria-hidden><CircleDot size={18} /></span>
+            <img className="brand-logo" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
+            <span className="brand-sep" aria-hidden />
             <b>Pivot Monitoring</b>
           </div>
           <nav className="tabs" aria-label="Sections">

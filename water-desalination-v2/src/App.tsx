@@ -65,7 +65,8 @@ export default function App() {
       <motion.div className="chrome" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
         <header className="topbar">
           <button className="brand" onClick={() => setEntered(false)} title="Back to the start screen" aria-label="Smart Water Desalination, back to the start screen">
-            <span className="brand-mark" aria-hidden><Droplets size={16} /></span>
+            <img className="brand-logo" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
+            <span className="brand-sep" aria-hidden />
             <div>
               <b>Smart Water Desalination</b>
             </div>

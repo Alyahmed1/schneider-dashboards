@@ -145,6 +145,5 @@ ul { list-style: none; }
 
 /* ===== Schneider Electric logo, recoloured to our violet and cyan (public/img/schneider-glow.png; green original for white paper) ===== */
 .hd-logo { height: 38px; width: auto; margin-right: 18px; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7)); user-select: none; }
-.cover-logo { position: absolute; z-index: 2; top: 4vh; left: 6vw; height: clamp(46px, 7.5vh, 72px); width: auto; filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.6)); user-select: none; }
 .brief-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
 .brief-logo { height: 38px; width: auto; margin-top: 4px; flex: none; }

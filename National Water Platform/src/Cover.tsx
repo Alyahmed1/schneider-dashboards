@@ -22,7 +22,6 @@ export default function Cover({ onEnter }: { onEnter: () => void }) {
       <video className={`cover-media ${video === "ok" ? "on" : ""}`} src="/cover.mp4" autoPlay muted loop playsInline preload="auto" aria-hidden
         onError={() => setVideo("failed")} onLoadedData={() => setVideo("ok")} />
       <div className="cover-shade" aria-hidden />
-      <motion.img className="cover-logo" src="/img/schneider-green.png" alt="Schneider Electric" draggable={false} initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2, ease }} />
       <div className="cover-body">
         <motion.span className="cover-tag" {...up(0)}><Droplets size={14} /> One national view · every ministry · the whole water cycle</motion.span>
         <motion.h1 {...up(1)}>Egypt National Water Platform</motion.h1>

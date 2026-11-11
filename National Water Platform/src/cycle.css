@@ -1,0 +1,88 @@
+/* ================= Water Cycle: banner, glass stage cards with pictures, drop in the middle ================= */
+.cycle { height: 100%; display: grid; grid-template-rows: 124px 1fr; gap: 10px; min-height: 0; }
+
+/* the banner: dam and treatment plant across the top, title on the left */
+.c-hero { position: relative; display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px; border-radius: 20px; overflow: hidden; border: 1px solid var(--line);
+  background: linear-gradient(90deg, #08062a 0%, rgba(8, 6, 42, 0.92) 30%, rgba(8, 6, 42, 0.18) 62%, rgba(8, 6, 42, 0) 100%), url(/img/cw-banner.jpg) right 22% / cover no-repeat; }
+.c-hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 40px; background: linear-gradient(180deg, transparent, rgba(7, 6, 26, 0.55)); pointer-events: none; }
+.c-hero-t { position: relative; z-index: 1; padding-left: 18px; }
+.c-hero-t::before { content: ""; position: absolute; left: 0; top: 4px; width: 6px; height: 44px; border-radius: 3px; background: linear-gradient(180deg, #67e8f9, #22d3ee); box-shadow: 0 0 14px #22d3ee; }
+.c-hero h2 { font-size: 34px; font-weight: 800; line-height: 1.1; text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6); }
+.c-hero p { margin-top: 4px; font-size: 13px; color: #d4d0ff; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7); }
+.c-legend { position: relative; z-index: 1; display: flex; gap: 8px; }
+.c-legend span, .c-owners span { padding: 3px 11px; border-radius: 12px; font-size: 11.5px; font-weight: 800; color: var(--c); background: rgba(8, 6, 40, 0.72); border: 1px solid color-mix(in srgb, var(--c) 70%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--c) 28%, transparent); }
+
+/* two rows of four stages; top runs left to right, bottom runs right to left */
+.c-grid { display: grid; grid-template-columns: 1fr 58px 1fr 58px 1fr 58px 1fr; grid-template-rows: 1fr 74px 1fr; min-height: 0; position: relative; }
+
+.c-node { position: relative; z-index: 1; display: grid; grid-template-rows: 52px 22px 58px 1fr; gap: 3px; padding: 12px 14px 10px; min-height: 0; min-width: 0; border-radius: 22px; overflow: hidden; cursor: pointer;
+  background: linear-gradient(160deg, rgba(34, 211, 238, 0.12), rgba(36, 28, 104, 0.82) 38%, rgba(18, 14, 62, 0.9));
+  border: 1px solid rgba(110, 190, 255, 0.4); box-shadow: inset 0 0 0 1px rgba(139, 120, 255, 0.16), 0 0 26px rgba(34, 211, 238, 0.08);
+  backdrop-filter: blur(10px); transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s; }
+.c-node.hot, .c-node:hover { transform: translateY(-3px); border-color: #67e8f9; box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.4), 0 0 34px rgba(34, 211, 238, 0.38), 0 12px 34px rgba(0, 0, 0, 0.4); }
+.c-node > * { position: relative; z-index: 1; }
+.c-node > .c-vis { position: absolute; z-index: 0; }
+
+/* the picture on the right half; it melts into the card on its left and bottom */
+.c-vis { top: 60px; right: 0; width: 54%; height: 112px; background-size: cover; background-position: center; opacity: 0.95; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 46%), linear-gradient(0deg, transparent 0%, #000 34%); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 46%), linear-gradient(0deg, transparent 0%, #000 34%); mask-composite: intersect; transition: transform 0.6s, opacity 0.3s; }
+.c-node:hover .c-vis { transform: scale(1.05); opacity: 1; }
+.c-vis.plain { background: none; -webkit-mask-image: none; mask-image: none; display: flex; align-items: center; justify-content: center; }
+.c-spark { width: 150px; height: 64px; margin-top: 30px; }
+.c-tank { width: 92px; height: 96px; margin-top: 8px; filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.4)); }
+.tk-shadow { fill: rgba(34, 211, 238, 0.28); } .tk-glass { fill: none; stroke: rgba(150, 230, 255, 0.85); stroke-width: 2.4; }
+.tk-rim { fill: rgba(150, 230, 255, 0.12); stroke: rgba(150, 230, 255, 0.7); stroke-width: 1.6; } .tk-n { fill: #fff; font-size: 20px; font-weight: 800; paint-order: stroke; stroke: rgba(10, 40, 110, 0.6); stroke-width: 3px; }
+.tk-wave { animation: wave 3.2s linear infinite; } @keyframes wave { to { transform: translateX(34px); } }
+
+.c-node header { display: flex; align-items: center; gap: 9px; padding-right: 32px; }
+.c-ico { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #e6fbff; background: radial-gradient(circle at 35% 30%, rgba(103, 232, 249, 0.45), rgba(79, 70, 229, 0.55)); border: 1.5px solid rgba(150, 230, 255, 0.8); box-shadow: 0 0 18px rgba(34, 211, 238, 0.5), inset 0 0 12px rgba(34, 211, 238, 0.3); }
+.c-node h3 { font-size: 14.5px; font-weight: 800; line-height: 1.15; white-space: nowrap; }
+.c-node header em { display: block; font-style: normal; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #c9c5f5; margin-top: 1px; }
+.c-node header > div { min-width: 0; }
+.c-n { position: absolute !important; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 800; background: rgba(8, 6, 40, 0.6); border: 1.5px solid rgba(150, 230, 255, 0.7); }
+.c-owners { display: flex; align-items: center; gap: 6px; }
+.c-go { margin-left: auto; color: #9b97d0; transition: transform 0.2s, color 0.2s; }
+.c-node:hover .c-go { transform: translateX(3px); color: #fff; }
+.c-main { display: flex; align-items: baseline; flex-wrap: wrap; align-content: center; gap: 0 6px; }
+.c-main b { font-size: 36px; font-weight: 800; line-height: 1.02; text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5); }
+.c-main small { font-size: 13px; font-weight: 700; color: #d8d4ff; }
+.c-main em { flex-basis: 100%; font-style: normal; font-size: 12px; color: #c9c5f5; }
+
+/* three detail lines, each with a thin bar underneath */
+.c-lines { display: grid; grid-template-rows: repeat(3, 1fr); min-height: 0; border-top: 1px solid rgba(139, 120, 255, 0.2); padding-top: 3px; }
+.c-lines li { display: grid; grid-template-columns: 22px 1fr auto; grid-template-rows: 1fr 4px; align-items: center; column-gap: 9px; min-height: 0; font-size: 12.5px; }
+.c-lines li i { color: #8be9ff; display: grid; place-items: center; }
+.c-lines li span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #e9e6ff; }
+.c-lines li b { font-size: 13px; font-weight: 800; white-space: nowrap; }
+.c-lines li u { grid-column: 2 / 4; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); overflow: hidden; text-decoration: none; margin-bottom: 3px; }
+.c-lines li s { display: block; height: 100%; border-radius: 2px; text-decoration: none; background: linear-gradient(90deg, #22d3ee, #7be8ff); box-shadow: 0 0 8px rgba(34, 211, 238, 0.7); transform-origin: left; animation: grow 1.1s 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.c-lines li s.warn { background: linear-gradient(90deg, #f59e0b, #fcd34d); box-shadow: 0 0 8px rgba(251, 191, 36, 0.6); }
+
+/* arrows between stages */
+.c-pipe { display: grid; place-items: center; align-content: center; gap: 1px; color: #22d3ee; z-index: 1; }
+.c-pipe svg { filter: drop-shadow(0 0 7px #22d3ee); animation: nudge-r 1.3s ease-in-out infinite; }
+.c-pipe.left svg { animation-name: nudge-l; } .c-pipe.down svg { animation-name: nudge-d; } .c-pipe.up svg { animation-name: nudge-u; }
+.c-pipe span { font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 9px; color: #a5f3fc; background: rgba(8, 6, 40, 0.8); border: 1px solid rgba(34, 211, 238, 0.6); }
+.c-pipe.hot { color: #fff; } .c-pipe.hot svg { filter: drop-shadow(0 0 12px #67e8f9); }
+@keyframes nudge-r { 0%, 100% { transform: translateX(-3px); opacity: 0.65; } 50% { transform: translateX(4px); opacity: 1; } }
+@keyframes nudge-l { 0%, 100% { transform: translateX(3px); opacity: 0.65; } 50% { transform: translateX(-4px); opacity: 1; } }
+@keyframes nudge-d { 0%, 100% { transform: translateY(-3px); opacity: 0.65; } 50% { transform: translateY(4px); opacity: 1; } }
+@keyframes nudge-u { 0%, 100% { transform: translateY(3px); opacity: 0.65; } 50% { transform: translateY(-4px); opacity: 1; } }
+
+/* the middle: four totals curve around a glowing drop */
+.c-sum { display: grid; grid-template-columns: 1fr 118px 1fr; align-items: center; padding: 8px 0; z-index: 1; pointer-events: none; }
+.c-sum-l, .c-sum-r { display: flex; align-items: center; gap: 10px; height: 100%; padding: 0 14px; border-radius: 40px; background: linear-gradient(90deg, rgba(34, 211, 238, 0.12), rgba(18, 14, 62, 0.78)); border: 1px solid rgba(110, 190, 255, 0.4); backdrop-filter: blur(10px); box-shadow: 0 0 22px rgba(34, 211, 238, 0.1); }
+.c-sum-r { background: linear-gradient(270deg, rgba(34, 211, 238, 0.12), rgba(18, 14, 62, 0.78)); }
+.c-pill { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.c-pill i { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #e6fbff; background: radial-gradient(circle at 35% 30%, rgba(103, 232, 249, 0.4), rgba(79, 70, 229, 0.5)); border: 1.5px solid rgba(150, 230, 255, 0.75); box-shadow: 0 0 14px rgba(34, 211, 238, 0.4); }
+.c-pill b { font-size: 20px; font-weight: 800; white-space: nowrap; }
+.c-pill span { font-size: 11.5px; line-height: 1.15; color: #c9c5f5; }
+.c-drop-wrap { position: relative; z-index: 3; display: grid; place-items: center; pointer-events: none; }
+.c-drop { position: relative; width: 70px; height: 104px; }
+.c-drop svg { position: absolute; left: 0; top: 0; width: 70px; height: 88px; filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.9)); animation: bob 3.6s ease-in-out infinite; }
+.c-drop i { position: absolute; left: 50%; bottom: 2px; width: 40px; height: 12px; margin-left: -20px; border-radius: 50%; border: 1.5px solid rgba(103, 232, 249, 0.9); box-shadow: 0 0 10px rgba(34, 211, 238, 0.7); animation: ripple 3s ease-out infinite; opacity: 0; }
+.c-drop i:nth-child(2) { animation-delay: 1s; } .c-drop i:nth-child(3) { animation-delay: 2s; }
+@keyframes ripple { 0% { transform: scale(0.4); opacity: 0.9; } 100% { transform: scale(3.2); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) { .c-pipe svg, .c-drop svg, .c-drop i, .tk-wave, .c-lines li s { animation: none !important; } }

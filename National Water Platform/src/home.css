@@ -1,0 +1,102 @@
+/* ================= Home: KPI strip, four ministry cards, Egypt map, outcomes ================= */
+.home { height: 100%; display: grid; grid-template-columns: 400px 1fr 400px; transition: grid-template-columns 0.35s cubic-bezier(0.22, 1, 0.36, 1); grid-template-rows: 80px 1fr 78px; gap: 12px 14px; }
+.kpi-strip { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, 1fr); border-radius: 18px; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(10px); overflow: hidden; }
+.kpi { display: flex; align-items: center; gap: 12px; padding: 0 16px; position: relative; transition: background 0.2s; }
+.kpi + .kpi::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 1px; background: var(--line-soft); }
+.kpi:hover { background: rgba(139, 92, 246, 0.2); }
+.kpi-ico { flex: none; color: var(--tone); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--tone) 65%, transparent)); animation: bob 4.5s ease-in-out infinite; }
+.kpi-t em { display: block; font-style: normal; font-size: 12.5px; color: #c9c5f5; }
+.kpi-t b { display: block; font-size: 27px; font-weight: 800; line-height: 1.12; white-space: nowrap; }
+.kpi-t b small { font-size: 14px; font-weight: 600; color: #d8d4ff; }
+.kpi-t b i { font-style: normal; font-size: 12.5px; font-weight: 600; color: #c9c5f5; margin-left: 4px; }
+.kpi-d { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; font-weight: 700; }
+.kpi-d.up { color: var(--green); }
+.kpi-d.down { color: var(--green); }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+.col { display: grid; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; position: relative; z-index: 1; }
+.kpi-strip, .outcomes { position: relative; z-index: 3; }
+.mcard { display: grid; grid-template-rows: 56px auto 1fr 28px; min-height: 0; border-radius: 18px; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(10px); overflow: hidden; width: 100%; text-align: left; transition: border-color 0.25s, box-shadow 0.25s, background 0.25s; }
+.mcard.hot, .mcard:hover { border-color: var(--accent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent), 0 10px 36px color-mix(in srgb, var(--accent) 30%, transparent); background: var(--panel-2); }
+.mcard header { display: flex; align-items: center; gap: 12px; padding: 0 14px; background: linear-gradient(90deg, color-mix(in srgb, var(--accent2) 42%, #241a78), rgba(40, 30, 120, 0.5)); border-bottom: 1px solid var(--line-soft); }
+.mcard h3 { flex: 1; font-size: 16px; font-weight: 800; line-height: 1.15; }
+.m-go { color: #d8d4ff; transition: transform 0.2s; }
+.mcard:hover .m-go { transform: translateX(4px); }
+
+/* with the menu hidden the ministry boxes grow, so the map never has wide empty sides */
+.home.wide { grid-template-columns: 478px 1fr 478px; }
+
+/* three headline tiles */
+.m-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px 12px 0; }
+.m-tile { padding: 8px 7px 7px; border-radius: 12px; background: rgba(8, 6, 36, 0.4); border: 1px solid var(--line-soft); min-width: 0; }
+.m-tile-h { display: flex; align-items: center; gap: 5px; }
+.m-tile .f-ico { width: 20px; height: 20px; border-radius: 6px; }
+.m-tile-h em { font-style: normal; font-size: 11.5px; line-height: 1.15; color: #c9c5f5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-tile b { display: block; margin-top: 4px; font-size: 22px; font-weight: 800; line-height: 1.1; white-space: nowrap; }
+.m-tile b small { font-size: 11px; font-weight: 600; color: #cfcaf7; }
+.f-ico { flex: none; width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; color: #fff;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 80%, #000), color-mix(in srgb, var(--accent2) 85%, #000)); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+.f-ico.sm { width: 26px; height: 26px; border-radius: 8px; }
+
+/* stations by type */
+.m-table { display: grid; grid-template-rows: 22px repeat(2, 1fr); padding: 8px 12px 2px; min-height: 0; }
+.m-row { display: grid; grid-template-columns: 1fr 42px 90px 74px; align-items: center; column-gap: 8px; font-size: 13.5px; border-top: 1px solid var(--line-soft); min-height: 0; }
+.m-row.head { border-top: 0; font-size: 11px; letter-spacing: 0.8px; text-transform: uppercase; color: #9b97d0; }
+.m-row.head span:nth-child(2), .m-row b { text-align: right; }
+.m-row b { font-size: 15px; font-weight: 800; }
+.m-type { display: flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.m-cap { color: #dedaff; white-space: nowrap; font-size: 12.5px; }
+.m-use { display: flex; align-items: center; gap: 6px; }
+.m-use u { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.12); overflow: hidden; text-decoration: none; }
+.m-use s { display: block; height: 100%; border-radius: 3px; text-decoration: none; background: linear-gradient(90deg, var(--accent), var(--accent2)); transform-origin: left; animation: grow 1.1s 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.m-use em { font-style: normal; font-size: 12px; font-weight: 700; width: 32px; text-align: right; }
+@keyframes grow { from { transform: scaleX(0); } }
+.mcard footer { display: flex; align-items: center; gap: 7px; padding: 0 14px; font-size: 12.5px; color: #dedaff; border-top: 1px solid var(--line-soft); background: rgba(8, 6, 36, 0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mcard footer svg { flex: none; color: var(--accent); }
+
+.map-col { position: relative; z-index: 0; min-height: 0; pointer-events: none; }
+.map-hint { position: absolute; top: 4px; left: 0; right: 0; text-align: center; font-size: 12.5px; letter-spacing: 0.6px; color: var(--muted); }
+.map-box { position: absolute; top: 0; bottom: 0; left: -14px; right: -14px; }
+.map-fig { position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); }
+.map-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; user-select: none;
+  /* the picture's own edges melt into the sea behind it */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(180deg, transparent, #000 3%, #000 97%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(180deg, transparent, #000 3%, #000 97%, transparent);
+  mask-composite: intersect; }
+/* the sea: deep blue glow, ripples and a faint grid, so there are never black sides */
+.sea { position: absolute; inset: 0;
+  background:
+    radial-gradient(58% 50% at 50% 58%, rgba(50, 130, 240, 0.6), transparent 74%),
+    radial-gradient(120% 90% at 50% 50%, rgba(20, 58, 170, 0.8), rgba(10, 28, 110, 0.55) 90%),
+    repeating-radial-gradient(circle at 50% 60%, rgba(90, 210, 255, 0.16) 0 1px, transparent 1px 54px),
+    linear-gradient(rgba(120, 170, 255, 0.07) 1px, transparent 1px) 0 0 / 100% 38px,
+    linear-gradient(90deg, rgba(120, 170, 255, 0.07) 1px, transparent 1px) 0 0 / 38px 100%;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(180deg, transparent, #000 5%, #000 95%, transparent); }
+
+/* a clickable spot sits on each pin that is drawn in the map picture */
+.spot { position: absolute; width: 0; height: 0; z-index: 3; pointer-events: auto; }
+.spot-core { position: absolute; left: -27px; top: -27px; width: 54px; height: 54px; border-radius: 50%; border: 2px solid transparent; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+.spot-ring { position: absolute; left: -27px; top: -27px; width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; animation: ping 2.8s ease-out infinite; pointer-events: none; }
+.spot.on .spot-core, .spot:hover .spot-core { border-color: var(--accent); transform: scale(1.14); box-shadow: 0 0 24px var(--accent), inset 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent); }
+.spot-tip { position: absolute; left: 36px; top: -22px; min-width: 150px; padding: 8px 12px; border-radius: 11px; background: rgba(14, 11, 52, 0.96); border: 1px solid var(--accent); opacity: 0; transform: translateX(-6px); transition: opacity 0.18s, transform 0.18s; pointer-events: none; white-space: nowrap; }
+.spot.flip .spot-tip { left: auto; right: 36px; transform: translateX(6px); }
+.spot-tip b { display: block; font-size: 13px; color: var(--accent); }
+.spot-tip em { display: block; font-style: normal; font-size: 11.5px; color: #dedaff; }
+.spot.on .spot-tip, .spot:hover .spot-tip { opacity: 1; transform: none; }
+@keyframes ping { 0% { transform: scale(0.8); opacity: 0.85; } 100% { transform: scale(1.9); opacity: 0; } }
+
+.outcomes { grid-column: 1 / -1; display: flex; border-radius: 22px; overflow: hidden; background: linear-gradient(90deg, rgba(40, 28, 120, 0.85), rgba(18, 14, 66, 0.75)); border: 1px solid var(--line); backdrop-filter: blur(10px); }
+.oc-title { flex: none; width: 310px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px 0 28px; font-size: 20px; font-weight: 800; line-height: 1.2; background: linear-gradient(90deg, #5b3df0, #7c5cf6); clip-path: polygon(0 0, 100% 0, calc(100% - 26px) 100%, 0 100%); transition: filter 0.2s; }
+.oc-title:hover { filter: brightness(1.15); }
+.oc-list { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); }
+.oc-list button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0 8px; text-align: center; position: relative; color: #e4e1ff; transition: background 0.2s, color 0.2s; }
+.oc-list button + button::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 1px; background: var(--line-soft); }
+.oc-list button svg { color: #a78bfa; transition: transform 0.25s, color 0.25s; }
+.oc-list button span { font-size: 12.5px; font-weight: 600; line-height: 1.2; }
+.oc-list button:hover { background: rgba(139, 92, 246, 0.22); color: #fff; }
+.oc-list button:hover svg { transform: translateY(-3px) scale(1.08); color: #22d3ee; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi-ico, .spot-ring { animation: none !important; }
+}

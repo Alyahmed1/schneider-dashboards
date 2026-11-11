@@ -1,0 +1,7 @@
+node_modules
+dist
+*.tsbuildinfo
+.playwright-mcp
+backgrounds/
+uoc video.mp4
+Egypt National Water Platform Dashboard.png

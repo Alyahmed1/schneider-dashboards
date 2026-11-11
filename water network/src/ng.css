@@ -181,3 +181,8 @@
 .ni-leak .do { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: rgba(58, 215, 240, .08); }
 .ni-leak .do b { color: #3ad7f0; }
 .ni-leak .do span { display: block; margin-top: 3px; color: #7f95b6; font-size: 11px; }
+
+/* Schneider Electric logo in the top bar */
+.brand-logo { height: 44px; width: auto; display: block; flex: none; }
+.brand .brand-sep { display: block; width: 1px; height: 32px; background: var(--line); flex: none; }
+@media (max-width: 720px) { .brand-logo { height: 30px; } .brand .brand-sep { display: none; } }

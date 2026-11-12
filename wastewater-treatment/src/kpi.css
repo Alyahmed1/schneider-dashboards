@@ -112,7 +112,7 @@ body:has(.kp) .dock { background: rgba(4, 16, 24, .86); }
 @media (min-width: 861px) {
   .kp.pl2 {
     display: grid; gap: 8px;
-    grid-template-columns: minmax(0, .95fr) minmax(0, 1.75fr) minmax(0, 1.05fr) minmax(0, 1.05fr) minmax(0, .9fr) minmax(0, .9fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.65fr) minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, .9fr) minmax(0, .9fr);
     grid-template-rows: repeat(3, minmax(0, 1fr)) minmax(0, .95fr);
     grid-template-areas:
       "cap  prod en   en   pw   op"
@@ -141,6 +141,9 @@ body:has(.kp) .dock { background: rgba(4, 16, 24, .86); }
 .pl2-stage span { color: var(--text-2); }
 .pl2-stage b { text-align: right; color: #fff; font-weight: 500; }
 
+.pl2-co2 { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.pl2-co2 figure { margin: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; }
+.pl2-co2 figcaption { font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); }
 .pl2-iso { padding: 0 !important; display: block !important; position: relative; overflow: hidden; background: linear-gradient(160deg, rgba(10, 40, 58, .35), rgba(4, 16, 26, .4)) !important; }
 .pl2-svg { width: 100%; height: 100%; display: block; }
 .pl2-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 50%; display: block; border-radius: inherit; }
@@ -189,7 +192,9 @@ body:has(.kp) .dock { background: rgba(4, 16, 24, .86); }
 }
 
 /* fixes: grid rows must be definite for the size-container gauges; bar columns fill their panel; number spans keep the big size */
-.pl2-rings, .pl2-mini { grid-template-rows: minmax(0, 1fr); }
+.pl2-rings, .pl2-mini, .pl2-co2 { grid-template-rows: minmax(0, 1fr); }
+.pl2-co2 { gap: 0; }
+.pl2-co2 .kp-gw { width: 100%; }
 .pl2 .bd-cols { flex: 1; min-height: 0; }
 .pl2-prod b span, .pl2-stage b span, .kp-gn b span, .kp-rn b span { font-size: inherit; letter-spacing: 0; text-transform: none; color: inherit; }
 .pl2-prod b { display: flex; align-items: baseline; gap: 4px; }

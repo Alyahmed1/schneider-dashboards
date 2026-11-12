@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AlertTriangle, ArrowUp } from "lucide-react";
-import { GEN_KW, SOLAR_KW } from "./cmms";
+import { LOADS, GEN_KW, SOLAR_KW } from "./cmms";
 import { useGrow } from "./anim";
 import { useTick, wobble } from "./live";
 import { CountUp } from "./ui";
@@ -48,6 +48,8 @@ export default function PlantBoard() {
   const cost = wobble(5.9, 4, t, 0.008);
   const cake = wobble(42, 5, t, 0.01);
   const tss = wobble(62, 6, t, 0.008);
+  const co2 = wobble((LOADS.reduce((s, l) => s + l.kw, 0) - GEN_KW - SOLAR_KW * 0.5) * 0.45, 4, t, 0.01);
+  const co2Target = 560;
   const bod = wobble(96, 17, t, 0.004);
   const cod = wobble(90, 18, t, 0.005);
   const day = wobble(118, 7, t, 0.01);
@@ -122,7 +124,12 @@ export default function PlantBoard() {
         <p className="pl2-note"><b>{unit.id} · {unit.name}</b> · <CountUp value={wobble(unit.kw, 30, t, 0.02)} decimals={0} /> kW. {unit.note}</p>
       </Panel>
 
-      <Panel title="TSS removal" className="a-tss" i={10}><Gauge value={tss} max={100} unit="%" grow={grow} /></Panel>
+      <Panel title="CO₂ emission" className="a-tss" i={10}>
+        <div className="pl2-co2">
+          <figure><Gauge value={co2} max={800} unit="kg/h" grow={grow} tone={co2 > co2Target ? "warm" : undefined} /><figcaption>Actual</figcaption></figure>
+          <figure><Gauge value={co2Target} max={800} unit="kg/h" grow={grow} tone="cool" /><figcaption>Target</figcaption></figure>
+        </div>
+      </Panel>
       <Panel title="Delivery vs stored (ML/d)" className="a-del" i={11} right={<Legend />}><PairBars labels={["B1", "B2", "B3", "B4"]} a={[50, 48, 51, 87]} b={[12, 14, 11, 8]} grow={grow} /></Panel>
       <Panel title="Water produced (ML)" className="a-tot" i={12}><Bars labels={["B1", "B2", "B3", "B4"]} values={[50, 48, 51, 87]} unit="ML" grow={grow} /></Panel>
       <Panel title="Reuse service (%)" className="a-sat" i={13}><Bars labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]} values={[99, 98, 96, 99, 97, 98]} unit="%" grow={grow} max={100} /></Panel>

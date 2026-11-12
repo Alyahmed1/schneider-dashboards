@@ -57,7 +57,7 @@ export default function PolarField({ p, label }: { p: PivotState; label: string 
     </svg>
   );
   // phone: the captions and the legend are plain text under and over the picture, so they keep a readable size
-  if (!phone) return svg;
+  if (!phone) return <div className="dcard pf-card">{svg}</div>;
   return (
     <div className="pf-wrap">
       <p className="pf-cap"><b>{label}</b><span>Cycle <b>{cyc}%</b></span><span>Position <b>{pos}°</b></span></p>

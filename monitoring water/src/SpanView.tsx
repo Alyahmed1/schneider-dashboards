@@ -62,5 +62,5 @@ export default function SpanView({ p, onNozzle }: { p: PivotState; onNozzle: (i:
     </svg>
   );
   // phone: the span keeps its real width (the 16 nozzles stay about 40 px wide, easy to tap) and is swiped sideways
-  return phone ? <div className="sv-scroll" tabIndex={0} role="region" aria-label="Span and nozzles, scroll sideways">{svg}</div> : svg;
+  return phone ? <div className="sv-scroll" tabIndex={0} role="region" aria-label="Span and nozzles, scroll sideways">{svg}</div> : <div className="dcard sv-card">{svg}</div>;
 }

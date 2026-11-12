@@ -130,8 +130,9 @@
 
 /* ---------- portrait tablet: the span and the field sit on their own dark cards, so the picture behind (its own pivot arm and circle) no longer cuts through the bars and captions ---------- */
 .stage[data-portrait="true"]:not([data-phone="true"]) .d-main { gap: 8px; }
-.stage[data-portrait="true"]:not([data-phone="true"]) .sv,
-.stage[data-portrait="true"]:not([data-phone="true"]) .pf { background: rgba(4, 16, 17, .72); border: 1px solid var(--line); border-radius: 6px; backdrop-filter: blur(4px); }
+/* the card is a plain div around the svg: backdrop-filter / background on the svg root itself made iPad Safari draw the span and field in the wrong place (blurred, shifted down). No blur: an opaque-enough dark fill does the same job. */
+.dcard { min-width: 0; min-height: 0; overflow: hidden; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .dcard { background: rgba(4, 16, 17, .84); border: 1px solid var(--line); border-radius: 6px; }
 .stage[data-portrait="true"]:not([data-phone="true"]) .sv .link { display: none; }
 .stage[data-portrait="true"]:not([data-phone="true"]) .nz-t { font-size: 12px; }
 .stage[data-portrait="true"]:not([data-phone="true"]) .sv-cap { font-size: 13px; fill: var(--ink); }

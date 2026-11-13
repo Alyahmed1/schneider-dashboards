@@ -1,16 +1,23 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowUp, ChevronRight } from "lucide-react";
-import { INSIGHT_ICON, MINISTRIES, NATIONAL_KPIS, OUTCOMES, type Go, type Ministry, type MinistryId } from "./data";
+import { MINISTRIES, NATIONAL_KPIS, OUTCOMES, type Go, type Ministry, type MinistryId } from "./data";
 import { CountUp } from "./ui";
-import EgyptMap from "./EgyptMap";
+import RealMap from "./RealMap";
 import MinistryIcon from "./MinistryIcon";
+import { Semi } from "./gauges";
+import { STATIONS } from "./stations";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const rise = (i: number) => ({ initial: { opacity: 0, y: 22 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.65, delay: 0.1 + i * 0.07, ease } });
 
+/** which two headline tiles each ministry card shows (the gauge already covers "in use") */
+const PICK: Record<MinistryId, [number, number]> = { mwri: [0, 2], mhuuc: [0, 1], eeaa: [1, 2], moalr: [0, 1] };
 function MinistryCard({ m, i, hover, setHover, go }: { m: Ministry; i: number; hover: MinistryId | null; setHover: (id: MinistryId | null) => void; go: Go }) {
-  const Insight = INSIGHT_ICON;
+  const usePct = Math.round(m.rows.reduce((a, r) => a + r.pct, 0) / m.rows.length);
+  const tiles = PICK[m.id].map((n) => m.tiles[n]);
+  const mine = STATIONS.filter((s) => s.ministry === m.id);
+  const cnt = { good: mine.filter((s) => s.status === "good").length, watch: mine.filter((s) => s.status === "watch").length, bad: mine.filter((s) => s.status === "bad").length };
   return (
     <motion.button className={`mcard ${hover === m.id ? "hot" : ""}`} style={{ ["--accent" as string]: m.accent, ["--accent2" as string]: m.accent2 }} {...rise(2 + i)} whileHover={{ y: -3 }}
       onClick={() => go("ministry", m.id)} onMouseEnter={() => setHover(m.id)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(m.id)} onBlur={() => setHover(null)}
@@ -20,32 +27,28 @@ function MinistryCard({ m, i, hover, setHover, go }: { m: Ministry; i: number; h
         <h3>{m.name}</h3>
         <ChevronRight size={22} className="m-go" />
       </header>
-      <div className="m-tiles">
-        {m.tiles.map((t) => {
-          const TI = t.icon;
-          return (
-            <div key={t.label} className="m-tile">
-              <span className="m-tile-h"><i className="f-ico"><TI size={14} strokeWidth={2.2} /></i><em>{t.label}</em></span>
-              <b>{t.prefix}<CountUp value={t.value} decimals={t.decimals ?? 0} />{t.suffix}{t.unit && <small> {t.unit}</small>}</b>
-            </div>
-          );
-        })}
+      <div className="m-body">
+        <div className="m-gauge"><h6>{m.colHead}</h6><Semi pct={usePct} tone={m.accent} label="average" size={150} /></div>
+        <div className="m-two">
+          {tiles.map((t) => {
+            const TI = t.icon;
+            return (
+              <div key={t.label} className="m-big">
+                <span className="m-big-h"><i className="f-ico"><TI size={15} strokeWidth={2.2} /></i><em>{t.label}</em></span>
+                <b>{t.prefix}<CountUp value={t.value} decimals={t.decimals ?? 0} />{t.suffix}{t.unit && <small> {t.unit}</small>}</b>
+              </div>
+            );
+          })}
+        </div>
       </div>
-      <div className="m-table" role="table" aria-label={`${m.short} top stations by type`}>
-        <div className="m-row head" role="row"><span>Type</span><span>Sites</span><span>Capacity</span><span>{m.colHead}</span></div>
-        {m.rows.slice(0, 2).map((r) => {
-          const RI = r.icon;
-          return (
-            <div key={r.label} className="m-row" role="row">
-              <span className="m-type"><i className="f-ico sm"><RI size={13} strokeWidth={2.2} /></i>{r.label}</span>
-              <b>{r.sites}</b>
-              <span className="m-cap">{r.cap}</span>
-              <span className="m-use"><u><s style={{ width: `${r.pct}%` }} /></u><em>{r.pct}%</em></span>
-            </div>
-          );
-        })}
+      <div className="m-health" aria-label={`${cnt.good} of ${mine.length} stations on the map are on track`}>
+        <span className="m-health-t">Stations on the map<b>{cnt.good} of {mine.length} on track</b></span>
+        <div className="m-health-bar">
+          {cnt.good > 0 && <s className="good" style={{ flexGrow: cnt.good }} />}
+          {cnt.watch > 0 && <s className="watch" style={{ flexGrow: cnt.watch }} />}
+          {cnt.bad > 0 && <s className="bad" style={{ flexGrow: cnt.bad }} />}
+        </div>
       </div>
-      <footer><Insight size={14} />{m.insight}</footer>
     </motion.button>
   );
 }
@@ -61,7 +64,7 @@ export default function Home({ go, wide }: { go: Go; wide: boolean }) {
           const Icon = k.icon;
           return (
             <button key={k.id} className="kpi" style={{ ["--tone" as string]: k.tone }} onClick={() => go("executive")} aria-label={`${k.label}. Open the Executive View`}>
-              <span className="kpi-ico" style={{ animationDelay: `${n * 0.4}s` }}><Icon size={34} strokeWidth={1.7} /></span>
+              <span className="kpi-ico" style={{ animationDelay: `${n * 0.4}s` }}><Icon size={40} strokeWidth={1.7} /></span>
               <span className="kpi-t">
                 <em>{k.label}</em>
                 <b>{k.prefix}<CountUp value={k.value} decimals={k.decimals} /> <small>{k.unit}</small>{k.sub && <i>{k.sub}</i>}</b>
@@ -74,7 +77,7 @@ export default function Home({ go, wide }: { go: Go; wide: boolean }) {
 
       <div className="col col-l"><MinistryCard m={left[0]} i={0} hover={hover} setHover={setHover} go={go} /><MinistryCard m={left[1]} i={2} hover={hover} setHover={setHover} go={go} /></div>
       <motion.div className="map-col" initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, delay: 0.25, ease }}>
-        <EgyptMap hover={hover} setHover={setHover} onOpen={(id) => go("ministry", id)} />
+        <RealMap hover={hover} setHover={setHover} go={go} wide={wide} />
       </motion.div>
       <div className="col col-r"><MinistryCard m={right[0]} i={1} hover={hover} setHover={setHover} go={go} /><MinistryCard m={right[1]} i={3} hover={hover} setHover={setHover} go={go} /></div>
 

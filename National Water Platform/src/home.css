@@ -1,5 +1,5 @@
 /* ================= Home: KPI strip, four ministry cards, Egypt map, outcomes ================= */
-.home { height: 100%; display: grid; grid-template-columns: 400px 1fr 400px; transition: grid-template-columns 0.35s cubic-bezier(0.22, 1, 0.36, 1); grid-template-rows: 80px 1fr 78px; gap: 12px 14px; }
+.home { height: 100%; display: grid; grid-template-columns: 400px 1fr 400px; transition: grid-template-columns 0.35s cubic-bezier(0.22, 1, 0.36, 1); grid-template-rows: 100px 1fr 78px; gap: 12px 14px; }
 .kpi-strip { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, 1fr); border-radius: 18px; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(10px); overflow: hidden; }
 .kpi { display: flex; align-items: center; gap: 12px; padding: 0 16px; position: relative; transition: background 0.2s; }
 .kpi + .kpi::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 1px; background: var(--line-soft); }
@@ -100,3 +100,220 @@
 @media (prefers-reduced-motion: reduce) {
   .kpi-ico, .spot-ring { animation: none !important; }
 }
+
+/* ===== Phase A (2026-11-13): top KPI row slightly bigger ===== */
+.kpi { gap: 14px; padding: 0 18px; }
+.kpi-t em { font-size: 14px; }
+.kpi-t b { font-size: 33px; }
+.kpi-t b small { font-size: 17px; }
+.kpi-t b i { font-size: 14px; }
+.kpi-d { font-size: 13.5px; }
+
+/* ===== Phase C (2026-11-13): real map of Egypt (Leaflet, dark tiles) ===== */
+.map-box.rm { left: 0; right: 0; pointer-events: auto; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: #0b0a2e; box-shadow: 0 0 40px rgba(109, 74, 255, 0.18); }
+.rm-map { position: absolute; inset: 0; background: #0b0a2e; font-family: var(--font); }
+.rm-map .leaflet-tile-pane { filter: sepia(0.8) hue-rotate(208deg) saturate(2.4) brightness(0.92) contrast(1.1); }
+.rm-glow { position: absolute; inset: 0; pointer-events: none; z-index: 500; box-shadow: inset 0 0 70px 10px rgba(7, 6, 26, 0.85); border-radius: 22px; }
+.rm-map .leaflet-control-attribution { background: rgba(7, 6, 26, 0.65); color: #8f8bc0; font-size: 9px; }
+.rm-map .leaflet-control-attribution a { color: #a99cff; }
+.rm-city { background: none; border: 0; }
+.rm-city span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: rgba(214, 210, 255, 0.62); text-shadow: 0 1px 6px #05041a, 0 0 10px #05041a; pointer-events: none; }
+
+.rm-hubwrap, .rm-pinwrap { background: none; border: 0; }
+.rm-hub { position: relative; width: 46px; height: 46px; animation: rmpop 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; cursor: pointer; transition: transform 0.2s; }
+.rm-hub .m-ico { width: 46px !important; height: 46px !important; box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 70%, transparent), 0 4px 14px rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 255, 0.85); }
+.rm-hub b { position: absolute; left: 50%; top: 52px; transform: translateX(-50%); font-size: 11.5px; font-weight: 800; padding: 1px 8px; border-radius: 9px; color: #fff; background: rgba(8, 6, 40, 0.88); border: 1px solid var(--accent); white-space: nowrap; }
+.rm-hub:hover, .rm-hubwrap.hot .rm-hub { transform: scale(1.18); }
+.rm-ring { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; animation: ping 2.6s ease-out infinite; pointer-events: none; }
+@keyframes rmpop { from { transform: scale(0); opacity: 0; } }
+
+.rm-pin { position: relative; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: radial-gradient(circle at 35% 30%, #2a2377, #100d3d); border: 2px solid var(--accent); color: var(--accent); box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent); animation: rmpop 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; transition: transform 0.18s; }
+.rm-pin i { display: grid; place-items: center; font-style: normal; }
+.rm-pin.watch { border-color: var(--amber); box-shadow: 0 0 14px rgba(251, 191, 36, 0.55); }
+.rm-pin.bad { border-color: var(--red); box-shadow: 0 0 16px rgba(251, 113, 133, 0.7); }
+.rm-pin:hover { transform: scale(1.22); z-index: 9; }
+.rm-pin .rm-ring { border-color: var(--accent); animation-duration: 3s; }
+.rm-pin.bad .rm-ring { border-color: var(--red); }
+.rm-pin.star { width: 40px; height: 40px; background: radial-gradient(circle at 35% 30%, #34d399, #0f7a4a); color: #fff; border-color: #fff; box-shadow: 0 0 26px #34d399; }
+.rm-pin.star b { position: absolute; top: 46px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 9px; color: #fff; background: rgba(8, 6, 40, 0.92); border: 1px solid #34d399; white-space: nowrap; }
+
+.rm-top { position: absolute; z-index: 600; top: 12px; left: 12px; right: 12px; display: flex; pointer-events: none; }
+.rm-chip { display: inline-flex; align-items: center; gap: 12px; padding: 6px 14px; border-radius: 20px; font-size: 13px; background: rgba(10, 8, 44, 0.86); border: 1px solid var(--line); backdrop-filter: blur(8px); pointer-events: auto; color: #e4e0ff; }
+.rm-chip.hint { gap: 8px; font-size: 12.5px; color: #cfcbf7; }
+.rm-chip b { color: var(--accent); }
+.rm-back { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 14px; font-size: 12.5px; font-weight: 800; color: #08062a; background: linear-gradient(90deg, #67e8f9, #22d3ee); transition: transform 0.15s; }
+.rm-back:hover { transform: translateX(-2px); }
+.rm-offline { position: absolute; z-index: 600; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 10px 16px; border-radius: 12px; background: rgba(10, 8, 44, 0.92); border: 1px solid var(--amber); color: var(--amber); font-size: 13px; }
+
+.rm-card { position: absolute; z-index: 700; left: 12px; right: 12px; bottom: 12px; display: grid; gap: 8px; padding: 10px 12px 10px; border-radius: 16px; background: rgba(10, 8, 44, 0.94); border: 1px solid var(--accent); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent); backdrop-filter: blur(10px); }
+.rm-card header { display: flex; align-items: center; gap: 10px; }
+.rm-card-ic { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent); }
+.rm-card header span { flex: 1; min-width: 0; display: grid; line-height: 1.2; }
+.rm-card h4 { margin: 0; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.rm-card h4 svg { color: var(--amber); }
+.rm-card header em { font-style: normal; font-size: 12px; color: #bdb8f0; }
+.rm-card header u { text-decoration: none; }
+.rm-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.rm-kpis div { display: grid; gap: 1px; padding: 5px 9px; border-radius: 10px; background: rgba(8, 6, 40, 0.65); border: 1px solid var(--line-soft); min-width: 0; }
+.rm-kpis em { font-style: normal; font-size: 10.5px; color: #bdb8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rm-kpis b { font-size: 14.5px; font-weight: 800; white-space: nowrap; }
+.rm-open { display: flex; align-items: center; justify-content: center; gap: 4px; height: 30px; border-radius: 10px; font-size: 12.5px; font-weight: 800; background: linear-gradient(90deg, #6d4aff, #8b5cf6); }
+.rm-open:hover { filter: brightness(1.15); }
+
+.rm.focused .rm-city { display: none; }
+.rm-border { filter: drop-shadow(0 0 5px #22d3ee); }
+
+/* ===== ministry cards in the wastewater KPIs look: gauge, pie, icon tiles (2026-11-13) ===== */
+.kpi-strip { }
+.home { grid-template-rows: 116px 1fr 78px; }
+.kpi { gap: 16px; }
+.kpi-t em { font-size: 15px; }
+.kpi-t b { font-size: 37px; }
+.kpi-t b small { font-size: 18px; }
+.kpi-t b i { font-size: 15px; }
+.kpi-d { font-size: 14.5px; }
+.kpi-ico svg { width: 44px; height: 44px; }
+.mcard { grid-template-rows: 46px 1fr 56px 26px; gap: 6px; padding-bottom: 0; }
+.m-gp { display: grid; grid-template-columns: 138px 1fr; gap: 8px; padding: 0 12px; min-height: 0; }
+.m-grp { display: grid; grid-template-rows: auto 1fr; min-height: 0; border-radius: 12px; background: rgba(8, 6, 40, 0.5); border: 1px solid var(--line-soft); padding: 5px 8px 4px; }
+.m-grp h6 { margin: 0; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.m-grp .wc-semi { align-self: center; }
+.m-grp .wc-semi b { font-size: 21px; }
+.m-grp .wc-semi span { font-size: 10.5px; margin-top: -2px; }
+.m-pie { display: flex; align-items: center; gap: 10px; min-height: 0; }
+.m-pie .wc-donut b { font-size: 14px; }
+.m-pie ul { flex: 1; display: grid; gap: 3px; min-width: 0; }
+.m-pie li { display: grid; grid-template-columns: 9px 1fr auto; align-items: center; gap: 6px; font-size: 11.5px; color: #e4e0ff; min-width: 0; }
+.m-pie li i { width: 8px; height: 8px; border-radius: 2px; }
+.m-pie li b { font-size: 12px; text-align: right; }
+.m-tiles { padding: 0 12px; gap: 6px; }
+.mcard .m-tile { padding: 4px 8px; display: grid; align-content: center; }
+.mcard .m-tile b { font-size: 19px; margin-top: 1px; }
+.mcard .m-tile-h em { font-size: 11px; }
+
+/* ===== ocean blue map, pin labels, filters (2026-11-13) ===== */
+.map-box.rm, .rm-map { background: #06285a; }
+.rm-map .leaflet-tile-pane { filter: sepia(1) hue-rotate(168deg) saturate(3.6) brightness(1.1) contrast(1.15); }
+.rm-glow { box-shadow: inset 0 0 70px 10px rgba(4, 20, 58, 0.85); }
+.rm-border { filter: drop-shadow(0 0 5px #5eead4); }
+.rm-lead { stroke-dasharray: 3 3; }
+.rm-pin b { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 4px; max-width: 94px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10.5px; font-weight: 700; color: #fff; padding: 1px 7px; border-radius: 8px; background: rgba(4, 18, 54, 0.92); border: 1px solid color-mix(in srgb, var(--accent) 70%, transparent); pointer-events: none; }
+.rm-pin.star b { top: 100%; margin-top: 4px; max-width: none; font-size: 11.5px; }
+.rm-pin.small { width: 28px; height: 28px; }
+.rm.health .rm-pin.good .rm-ring { display: none; }
+.rm.health .rm-pin.watch .rm-ring, .rm.health .rm-pin.bad .rm-ring { animation-duration: 1.7s; border-color: var(--accent); }
+.rm.health .rm-pin.bad { z-index: 5; }
+.rm-filters { display: flex; gap: 6px; flex-wrap: wrap; pointer-events: auto; }
+.rm-filters button { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 16px; font-size: 12px; font-weight: 800; color: #e4e0ff; background: rgba(4, 18, 54, 0.88); border: 1px solid var(--line); backdrop-filter: blur(6px); transition: background 0.15s, border-color 0.15s; }
+.rm-filters button:hover { border-color: var(--accent, #22d3ee); }
+.rm-filters button.on { color: #06143a; background: var(--accent, #22d3ee); border-color: var(--accent, #22d3ee); }
+.rm-filters em { font-style: normal; font-size: 11px; padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.14); }
+.rm-filters button.on em { background: rgba(4, 18, 54, 0.3); }
+.rm-filters em.good { color: var(--green); } .rm-filters em.watch { color: var(--amber); } .rm-filters em.bad { color: var(--red); }
+.rm-filters button.on em { color: #06143a; }
+.rm-legend { position: absolute; z-index: 600; left: 12px; bottom: 12px; display: flex; gap: 12px; padding: 5px 12px; border-radius: 14px; font-size: 11.5px; color: #e4e0ff; background: rgba(4, 18, 54, 0.88); border: 1px solid var(--line); }
+/* Executive map: the legend lives in its own strip under the map, so it never covers a station */
+.rm.health .rm-map { inset: 0 0 40px 0; }
+.rm.health .rm-legend { left: 0; right: 0; bottom: 0; height: 40px; justify-content: center; align-items: center; gap: 28px; padding: 0; border-radius: 0; border: 0; border-top: 1px solid var(--line); font-size: 13px; font-weight: 700; }
+.rm-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.rm-legend i { width: 9px; height: 9px; border-radius: 50%; }
+.rm-card { background: rgba(4, 18, 54, 0.95); }
+.rm-chip, .rm-chip.hint { background: rgba(4, 18, 54, 0.88); }
+.rm.health .rm-card { bottom: 52px; }
+
+/* Executive View: the map fills the panel */
+.x-mapbody { display: block; position: relative; padding: 0; }
+.x-mapbody .map-box { top: 8px; bottom: 10px; left: 10px; right: 10px; width: auto; }
+.rm-pin.small { width: 24px; height: 24px; border-width: 1.5px; }
+.m-gp { grid-template-columns: 124px 1fr; }
+.m-pie li { white-space: nowrap; font-size: 11px; }
+.m-pie li span, .m-pie ul { overflow: hidden; }
+.kpi-t em { font-size: 14px; }
+.m-lab { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+/* ===== simpler ministry cards, bigger map (2026-11-13) ===== */
+.home { grid-template-columns: 340px 1fr 340px; }
+.home.wide { grid-template-columns: 430px 1fr 430px; }
+.mcard { grid-template-rows: 56px 1fr; gap: 0; }
+.m-body { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center; padding: 8px 14px 12px; min-height: 0; }
+.m-gauge { display: grid; justify-items: center; align-content: center; gap: 2px; }
+.m-gauge h6 { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.m-gauge .wc-semi b { font-size: 30px; }
+.m-gauge .wc-semi span { font-size: 12px; }
+.m-two { display: grid; gap: 10px; }
+.m-big { display: grid; gap: 3px; padding: 9px 12px; border-radius: 14px; background: rgba(8, 6, 40, 0.5); border: 1px solid var(--line-soft); min-width: 0; }
+.m-big-h { display: flex; align-items: center; gap: 6px; }
+.m-big-h em { font-style: normal; font-size: 12.5px; color: #cfcbf7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-big b { font-size: 28px; font-weight: 800; line-height: 1.05; white-space: nowrap; }
+.m-big b small { font-size: 12px; font-weight: 600; color: #cfcaf7; }
+.rm-issue { margin: 0; padding: 5px 10px; border-radius: 9px; font-size: 12px; color: #fde68a; background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.4); }
+
+/* ===== slightly bigger top bar and map (2026-11-13) ===== */
+.home { grid-template-columns: 318px 1fr 318px; grid-template-rows: 128px 1fr 68px; }
+.home.wide { grid-template-columns: 420px 1fr 420px; }
+.kpi-t em { font-size: 15px; }
+.kpi-t b { font-size: 40px; }
+.kpi-t b small { font-size: 19px; }
+.kpi-d { font-size: 15px; }
+.kpi-ico svg { width: 48px; height: 48px; }
+.oc-list button svg { width: 26px; height: 26px; }
+.oc-list button span { font-size: 12px; }
+.m-gauge .wc-semi { width: 138px !important; }
+.kpi { gap: 10px; padding: 0 12px; min-width: 0; }
+.kpi-t b { font-size: 38px; }
+.kpi-t b small { font-size: 15px; }
+.kpi-t b i { font-size: 13px; margin-left: 2px; }
+.kpi-ico svg { width: 44px; height: 44px; }
+.kpi-t { min-width: 0; }
+.rm-glow { box-shadow: inset 0 0 46px 6px rgba(6, 30, 70, 0.7); }
+.mcard { grid-template-rows: 56px 1fr auto; }
+.m-health { display: grid; gap: 6px; padding: 0 14px 12px; }
+.m-health-t { display: flex; align-items: baseline; justify-content: space-between; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.m-health-t b { font-size: 13px; letter-spacing: 0; text-transform: none; color: #fff; }
+.m-health-bar { display: flex; gap: 3px; height: 9px; }
+.m-health-bar s { display: block; flex-basis: 0; border-radius: 5px; text-decoration: none; transform-origin: left; animation: grow 1.1s 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.m-health-bar s.good { background: var(--green); box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
+.m-health-bar s.watch { background: var(--amber); }
+.m-health-bar s.bad { background: var(--red); box-shadow: 0 0 8px rgba(251, 113, 133, 0.5); }
+.m-body { padding-bottom: 4px; }
+
+/* ===== map colours: no dark bands (2026-11-13) ===== */
+.rm-glow { box-shadow: none; }
+.map-box.rm, .rm-map { background: #0c4079; }
+.rm-map .leaflet-tile-pane { filter: sepia(1) hue-rotate(168deg) saturate(3.6) brightness(1.38) contrast(1.1); }
+.rm-chip, .rm-filters button, .rm-legend { background: rgba(6, 36, 84, 0.9); }
+
+/* neighbouring land takes the sea colour, so Egypt sits in one continuous sea (2026-11-13) */
+.map-box.rm, .rm-map { background: #04284a; }
+.rm-map .leaflet-tile-pane { filter: sepia(1) hue-rotate(168deg) saturate(3.6) brightness(1.1) contrast(1.15); }
+
+/* ===== Round 6 (2026-11-13): map styled like Aly's picture: terrain, glowing Nile, governorate borders, drop pins, zoom buttons ===== */
+.rm-hub .m-ico { border-radius: 50% 50% 50% 0 !important; transform: rotate(-45deg); }
+.rm-hub .m-ico > * { transform: rotate(45deg); }
+.rm-hub b { top: 60px; }
+.rm-north { position: absolute; z-index: 650; right: 12px; top: 12px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #e4e0ff; background: rgba(6, 36, 84, 0.9); border: 1px solid var(--line); box-shadow: 0 0 12px rgba(34, 211, 238, 0.25); }
+.rm-north::before { content: ""; position: absolute; top: -5px; left: 50%; margin-left: -4px; border: 4px solid transparent; border-bottom: 7px solid #67e8f9; border-top: 0; }
+.rm-map .leaflet-top.leaflet-right { top: 54px; right: 2px; }
+.rm-map .leaflet-bar { border: 0; box-shadow: none; display: grid; gap: 6px; }
+.rm-map .leaflet-bar a { width: 34px; height: 34px; line-height: 32px; border-radius: 10px !important; font-size: 20px; font-weight: 700; color: #e4e0ff; background: rgba(6, 36, 84, 0.92); border: 1px solid var(--line); }
+.rm-map .leaflet-bar a:hover { background: rgba(34, 211, 238, 0.25); color: #fff; }
+.rm-map .leaflet-bar a.leaflet-disabled { opacity: 0.4; }
+
+/* ===== richer pin card on the Home map (2026-11-13): health gauge, two bars, 12-hour chart ===== */
+.rm-rich { display: grid; grid-template-columns: 96px 1fr 1.2fr; gap: 14px; align-items: center; padding-top: 8px; border-top: 1px solid var(--line-soft); }
+.rm-rich .wc-semi { margin: 0; }
+.rm-prog { display: grid; gap: 8px; min-width: 0; }
+.rm-prog span { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; font-size: 11.5px; }
+.rm-prog em { font-style: normal; color: #bdb8f0; white-space: nowrap; }
+.rm-prog b { font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; }
+.rm-prog u { display: block; height: 7px; margin-top: 3px; border-radius: 4px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.rm-prog s { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 55%, #0ea5e9), var(--accent)); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent); transform-origin: left; animation: rmgrowx 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.rm-trend { display: grid; gap: 3px; min-width: 0; }
+.rm-trend > em { font-style: normal; font-size: 10.5px; font-weight: 700; color: #bdb8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rm-trend > div { display: flex; align-items: flex-end; gap: 3px; height: 46px; }
+.rm-trend s { flex: 1; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 85%, #fff), color-mix(in srgb, var(--accent) 25%, transparent)); transform-origin: bottom; animation: rmgrowy 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.rm-trend s.now { background: linear-gradient(180deg, #fff, var(--accent)); box-shadow: 0 0 10px var(--accent); }
+.rm-trend > span { display: flex; justify-content: space-between; gap: 6px; font-size: 10px; color: #9f9bd0; }
+.rm-trend i { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes rmgrowx { from { transform: scaleX(0); } }
+@keyframes rmgrowy { from { transform: scaleY(0); } }

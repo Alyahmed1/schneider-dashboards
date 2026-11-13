@@ -9,9 +9,9 @@ import {
 } from "./data";
 import { CountUp } from "./ui";
 import { SEV_ICON } from "./Header";
-import MinistryIcon from "./MinistryIcon";
-import { IMG_H, IMG_W, SPOTS } from "./EgyptMap";
-import { Panel, Ring, ease, rise } from "./parts";
+import RealMap from "./RealMap";
+import { STATIONS } from "./stations";
+import { Panel, ease, rise } from "./parts";
 
 type Range = 3 | 6 | 12;
 const TODAY = "10 November 2026";
@@ -58,24 +58,6 @@ function KpiCard({ k, i, range, go }: { k: (typeof EXEC_KPIS)[number]; i: number
         <em><Target size={11} /> Target {t.target}</em>
       </span>
     </motion.button>
-  );
-}
-
-/** the map with a status ring on every pin: green on track, amber watch, red behind */
-function MapStrip({ go }: { go: Go }) {
-  return (
-    <div className="xm">
-      <img src="/img/egypt-map.jpg" alt="" draggable={false} />
-      {SPOTS.map((p, n) => {
-        const m = MINISTRY_BY_ID[p.id];
-        const st = MINISTRY_SCORE[p.id].status;
-        return (
-          <button key={n} className={`xm-dot ${st}`} style={{ left: `${(p.x / IMG_W) * 100}%`, top: `${(p.y / IMG_H) * 100}%` }} onClick={() => go("ministry", p.id)} aria-label={`${m.short}, ${p.where}: ${STATUS_LABEL[st]}. Open the ministry page`} title={`${m.short} · ${p.where}`}>
-            <i />
-          </button>
-        );
-      })}
-    </div>
   );
 }
 
@@ -170,29 +152,13 @@ export default function Executive({ go }: { go: Go }) {
       </section>
 
       <section className="x-mid">
-        <Panel icon={MapPinned} title="Ministries on the map" hint="score out of 100" i={0}>
-          <div className="x-mapbody">
-            <MapStrip go={go} />
-            <ul className="x-score">
-              {MINISTRIES.map((m) => {
-                const s = MINISTRY_SCORE[m.id];
-                return (
-                  <li key={m.id}>
-                    <button onClick={() => go("ministry", m.id)} aria-label={`Open ${m.name}`} style={{ backgroundImage: `linear-gradient(90deg, rgba(16,12,58,.96) 42%, rgba(16,12,58,.45)), url(${m.photo})` }}>
-                      <MinistryIcon m={m} size={34} />
-                      <span className="x-score-t"><b>{m.short}</b><em>{s.issue}</em></span>
-                      <Ring value={s.score} status={s.status} size={44} />
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+        <Panel icon={MapPinned} title="Station health on the map" hint="every station, by health" i={0}>
+          <div className="x-mapbody"><RealMap mode="health" go={go} /></div>
         </Panel>
 
-        <Panel icon={ListChecks} title="Needs attention" hint={`${ATTENTION.filter((a) => a.sev === "critical").length} critical · ${ATTENTION.length} open`} i={1}>
+        <Panel icon={ListChecks} title="Needs attention" hint={`${STATIONS.filter((x) => x.status === "bad").length} behind · ${STATIONS.filter((x) => x.status === "watch").length} watch`} i={1}>
           <ul className="x-attn">
-            {ATTENTION.map((a) => {
+            {ATTENTION.slice(0, 5).map((a) => {
               const Icon = SEV_ICON[a.sev];
               const m = MINISTRY_BY_ID[a.ministry];
               return (

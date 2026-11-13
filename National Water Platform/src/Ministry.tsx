@@ -72,7 +72,7 @@ function Overview({ id, go }: { id: MinistryId; go: Go }) {
   );
 }
 
-function Sites({ id, openDash }: { id: MinistryId; openDash: (d: string) => void }) {
+function Sites({ id, openDash, openStation }: { id: MinistryId; openDash: (d: string) => void; openStation: (s: string) => void }) {
   const pg = MINISTRY_PAGE[id];
   const types = useMemo(() => ["All", ...Array.from(new Set(pg.sites.map((s) => s.type)))], [pg]);
   const [type, setType] = useState("All");
@@ -96,7 +96,7 @@ function Sites({ id, openDash }: { id: MinistryId; openDash: (d: string) => void
                 <b>{s.name}</b><span>{s.type}</span><span>{s.gov}</span><span>{s.cap}</span>
                 <span className="m-use"><u><s style={{ width: `${s.load}%`, background: statusColor(s.status) }} /></u><em>{s.load}%</em></span>
                 <StatusChip status={s.status} />
-                {hasDash(s.dash) ? <button className="mp-open" onClick={() => openDash(s.dash!)} aria-label={`Open the dashboard for ${s.name}`}><ArrowUpRight size={16} /> Dashboard</button> : <span />}
+                {s.station ? <button className="mp-open" onClick={() => openStation(s.station!)} aria-label={`Open the station page for ${s.name}`}><ArrowUpRight size={16} /> Station page</button> : hasDash(s.dash) ? <button className="mp-open" onClick={() => openDash(s.dash!)} aria-label={`Open the dashboard for ${s.name}`}><ArrowUpRight size={16} /> Dashboard</button> : <span />}
               </div>
             ))}
           </div>
@@ -193,7 +193,7 @@ export default function Ministry({ id, go }: { id: MinistryId; go: Go }) {
           <motion.div key={`${tab}-${embed ?? ""}`} className="mp-pane" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25, ease }}>
             {tab === "overview" && <Overview id={id} go={go} />}
             {tab === "operations" && <Operations id={id} />}
-            {tab === "sites" && <Sites id={id} openDash={openDash} />}
+            {tab === "sites" && <Sites id={id} openDash={openDash} openStation={(s) => go("station", s)} />}
             {tab === "dashboards" && <Dashboards id={id} embed={embed} setEmbed={setEmbed} goOps={() => setTab("operations")} />}
           </motion.div>
         </AnimatePresence>

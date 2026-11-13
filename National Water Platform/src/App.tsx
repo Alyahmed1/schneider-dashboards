@@ -11,10 +11,11 @@ import Home from "./Home";
 import Executive from "./Executive";
 import Cycle from "./Cycle";
 import Ministry from "./Ministry";
+import Station from "./Station";
 import MinistriesView from "./MinistriesView";
 import { PAGES, TabPlaceholder } from "./Placeholder";
 
-type Route = { tab: TabId | "ministry"; id?: MinistryId };
+type Route = { tab: TabId | "ministry" | "station"; id?: string };
 
 const NAV: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: "home", label: "Home", icon: HomeIcon },
@@ -32,7 +33,7 @@ const NAV: { id: TabId; label: string; icon: LucideIcon }[] = [
 /** which background picture sits behind each page */
 const readCollapsed = () => { try { return localStorage.getItem("nwp-menu-hidden") === "1"; } catch { return false; } };
 
-const bgFor = (r: Route) => (r.tab === "home" || r.tab === "ministry" ? "executive" : PAGES[r.tab].bg);
+const bgFor = (r: Route) => (r.tab === "home" || r.tab === "ministry" || r.tab === "station" ? "executive" : PAGES[r.tab].bg);
 
 export default function App() {
   const [entered, setEntered] = useState(false);
@@ -48,7 +49,7 @@ export default function App() {
   const [collapsed, setCollapsed] = useState(readCollapsed);
   const toggleMenu = () => setCollapsed((c) => { const n = !c; try { localStorage.setItem("nwp-menu-hidden", n ? "1" : "0"); } catch { /* private window: the choice is just not remembered */ } return n; });
   const go: Go = (tab, id) => setRoute({ tab, id });
-  const active: TabId = route.tab === "ministry" ? "ministries" : route.tab;
+  const active: TabId = route.tab === "ministry" ? "ministries" : route.tab === "station" ? "home" : route.tab;
 
   return (
     <>
@@ -84,8 +85,10 @@ export default function App() {
                 ) : route.tab === "cycle" ? (
                   <Cycle key="cycle" go={go} />
                 ) : route.tab === "ministry" && route.id ? (
-                  <Ministry key={`m-${route.id}`} id={route.id} go={go} />
-                ) : route.tab !== "ministry" ? (
+                  <Ministry key={`m-${route.id}`} id={route.id as MinistryId} go={go} />
+                ) : route.tab === "station" && route.id ? (
+                  <Station key={`s-${route.id}`} id={route.id} go={go} />
+                ) : route.tab !== "ministry" && route.tab !== "station" ? (
                   <TabPlaceholder key={route.tab} tab={route.tab} />
                 ) : null}
               </AnimatePresence>

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { MinistryId, Status, Tile } from "./data";
 
-export interface Site { name: string; type: string; gov: string; cap: string; load: number; status: Status; dash?: string }
+export interface Site { name: string; type: string; gov: string; cap: string; load: number; status: Status; dash?: string; station?: string }
 export interface Dash { id: string; title: string; blurb: string; url: string; icon: LucideIcon; tags: string[] }
 export interface MinistryPage {
   tagline: string;
@@ -116,7 +116,7 @@ export const MINISTRY_PAGE: Record<MinistryId, MinistryPage> = {
       { name: "Fayoum drip farms", type: "Drip farm", gov: "Fayoum", cap: "45 K feddan", load: 85, status: "good" },
       { name: "Salam Canal farms", type: "Drip farm", gov: "North Sinai", cap: "75 K feddan", load: 76, status: "watch" },
       { name: "Beni Suef reuse station", type: "Reuse", gov: "Beni Suef", cap: "0.30 M m³/day", load: 94, status: "good" },
-      { name: "Ismailia reuse station", type: "Reuse", gov: "Ismailia", cap: "0.22 M m³/day", load: 90, status: "good" },
+      { name: "El Hamam", type: "Reuse", gov: "Ismailia", cap: "1.0 M m³/day", load: 91, status: "good", station: "hamam" },
     ],
     dashboards: [
       { id: "irrigation", title: "Smart Irrigation", blurb: "Pivots, pump stations, sensors, weather, irrigation schedule and the live farm map.", url: "https://waterirrigation.vercel.app", icon: Sprout, tags: ["Farms", "Pivots"] },

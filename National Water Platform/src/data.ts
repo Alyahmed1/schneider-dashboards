@@ -19,7 +19,7 @@ export type TabId =
   | "home" | "executive" | "cycle" | "balance" | "ministries" | "operations"
   | "performance" | "sustainability" | "alerts" | "reports";
 export type MinistryId = "mwri" | "mhuuc" | "eeaa" | "moalr";
-export type Go = (tab: TabId | "ministry", id?: MinistryId) => void;
+export type Go = (tab: TabId | "ministry" | "station", id?: string) => void;
 export type Role = "cabinet" | "minister" | "operator";
 
 export const ROLES: { id: Role; label: string; title: string; access: string }[] = [
@@ -134,10 +134,11 @@ export const OUTCOMES: { id: string; label: string; icon: LucideIcon }[] = [
 export type Sev = "critical" | "warning" | "info";
 export const ALERTS: { id: string; sev: Sev; ministry: MinistryId; text: string; where: string; ago: string }[] = [
   { id: "a1", sev: "critical", ministry: "moalr", text: "Pivot P4 drive fault, tower 7", where: "Minya smart farms", ago: "6 min ago" },
-  { id: "a2", sev: "critical", ministry: "mhuuc", text: "Low pressure in Zone 4", where: "Greater Cairo network", ago: "12 min ago" },
-  { id: "a3", sev: "warning", ministry: "eeaa", text: "COD near the limit at a discharge point", where: "Alexandria industrial zone", ago: "31 min ago" },
-  { id: "a4", sev: "warning", ministry: "mhuuc", text: "Membrane cleaning due in 3 days", where: "Red Sea desalination", ago: "1 h ago" },
-  { id: "a5", sev: "info", ministry: "mwri", text: "Release held at 92% of plan", where: "Aswan High Dam", ago: "2 h ago" },
+  { id: "a2", sev: "critical", ministry: "mhuuc", text: "Membrane cleaning overdue", where: "Sharm El Sheikh desalination", ago: "12 min ago" },
+  { id: "a3", sev: "critical", ministry: "eeaa", text: "Discharge above the COD limit", where: "Helwan industrial zone", ago: "25 min ago" },
+  { id: "a4", sev: "warning", ministry: "mhuuc", text: "Low pressure in Zone 4", where: "Giza water plant", ago: "31 min ago" },
+  { id: "a5", sev: "warning", ministry: "eeaa", text: "COD near the limit at a discharge point", where: "Alexandria industrial zone", ago: "1 h ago" },
+  { id: "a6", sev: "warning", ministry: "mwri", text: "One gate under repair", where: "Naga Hammadi Barrage", ago: "2 h ago" },
 ];
 
 export const INSIGHT_ICON = Info;
@@ -172,10 +173,11 @@ export const outcomeStatus = (score: number, target: number): Status => (score >
 
 export const ATTENTION: { id: string; sev: Sev; ministry: MinistryId; title: string; detail: string; to: TabId | "ministry" }[] = [
   { id: "n1", sev: "critical", ministry: "moalr", title: "Pivot P4 drive fault, tower 7", detail: "Minya smart farms · 150 feddan not irrigating", to: "ministry" },
-  { id: "n2", sev: "critical", ministry: "mhuuc", title: "Low pressure in Zone 4", detail: "Greater Cairo network · about 38,000 people affected", to: "ministry" },
-  { id: "n3", sev: "warning", ministry: "eeaa", title: "Industrial discharge near the COD limit", detail: "Alexandria industrial zone · 2 discharge points", to: "ministry" },
-  { id: "n4", sev: "warning", ministry: "eeaa", title: "Water reuse is 6 points behind its 2026 target", detail: "Circularity outcome at 74 against a target of 80", to: "performance" },
-  { id: "n5", sev: "info", ministry: "mwri", title: "Decision: approve the summer release plan", detail: "Aswan High Dam · release held at 92% of plan", to: "ministry" },
+  { id: "n2", sev: "critical", ministry: "mhuuc", title: "Membrane cleaning overdue", detail: "Sharm El Sheikh desalination · output down to 60 K m³/day", to: "ministry" },
+  { id: "n3", sev: "critical", ministry: "eeaa", title: "Discharge above the COD limit", detail: "Helwan industrial zone · 96 mg/L against 80", to: "ministry" },
+  { id: "n4", sev: "warning", ministry: "mhuuc", title: "Low pressure in Zone 4", detail: "Giza water plant · about 38,000 people affected", to: "ministry" },
+  { id: "n5", sev: "warning", ministry: "eeaa", title: "Discharge near the COD limit", detail: "Alexandria industrial zone · 2 discharge points", to: "ministry" },
+  { id: "n6", sev: "warning", ministry: "mwri", title: "One gate under repair", detail: "Naga Hammadi Barrage · flow 365 m³/s", to: "ministry" },
 ];
 
 export const INSIGHTS: string[] = [

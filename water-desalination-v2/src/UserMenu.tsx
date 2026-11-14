@@ -30,16 +30,16 @@ export default function UserMenu({ go, theme, setTheme, wos, onStart }: { go: Go
 
   return (
     <div className="user-wrap" ref={box}>
-      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label="Account: A, plant manager">
+      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label="Account: Administrator, plant manager">
         <span>A</span>
-        <div><b>A</b><em>Plant manager</em></div>
+        <div><b>Administrator</b><em>Plant manager</em></div>
       </button>
       <AnimatePresence>
         {open && (
           <motion.div className="me-panel" role="dialog" aria-label="Account" initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.18 }}>
             <div className="me-top">
               <div className="me-av" aria-hidden>A</div>
-              <div><b>A</b><span>Plant manager</span></div>
+              <div><b>Administrator</b><span>Plant manager</span></div>
               <Chip tone="good">Online</Chip>
             </div>
             <div className="me-info">

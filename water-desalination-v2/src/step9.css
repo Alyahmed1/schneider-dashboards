@@ -22,7 +22,7 @@
 .cell-bg { fill: rgba(255, 255, 255, .35); }
 .cell-edge { fill: none; stroke: var(--line); stroke-width: 3; }
 html[data-theme="dark"] .cell-bg { fill: rgba(255, 255, 255, .03); }
-.conn .pipe-flow { stroke-dasharray: 1 7; animation-name: wireflow-s; }
+.conn .pipe-flow { stroke-dasharray: 1 7; animation-name: wireflow-s; animation-duration: 1.8s; }
 @keyframes wireflow-s { to { stroke-dashoffset: -8; } }
 .page.flow .tag { padding: 2px 6px 2px 5px; border-width: 1px; gap: 4px; }
 .page.flow .tag-dot { width: 5px; height: 5px; }

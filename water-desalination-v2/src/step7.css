@@ -26,7 +26,7 @@ html[data-theme="dark"] {
 .pipe-edge, .pipe-in, .pipe-flow { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .pipe-edge { stroke: var(--pipe-edge); }
 .pipe-in { stroke: var(--pipe); }
-.pipe-flow { stroke: var(--f, #3d8fe0); stroke-dasharray: 2 15; animation: wireflow .9s linear infinite; }
+.pipe-flow { stroke: var(--f, #3d8fe0); stroke-dasharray: 2 15; animation: wireflow 1.8s linear infinite; }
 .k-sea { --f: #3d8fe0; }
 .k-clean { --f: #2bc4c0; }
 .k-product { --f: #19b3ac; }
@@ -51,11 +51,11 @@ html[data-theme="dark"] {
 .sea { fill: var(--sea-c); }
 .wall { fill: var(--wall-c); stroke: var(--eq-edge); stroke-width: 1.5; }
 .hill { fill: var(--hill-c); }
-.wave-line { fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 2.2; animation: wavemove 3.2s linear infinite; }
-.sea-wave { stroke: rgba(255, 255, 255, .35); animation-duration: 5s; }
+.wave-line { fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 2.2; animation: wavemove 6.4s linear infinite; }
+.sea-wave { stroke: rgba(255, 255, 255, .35); animation-duration: 10s; }
 @keyframes wavemove { to { transform: translateX(40px); } }
 .sea-wave { transform-box: fill-box; }
-.spin { fill: none; stroke: var(--eq-edge); stroke-width: 2; stroke-dasharray: 5 9; transform-box: fill-box; transform-origin: center; animation: spinr 2.6s linear infinite; }
+.spin { fill: none; stroke: var(--eq-edge); stroke-width: 2; stroke-dasharray: 5 9; transform-box: fill-box; transform-origin: center; animation: spinr 5.2s linear infinite; }
 @keyframes spinr { to { transform: rotate(360deg); } }
 .st-Alarm .eq, .st-Alarm .eq-line { stroke: var(--bad); }
 .st-Alarm .spin { stroke: var(--bad); }

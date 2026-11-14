@@ -48,5 +48,10 @@ html[data-theme="dark"] .as-panel form button { color: #06141f; }
 
 /* Schneider Electric logo in the top bar */
 .brand-logo { height: 44px; width: auto; display: block; flex: none; }
+.brand-logo.aveva { height: 29px; margin-left: -2px; }
+/* AVEVA: original purple on the light theme, white on the dark theme */
+.brand-logo.aveva-dark { display: none; }
+html[data-theme="dark"] .brand-logo.aveva-dark { display: block; }
+html[data-theme="dark"] .brand-logo.aveva-light { display: none; }
 .brand .brand-sep { display: block; width: 1px; height: 32px; background: var(--line); flex: none; }
-@media (max-width: 720px) { .brand-logo { height: 30px; } .brand .brand-sep { display: none; } }
+@media (max-width: 720px) { .brand-logo { height: 30px; } .brand-logo.aveva { height: 20px; } .brand .brand-sep { display: none; } }

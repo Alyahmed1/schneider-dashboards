@@ -192,13 +192,13 @@ html[data-theme="dark"] .tour-btn.on { color: #0e1230; }
 
 /* pipes */
 .pipe-base { fill: none; stroke: var(--pipe-edge); stroke-width: 11; stroke-linejoin: round; }
-.pipe-flow { fill: none; stroke-width: 4; stroke-dasharray: 9 13; stroke-linecap: round; animation: dash 1s linear infinite; }
+.pipe-flow { fill: none; stroke-width: 4; stroke-dasharray: 9 13; stroke-linecap: round; animation: dash 2s linear infinite; }
 @keyframes dash { to { stroke-dashoffset: -22; } }
 .p-raw .pipe-flow { stroke: #c9a468; } .p-clar .pipe-flow { stroke: #9fc4c0; } .p-treated .pipe-flow { stroke: var(--aqua); }
 .p-reject .pipe-flow { stroke: #f0a030; } .p-sludge .pipe-flow { stroke: #8a6b4a; } .p-reuse .pipe-flow { stroke: #3ecf5a; }
 .pd[data-scn="storm"] .p-raw .pipe-flow { stroke: #8a6240; }
 .pd[data-scn="storm"] .p-clar .pipe-flow { stroke: #b08a5a; }
-.pd[data-scn="fouling"] .p-treated .pipe-flow { animation-duration: 1.8s; }
+.pd[data-scn="fouling"] .p-treated .pipe-flow { animation-duration: 3.6s; }
 .arrow-reject { fill: #f0a030; } .arrow-sludge { fill: #8a6b4a; }
 
 /* equipment tiles */
@@ -229,26 +229,26 @@ html[data-theme="dark"] .tour-btn.on { color: #0e1230; }
 .sv-txt { fill: var(--muted); font: 500 9px var(--body); text-anchor: middle; }
 .sv-big { fill: var(--ink); font: 700 16px var(--body); text-anchor: middle; }
 .l-coal { fill: #3b3f52; } .l-sand { fill: #c9b07a; } .l-gravel { fill: #8a8f9e; }
-.drops circle { fill: var(--aqua); animation: fall 1.6s linear infinite; }
+.drops circle { fill: var(--aqua); animation: fall 3.2s linear infinite; }
 @keyframes fall { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(34px); opacity: 0; } }
-.fibre { fill: none; stroke: var(--aqua); stroke-width: 1.6; stroke-dasharray: 6 5; animation: dash 1.2s linear infinite; }
-.flow-mini { fill: none; stroke: var(--aqua); stroke-width: 2; stroke-dasharray: 4 6; animation: dash .9s linear infinite; }
-.spin { transform-box: fill-box; transform-origin: center; animation: spin 1.6s linear infinite; }
-.spin.slow { animation-duration: 4s; } .spin.rev { animation-direction: reverse; }
+.fibre { fill: none; stroke: var(--aqua); stroke-width: 1.6; stroke-dasharray: 6 5; animation: dash 2.4s linear infinite; }
+.flow-mini { fill: none; stroke: var(--aqua); stroke-width: 2; stroke-dasharray: 4 6; animation: dash 1.8s linear infinite; }
+.spin { transform-box: fill-box; transform-origin: center; animation: spin 3.2s linear infinite; }
+.spin.slow { animation-duration: 8s; } .spin.rev { animation-direction: reverse; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.wave { animation: wavemove 2.4s linear infinite; }
+.wave { animation: wavemove 4.8s linear infinite; }
 @keyframes wavemove { to { transform: translateX(-18px); } }
-.sweep { transform-box: fill-box; transform-origin: left center; animation: sweep 5s ease-in-out infinite; }
+.sweep { transform-box: fill-box; transform-origin: left center; animation: sweep 10s ease-in-out infinite; }
 @keyframes sweep { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(-1); } }
 .sludge circle { fill: #8a6b4a; }
-.steam circle { fill: rgba(220, 230, 245, .7); transform-box: fill-box; transform-origin: center; animation: puff 2.7s ease-out infinite; }
-.steam.sm circle { animation-duration: 2.2s; }
+.steam circle { fill: rgba(220, 230, 245, .7); transform-box: fill-box; transform-origin: center; animation: puff 5.4s ease-out infinite; }
+.steam.sm circle { animation-duration: 4.4s; }
 @keyframes puff { 0% { transform: translateY(8px) scale(.5); opacity: 0; } 25% { opacity: .8; } 100% { transform: translateY(-14px) scale(1.4); opacity: 0; } }
-.flame path { fill: #f0a030; transform-box: fill-box; transform-origin: 50% 100%; animation: flicker .45s ease-in-out infinite alternate; }
+.flame path { fill: #f0a030; transform-box: fill-box; transform-origin: 50% 100%; animation: flicker .9s ease-in-out infinite alternate; }
 @keyframes flicker { from { transform: scaleY(.75); } to { transform: scaleY(1.15); } }
 .gear { fill: none; stroke: var(--eq-line); stroke-width: 5; stroke-dasharray: 3 2.500; }
 .win { fill: rgba(240, 200, 100, .85); }
-.bubbles circle { fill: rgba(255, 255, 255, .75); animation: rise 2s ease-in infinite; }
+.bubbles circle { fill: rgba(255, 255, 255, .75); animation: rise 4s ease-in infinite; }
 @keyframes rise { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-34px); opacity: 0; } }
 
 /* detail panel */
@@ -280,9 +280,9 @@ html[data-theme="dark"] .tour-btn.on { color: #0e1230; }
 .ar-raw { fill: #c9a468; } .ar-clar { fill: #9fc4c0; } .ar-treated { fill: var(--aqua); } .ar-reject { fill: #f0a030; }
 .ar-sludge { fill: #8a6b4a; } .ar-reuse { fill: #3ecf5a; } .ar-slurry { fill: #a39689; } .ar-conc { fill: #e8c84a; }
 .k-slurry { background: #a39689; } .k-conc { background: #e8c84a; } .k-sludge { background: #8a6b4a; }
-.pd[data-scn="drought"] .pipe-flow, .pd[data-scn="hot"] .p-treated .pipe-flow { animation-duration: 1.7s; }
-.pd[data-scn="rain"] .pipe-flow { animation-duration: .7s; }
-.pd[data-scn="cip"] .p-reject .pipe-flow { stroke: #f0d060; animation-duration: .7s; }
+.pd[data-scn="drought"] .pipe-flow, .pd[data-scn="hot"] .p-treated .pipe-flow { animation-duration: 3.4s; }
+.pd[data-scn="rain"] .pipe-flow { animation-duration: 1.4s; }
+.pd[data-scn="cip"] .p-reject .pipe-flow { stroke: #f0d060; animation-duration: 1.4s; }
 
 .sv-slurry { fill: rgba(140, 126, 112, .75); }
 .sv-salt { fill: rgba(235, 235, 245, .85); }
@@ -290,33 +290,33 @@ html[data-theme="dark"] .tour-btn.on { color: #0e1230; }
 .l-resin { fill: #d9b26a; }
 .sv-ln.dashed { stroke-dasharray: 4 3; }
 .conc-line { stroke: #e8c84a; stroke-width: 3; fill: none; stroke-linecap: round; }
-.balls circle { fill: #8f9dd6; stroke: var(--eq-line); animation: wobble 1.2s ease-in-out infinite alternate; }
+.balls circle { fill: #8f9dd6; stroke: var(--eq-line); animation: wobble 2.4s ease-in-out infinite alternate; }
 @keyframes wobble { from { transform: translate(-2px, 1px); } to { transform: translate(3px, -3px); } }
-.froth circle { fill: #e8c84a; transform-box: fill-box; transform-origin: center; animation: froth 2s ease-in-out infinite; }
+.froth circle { fill: #e8c84a; transform-box: fill-box; transform-origin: center; animation: froth 4s ease-in-out infinite; }
 @keyframes froth { 0%, 100% { transform: translateY(2px) scale(.8); opacity: .5; } 50% { transform: translateY(-3px) scale(1.15); opacity: 1; } }
-.road { fill: none; stroke: var(--eq-line); stroke-width: 2; stroke-dasharray: 8 8; animation: dash .8s linear infinite; }
-.bob { animation: bob .6s ease-in-out infinite alternate; }
+.road { fill: none; stroke: var(--eq-line); stroke-width: 2; stroke-dasharray: 8 8; animation: dash 1.6s linear infinite; }
+.bob { animation: bob 1.2s ease-in-out infinite alternate; }
 @keyframes bob { to { transform: translateY(-1.500px); } }
-.spray circle { fill: var(--aqua); opacity: 0; animation: spray 1s ease-out infinite; }
+.spray circle { fill: var(--aqua); opacity: 0; animation: spray 2s ease-out infinite; }
 @keyframes spray { 0% { transform: translate(0, 0); opacity: .9; } 100% { transform: translate(10px, 14px); opacity: 0; } }
-.jaw { transform-box: fill-box; transform-origin: 50% 0; animation: jaw .8s ease-in-out infinite alternate; }
+.jaw { transform-box: fill-box; transform-origin: 50% 0; animation: jaw 1.6s ease-in-out infinite alternate; }
 @keyframes jaw { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
-.needle { transform-box: fill-box; transform-origin: 0 100%; animation: needle 2s ease-in-out infinite alternate; }
+.needle { transform-box: fill-box; transform-origin: 0 100%; animation: needle 4s ease-in-out infinite alternate; }
 @keyframes needle { from { transform: rotate(-25deg); } to { transform: rotate(30deg); } }
-.ripple ellipse { fill: none; stroke: rgba(255, 255, 255, .6); stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: ripple 2s ease-out infinite; }
+.ripple ellipse { fill: none; stroke: rgba(255, 255, 255, .6); stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: ripple 4s ease-out infinite; }
 @keyframes ripple { 0% { transform: scale(.4); opacity: .9; } 100% { transform: scale(1.4); opacity: 0; } }
-.drops.slow circle { animation-duration: 2.6s; }
-.beads circle { fill: #b8863a; animation: wobble 1.6s ease-in-out infinite alternate; }
-.uv-lamp { fill: none; stroke: #b48cff; stroke-width: 5; stroke-linecap: round; filter: blur(2px); animation: uvpulse 1.2s ease-in-out infinite alternate; }
+.drops.slow circle { animation-duration: 5.2s; }
+.beads circle { fill: #b8863a; animation: wobble 3.2s ease-in-out infinite alternate; }
+.uv-lamp { fill: none; stroke: #b48cff; stroke-width: 5; stroke-linecap: round; filter: blur(2px); animation: uvpulse 2.4s ease-in-out infinite alternate; }
 @keyframes uvpulse { from { opacity: .3; } to { opacity: 1; } }
-.drip { fill: var(--aqua); opacity: 0; animation: drip 1s linear infinite; }
+.drip { fill: var(--aqua); opacity: 0; animation: drip 2s linear infinite; }
 @keyframes drip { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
-.belt { animation: belt 2.4s linear infinite; }
+.belt { animation: belt 4.8s linear infinite; }
 @keyframes belt { to { transform: translateX(28px); } }
 .bottle { fill: rgba(180, 225, 245, .3); stroke: var(--eq-line); stroke-width: 1; }
 .bottle-cap { fill: #3a6fd6; }
 .bottle-fill { fill: rgba(61, 188, 220, .65); }
-.cip-loop { fill: none; stroke: var(--aqua); stroke-width: 3; stroke-dasharray: 6 7; animation: dash 1s linear infinite; }
+.cip-loop { fill: none; stroke: var(--aqua); stroke-width: 3; stroke-dasharray: 6 7; animation: dash 2s linear infinite; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1280px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

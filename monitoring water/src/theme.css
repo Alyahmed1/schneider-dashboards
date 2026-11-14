@@ -53,11 +53,12 @@ h1, h2, h3 { font-weight: 400; }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand-mark { width: 32px; height: 32px; border-radius: var(--radius); background: var(--teal); color: #04180d; display: grid; place-items: center; flex: none; }
 .brand-logo { height: 40px; width: auto; display: block; flex: none; }
+.brand-logo.aveva { height: 24px; margin-left: -2px; }
 .brand-sep { display: block; width: 1px; height: 30px; background: var(--line); flex: none; }
 .brand b { font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brand em { font-style: normal; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .tabs { justify-self: center; display: flex; gap: 6px; padding: 4px; border: 1px solid var(--line); background: var(--surface-0); border-radius: var(--radius); }
-.tabs button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; font-size: 15px; color: var(--text-2); border-radius: 3px; white-space: nowrap; transition: background .15s, color .15s; }
+.tabs button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; font-size: 14px; color: var(--text-2); border-radius: 3px; white-space: nowrap; transition: background .15s, color .15s; }
 .tabs button:hover { color: var(--ink); background: var(--surface-2); }
 .tabs button.on { background: var(--teal); color: #04180d; font-weight: 600; }
 .acts { display: flex; justify-content: flex-end; align-items: center; gap: 8px; min-width: 0; }

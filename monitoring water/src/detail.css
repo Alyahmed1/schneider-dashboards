@@ -136,3 +136,12 @@
 .stage[data-portrait="true"]:not([data-phone="true"]) .sv .link { display: none; }
 .stage[data-portrait="true"]:not([data-phone="true"]) .nz-t { font-size: 12px; }
 .stage[data-portrait="true"]:not([data-phone="true"]) .sv-cap { font-size: 13px; fill: var(--ink); }
+
+/* portrait tablet: the AVEVA logo takes room, so the user button shows only the avatar and the tabs are tighter */
+.stage[data-portrait="true"]:not([data-phone="true"]) .um-name { display: none; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .um-btn { padding: 0 5px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .tabs button { padding: 0 10px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .brand-logo { height: 36px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .brand-logo.aveva { height: 22px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .tabs button:not(.on) { font-size: 0; gap: 0; padding: 0 12px; }
+.stage[data-portrait="true"]:not([data-phone="true"]) .tabs button:not(.on) svg { width: 20px; height: 20px; }

@@ -8,6 +8,7 @@
 .stage[data-phone="true"] .head { position: relative; height: auto; grid-template-columns: minmax(0, 1fr) auto auto auto; grid-auto-rows: auto; gap: 8px; padding: 8px 12px; backdrop-filter: none; background: rgba(8, 19, 26, .88); }
 .stage[data-phone="true"] .brand { grid-column: 1; grid-row: 1; }
 .stage[data-phone="true"] .brand-logo { height: 30px; }
+.stage[data-phone="true"] .brand-logo.aveva { height: 20px; }
 .stage[data-phone="true"] .brand-sep, .stage[data-phone="true"] .brand b { display: none; }
 .stage[data-phone="true"] .acts { display: contents; }
 .stage[data-phone="true"] .bell { grid-column: 2; grid-row: 1; }
@@ -115,3 +116,6 @@
 .stage[data-phone="true"] .alx-d-act .btn { flex: 1; }
 .stage[data-phone="true"] .alx-status { margin: 8px -10px 0; font-size: 12px; }
 .stage[data-phone="true"] .alx-status span { padding: 6px 10px; }
+
+/* AVEVA logo next to Schneider needs the room: on narrow phones the user button keeps only the avatar */
+@media (max-width: 460px) { .stage[data-phone="true"] .um-name { display: none; } .stage[data-phone="true"] .um-btn { padding: 0 5px; } }

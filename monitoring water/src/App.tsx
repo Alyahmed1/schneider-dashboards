@@ -33,6 +33,7 @@ export default function App() {
         <header className="head">
           <div className="brand">
             <img className="brand-logo" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
+            <img className="brand-logo aveva" src="/aveva-logo-white.png" alt="AVEVA" />
             <span className="brand-sep" aria-hidden />
             <b>Pivot Monitoring</b>
           </div>

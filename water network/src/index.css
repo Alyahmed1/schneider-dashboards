@@ -255,7 +255,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--teal); out
 @media (max-width: 1280px) {
   .g-kpi { grid-template-columns: repeat(3, 1fr); }
   .g-kpi .kpi-hero { grid-column: span 1; }
-  .user div { display: none; }
+  .user em { display: none; }
 }
 @media (max-width: 1180px) {
   .topbar { flex-wrap: wrap; row-gap: 10px; }
@@ -280,4 +280,7 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--teal); out
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 640px) {
+  .user div { display: none; }
 }

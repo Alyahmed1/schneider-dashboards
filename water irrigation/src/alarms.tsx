@@ -22,8 +22,8 @@ export function alarmAt(a: Alarm) {
 }
 
 export function AlarmsProvider({ children }: { children: ReactNode }) {
-  const [done, setDone] = useState<Record<string, DoneInfo>>(() => Object.fromEntries(ALARMS.filter((a) => a.done).map((a) => [a.id, { at: alarmAt(a) + 35 * 60_000, by: "Aly Ahmed" }])));
-  const markDone = (id: string) => setDone((d) => ({ ...d, [id]: { at: Date.now(), by: "Aly Ahmed" } }));
+  const [done, setDone] = useState<Record<string, DoneInfo>>(() => Object.fromEntries(ALARMS.filter((a) => a.done).map((a) => [a.id, { at: alarmAt(a) + 35 * 60_000, by: "Administrator" }])));
+  const markDone = (id: string) => setDone((d) => ({ ...d, [id]: { at: Date.now(), by: "Administrator" } }));
   const undo = (id: string) => setDone((d) => { const n = { ...d }; delete n[id]; return n; });
   return <AlarmsCtx.Provider value={{ done, markDone, undo, toggle: (id) => (done[id] ? undo(id) : markDone(id)) }}>{children}</AlarmsCtx.Provider>;
 }

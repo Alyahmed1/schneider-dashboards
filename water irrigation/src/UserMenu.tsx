@@ -4,7 +4,7 @@ import { FARM, pivotsAt } from "./farm";
 import { useAlarms, useOpenAlarms } from "./alarms";
 import type { Go, Theme } from "./App";
 
-const NAME = "Aly Ahmed";
+const NAME = "Administrator";
 const ROLE = "Farm manager";
 
 /** the person in the top bar: a click opens their profile card with shift, access, a few live numbers and shortcuts */

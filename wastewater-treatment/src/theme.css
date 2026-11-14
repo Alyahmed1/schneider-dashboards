@@ -122,7 +122,8 @@ html[data-theme="dark"] .dock button.on { background: var(--surface-2); }
   .topbar { flex-wrap: nowrap; padding: 0 12px; }
   .brand { flex: 1 1 0; }
   .brand b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .user div { display: none; }
+  .user em { display: none; }
+  .user b { font-size: 11px; }
   .dock button { flex-direction: column; gap: 2px; font-size: 10.5px; padding-top: 4px; }
   .crumb { padding: 0 6px 0 12px; font-size: 13px; }
   .crumb.here { padding: 0 12px; }

@@ -79,14 +79,14 @@ function Account({ role, setRole, go, onStart }: { role: Role; setRole: (r: Role
   const jump = (fn: () => void) => { setOpen(false); fn(); };
   return (
     <div className="hd-wrap" ref={ref}>
-      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label={`Account: A, ${cur.title}`}>
+      <button className={`user ${open ? "on" : ""}`} onClick={() => setOpen((o) => !o)} aria-haspopup="dialog" aria-expanded={open} aria-label={`Account: Administrator, ${cur.title}`}>
         <span className="user-av"><UserRound size={17} /></span>
-        <div><b>A</b><em>{cur.title}</em></div>
+        <div><b>Administrator</b><em>{cur.title}</em></div>
       </button>
       <Pop open={open} label="Account">
         <div className="me-top">
           <div className="me-av" aria-hidden>A</div>
-          <div><b>A</b><span>{cur.title}</span></div>
+          <div><b>Administrator</b><span>{cur.title}</span></div>
           <span className="chip good">Online</span>
         </div>
         <div className="me-sub">Switch view</div>

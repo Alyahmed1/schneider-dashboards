@@ -66,7 +66,8 @@ export default function App() {
         <header className="topbar">
           <button className="brand" onClick={() => setEntered(false)} title="Back to the start screen" aria-label="Smart Water Desalination, back to the start screen">
             <img className="brand-logo" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
-            <img className="brand-logo aveva" src="/aveva-logo-transparent.png" alt="AVEVA" />
+            <img className="brand-logo aveva aveva-light" src="/aveva-logo-transparent.png" alt="AVEVA" />
+            <img className="brand-logo aveva aveva-dark" src="/aveva-logo-white.png" alt="" aria-hidden />
             <span className="brand-sep" aria-hidden />
             <div>
               <b>Smart Water Desalination</b>

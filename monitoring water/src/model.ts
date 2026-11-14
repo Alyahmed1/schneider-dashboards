@@ -110,10 +110,10 @@ const SEED_EVENTS: Omit<EventRec, "id">[] = [
   ev(0, 0, 0, "System", "System", "P2", "Started by its irrigation window"),
   ev(1, 22, 0, "System", "System", "P1", "Started by its irrigation window"),
   ev(1, 20, 0, "System", "System", "P3", "Started by its irrigation window"),
-  ev(1, 15, 5, "A", "Supervisor", "P1", "Changed the irrigation window to 22:00 to 04:00"),
-  ev(1, 14, 25, "A", "Operator", "P4", "Closed nozzle V10 (blocked)"),
-  ev(2, 9, 12, "A", "Operator", "P1", "Closed nozzle V4 (blocked)"),
-  ev(3, 11, 25, "A", "Supervisor", null, "Set the pumping window to 22:00 to 06:00"),
+  ev(1, 15, 5, "Administrator", "Supervisor", "P1", "Changed the irrigation window to 22:00 to 04:00"),
+  ev(1, 14, 25, "Administrator", "Operator", "P4", "Closed nozzle V10 (blocked)"),
+  ev(2, 9, 12, "Administrator", "Operator", "P1", "Closed nozzle V4 (blocked)"),
+  ev(3, 11, 25, "Administrator", "Supervisor", null, "Set the pumping window to 22:00 to 06:00"),
 ];
 
 function initial(): Fleet {

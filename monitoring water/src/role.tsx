@@ -4,7 +4,7 @@ import { can, needs, type Level, type Role, type Who } from "./model";
 import { PIVOTS, type PivotId } from "./pivots";
 
 /** simulated roles: the same screens, but some controls are locked until the role is high enough. Real sign-in comes with the backend. */
-const Ctx = createContext<Who>({ name: "A", role: "Admin" });
+const Ctx = createContext<Who>({ name: "Administrator", role: "Admin" });
 export const RoleProvider = ({ who, children }: { who: Who; children: ReactNode }) => <Ctx.Provider value={who}>{children}</Ctx.Provider>;
 export const useWho = () => useContext(Ctx);
 /** `ok` is false when the role is too low; `why` is the reason to show on the locked control */
@@ -32,17 +32,16 @@ export function UserMenu({ who, setRole, links, setLink }: { who: Who; setRole: 
     document.addEventListener("keydown", esc);
     return () => { document.removeEventListener("mousedown", away); document.removeEventListener("keydown", esc); };
   }, [open]);
-  const initials = who.name.split(" ").map((s) => s[0]).join("").slice(0, 2);
   const cur = ROLES.find((r) => r.role === who.role)!;
   return (
     <div className="um" ref={box}>
       <button className="um-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={`${who.name}, ${who.role}. Open the user menu`}>
-        <span>{initials}</span>
+        <span className="um-ic"><UserRound size={18} /></span><span className="um-name">{who.name}</span>
       </button>
       {open && (
         <div className="um-pop" role="dialog" aria-label="User">
           <div className="um-head">
-            <span className="um-av">{initials}</span>
+            <span className="um-av"><UserRound size={24} /></span>
             <div><b>{who.name}</b><em>{who.role}</em></div>
           </div>
           <p className="um-lab"><ShieldCheck size={15} />Role (simulated)</p>

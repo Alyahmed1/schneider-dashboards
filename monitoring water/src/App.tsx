@@ -15,7 +15,7 @@ export type TabId = "pivots" | "detail";
 export default function App() {
   const st = useStage();
   // simulated user: the role can be switched from the user menu to show what each role may do
-  const [who, setWho] = useState<Who>({ name: "A", role: "Admin" });
+  const [who, setWho] = useState<Who>({ name: "Administrator", role: "Admin" });
   const [fleet, act] = useFleet(who);
   const [tab, setTab] = useState<TabId>("pivots");
   const [sel, setSel] = useState<PivotId>("P1");

@@ -1,6 +1,8 @@
 /* ================= step 2: user menu and roles, confirmations, lost signal, events log ================= */
 .um { position: relative; }
-.um-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--teal); color: #04180d; font-weight: 700; font-size: 14px; display: grid; place-items: center; transition: filter .15s; }
+.um-btn { height: 44px; padding: 0 14px 0 5px; border-radius: 22px; background: transparent; border: 1px solid var(--line-hi); color: var(--text); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 9px; transition: filter .15s, background .15s; }
+.um-ic { width: 32px; height: 32px; border-radius: 50%; background: var(--teal); color: #04180d; display: grid; place-items: center; flex: none; }
+.um-name { white-space: nowrap; }
 .um-btn:hover { filter: brightness(1.1); }
 .um-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; width: 340px; max-width: 92vw; padding: 14px; display: grid; gap: 10px; background: var(--card-solid); border: 1px solid var(--line-hi); border-radius: 6px; box-shadow: 0 14px 40px rgba(0, 0, 0, .55); animation: pop .2s cubic-bezier(.22, 1, .36, 1); }
 .um-head { display: flex; align-items: center; gap: 12px; }

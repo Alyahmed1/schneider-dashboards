@@ -78,13 +78,13 @@ const RAISED: Record<string, number> = {
 // key, severity, class, tag, group, node, limit, text, pivot, [days ago, hour, minute, minutes until normal, acknowledged by]
 type Past = [string, Sev, AlarmCls, string, string, string, string, string, PivotId | null, [number, number, number, number, string]];
 const PAST: Past[] = [
-  ["P3:dry", "Warning", "PROCESS", "P3_Moisture", "Centre pivots", "PIVOT-PLC", "28 %", "Soil moisture is low, average 26%", "P3", [1, 6, 30, 95, "A"]],
+  ["P3:dry", "Warning", "PROCESS", "P3_Moisture", "Centre pivots", "PIVOT-PLC", "28 %", "Soil moisture is low, average 26%", "P3", [1, 6, 30, 95, "Administrator"]],
   ["T3:low", "Warning", "PROCESS", "Tank3_Level", "Storage tanks", "PUMP-PLC", "35 %", "Tank 3 is low at 33%", null, [2, 17, 45, 320, "System"]],
-  ["P2:nz:5", "Warning", "EQUIPMENT", "P2_V6_Blocked", "Centre pivots", "PIVOT-PLC", "", "Nozzle V6 is blocked, its ring is under-applied", "P2", [3, 11, 20, 410, "A"]],
+  ["P2:nz:5", "Warning", "EQUIPMENT", "P2_V6_Blocked", "Centre pivots", "PIVOT-PLC", "", "Nozzle V6 is blocked, its ring is under-applied", "P2", [3, 11, 20, 410, "Administrator"]],
   ["P1:wind", "Info", "PROCESS", "P1_Wind", "Centre pivots", "PIVOT-PLC", "30 km/h", "Wind gusts 33 km/h, spray drift risk", "P1", [3, 15, 5, 70, "System"]],
-  ["P3:fault", "Critical", "EQUIPMENT", "P3_DriveTrip", "Centre pivots", "PIVOT-PLC", "ON", "Tower 3 drive tripped, the pivot is stopped", "P3", [4, 1, 50, 140, "A"]],
+  ["P3:fault", "Critical", "EQUIPMENT", "P3_DriveTrip", "Centre pivots", "PIVOT-PLC", "ON", "Tower 3 drive tripped, the pivot is stopped", "P3", [4, 1, 50, 140, "Administrator"]],
   ["P2:dry", "Warning", "PROCESS", "P2_Moisture", "Centre pivots", "PIVOT-PLC", "28 %", "Soil moisture is low, average 27%", "P2", [5, 13, 15, 180, "System"]],
-  ["T1:low", "Warning", "PROCESS", "Tank1_Level", "Storage tanks", "PUMP-PLC", "35 %", "Tank 1 is low at 34%", null, [6, 8, 40, 260, "A"]],
+  ["T1:low", "Warning", "PROCESS", "Tank1_Level", "Storage tanks", "PUMP-PLC", "35 %", "Tank 1 is low at 34%", null, [6, 8, 40, 260, "Administrator"]],
 ];
 
 export function seedAlarms(conds: Cond[]): Alarm[] {

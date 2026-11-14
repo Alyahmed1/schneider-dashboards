@@ -30,7 +30,7 @@ html[data-theme="light"] .user > span { color: #fff; }
 .me-actions button:hover { background: var(--surface-2); }
 
 
-@media (max-width: 900px) { .user div { display: none; } .user { padding: 0; } }
+@media (max-width: 900px) { .user div em { display: none; } }
 
 /* ---------- Work orders window: a list on the left, the selected work order on the right ---------- */
 .wo-veil { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 14px; background: rgba(6, 8, 24, .62); }

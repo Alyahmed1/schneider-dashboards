@@ -12,7 +12,7 @@
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 10px 12px; min-height: 0; }
 
 /* one pivot: the circle (button) with its chip underneath */
-.pcard { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; justify-items: center; gap: 6px; min-width: 0; min-height: 0; padding: 4px 0 0; text-align: left; border-radius: var(--radius); animation: rise .55s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
+.pcard { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; justify-items: center; gap: 12px; min-width: 0; min-height: 0; padding: 4px 0 0; text-align: left; border-radius: var(--radius); animation: rise .55s cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--i, 0) * 70ms); }
 .pcard:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
 .pc-disc { min-height: 0; width: 100%; display: flex; justify-content: center; transition: transform .25s cubic-bezier(.22, 1, .36, 1); }
 .pcard:hover .pc-disc, .pcard:active .pc-disc { transform: translateY(-3px) scale(1.02); }
@@ -21,7 +21,7 @@
 .disc-ring.on { stroke: var(--good); } .disc-ring.fault { stroke: var(--bad); animation: blink 1.4s steps(2, jump-none) infinite; }
 .disc-rim { fill: none; stroke: #e8f4f0; stroke-width: 1.5; }
 
-.chip { width: min(100%, 470px); display: grid; gap: 8px; padding: 10px 14px 11px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); backdrop-filter: blur(8px); transition: border-color .2s; }
+.chip { container-type: inline-size; width: min(100%, 470px); display: grid; gap: 8px; padding: 10px 14px 11px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); backdrop-filter: blur(8px); transition: border-color .2s; }
 .pcard:hover .chip { border-color: var(--teal); }
 .pcard.fault .chip { border-color: color-mix(in srgb, var(--bad) 60%, var(--line)); }
 .chip-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -30,17 +30,16 @@
 .chip-crop svg { color: var(--teal); flex: none; }
 .badge { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; font-size: 12.5px; font-weight: 600; border: 1px solid currentColor; border-radius: 999px; }
 .badge.on { color: var(--good); } .badge.off { color: var(--muted); } .badge.fault { color: var(--bad); }
-.chip-stats { display: flex; align-items: center; gap: 4px 16px; min-width: 0; }
-.stat { display: flex; align-items: center; gap: 7px; min-width: 0; }
-.stat > svg { color: var(--teal); flex: none; }
+.chip-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: 4px clamp(4px, 2cqw, 14px); min-width: 0; }
+.stat { display: flex; align-items: center; gap: clamp(4px, 1.6cqw, 7px); min-width: 0; }
+.stat > svg { color: var(--teal); flex: none; width: clamp(14px, 4.4cqw, 17px); height: auto; aspect-ratio: 1; }
 .stat > div { display: grid; min-width: 0; }
-.stat b { font-size: 17px; font-weight: 600; line-height: 1.1; white-space: nowrap; }
-.stat small { margin-left: 3px; font-size: 11.5px; font-weight: 400; color: var(--text-2); }
-.stat span { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
-.stat.al { margin-left: auto; } .stat.al > svg, .stat.al b { color: var(--warn); }
+.stat b { font-size: clamp(13px, 4.4cqw, 17px); font-weight: 600; line-height: 1.1; white-space: nowrap; }
+.stat small { margin-left: 2px; font-size: clamp(9.5px, 2.9cqw, 11.5px); font-weight: 400; color: var(--text-2); }
+.stat span { font-size: clamp(9.5px, 3cqw, 11.5px); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stat.al > svg, .stat.al b { color: var(--warn); }
 
 /* portrait: tall cells, the chip is a little tighter */
 .stage[data-portrait="true"] .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .stage[data-portrait="true"] .kpi:nth-child(n + 4) { grid-column: span 1; }
-.stage[data-portrait="true"] .chip-stats { flex-wrap: wrap; }
 .stage[data-portrait="true"] .chip-crop { font-size: 12.5px; }

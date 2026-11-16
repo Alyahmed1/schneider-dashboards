@@ -19,7 +19,7 @@ Alarms open from the bell (`ViewId "alarms"`, no tab). Routing: `App.tsx` holds 
 ## Decisions
 - Project renamed Smart Agriculture -> Smart Irrigation (2026-11-04; Vercel project is still `waterirrigation`).
 - Green accent (#4cc97a dark / #1f9d55 light) on navy-teal panels. Light/Dark chosen on the cover.
-- Fictional farm: Wadi El Natrun, wheat, maize, alfalfa, potatoes (2 pivots each, 150 feddan each). Landscape = HQ grounds, 12 zones, 3 controllers, 23 sensors. Grey water = 68 m³/day plant feeding the landscape and fodder alfalfa.
+- Fictional farm: Wadi El Natrun, wheat, corn, beans, potatoes (2 pivots each, 150 feddan each). Landscape = HQ grounds, 12 zones, 3 controllers, 23 sensors. Grey water = 68 m³/day plant feeding the landscape and fodder beans.
 - Cover: `public/cover.png` (done) and `public/cover.mp4` (Aly generates; the cover uses it automatically).
 - Offline assistant (side panel, `askengine.ts`) and CSV/print export (`ExportMenu.tsx`) are built.
 

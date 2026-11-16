@@ -9,7 +9,7 @@ import { Bars, CountUp, Panel, Segmented, Tip } from "./ui";
 import PivotPlan, { DEFAULT_CTL, type Ctl } from "./PivotPlan";
 
 const CLASS_TEXT = { dry: "Dry, needs water", low: "Low, water soon", ok: "In the optimal range", wet: "Wet" } as const;
-const CROP_ICON = { Wheat: "🌾", Maize: "🌽", Alfalfa: "🌿", Potatoes: "🥔" } as const;
+const CROP_ICON = { Wheat: "🌾", Corn: "🌽", Beans: "🫘", Potatoes: "🥔" } as const;
 const hh =(h: number) => `${String(h % 24).padStart(2, "0")}:00`;
 
 /** Pivots: pick a pivot, read its six key numbers, see it from above, control it, and follow its soil moisture and schedule */

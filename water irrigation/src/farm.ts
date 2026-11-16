@@ -30,9 +30,9 @@ export const FARM = {
 };
 
 /* ---------- crops ---------- */
-export type Crop = "Wheat" | "Maize" | "Alfalfa" | "Potatoes";
-export const CROPS: Crop[] = ["Wheat", "Maize", "Alfalfa", "Potatoes"];
-export const KC: Record<Crop, number> = { Wheat: 1.05, Maize: 1.15, Alfalfa: 1.0, Potatoes: 1.1 }; // crop coefficient
+export type Crop = "Wheat" | "Corn" | "Beans" | "Potatoes";
+export const CROPS: Crop[] = ["Wheat", "Corn", "Beans", "Potatoes"];
+export const KC: Record<Crop, number> = { Wheat: 1.05, Corn: 1.15, Beans: 1.0, Potatoes: 1.1 }; // crop coefficient
 
 /* ---------- pivots ---------- */
 export type StationId = "PS-A" | "PS-B" | "PS-C";
@@ -48,10 +48,10 @@ export interface Pivot {
 export const PIVOTS: Pivot[] = [
   { id: "P1", crop: "Wheat", stage: "Emergence", feddan: 150, col: 0, row: 0, station: "PS-B", base: 38, win: [22, 4] },
   { id: "P2", crop: "Wheat", stage: "Emergence", feddan: 150, col: 1, row: 0, station: "PS-B", base: 37, win: [0, 6] },
-  { id: "P3", crop: "Maize", stage: "Maturity", feddan: 150, col: 2, row: 0, station: "PS-A", base: 35, win: [20, 2] },
-  { id: "P4", crop: "Maize", stage: "Maturity", feddan: 150, col: 3, row: 0, station: "PS-A", base: 34, win: [2, 8], fault: "Tower 7 drive tripped" },
-  { id: "P5", crop: "Alfalfa", stage: "Regrowth", feddan: 150, col: 0, row: 1, station: "PS-A", base: 40, win: [4, 10] },
-  { id: "P6", crop: "Alfalfa", stage: "Mid-cut", feddan: 150, col: 1, row: 1, station: "PS-C", base: 37, win: [18, 0] },
+  { id: "P3", crop: "Corn", stage: "Maturity", feddan: 150, col: 2, row: 0, station: "PS-A", base: 35, win: [20, 2] },
+  { id: "P4", crop: "Corn", stage: "Maturity", feddan: 150, col: 3, row: 0, station: "PS-A", base: 34, win: [2, 8], fault: "Tower 7 drive tripped" },
+  { id: "P5", crop: "Beans", stage: "Flowering", feddan: 150, col: 0, row: 1, station: "PS-A", base: 40, win: [4, 10] },
+  { id: "P6", crop: "Beans", stage: "Pod fill", feddan: 150, col: 1, row: 1, station: "PS-C", base: 37, win: [18, 0] },
   { id: "P7", crop: "Potatoes", stage: "Tuber bulking", feddan: 150, col: 2, row: 1, station: "PS-C", base: 34, win: [5, 11] },
   { id: "P8", crop: "Potatoes", stage: "Tuber bulking", feddan: 150, col: 3, row: 1, station: "PS-C", base: 30, win: [16, 22] },
 ];
@@ -166,7 +166,7 @@ export const ALARMS: Alarm[] = [
   { id: "a16", sev: "Info", source: "Landscape S-11", text: "Rain sensor has read 0 mm for 24 hours, check it is not blocked", time: "09:00", day: 4 },
   { id: "a17", sev: "Warning", source: "PS-B canal lift", text: "Canal level dropped 30 cm, the pumps were throttled back", time: "13:30", day: 4, done: true },
   { id: "a18", sev: "Info", source: "Water budget", text: "Weekly use is 3% over the plan", time: "06:00", day: 5, done: true },
-  { id: "a19", sev: "Warning", source: "Pivot P5", text: "Alfalfa moisture reached 29% before its window, irrigation brought forward", time: "02:50", day: 5, done: true },
+  { id: "a19", sev: "Warning", source: "Pivot P5", text: "Beans moisture reached 29% before its window, irrigation brought forward", time: "02:50", day: 5, done: true },
   { id: "a20", sev: "Warning", source: "Landscape C2", text: "Controller C2 lost its link for 12 minutes and caught up on reconnect", time: "20:35", day: 6 },
 ];
 

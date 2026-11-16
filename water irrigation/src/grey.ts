@@ -1,6 +1,6 @@
 /* ================= Grey water: reuse of shower, basin and laundry water (all numbers are sample data) =================
    Headquarters, villas and staff housing make about 68 m³ of grey water a day. A small plant (screen, biological membrane
-   reactor, UV, chlorine) cleans it into a storage tank, and it goes back out to water the gardens and fodder alfalfa. */
+   reactor, UV, chlorine) cleans it into a storage tank, and it goes back out to water the gardens and fodder beans. */
 import { fmt, rng } from "./farm";
 import { zonesAt } from "./landscape";
 

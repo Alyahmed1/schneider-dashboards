@@ -63,14 +63,14 @@ export default function Plant3D({ stage, onPick }: { stage: number; onPick: (i: 
     controls.autoRotate = false;
     controls.update();
 
-    scene.add(new THREE.HemisphereLight(0xcfe3ff, 0x1a1a5e, 1.5));
+    scene.add(new THREE.HemisphereLight(0xcfe3ff, 0x10304a, 1.5));
     const sun = new THREE.DirectionalLight(0xffffff, 2.1); sun.position.set(-20, 40, 25); scene.add(sun);
     const rim = new THREE.DirectionalLight(0x7aa7ff, 0.9); rim.position.set(30, 20, -30); scene.add(rim);
 
     const flows: THREE.Texture[] = [];
     const spinners: { o: THREE.Object3D; v: number }[] = [];
-    const concrete = new THREE.MeshStandardMaterial({ color: 0x8794b8, roughness: 0.7, metalness: 0.1 });
-    const dark = new THREE.MeshStandardMaterial({ color: 0x2a3166, roughness: 0.6, metalness: 0.3 });
+    const concrete = new THREE.MeshStandardMaterial({ color: 0x8fa6b8, roughness: 0.7, metalness: 0.1 });
+    const dark = new THREE.MeshStandardMaterial({ color: 0x1f3a52, roughness: 0.6, metalness: 0.3 });
     const glow = (c: number) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 1.4, roughness: 0.4 });
 
     let root: THREE.Object3D = scene;
@@ -89,15 +89,15 @@ export default function Plant3D({ stage, onPick }: { stage: number; onPick: (i: 
     };
 
     // ground and a faint grid
-    const ground = new THREE.Mesh(new THREE.CircleGeometry(78, 64), new THREE.MeshStandardMaterial({ color: 0x0c1347, roughness: 1 }));
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(78, 64), new THREE.MeshStandardMaterial({ color: 0x0a1a2b, roughness: 1 }));
     ground.rotation.x = -Math.PI / 2; add(ground, -17, -0.02, 7);
-    const grid = new THREE.GridHelper(140, 70, 0x3a4cc0, 0x1c2570);
+    const grid = new THREE.GridHelper(140, 70, 0x2f7fb8, 0x143a56);
     (grid.material as THREE.Material).transparent = true; (grid.material as THREE.Material).opacity = 0.35; add(grid, -17, 0, 7);
 
     // 1 intake canal
     pool(6, 2.4, -15, 0, 0.8);
     // 2 screening house with pump chimney and glowing windows
-    box(3.6, 3.2, 3.8, new THREE.MeshStandardMaterial({ color: 0x6d7fb0, roughness: 0.6 }), -9.5, 0, 0);
+    box(3.6, 3.2, 3.8, new THREE.MeshStandardMaterial({ color: 0x6f8da8, roughness: 0.6 }), -9.5, 0, 0);
     box(3.9, 0.35, 4.1, dark, -9.5, 3.2, 0);
     for (const z of [-1.1, 1.1]) box(0.9, 0.9, 0.06, glow(0x67e8f9), -7.67, 1.5, z);
     add(new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 2.2, 14), dark), -10.4, 4.7, 1.2);
@@ -119,8 +119,8 @@ export default function Plant3D({ stage, onPick }: { stage: number; onPick: (i: 
     // 5 chlorine contact lanes and two dosing tanks
     for (const z of [-2.4, 0, 2.4]) pool(5.2, 1.7, 12.4, z, 0.9, "#2a6fd6");
     for (const z of [-6, 6]) {
-      add(new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.3, 3.4, 28), new THREE.MeshStandardMaterial({ color: 0x7c5cf0, roughness: 0.45, metalness: 0.25 })), 12.4, 1.7, z);
-      add(new THREE.Mesh(new THREE.CylinderGeometry(1.34, 1.34, 0.25, 28), glow(0xc4b5fd)), 12.4, 2.2, z);
+      add(new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.3, 3.4, 28), new THREE.MeshStandardMaterial({ color: 0x2f8fd8, roughness: 0.45, metalness: 0.25 })), 12.4, 1.7, z);
+      add(new THREE.Mesh(new THREE.CylinderGeometry(1.34, 1.34, 0.25, 28), glow(0x9fd8ff)), 12.4, 2.2, z);
     }
     // water tower
     for (const [dx, dz] of [[-0.9, -0.9], [0.9, -0.9], [-0.9, 0.9], [0.9, 0.9]]) add(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 5, 8), dark), 17 + dx, 2.5, -7.5 + dz);

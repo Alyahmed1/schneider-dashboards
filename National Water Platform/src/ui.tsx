@@ -1,17 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /** numbers climb from 0 to their value, so every figure arrives in front of the viewer */
 export function CountUp({ value, decimals = 0, duration = 1.3 }: { value: number; decimals?: number; duration?: number }) {
   const [v, setV] = useState(() => (reduced() ? value : 0));
+  const from = useRef(reduced() ? value : 0); // counts on from the number on screen, so live updates move a little instead of restarting
   useEffect(() => {
-    if (reduced()) { setV(value); return; }
+    if (reduced()) { setV(value); from.current = value; return; }
     let raf = 0;
     const t0 = performance.now();
+    const a = from.current;
+    const dur = a === 0 ? duration : 0.6;
     const tick = (t: number) => {
-      const p = Math.min(1, (t - t0) / (duration * 1000));
-      setV(value * (1 - Math.pow(1 - p, 3)));
+      const p = Math.min(1, (t - t0) / (dur * 1000));
+      const x = a + (value - a) * (1 - Math.pow(1 - p, 3));
+      from.current = x;
+      setV(x);
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -44,4 +49,15 @@ export function useDismiss(open: boolean, close: () => void, ref: React.RefObjec
     document.addEventListener("keydown", key);
     return () => { document.removeEventListener("mousedown", down); document.removeEventListener("keydown", key); };
   }, [open, close, ref]);
+}
+
+/** light / dark theme, remembered in localStorage and written on <html data-theme> */
+export type Theme = "dark" | "light";
+export const readTheme = (): Theme => { try { return localStorage.getItem("nwp-theme") === "light" ? "light" : "dark"; } catch { return "dark"; } };
+export const applyTheme = (t: Theme) => { document.documentElement.dataset.theme = t; };
+export function useTheme() {
+  const [theme, setTheme] = useState<Theme>(readTheme);
+  useEffect(() => { applyTheme(theme); }, [theme]);
+  const toggle = () => setTheme((t) => { const n: Theme = t === "dark" ? "light" : "dark"; try { localStorage.setItem("nwp-theme", n); } catch { /* not remembered */ } return n; });
+  return [theme, toggle] as const;
 }

@@ -3,13 +3,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BarChart3, CheckCircle2, Cloud, Coins, Droplet, Droplets, Factory, Flame, FlaskConical, Landmark, Leaf, Recycle, Settings, Sprout, TrendingUp, Truck, Waves, Zap, type LucideIcon } from "lucide-react";
 import { MINISTRY_BY_ID, type Go, type MinistryId } from "./data";
 import {
-  GEN_PCT, NETWORK, NETWORK_SPLIT, OUTPUTS, REUSE, REUSED_PCT, REUSE_TOTAL, SLUDGE_SPLIT, SOURCES, SUPPLY_TOTAL, WATER_SPLIT,
+  GEN_PCT, NETWORK, NETWORK_SPLIT, OUTPUTS, REUSE, REUSED_PCT, REUSE_TOTAL, SLUDGE_SPLIT, SOURCES, WATER_SPLIT,
   type Kpi, type Lane, type Output, type Step,
 } from "./cycleData";
 import Eq from "./Eq";
 import { Donut, Semi } from "./gauges";
 import Scene from "./Scenes";
 import { CountUp } from "./ui";
+import { useSupply } from "./live";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -45,6 +46,9 @@ const Arrow = ({ tone }: { tone: string }) => (
 
 /** a lane = one stream from start to end, with its share gauge and KPIs on the right */
 function LaneRow({ lane, i, go }: { lane: Lane; i: number; go: Go }) {
+  const sup = useSupply();
+  const produced = lane.id === "sea" ? sup.sea : lane.id === "river" ? sup.river : lane.id === "wells" ? sup.wells : null; // live, same numbers as Home
+  const kpis = produced == null ? lane.kpis : lane.kpis.map((k) => (k.label === "Produced" ? { ...k, value: produced.toFixed(1) } : k));
   return (
     <motion.section className="wc-lane" style={{ ["--tone" as string]: lane.tone }} {...rise(i)}>
       <header><span className="wc-dot" /><h4>{lane.kicker}</h4><i>{lane.title}</i><Owner id={lane.owner} go={go} /></header>
@@ -59,7 +63,7 @@ function LaneRow({ lane, i, go }: { lane: Lane; i: number; go: Go }) {
         </div>
         <div className="wc-kpis">
           <Semi pct={lane.gauge.pct} tone={lane.tone} label={lane.gauge.label} size={146} />
-          <div className="wc-tiles">{lane.kpis.map((k) => <Tile key={k.label} k={k} tone={lane.tone} />)}</div>
+          <div className="wc-tiles">{kpis.map((k) => <Tile key={k.label} k={k} tone={lane.tone} />)}</div>
         </div>
       </div>
     </motion.section>
@@ -85,10 +89,11 @@ function ShareBar({ title, amount, parts }: { title: string; amount?: string; pa
 /* ---------- the three sub-tabs ---------- */
 function CycleTab({ go, next }: { go: Go; next: () => void }) {
   const parts = SOURCES.map((l) => ({ label: cap(l.kicker), pct: l.gauge.pct, color: l.tone }));
+  const sup = useSupply();
   return (
     <>
       <div className="wc-head">
-        <div className="wc-title"><h2>Water Cycle</h2><p>Step 1 · where the water comes from, {SUPPLY_TOTAL} M m³/day in total</p></div>
+        <div className="wc-title"><h2>Water Cycle</h2><p>Step 1 · where the water comes from, {sup.total.toFixed(1)} M m³/day in total</p></div>
         <ShareBar title="Sources of supply" parts={parts} />
       </div>
       <div className="wc-main wc-cols-cycle">
@@ -96,7 +101,7 @@ function CycleTab({ go, next }: { go: Go; next: () => void }) {
         <motion.section className="wc-side" style={{ ["--tone" as string]: "#34d399" }} {...rise(3)}>
           <header><span className="wc-dot" /><h4>NETWORK</h4><i>End of step 1</i><Owner id="mhuuc" go={go} /></header>
           <div className="wc-side-sym"><Eq kind="network" /></div>
-          <div className="wc-in"><em>Into the network</em><b><CountUp value={15.5} decimals={1} /> <small>M m³/day</small></b><span>+ {NETWORK.raw} M used raw by farms and industry</span></div>
+          <div className="wc-in"><em>Into the network</em><b><CountUp value={sup.network} decimals={1} /> <small>M m³/day</small></b><span>+ {NETWORK.raw} M used raw by farms and industry</span></div>
           <div className="wc-split2">
             <Donut size={112} centre={`${NETWORK_SPLIT[0]}%`} parts={[{ label: "Delivered", pct: NETWORK_SPLIT[0], color: "#34d399" }, { label: "Lost", pct: NETWORK_SPLIT[1], color: "#fb7185" }]} />
             <ul>
@@ -171,7 +176,7 @@ function OutputCol({ o, i, go }: { o: Output; i: number; go: Go }) {
 
 const TOP_KPIS: { icon: LucideIcon; label: string; value: string; unit: string; delta: string; down?: boolean; tone: string }[] = [
   { icon: Droplet, label: "Reused Water", value: "4.1", unit: "M m³/day", delta: "+6%", tone: "#22d3ee" },
-  { icon: Truck, label: "Sludge", value: "4,200", unit: "t/day", delta: "−2%", down: true, tone: "#a78bfa" },
+  { icon: Truck, label: "Sludge", value: "4,200", unit: "t/day", delta: "−2%", down: true, tone: "#5aaee8" },
   { icon: Cloud, label: "CO₂ Avoided", value: "310", unit: "t/day", delta: "+8%", tone: "#34d399" },
   { icon: Zap, label: "Energy Use", value: "0.85", unit: "GWh/day", delta: "−3%", down: true, tone: "#fbbf24" },
 ];
@@ -250,8 +255,8 @@ export default function Cycle({ go }: { go: Go }) {
     <motion.div className="wc" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
         <defs>
-          <linearGradient id="wcBody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#4d44c0" /><stop offset="0.35" stopColor="#3a31a0" /><stop offset="0.7" stopColor="#262070" /><stop offset="1" stopColor="#1a1552" /></linearGradient>
-          <linearGradient id="wcTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#7466e8" /><stop offset="1" stopColor="#3f35a8" /></linearGradient>
+          <linearGradient id="wcBody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#4497c0" /><stop offset="0.35" stopColor="#317ba0" /><stop offset="0.7" stopColor="#203a52" /><stop offset="1" stopColor="#182c40" /></linearGradient>
+          <linearGradient id="wcTop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#66bce8" /><stop offset="1" stopColor="#3582a8" /></linearGradient>
         </defs>
       </svg>
       <AnimatePresence mode="wait">

@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, CircleHelp, PanelLeftClose, PanelLeftOpen, FileText, Home as HomeIcon, Info, OctagonAlert, ShieldCheck, TriangleAlert, Eye, UserRound, Wrench } from "lucide-react";
-import { ALERTS, MINISTRY_BY_ID, ROLES, type Go, type Role, type Sev } from "./data";
-import { useDismiss } from "./ui";
+import { Bot, Moon, Sun, Bell, CircleHelp, PanelLeftClose, PanelLeftOpen, FileText, Home as HomeIcon, Info, OctagonAlert, ShieldCheck, TriangleAlert, Eye, UserRound, Wrench } from "lucide-react";
+import { MINISTRY_BY_ID, ROLES, type Go, type Role, type Sev } from "./data";
+import { ago, useLive, waiting } from "./live";
+import { useDismiss, useTheme } from "./ui";
 
 export const SEV_ICON = { critical: OctagonAlert, warning: TriangleAlert, info: Info } as const;
 export const sevClass = (s: Sev) => s;
@@ -23,6 +24,8 @@ function Bell_({ go }: { go: Go }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useDismiss(open, () => setOpen(false), ref);
+  const { alarms } = useLive();
+  const ALERTS = waiting(alarms).sort((a, b) => a.priority - b.priority || b.at - a.at);
   const crit = ALERTS.filter((a) => a.sev === "critical").length;
   return (
     <div className="hd-wrap" ref={ref}>
@@ -32,14 +35,14 @@ function Bell_({ go }: { go: Go }) {
       <Pop open={open} label="Alerts">
         <div className="pop-top"><b>Active alerts</b><span>{crit} critical</span></div>
         <ul className="alert-list">
-          {ALERTS.map((a) => {
+          {ALERTS.slice(0, 6).map((a) => {
             const Icon = SEV_ICON[a.sev];
             const m = MINISTRY_BY_ID[a.ministry];
             return (
               <li key={a.id}>
                 <button onClick={() => { setOpen(false); go("alerts"); }}>
                   <span className={`sev ${sevClass(a.sev)}`}><Icon size={16} /></span>
-                  <span className="al-t"><b>{a.text}</b><em>{m.short} · {a.where} · {a.ago}</em></span>
+                  <span className="al-t"><b>{a.comment}</b><em>{m.short} · {a.name} · {ago(a.at)}</em></span>
                 </button>
               </li>
             );
@@ -49,6 +52,12 @@ function Bell_({ go }: { go: Go }) {
       </Pop>
     </div>
   );
+}
+
+/** shows that the numbers are alive: a green dot that blinks every time the shared 10-second feed ticks */
+function LivePill() {
+  const { tick } = useLive();
+  return <span className="hd-live" title="All numbers update every 10 seconds (simulated)"><i key={tick} />LIVE</span>;
 }
 
 function Help() {
@@ -107,7 +116,8 @@ function Account({ role, setRole, go, onStart }: { role: Role; setRole: (r: Role
   );
 }
 
-export default function Header({ go, role, setRole, onStart, collapsed, onToggle }: { go: Go; role: Role; setRole: (r: Role) => void; onStart: () => void; collapsed: boolean; onToggle: () => void }) {
+export default function Header({ go, role, setRole, onStart, collapsed, onToggle, ask, onAsk }: { ask: boolean; onAsk: () => void; go: Go; role: Role; setRole: (r: Role) => void; onStart: () => void; collapsed: boolean; onToggle: () => void }) {
+  const [theme, toggleTheme] = useTheme();
   return (
     <header className="header">
       <button className="hd-btn hd-toggle" onClick={onToggle} aria-label={collapsed ? "Show the menu" : "Hide the menu"} aria-pressed={collapsed} title={collapsed ? "Show the menu" : "Hide the menu"}>
@@ -121,7 +131,7 @@ export default function Header({ go, role, setRole, onStart, collapsed, onToggle
         <h1>Egypt National Water Platform</h1>
         <p>Unified View Across the Water Sector</p>
       </div>
-      <div className="hd-right"><img className="hd-logo" src="/img/schneider-green.png" alt="Schneider Electric" draggable={false} /><Bell_ go={go} /><Help /><Account role={role} setRole={setRole} go={go} onStart={onStart} /></div>
+      <div className="hd-right"><img className="hd-logo" src="/img/schneider-green.png" alt="Schneider Electric" draggable={false} /><LivePill /><button className={`hd-ask ${ask ? "on" : ""}`} onClick={onAsk} aria-expanded={ask} aria-label="Ask the national assistant"><Bot size={18} /><span>Ask</span></button><button className="hd-btn" onClick={toggleTheme} aria-label={theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}</button><Bell_ go={go} /><Help /><Account role={role} setRole={setRole} go={go} onStart={onStart} /></div>
     </header>
   );
 }

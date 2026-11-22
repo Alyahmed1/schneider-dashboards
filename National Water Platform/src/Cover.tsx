@@ -16,7 +16,7 @@ export default function Cover({ onEnter }: { onEnter: () => void }) {
   // "loading" shows only the dark background, so the still never flashes before the video starts
   const [video, setVideo] = useState<"loading" | "ok" | "failed">("loading");
   return (
-    <motion.div className="cover" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.03 }} transition={{ duration: 0.6, ease: "easeInOut" }}>
+    <motion.div className="cover dark-scope" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 1.03 }} transition={{ duration: 0.6, ease: "easeInOut" }}>
       {video === "failed" && <img className="cover-media" src="/img/cover.jpg" alt="" />}
       {/* the clip lives at public/cover.mp4 */}
       <video className={`cover-media ${video === "ok" ? "on" : ""}`} src="/cover.mp4" autoPlay muted loop playsInline preload="auto" aria-hidden

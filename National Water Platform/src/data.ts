@@ -35,8 +35,8 @@ export interface Kpi {
 
 export const NATIONAL_KPIS: Kpi[] = [
   { id: "supply", label: "Total Water Supply", value: 17.5, decimals: 1, unit: "M m³/day", delta: "3.2%", icon: Droplet, tone: "#38bdf8" },
-  { id: "pop", label: "Population Served", value: 115, decimals: 0, prefix: "~", unit: "M", delta: "1.4%", icon: Users, tone: "#a78bfa" },
-  { id: "cap", label: "Treatment Capacity", value: 19.8, decimals: 1, unit: "M m³/day", delta: "5.1%", icon: Factory, tone: "#c4b5fd" },
+  { id: "pop", label: "Population Served", value: 115, decimals: 0, prefix: "~", unit: "M", delta: "1.4%", icon: Users, tone: "#5aaee8" },
+  { id: "cap", label: "Treatment Capacity", value: 19.8, decimals: 1, unit: "M m³/day", delta: "5.1%", icon: Factory, tone: "#7fb2d4" },
   { id: "reuse", label: "Water Reuse", value: 4.1, decimals: 1, unit: "M m³/day", sub: "(23%)", delta: "2.8 pp", icon: Recycle, tone: "#22d3ee" },
   { id: "irr", label: "Irrigation Efficiency", value: 15, decimals: 0, prefix: "+", unit: "%", delta: "vs last year", icon: Sprout, tone: "#4ade80" },
   { id: "co2", label: "Water Sector Emissions", value: 12, decimals: 0, prefix: "−", unit: "%", delta: "vs last year", down: true, icon: Cloud, tone: "#94a3b8" },
@@ -72,7 +72,7 @@ export const MINISTRIES: Ministry[] = [
     insight: "Lake Nasser storage at 82%, release held at 92% of plan",
   },
   {
-    id: "mhuuc", name: "Ministry of Housing, Utilities & Urban Communities", short: "MHUUC", icon: Building2, accent: "#38bdf8", accent2: "#6366f1", photo: "/img/mhuuc.jpg",
+    id: "mhuuc", name: "Ministry of Housing, Utilities & Urban Communities", short: "MHUUC", icon: Building2, accent: "#38bdf8", accent2: "#63c6f1", photo: "/img/mhuuc.jpg",
     tiles: [
       { icon: Droplet, value: 15.5, decimals: 1, unit: "M m³/day", label: "Supplied" },
       { icon: Factory, value: 19.8, decimals: 1, unit: "M m³/day", label: "Capacity" },
@@ -88,7 +88,7 @@ export const MINISTRIES: Ministry[] = [
     insight: "Low pressure in Zone 4, Greater Cairo · network losses 24%",
   },
   {
-    id: "eeaa", name: "Ministry of Environment (EEAA)", short: "EEAA", icon: Leaf, accent: "#c084fc", accent2: "#ec4899", photo: "/img/eeaa.jpg",
+    id: "eeaa", name: "Ministry of Environment (EEAA)", short: "EEAA", icon: Leaf, accent: "#2dd4bf", accent2: "#0d9488", photo: "/img/eeaa.jpg",
     tiles: [
       { icon: ShieldCheck, value: 98, suffix: "%", label: "Compliance" },
       { icon: Activity, value: 45, unit: "stations", label: "Stations" },
@@ -192,7 +192,7 @@ export const INSIGHTS: string[] = [
    the 4.1 M m3/day reused is worth about EGP 3.4 bn. ================= */
 export const EXEC_KPIS: Kpi[] = [
   { id: "cost", label: "Operating cost per m³", value: 4.8, decimals: 1, cur: "EGP", unit: "/ m³", delta: "−3.1%", down: true, icon: Coins, tone: "#38bdf8" },
-  { id: "recovery", label: "Cost recovery", value: 78, decimals: 0, unit: "%", delta: "+4 pts", icon: BadgePercent, tone: "#a78bfa" },
+  { id: "recovery", label: "Cost recovery", value: 78, decimals: 0, unit: "%", delta: "+4 pts", icon: BadgePercent, tone: "#5aaee8" },
   { id: "revenue", label: "Revenue this month", value: 2.0, decimals: 1, cur: "EGP", unit: "bn", delta: "+5.2%", icon: Banknote, tone: "#4ade80" },
   { id: "lost", label: "Value of water lost", value: 6.5, decimals: 1, cur: "EGP", unit: "bn / yr", delta: "−6%", down: true, icon: Droplets, tone: "#fb7185" },
   { id: "energy", label: "Energy cost", value: 8.6, decimals: 1, cur: "EGP", unit: "bn / yr", delta: "−2.4%", down: true, icon: Zap, tone: "#fbbf24" },

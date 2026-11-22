@@ -2,7 +2,7 @@ import { Gauge, Pipe, Tank, Valve } from "./Eq";
 
 /** big drawings for the Outputs tab, 300 x 150 each: several machines joined by flowing pipes */
 const Bub = (x: number, y: number, d: number, c = "rise") => <circle cx={x} cy={y} r="1.8" className={c} style={{ ["--d" as string]: `${d}s` }} />;
-const Ground = () => (<g><rect x="0" y="126" width="300" height="24" fill="rgba(8,6,40,0.55)" /><path d="M0 126 H300" className="band" /><ellipse cx="150" cy="140" rx="140" ry="5" className="ground" /></g>);
+const Ground = () => (<g><rect x="0" y="126" width="300" height="24" fill="rgba(9,20,32,0.55)" /><path d="M0 126 H300" className="band" /><ellipse cx="150" cy="140" rx="140" ry="5" className="ground" /></g>);
 
 function Fertilizer() {
   return (

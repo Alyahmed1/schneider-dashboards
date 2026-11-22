@@ -191,7 +191,7 @@ export default function RealMap({ mode = "home", hover = null, setHover, go, wid
   const count = focus ? STATIONS.filter((s) => s.ministry === focus).length : 0;
   const tally = useMemo(() => ({ good: STATIONS.filter((s) => s.status === "good").length, watch: STATIONS.filter((s) => s.status === "watch").length, bad: STATIONS.filter((s) => s.status === "bad").length }), []);
   return (
-    <div className={`map-box rm ${focus ? "focused" : ""} ${health ? "health" : ""}`}>
+    <div className={`map-box rm dark-scope ${focus ? "focused" : ""} ${health ? "health" : ""}`}>
       <div ref={box} className="rm-map" />
       <div className="rm-glow" aria-hidden />
       {!health && <div className="rm-north" aria-hidden>N</div>}

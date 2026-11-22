@@ -95,7 +95,7 @@ export default function Eq({ kind }: { kind: Sym }) {
           <rect x="16" y="34" width="88" height="8" className="eq-dome" /><rect x="16" y="43" width="88" height="7" className="eq-top" /><rect x="16" y="51" width="88" height="6" className="eq-line-fill" />
           {B(30, 28, 0)}{B(60, 26, 0.8)}{B(88, 29, 1.5)}
           <Pipe d="M0 24 H12" /><Pipe d="M108 54 H120" /><Valve x={6} y={24} /><Valve x={114} y={54} />
-          {[22, 34, 46, 58, 70, 82, 94].map((x, i) => <circle key={x} cx={x} cy={46.5} r="1" fill="#cbbfff" opacity="0.6" className="rise" style={{ ["--d" as string]: `${i * 0.3}s` }} />)}
+          {[22, 34, 46, 58, 70, 82, 94].map((x, i) => <circle key={x} cx={x} cy={46.5} r="1" fill="#d1e1ed" opacity="0.6" className="rise" style={{ ["--d" as string]: `${i * 0.3}s` }} />)}
           <path d="M30 14 V8 H90 V14" className="pipe" /><path d="M30 14 V8 H90 V14" className="pipe-flow" />
         </Frame>
       );

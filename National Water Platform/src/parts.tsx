@@ -31,11 +31,11 @@ export function Panel({ icon: Icon, title, hint, children, i = 0, className = ""
   );
 }
 
-const tip = { background: "#14113a", border: "1px solid #5b4bd6", borderRadius: 8, fontSize: 12, padding: "4px 8px" };
-const axis = { fill: "#b9b5ea", fontSize: 11 };
+const tip = { background: "rgb(var(--n1-rgb))", color: "var(--ink)", border: "1px solid var(--line)", borderRadius: 8, fontSize: 12, padding: "4px 8px" };
+const axis = { fill: "var(--muted)", fontSize: 11 };
 
 /** 12 months of one line (filled), an optional second line to compare with, and an optional dashed reference line */
-export function TrendChart({ series, compare, names, unit, decimals = 0, color = "#8b5cf6", color2 = "#22d3ee", refLine, compact = false, labels }: {
+export function TrendChart({ series, compare, names, unit, decimals = 0, color = "#5cb9f6", color2 = "#22d3ee", refLine, compact = false, labels }: {
   series: number[]; compare?: number[]; names?: [string, string]; unit: string; decimals?: number; color?: string; color2?: string; refLine?: { label: string; value: number }; compact?: boolean; labels?: string[];
 }) {
   const data = series.map((v, i) => ({ m: (labels ?? MONTHS)[i], v, c: compare?.[i] }));
@@ -48,10 +48,10 @@ export function TrendChart({ series, compare, names, unit, decimals = 0, color =
       <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 420, height: 300 }}>
         <ComposedChart data={data} margin={{ top: 12, right: 14, bottom: 0, left: 0 }}>
           <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={color} stopOpacity=".5" /><stop offset="1" stopColor={color} stopOpacity="0" /></linearGradient></defs>
-          <CartesianGrid stroke="rgba(139,120,255,.14)" vertical={false} />
+          <CartesianGrid stroke="rgba(var(--ac-rgb),0.16)" vertical={false} />
           <XAxis dataKey="m" tick={axis} tickLine={false} axisLine={false} interval={compact ? 2 : 0} />
           <YAxis tick={axis} tickLine={false} axisLine={false} width={42} domain={[lo - pad, hi + pad]} tickFormatter={(n) => fmt(Number(n))} />
-          <Tooltip contentStyle={tip} labelStyle={{ color: "#c9c5f5" }} itemStyle={{ color: "#fff" }} cursor={{ stroke: color, strokeOpacity: 0.4 }}
+          <Tooltip contentStyle={tip} labelStyle={{ color: "var(--text-2)" }} itemStyle={{ color: "var(--ink)" }} cursor={{ stroke: color, strokeOpacity: 0.4 }}
             formatter={(v, k) => [`${fmt(Number(v))}${unit === "%" ? "" : ` ${unit}`}`, k === "c" ? (names?.[1] ?? "Compare") : (names?.[0] ?? "Value")]} />
           {refLine && <ReferenceLine y={refLine.value} stroke="#fbbf24" strokeDasharray="5 5" label={{ value: refLine.label, fill: "#fcd34d", fontSize: 11, position: "insideTopRight" }} />}
           <Area type="monotone" dataKey="v" stroke={color} strokeWidth={2.4} fill={`url(#${id})`} animationDuration={900} />
@@ -63,7 +63,7 @@ export function TrendChart({ series, compare, names, unit, decimals = 0, color =
 }
 
 /** horizontal bars with a label and a value */
-export function BarList({ items, max, color = "linear-gradient(90deg,#6d4aff,#22d3ee)" }: { items: { name: string; value: number; label: string }[]; max: number; color?: string }) {
+export function BarList({ items, max, color = "linear-gradient(90deg,#51bbf8,#22d3ee)" }: { items: { name: string; value: number; label: string }[]; max: number; color?: string }) {
   return (
     <ul className="barlist">
       {items.map((it) => (
@@ -86,10 +86,10 @@ export function CompareChart({ lines, unit, decimals = 0 }: { lines: { id: strin
     <div className="trend">
       <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 520, height: 360 }}>
         <LineChart data={data} margin={{ top: 12, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="rgba(139,120,255,.14)" vertical={false} />
+          <CartesianGrid stroke="rgba(var(--ac-rgb),0.16)" vertical={false} />
           <XAxis dataKey="m" tick={axis} tickLine={false} axisLine={false} interval={0} />
           <YAxis tick={axis} tickLine={false} axisLine={false} width={44} domain={[Math.floor(lo - pad), Math.ceil(hi + pad)]} tickFormatter={(n) => Number(n).toFixed(decimals)} />
-          <Tooltip contentStyle={tip} labelStyle={{ color: "#c9c5f5" }} itemStyle={{ color: "#fff" }} formatter={(v, k) => [`${Number(v).toFixed(decimals)} ${unit}`, String(k)]} />
+          <Tooltip contentStyle={tip} labelStyle={{ color: "var(--text-2)" }} itemStyle={{ color: "var(--ink)" }} formatter={(v, k) => [`${Number(v).toFixed(decimals)} ${unit}`, String(k)]} />
           {lines.map((l) => <Line key={l.id} type="monotone" dataKey={l.id} name={l.name} stroke={l.color} strokeWidth={2.6} dot={false} activeDot={{ r: 5 }} animationDuration={900} />)}
         </LineChart>
       </ResponsiveContainer>

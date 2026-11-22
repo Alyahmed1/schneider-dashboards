@@ -7,6 +7,7 @@ import RealMap from "./RealMap";
 import MinistryIcon from "./MinistryIcon";
 import { Semi } from "./gauges";
 import { STATIONS } from "./stations";
+import { useWob } from "./live";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const rise = (i: number) => ({ initial: { opacity: 0, y: 22 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.65, delay: 0.1 + i * 0.07, ease } });
@@ -28,7 +29,7 @@ function MinistryCard({ m, i, hover, setHover, go }: { m: Ministry; i: number; h
         <ChevronRight size={22} className="m-go" />
       </header>
       <div className="m-body">
-        <div className="m-gauge"><h6>{m.colHead}</h6><Semi pct={usePct} tone={m.accent} label="average" size={150} /></div>
+        <div className="m-gauge"><h6>In use</h6><Semi pct={usePct} tone={m.accent} label="average" size={150} /></div>
         <div className="m-two">
           {tiles.map((t) => {
             const TI = t.icon;
@@ -53,6 +54,23 @@ function MinistryCard({ m, i, hover, setHover, go }: { m: Ministry; i: number; h
   );
 }
 
+/** one headline number; it moves a little every 10 seconds (shared live feed) */
+function KpiTile({ k, n, go }: { k: (typeof NATIONAL_KPIS)[number]; n: number; go: Go }) {
+  const Icon = k.icon;
+  const dec = k.decimals;
+  const v = useWob(k.value, `h-${k.id}`, k.id === "pop" ? 0.0008 : 0.006, dec);
+  return (
+    <button className="kpi" style={{ ["--tone" as string]: k.tone }} onClick={() => go("executive")} aria-label={`${k.label}. Open the Executive View`}>
+      <span className="kpi-ico" style={{ animationDelay: `${n * 0.4}s` }}><Icon size={40} strokeWidth={1.7} /></span>
+      <span className="kpi-t">
+        <em>{k.label}</em>
+        <b>{k.prefix}<CountUp value={v} decimals={dec} /> <small>{k.unit}</small>{k.sub && <i>{k.sub}</i>}</b>
+        <span className={`kpi-d ${k.down ? "down" : "up"}`}>{k.down ? <ArrowDown size={13} /> : <ArrowUp size={13} />}{k.delta.startsWith("vs") ? "" : "+"}{k.delta}</span>
+      </span>
+    </button>
+  );
+}
+
 export default function Home({ go, wide }: { go: Go; wide: boolean }) {
   const [hover, setHover] = useState<MinistryId | null>(null);
   const [left, right] = [MINISTRIES.filter((_, n) => n % 2 === 0), MINISTRIES.filter((_, n) => n % 2 === 1)];
@@ -60,19 +78,7 @@ export default function Home({ go, wide }: { go: Go; wide: boolean }) {
   return (
     <div className={`home ${wide ? "wide" : ""}`}>
       <motion.section className="kpi-strip" {...rise(0)} aria-label="National key numbers">
-        {NATIONAL_KPIS.map((k, n) => {
-          const Icon = k.icon;
-          return (
-            <button key={k.id} className="kpi" style={{ ["--tone" as string]: k.tone }} onClick={() => go("executive")} aria-label={`${k.label}. Open the Executive View`}>
-              <span className="kpi-ico" style={{ animationDelay: `${n * 0.4}s` }}><Icon size={40} strokeWidth={1.7} /></span>
-              <span className="kpi-t">
-                <em>{k.label}</em>
-                <b>{k.prefix}<CountUp value={k.value} decimals={k.decimals} /> <small>{k.unit}</small>{k.sub && <i>{k.sub}</i>}</b>
-                <span className={`kpi-d ${k.down ? "down" : "up"}`}>{k.down ? <ArrowDown size={13} /> : <ArrowUp size={13} />}{k.delta.startsWith("vs") ? "" : "+"}{k.delta}</span>
-              </span>
-            </button>
-          );
-        })}
+        {NATIONAL_KPIS.map((k, n) => <KpiTile key={k.id} k={k} n={n} go={go} />)}
       </motion.section>
 
       <div className="col col-l"><MinistryCard m={left[0]} i={0} hover={hover} setHover={setHover} go={go} /><MinistryCard m={left[1]} i={2} hover={hover} setHover={setHover} go={go} /></div>

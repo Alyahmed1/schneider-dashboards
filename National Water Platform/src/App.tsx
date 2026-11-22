@@ -13,6 +13,13 @@ import Cycle from "./Cycle";
 import Ministry from "./Ministry";
 import Station from "./Station";
 import MinistriesView from "./MinistriesView";
+import Alerts from "./Alerts";
+import WaterBalance from "./WaterBalance";
+import NationalOps from "./NationalOps";
+import Performance from "./Performance";
+import Sustainability from "./Sustainability";
+import Reports from "./Reports";
+import Assistant from "./Assistant";
 import { PAGES, TabPlaceholder } from "./Placeholder";
 
 type Route = { tab: TabId | "ministry" | "station"; id?: string };
@@ -45,6 +52,7 @@ export default function App() {
   }, [entered]);
   const [route, setRoute] = useState<Route>({ tab: "home" });
   const [role, setRole] = useState<Role>("cabinet");
+  const [ask, setAsk] = useState(false);
   const scale = useScale();
   const [collapsed, setCollapsed] = useState(readCollapsed);
   const toggleMenu = () => setCollapsed((c) => { const n = !c; try { localStorage.setItem("nwp-menu-hidden", n ? "1" : "0"); } catch { /* private window: the choice is just not remembered */ } return n; });
@@ -61,7 +69,7 @@ export default function App() {
           </AnimatePresence>
           <div className="backdrop-shade" />
           <div className="stage" style={{ width: STAGE_W, height: STAGE_H, transform: `translate(-50%, -50%) scale(${scale})` }}>
-            <Header go={go} role={role} setRole={setRole} collapsed={collapsed} onToggle={toggleMenu} onStart={() => { setEntered(false); setRoute({ tab: "home" }); }} />
+            <Header go={go} ask={ask} onAsk={() => setAsk((v) => !v)} role={role} setRole={setRole} collapsed={collapsed} onToggle={toggleMenu} onStart={() => { setEntered(false); setRoute({ tab: "home" }); }} />
             <nav className={`side ${collapsed ? "hide" : ""}`} aria-label="Main menu" aria-hidden={collapsed}>
               {NAV.map((n, i) => {
                 const Icon = n.icon;
@@ -84,6 +92,18 @@ export default function App() {
                   <MinistriesView key="ministries" go={go} />
                 ) : route.tab === "cycle" ? (
                   <Cycle key="cycle" go={go} />
+                ) : route.tab === "performance" ? (
+                  <Performance key="performance" go={go} />
+                ) : route.tab === "sustainability" ? (
+                  <Sustainability key="sustainability" go={go} />
+                ) : route.tab === "reports" ? (
+                  <Reports key="reports" role={role} />
+                ) : route.tab === "operations" ? (
+                  <NationalOps key="operations" go={go} />
+                ) : route.tab === "balance" ? (
+                  <WaterBalance key="balance" />
+                ) : route.tab === "alerts" ? (
+                  <Alerts key="alerts" go={go} role={role} focus={route.id} />
                 ) : route.tab === "ministry" && route.id ? (
                   <Ministry key={`m-${route.id}`} id={route.id as MinistryId} go={go} />
                 ) : route.tab === "station" && route.id ? (
@@ -93,6 +113,7 @@ export default function App() {
                 ) : null}
               </AnimatePresence>
             </main>
+            <Assistant go={go} open={ask} setOpen={setAsk} />
           </div>
         </div>
       )}

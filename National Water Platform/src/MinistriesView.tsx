@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, Scale, TrendingUp, Trophy } from "lucide-react";
-import { ALERTS, BUDGET_USED, MINISTRIES, MINISTRY_SCORE, type Go, type MinistryId } from "./data";
+import { liveSnap, useLive, waiting } from "./live";
+import { BUDGET_USED, MINISTRIES, MINISTRY_SCORE, type Go, type MinistryId } from "./data";
 import { COMPARE_SERIES, OPS, SCORE_CHANGE, WATER_HANDLED } from "./ministryData";
 import MinistryIcon from "./MinistryIcon";
 import { CompareChart, Panel, StatusChip } from "./parts";
@@ -12,7 +13,7 @@ type Row = { key: string; label: string; val?: (id: MinistryId) => number; best?
 const sites = (id: MinistryId) => MINISTRIES.find((m) => m.id === id)!.rows.reduce((n, r) => n + Number(r.sites.replace(/,/g, "")), 0);
 const inUse = (id: MinistryId) => { const r = MINISTRIES.find((m) => m.id === id)!.rows; return Math.round(r.reduce((n, x) => n + x.pct, 0) / r.length); };
 const running = (id: MinistryId) => { const o = OPS[id]; return Math.round((o.running / (o.running + o.standby + o.fault)) * 100); };
-const alerts = (id: MinistryId) => ALERTS.filter((a) => a.ministry === id).length;
+const alerts = (id: MinistryId) => waiting(liveSnap().alarms).filter((a) => a.ministry === id).length; // live, same list as the bell
 
 const ROWS: Row[] = [
   { key: "score", label: "Score", val: (id) => MINISTRY_SCORE[id].score, best: "high", text: (id) => <b>{MINISTRY_SCORE[id].score}<small> / 100</small></b> },
@@ -36,6 +37,7 @@ function isBest(r: Row, id: MinistryId) {
 
 /** the four ministries side by side: the same numbers in the same order, so they can be compared at a glance */
 export default function MinistriesView({ go }: { go: Go }) {
+  useLive(); // re-draw on every tick
   const [measure, setMeasure] = useState<Measure>("score");
   const ser = COMPARE_SERIES[measure];
   return (

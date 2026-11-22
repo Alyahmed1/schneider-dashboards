@@ -4,8 +4,9 @@ import {
   Activity, AppWindow, ArrowLeft, CircleCheck, ExternalLink, Gauge, LayoutDashboard, Lightbulb, ListChecks, MapPin, Maximize2, TrendingUp, ArrowUpRight,
 } from "lucide-react";
 import {
-  ATTENTION, MINISTRY_BY_ID, MINISTRY_SCORE, type Go, type MinistryId, type Tile,
+  MINISTRY_BY_ID, MINISTRY_SCORE, type Go, type MinistryId, type Tile,
 } from "./data";
+import { useLive, waiting } from "./live";
 import { MINISTRY_PAGE, statusColor, type Dash, type Site } from "./ministryData";
 import { CountUp } from "./ui";
 import { SEV_ICON } from "./Header";
@@ -18,12 +19,14 @@ const TAB_ICON = { overview: LayoutDashboard, operations: Activity, sites: MapPi
 const TAB_LABEL: Record<TabKey, string> = { overview: "Overview", operations: "Operations", sites: "Sites", dashboards: "Dashboards" };
 const TAB_HINT: Record<TabKey, string> = { overview: "The big picture", operations: "What is happening now", sites: "Every site, one list", dashboards: "Open a live dashboard" };
 
-function TileCard({ t, i }: { t: Tile; i: number }) {
+function TileCard({ t, i, id }: { t: Tile; i: number; id: MinistryId }) {
   const Icon = t.icon;
+  const { alarms } = useLive();
+  const value = t.label === "Active alarms" ? waiting(alarms).filter((a) => a.ministry === id).length : t.value; // live, same list as the bell
   return (
     <motion.div className="mp-tile" {...rise(i)}>
       <span className="mp-tile-h"><i className="f-ico"><Icon size={15} strokeWidth={2.2} /></i><em>{t.label}</em></span>
-      <b>{t.prefix}<CountUp value={t.value} decimals={t.decimals ?? 0} />{t.suffix}{t.unit && <small> {t.unit}</small>}</b>
+      <b>{t.prefix}<CountUp value={value} decimals={t.decimals ?? 0} />{t.suffix}{t.unit && <small> {t.unit}</small>}</b>
     </motion.div>
   );
 }
@@ -31,11 +34,12 @@ function TileCard({ t, i }: { t: Tile; i: number }) {
 function Overview({ id, go }: { id: MinistryId; go: Go }) {
   const m = MINISTRY_BY_ID[id];
   const pg = MINISTRY_PAGE[id];
-  const attn = ATTENTION.filter((a) => a.ministry === id);
+  const { alarms } = useLive();
+  const attn = waiting(alarms).filter((a) => a.ministry === id).sort((a, b) => a.priority - b.priority).map((a) => ({ id: a.id, sev: a.sev, title: a.comment, detail: `${a.name} · ${a.detail}` }));
   const totalSites = m.rows.reduce((n, r) => n + Number(r.sites.replace(/,/g, "")), 0);
   return (
     <div className="mp-over">
-      <div className="mp-tiles">{[...m.tiles, ...pg.extra].map((t, i) => <TileCard key={t.label} t={t} i={i} />)}</div>
+      <div className="mp-tiles">{[...m.tiles, ...pg.extra].map((t, i) => <TileCard key={t.label} t={t} i={i} id={id} />)}</div>
       <div className="mp-cols">
         <Panel icon={Gauge} title="Stations by type" hint={`${totalSites.toLocaleString("en-US")} sites`} i={0}>
           <ul className="mp-types">
@@ -60,7 +64,7 @@ function Overview({ id, go }: { id: MinistryId; go: Go }) {
             {attn.map((a) => {
               const Icon = SEV_ICON[a.sev];
               return (
-                <li key={a.id}><button onClick={() => go("alerts")}><span className={`sev ${a.sev}`}><Icon size={17} /></span><span className="x-attn-t"><b>{a.title}</b><em>{a.detail}</em></span></button></li>
+                <li key={a.id}><button onClick={() => go("alerts", a.id)}><span className={`sev ${a.sev}`}><Icon size={17} /></span><span className="x-attn-t"><b>{a.title}</b><em>{a.detail}</em></span></button></li>
               );
             })}
             {!attn.length && <li className="mp-clear"><CircleCheck size={18} /> No open alerts for this ministry</li>}
@@ -170,7 +174,7 @@ export default function Ministry({ id, go }: { id: MinistryId; go: Go }) {
   const openDash = (d: string) => { setEmbed(d); setTab("dashboards"); };
   return (
     <motion.div className="mp" style={{ ["--accent" as string]: m.accent, ["--accent2" as string]: m.accent2 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-      <header className="mp-head" style={{ backgroundImage: `linear-gradient(90deg, rgba(10,8,44,.96) 28%, rgba(10,8,44,.55)), url(${m.photo})` }}>
+      <header className="mp-head" style={{ backgroundImage: `linear-gradient(90deg, rgba(var(--n0-rgb),0.96) 28%, rgba(var(--n0-rgb),0.55)), url(${m.photo})` }}>
         <MinistryIcon m={m} size={56} />
         <div className="mp-head-t"><h2>{m.name}</h2><p>{pg.tagline}</p></div>
         <button className="mp-back" onClick={() => go("ministries")}><ArrowLeft size={15} /> All ministries</button>

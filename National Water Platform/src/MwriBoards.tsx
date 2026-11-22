@@ -8,7 +8,7 @@ function Gauge180({ pct }: { pct: number }) {
   const R = 78, C = Math.PI * R;
   return (
     <svg className="gauge" viewBox="0 0 200 118" role="img" aria-label={`Lake Nasser is ${pct}% full`}>
-      <defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stopColor="#22d3ee" /><stop offset="1" stopColor="#8b5cf6" /></linearGradient></defs>
+      <defs><linearGradient id="gg" x1="0" x2="1"><stop offset="0" stopColor="#22d3ee" /><stop offset="1" stopColor="#5cb9f6" /></linearGradient></defs>
       <path d="M22 100 A78 78 0 0 1 178 100" className="g-bg" />
       <path d="M22 100 A78 78 0 0 1 178 100" className="g-fg" stroke="url(#gg)" strokeDasharray={`${(C * pct) / 100} ${C}`} />
       <text x="100" y="86" textAnchor="middle" className="g-n">{pct}%</text>
@@ -37,7 +37,7 @@ export function NileDams() {
           {DAMS.map((d) => (
             <li key={d.name}>
               <span><b>{d.name}</b><em>{d.note}</em></span>
-              <u><s style={{ width: `${d.level}%`, background: `linear-gradient(90deg, #6d4aff, ${statusColor(d.level < 80 ? "watch" : "good")})` }} /></u>
+              <u><s style={{ width: `${d.level}%`, background: `linear-gradient(90deg, #51bbf8, ${statusColor(d.level < 80 ? "watch" : "good")})` }} /></u>
               <strong>{d.level}%</strong>
             </li>
           ))}

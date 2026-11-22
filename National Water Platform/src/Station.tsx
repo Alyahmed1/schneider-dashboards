@@ -6,6 +6,7 @@ import { STATION_BY_ID, TYPE_INFO } from "./stations";
 import { check100, split } from "./cycleData";
 import { Donut, Semi } from "./gauges";
 import Plant3D from "./Plant3D";
+import { useWob } from "./live";
 import { STAGES } from "./plantStages";
 import "./station.css";
 
@@ -19,7 +20,7 @@ check100("El Hamam water use", USE);
 const GOES = [
   { label: "Irrigation", pct: USE[0], color: "#34d399" },
   { label: "Land reclamation", pct: USE[1], color: "#22d3ee" },
-  { label: "Landscape", pct: USE[2], color: "#a78bfa" },
+  { label: "Landscape", pct: USE[2], color: "#5aaee8" },
 ];
 
 const Tile = ({ icon: Icon, label, value, unit }: { icon: LucideIcon; label: string; value: string; unit?: string }) => (
@@ -27,6 +28,8 @@ const Tile = ({ icon: Icon, label, value, unit }: { icon: LucideIcon; label: str
 );
 
 export default function Station({ id, go }: { id: string; go: Go }) {
+  const liveCap = Math.round(useWob(91, "hm-cap", 0.012, 0)); // moves a little every 10 seconds
+  const liveQ = Math.min(100, Math.round(useWob(99, "hm-q", 0.004, 0)));
   const s = STATION_BY_ID[id];
   const [stage, setStage] = useState(-1); // -1 = the whole plant, 0..6 = a stage of the walkthrough
   const [tour, setTour] = useState(false);
@@ -63,7 +66,7 @@ export default function Station({ id, go }: { id: string; go: Go }) {
         <section className="st-panel">
           <h4><Gauge size={14} /> FLOW AND CAPACITY</h4>
           <div className="st-gt">
-            <Semi pct={91} tone="#22d3ee" label="capacity used" size={150} />
+            <Semi pct={liveCap} tone="#22d3ee" label="capacity used" size={150} />
             <div className="st-tiles one">
               <Tile icon={Waves} label="Treated water" value={s.kpis[0].replace(/ M.*/, "")} unit="M m³/day" />
               <Tile icon={Droplets} label="Inflow" value="1.04" unit="M m³/day" />
@@ -81,7 +84,7 @@ export default function Station({ id, go }: { id: string; go: Go }) {
         </section>
       </aside>
 
-      <section className="st-mid">
+      <section className="st-mid dark-scope">
         <Plant3D stage={stage} onPick={pick} />
         <span className="st-hint"><Hand size={13} /> Drag to turn · scroll to zoom · press a number</span>
         <motion.div key={cur ? cur.id : "all"} className="st-card" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
@@ -137,7 +140,7 @@ export default function Station({ id, go }: { id: string; go: Go }) {
         <section className="st-panel">
           <h4><Droplets size={14} /> WATER QUALITY</h4>
           <div className="st-gt">
-            <Semi pct={99} tone="#34d399" label="quality pass" size={150} />
+            <Semi pct={liveQ} tone="#34d399" label="quality pass" size={150} />
             <div className="st-tiles one">
               <Tile icon={Waves} label="Salinity" value={s.kpis[2].replace(/ dS.*/, "")} unit="dS/m" />
               <Tile icon={Droplets} label="Turbidity" value="1.8" unit="NTU" />

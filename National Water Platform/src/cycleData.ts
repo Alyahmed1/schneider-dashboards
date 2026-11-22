@@ -62,7 +62,7 @@ export const SOURCES: Lane[] = [
     kpis: [{ label: "Produced", value: "7.5", unit: "M m³/day" }, { label: "Cost", value: "EGP 4.2", unit: "/ m³" }, { label: "Plants", value: "44" }, { label: "Quality pass", value: "99.1", unit: "%" }],
   },
   {
-    id: "wells", kicker: "WELLS", title: "Water treatment", tone: "#a78bfa", owner: "mhuuc", ownerShort: "MHUUC",
+    id: "wells", kicker: "WELLS", title: "Water treatment", tone: "#5aaee8", owner: "mhuuc", ownerShort: "MHUUC",
     steps: [
       { sym: "wells", name: "Well pumps", tile: ["Pumped", "8.6 M m³/day"] },
       { sym: "filter", name: "Aeration and filters", tile: ["Iron removed", "96 %"] },
@@ -84,7 +84,7 @@ export const REUSED_PCT = check100("reused water", split(REUSED));
 export const REUSE_RATE = REUSED.map((r, i) => Math.round((r / GEN[i]) * 100)); // 33, 43, 75
 export const REUSE: Lane[] = [
   {
-    id: "domestic", kicker: "DOMESTIC", title: "Homes and cities", tone: "#f472b6", owner: "mhuuc", ownerShort: "MHUUC",
+    id: "domestic", kicker: "DOMESTIC", title: "Homes and cities", tone: "#6aa8ff", owner: "mhuuc", ownerShort: "MHUUC",
     steps: [
       { sym: "houses", name: "Sewer network", tile: ["Collected", "6.0 M m³/day"] },
       { sym: "wwtp", name: "Treatment plant", tile: ["Treated", "5.2 M m³/day"] },

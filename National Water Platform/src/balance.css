@@ -1,0 +1,35 @@
+/* Water Balance: one flow picture and one in = out bar */
+.wbf-svg { width: 100%; height: 100%; display: block; }
+.wbf-card { fill: rgba(var(--n1-rgb), 0.78); stroke: var(--line); stroke-width: 1; }
+.wbf-tile { fill: rgba(var(--ac-rgb), 0.1); stroke-width: 1.5; }
+.wbf-name { font-size: 17px; font-weight: 700; fill: var(--ink); }
+.wbf-val { font-size: 30px; font-weight: 800; }
+.wbf-unit { font-size: 13px; font-weight: 600; fill: var(--text-2); }
+.wbf-pct { font-size: 20px; font-weight: 800; fill: var(--text-2); }
+
+.wbf-halo { fill: rgba(var(--ac-rgb), 0.1); stroke: rgba(var(--ac-rgb), 0.35); stroke-width: 1.5; }
+.wbf-core { fill: rgba(var(--n1-rgb), 0.9); stroke: var(--ac); stroke-width: 3; }
+.wbf-big { font-size: 64px; font-weight: 800; fill: var(--ink); }
+.wbf-bigu { font-size: 17px; font-weight: 600; fill: var(--text-2); }
+
+.wbf-dash { stroke-width: 3; stroke-dasharray: 9 13; animation: wbfd 1.3s linear infinite; }
+@keyframes wbfd { to { stroke-dashoffset: -22; } }
+@media (prefers-reduced-motion: reduce) { .wbf-dash { animation: none; } }
+
+.wbf-pill { stroke-width: 1.5; }
+.wbf-pill.ok { fill: rgba(var(--green-rgb), 0.14); stroke: var(--green); }
+.wbf-pill.bad { fill: rgba(var(--red-rgb), 0.14); stroke: var(--red); }
+.wbf-pilltxt { font-size: 20px; font-weight: 800; }
+.wbf-pilltxt.ok { fill: var(--green); } .wbf-pilltxt.bad { fill: var(--red); }
+.wbf-hint { font-size: 13.5px; fill: var(--text-2); }
+
+.wbb { height: 100%; display: grid; align-content: center; gap: 12px; padding: 8px 22px 12px; }
+.wbb-row { display: grid; grid-template-columns: 56px 1fr 70px; align-items: center; gap: 14px; }
+.wbb-tag { font-size: 17px; font-weight: 800; letter-spacing: 0.08em; color: var(--ink); }
+.wbb-tot { font-size: 30px; font-weight: 800; text-align: right; }
+.wbb-bar { display: flex; height: 50px; border-radius: 14px; overflow: hidden; gap: 4px; }
+.wbb-bar s { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 16px; min-width: 0; color: #fff; text-decoration: none; font-size: 16px; }
+.wbb-bar s span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.wbb-bar s b { font-size: 22px; font-weight: 800; }
+.wbb-key { display: flex; justify-content: center; gap: 30px; font-size: 14px; color: var(--text-2); }
+.wbb-key i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 8px; vertical-align: -2px; }

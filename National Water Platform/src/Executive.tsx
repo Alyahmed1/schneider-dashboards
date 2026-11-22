@@ -4,17 +4,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Area, AreaChart, ReferenceDot, ResponsiveContainer, Tooltip, YAxis } from "recharts";
 import { ArrowDown, ArrowUp, ChevronRight, FileText, Lightbulb, ListChecks, MapPinned, Printer, Radio, Target, Trophy, X } from "lucide-react";
 import {
-  ALERTS, ATTENTION, INSIGHTS, EXEC_TREND, MINISTRIES, MINISTRY_BY_ID, MINISTRY_SCORE, MONTHS, EXEC_KPIS, OUTCOMES, OUTCOME_SCORE, STATUS_LABEL,
+  INSIGHTS, EXEC_TREND, MINISTRIES, MINISTRY_BY_ID, MINISTRY_SCORE, MONTHS, EXEC_KPIS, OUTCOMES, OUTCOME_SCORE, STATUS_LABEL,
   outcomeStatus, type Go,
 } from "./data";
 import { CountUp } from "./ui";
+import { ago, useLive, useWob, waiting } from "./live";
 import { SEV_ICON } from "./Header";
 import RealMap from "./RealMap";
 import { STATIONS } from "./stations";
 import { Panel, ease, rise } from "./parts";
 
 type Range = 3 | 6 | 12;
-const TODAY = "10 November 2026";
+const TODAY = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 /** progress towards the target, as a glowing ring */
 function KRing({ pct, tone }: { pct: number; tone: string }) {
@@ -31,6 +32,7 @@ function KRing({ pct, tone }: { pct: number; tone: string }) {
 function KpiCard({ k, i, range, go }: { k: (typeof EXEC_KPIS)[number]; i: number; range: Range; go: Go }) {
   const t = EXEC_TREND[k.id];
   const Icon = k.icon;
+  const live = useWob(k.value, `x-${k.id}`, 0.008, k.decimals); // moves a little every 10 seconds
   const data = t.series.slice(-range).map((v, n) => ({ m: MONTHS[12 - range + n], v }));
   const last = data[data.length - 1];
   const gid = `g-${k.id}`;
@@ -38,7 +40,7 @@ function KpiCard({ k, i, range, go }: { k: (typeof EXEC_KPIS)[number]; i: number
     <motion.button className="x-kpi rich" style={{ ["--tone" as string]: k.tone }} {...rise(i)} whileHover={{ y: -3 }} onClick={() => go("performance")} aria-label={`${k.label}. Open Performance`}>
       <span className="x-kpi-h"><i className="x-ico"><Icon size={18} strokeWidth={1.9} /></i><em>{k.label}</em></span>
       <span className="x-kpi-v">
-        <span className="x-kpi-n">{k.cur && <small className="x-cur">{k.cur}</small>}<b>{k.prefix}<CountUp value={k.value} decimals={k.decimals} /></b><small>{k.unit}</small></span>
+        <span className="x-kpi-n">{k.cur && <small className="x-cur">{k.cur}</small>}<b>{k.prefix}<CountUp value={live} decimals={k.decimals} /></b><small>{k.unit}</small></span>
         <KRing pct={t.progress} tone={k.tone} />
       </span>
       <span className="x-spark">
@@ -46,7 +48,7 @@ function KpiCard({ k, i, range, go }: { k: (typeof EXEC_KPIS)[number]; i: number
           <AreaChart data={data} margin={{ top: 6, right: 6, bottom: 0, left: 2 }}>
             <defs><linearGradient id={gid} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={k.tone} stopOpacity=".55" /><stop offset="1" stopColor={k.tone} stopOpacity="0" /></linearGradient></defs>
             <YAxis hide domain={["dataMin - 0.3", "dataMax + 0.3"]} />
-            <Tooltip cursor={{ stroke: k.tone, strokeOpacity: 0.4 }} contentStyle={{ background: "#14113a", border: "1px solid #5b4bd6", borderRadius: 8, fontSize: 12, padding: "4px 8px" }} labelStyle={{ color: "#c9c5f5" }} itemStyle={{ color: "#fff" }}
+            <Tooltip cursor={{ stroke: k.tone, strokeOpacity: 0.4 }} contentStyle={{ background: "rgb(var(--n1-rgb))", color: "var(--ink)", border: "1px solid var(--line)", borderRadius: 8, fontSize: 12, padding: "4px 8px" }} labelStyle={{ color: "var(--text-2)" }} itemStyle={{ color: "var(--ink)" }}
               formatter={(v) => [k.unit === "%" ? `${v}%` : `${k.cur ? `${k.cur} ` : ""}${v} ${k.unit}`, k.label]} />
             <Area type="monotone" dataKey="v" stroke={k.tone} strokeWidth={2.2} fill={`url(#${gid})`} animationDuration={900} />
             <ReferenceDot x={last.m} y={last.v} r={4.5} fill="#fff" stroke={k.tone} strokeWidth={2} />
@@ -63,8 +65,9 @@ function KpiCard({ k, i, range, go }: { k: (typeof EXEC_KPIS)[number]; i: number
 
 /** the one-page brief: shown on screen, and it is the only thing that prints */
 function Brief({ onClose }: { onClose: () => void }) {
+  const ATTENTION = useAttention().slice(0, 6);
   return createPortal(
-    <motion.div className="brief-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+    <motion.div className="brief-overlay dark-scope" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <motion.div className="brief-sheet" role="dialog" aria-label="Cabinet brief" initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3, ease }}>
         <div className="brief-actions">
           <button onClick={() => window.print()}><Printer size={16} /> Print or save as PDF</button>
@@ -105,11 +108,21 @@ function Brief({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** what still needs attention, from the shared live alarms (the same list the bell and the Alerts page show) */
+function useAttention() {
+  const { alarms } = useLive();
+  return waiting(alarms).sort((a, b) => a.priority - b.priority || b.at - a.at).map((a) => ({
+    id: a.id, sev: a.sev, ministry: a.ministry, title: a.comment, detail: `${a.name} · ${a.detail}`, stationId: a.stationId,
+  }));
+}
+
 /** the latest events and insights, scrolling along the bottom */
 function Ticker() {
+  const { alarms } = useLive();
+  const recent = [...alarms].sort((a, b) => b.at - a.at).filter((a) => a.state !== "ACK_RTN").slice(0, 7);
   const items = [
-    ...ALERTS.map((a) => ({ key: a.id, sev: a.sev as string, text: a.text, tag: MINISTRY_BY_ID[a.ministry].short, color: MINISTRY_BY_ID[a.ministry].accent, ago: a.ago })),
-    ...INSIGHTS.map((t, n) => ({ key: `i${n}`, sev: "tip", text: t, tag: "Insight", color: "#a78bfa", ago: "" })),
+    ...recent.map((a) => ({ key: a.id, sev: a.sev as string, text: `${a.comment} · ${a.name}`, tag: MINISTRY_BY_ID[a.ministry].short, color: MINISTRY_BY_ID[a.ministry].accent, ago: ago(a.at) })),
+    ...INSIGHTS.map((t, n) => ({ key: `i${n}`, sev: "tip", text: t, tag: "Insight", color: "#5aaee8", ago: "" })),
   ];
   const run = [...items, ...items];
   return (
@@ -134,7 +147,8 @@ function Ticker() {
 export default function Executive({ go }: { go: Go }) {
   const [range, setRange] = useState<Range>(12);
   const [brief, setBrief] = useState(false);
-  const openAttention = (a: (typeof ATTENTION)[number]) => (a.to === "ministry" ? go("ministry", a.ministry) : go(a.to));
+  const ATTENTION = useAttention();
+  const openAttention = (a: (typeof ATTENTION)[number]) => go("alerts", a.id);
   return (
     <motion.div className="exec" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
       <header className="x-hero">

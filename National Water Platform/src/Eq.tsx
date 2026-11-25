@@ -197,6 +197,52 @@ export default function Eq({ kind }: { kind: Sym }) {
           <rect x="54" y="30" width="12" height="24" rx="3" className="eq" /><circle cx="60" cy="28" r="5" className="eq-dome" />{B(86, 56, 0)}{B(36, 58, 0.8)}
         </Frame>
       );
+    case "intake":
+      return (
+        <Frame>
+          <path d="M0 40 Q15 33 30 40 T60 40 V72 H0Z" className="eq-liq" /><path d="M0 50 Q15 44 30 50 T60 50" className="spec" />
+          <rect x="62" y="20" width="36" height="38" rx="4" className="eq" /><path d="M62 20 H98" className="eq-top" strokeWidth="5" />
+          <g className="bd-spin slow"><circle cx="80" cy="42" r="8" className="eq-top" /><path d="M72 42 H88 M80 34 V50" className="eq-line" /></g>
+          <Pipe d="M60 46 H64" /><Pipe d="M98 46 H120" /><Gauge x={90} y={14} />{B(30, 56, 0)}{B(46, 60, 0.9)}
+        </Frame>
+      );
+    case "screen":
+      return (
+        <Frame>
+          <rect x="6" y="28" width="108" height="30" rx="4" className="eq" /><rect x="10" y="40" width="100" height="14" rx="2" className="eq-liq" />
+          {[44, 52, 60, 68, 76].map((x) => <path key={x} d={`M${x} 28 V58`} className="eq-line" />)}
+          <g className="bd-sway"><path d="M40 12 V28 M82 12 V28 M40 14 H82" className="eq-line" strokeWidth="2.200" /></g>
+          <Pipe d="M0 46 H6" /><Pipe d="M114 46 H120" />{B(20, 48, 0)}{B(96, 50, 0.8)}<Gauge x={100} y={22} />
+        </Frame>
+      );
+    case "clarifier":
+      return (
+        <Frame>
+          <Tank cx={60} w={92} top={30} bottom={58} liq={0.78} />
+          <g className="bd-sway"><path d="M20 30 H100" className="eq-line" strokeWidth="2.400" /></g>
+          <rect x="56" y="22" width="8" height="12" rx="2" className="eq-dome" />
+          <Pipe d="M0 50 H14" /><Pipe d="M106 38 H120" />{B(40, 48, 0)}{B(74, 50, 0.8)}{B(60, 54, 1.5)}
+        </Frame>
+      );
+    case "contact":
+      return (
+        <Frame>
+          <rect x="10" y="14" width="100" height="46" rx="5" className="eq" />
+          <path d="M34 14 V46 M58 26 V60 M82 14 V46" className="eq-line" strokeWidth="2.200" />
+          <path d="M20 22 H46 V52 H70 V22 H96 V50" className="pipe" /><path d="M20 22 H46 V52 H70 V22 H96 V50" className="pipe-flow" />
+          <g className="bd-pulse"><circle cx="96" cy="52" r="5" fill="#34d399" opacity="0.55" /></g>
+          <Pipe d="M0 22 H10" /><Pipe d="M110 52 H120" /><Gauge x={100} y={10} />
+        </Frame>
+      );
+    case "outlet":
+      return (
+        <Frame>
+          <path d="M0 42 H120 V58 H0Z" className="eq-liq" /><path d="M0 42 H120 M0 58 H120" className="eq-line" />
+          <rect x="46" y="22" width="26" height="36" rx="3" className="eq" /><path d="M54 22 V14 H64 V22" className="eq-line" /><rect x="52" y="12" width="14" height="5" rx="2" className="eq-dome" />
+          <path d="M8 48 q6 -5 12 0 t12 0 M80 48 q6 -5 12 0 t12 0" className="spec" />{B(26, 52, 0)}{B(96, 54, 0.9)}
+          <Pipe d="M72 50 H120" />
+        </Frame>
+      );
     case "digester":
       return (
         <Frame>

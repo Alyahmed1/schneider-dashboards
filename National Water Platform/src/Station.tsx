@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronLeft, ChevronRight, Droplets, Gauge, Hand, Leaf, MapPin, Pause, Play, Settings, Sprout, Waves, X, Zap, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Droplets, Gauge, Leaf, MapPin, Pause, Play, Settings, Sprout, Waves, X, Zap, type LucideIcon } from "lucide-react";
 import { MINISTRY_BY_ID, STATUS_LABEL, type Go } from "./data";
 import { STATION_BY_ID, TYPE_INFO } from "./stations";
 import { check100, split } from "./cycleData";
 import { Donut, Semi } from "./gauges";
-import Plant3D from "./Plant3D";
+import StationDiagram from "./StationDiagram";
+import "./diagram.css";
 import { useWob } from "./live";
 import { STAGES } from "./plantStages";
 import "./station.css";
@@ -85,20 +86,22 @@ export default function Station({ id, go }: { id: string; go: Go }) {
       </aside>
 
       <section className="st-mid dark-scope">
-        <Plant3D stage={stage} onPick={pick} />
-        <span className="st-hint"><Hand size={13} /> Drag to turn · scroll to zoom · press a number</span>
+        <StationDiagram stage={stage} onPick={pick} />
         <motion.div key={cur ? cur.id : "all"} className="st-card" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
           {cur ? (
             <>
-              <div className="st-card-b">
-                <button className="st-close" onClick={() => show(-1)} title="Close (Esc)"><X size={14} /> Whole plant</button>
-                <em>STAGE {stage + 1} OF {STAGES.length} · {cur.flow} M m³/day</em>
-                <h3>{cur.title}</h3>
-                <p>{cur.line}</p>
+              <div className="st-card-b cols">
+                <div className="st-c1">
+                  <em>STEP {stage + 1} OF {STAGES.length} · {cur.flow} M m³/day</em>
+                  <h3>{cur.title}</h3>
+                  <p>{cur.line}</p>
+                  <button className="st-close" onClick={() => show(-1)} title="Close (Esc)"><X size={14} /> Whole plant</button>
+                </div>
                 <div className="st-card-k">
                   <Semi key={cur.id} pct={cur.gauge.pct} tone="#22d3ee" label={cur.gauge.label} size={120} />
                   <div className="st-tiles one">{cur.kpis.map(([l, v]) => <div key={l} className="st-tile"><em>{l}</em><b>{v}</b></div>)}</div>
                 </div>
+                <div className="st-c3">
                 <div className="st-prog">
                   {cur.bars.map(([l, p, t]) => (
                     <div key={l}><span><em>{l}</em><b>{t}</b></span><u><s style={{ width: `${p}%` }} /></u></div>
@@ -114,13 +117,14 @@ export default function Station({ id, go }: { id: string; go: Go }) {
                   </div>
                   <span><i>12 h ago</i><i>now {cur.trend.values[cur.trend.values.length - 1]}</i></span>
                 </div>
+                </div>
               </div>
             </>
           ) : (
             <div className="st-card-b">
               <em>WALKTHROUGH</em>
               <h3>Follow the water</h3>
-              <p>From the intake canal to the farms in 7 stages. Press a number on the plant, use the arrows, or start the tour.</p>
+              <p>From the intake canal to the farms in 7 steps. Press a step in the diagram, use the arrows, or start the tour.</p>
             </div>
           )}
         </motion.div>

@@ -8,14 +8,14 @@ import "./pages.css";
 import "./balance.css";
 
 /**
- * Water balance (M m³/day). Base numbers are the ones every other page uses: supply 17.5 = sea 1.6 + river 7.5 + wells 8.4,
+ * Water balance (M m³/day). Base numbers are the ones every other page uses: supply 17.5 = sea 7.0 + Nile 10.0 + lakes 0.5 (this page only; lakes are very small),
  * and the same 17.5 goes out as reused 4.1 + returned 5.3 + used up 4.4 + lost 3.7. In and out are tied in tenths, so the check is always 0.0.
  */
 type Scenario = "normal" | "drought" | "lownile";
-const SCEN: { id: Scenario; label: string; river: number; wells: number; note: string }[] = [
-  { id: "normal", label: "Normal year", river: 1, wells: 1, note: "All sources at their usual level" },
-  { id: "drought", label: "Drought", river: 0.85, wells: 0.95, note: "The Nile gives 15% less and wells 5% less" },
-  { id: "lownile", label: "Low Nile", river: 0.75, wells: 1, note: "The Nile gives 25% less (dam release cut)" },
+const SCEN: { id: Scenario; label: string; river: number; lakes: number; note: string }[] = [
+  { id: "normal", label: "Normal year", river: 1, lakes: 1, note: "All sources at their usual level" },
+  { id: "drought", label: "Drought", river: 0.85, lakes: 0.9, note: "The Nile gives 15% less and lakes 10% less" },
+  { id: "lownile", label: "Low Nile", river: 0.75, lakes: 1, note: "The Nile gives 25% less (dam release cut)" },
 ];
 
 /** share an amount (in tenths) over weights so the parts add up exactly */
@@ -84,18 +84,21 @@ export default function WaterBalance() {
   const [sc, setSc] = useState<Scenario>("normal");
   const live = useSupply();
   const cfg = SCEN.find((s) => s.id === sc)!;
-  const sea = r1(live.sea), river = r1(live.river * cfg.river), wells = r1(live.wells * cfg.wells);
-  const S = r1(sea + river + wells);
+  // this page: the two big sources are the sea and the Nile, lakes give very little; the three always add up to the live total
+  const base = { sea: r1(live.total * (7 / 17.5)), lakes: r1(live.total * (0.5 / 17.5)) };
+  const baseRiver = r1(live.total - base.sea - base.lakes);
+  const sea = base.sea, river = r1(baseRiver * cfg.river), lakes = r1(base.lakes * cfg.lakes);
+  const S = r1(sea + river + lakes);
   const [reuse, back, used, lost] = splitTenths(S, [4.1, 5.3, 4.4, 3.7]);
   const out = r1(reuse + back + used + lost);
   const gap = r1(S - out);
-  const demand = r1(live.sea + live.river + live.wells); // what the country needs = this year's normal supply
+  const demand = r1(live.total); // what the country needs = this year's normal supply
   const short = r1(demand - S);
 
   const ins: Item[] = [
     { label: "Sea (desalination)", v: sea, color: "var(--ac)", Icon: Waves },
     { label: "Nile (river)", v: river, color: "var(--ac)", Icon: Droplet },
-    { label: "Wells", v: wells, color: "var(--ac)", Icon: Droplets },
+    { label: "Lakes", v: lakes, color: "var(--ac)", Icon: Droplets },
   ];
   const outs: Item[] = [
     { label: "Reused", v: reuse, color: "var(--green)", Icon: Recycle },

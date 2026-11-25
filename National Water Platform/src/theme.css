@@ -197,3 +197,12 @@ ul { list-style: none; }
 /* light theme: coloured labels need to be darker to stay readable on pale panels */
 html[data-theme="light"] .wc-lane h4, html[data-theme="light"] .wc-side h4, html[data-theme="light"] .wc-out h4 { color: color-mix(in srgb, var(--tone) 45%, #0c2a44); }
 html[data-theme="light"] .hd-logo { filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.9)); }
+
+/* AVEVA logo: original colours, as on the other dashboards (white on the dark theme, purple on the light theme) */
+.hd-logo.sch { margin-right: 10px; }
+.hd-logo.av { height: 28px; margin-right: 16px; }
+.hd-logo.av-dark { display: none; }
+html[data-theme="dark"] .hd-logo.av-dark { display: block; }
+html[data-theme="dark"] .hd-logo.av-light { display: none; }
+html:not([data-theme]) .hd-logo.av-dark { display: block; }
+html:not([data-theme]) .hd-logo.av-light { display: none; }

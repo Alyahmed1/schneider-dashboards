@@ -26,7 +26,8 @@ export function check100(name: string, pcts: number[]) {
 export type Sym =
   | "sea" | "pretreat" | "ro" | "wells" | "river" | "filter" | "uv" | "network"
   | "houses" | "factory" | "field" | "collect" | "wwtp" | "tertiary"
-  | "compost" | "pivot" | "digester" | "gas" | "sludge" | "drip";
+  | "compost" | "pivot" | "digester" | "gas" | "sludge" | "drip"
+  | "intake" | "screen" | "clarifier" | "contact" | "outlet";
 
 export interface Step { sym: Sym; name: string; tile: [string, string] }
 export interface Kpi { label: string; value: string; unit?: string }

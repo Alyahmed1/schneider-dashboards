@@ -131,7 +131,7 @@ export default function Header({ go, role, setRole, onStart, collapsed, onToggle
         <h1>Egypt National Water Platform</h1>
         <p>Unified View Across the Water Sector</p>
       </div>
-      <div className="hd-right"><img className="hd-logo" src="/img/schneider-green.png" alt="Schneider Electric" draggable={false} /><LivePill /><button className={`hd-ask ${ask ? "on" : ""}`} onClick={onAsk} aria-expanded={ask} aria-label="Ask the national assistant"><Bot size={18} /><span>Ask</span></button><button className="hd-btn" onClick={toggleTheme} aria-label={theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}</button><Bell_ go={go} /><Help /><Account role={role} setRole={setRole} go={go} onStart={onStart} /></div>
+      <div className="hd-right"><img className="hd-logo sch" src="/img/schneider-green.png" alt="Schneider Electric" draggable={false} /><img className="hd-logo av av-light" src="/img/aveva-purple.png" alt="AVEVA" draggable={false} /><img className="hd-logo av av-dark" src="/img/aveva-white.png" alt="" aria-hidden draggable={false} /><LivePill /><button className={`hd-ask ${ask ? "on" : ""}`} onClick={onAsk} aria-expanded={ask} aria-label="Ask the national assistant"><Bot size={18} /><span>Ask</span></button><button className="hd-btn" onClick={toggleTheme} aria-label={theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"} title={theme === "dark" ? "Light theme" : "Dark theme"}>{theme === "dark" ? <Sun size={19} /> : <Moon size={19} />}</button><Bell_ go={go} /><Help /><Account role={role} setRole={setRole} go={go} onStart={onStart} /></div>
     </header>
   );
 }

@@ -16,12 +16,12 @@ import Alerts, { type AlertStatus, type AlertStatusMap } from "./Alerts";
 
 const META: Record<TabId, { label: string; title: string; sub: string; icon: typeof Zap }> = {
   overview: { label: "Overview", title: "Factory overview", sub: "Plant-wide performance at a glance", icon: LayoutDashboard },
-  process: { label: "Production process", title: "Production process", sub: "From raw material intake to dispatch, stage by stage", icon: Workflow },
-  quality: { label: "Batches & quality", title: "Batches & quality", sub: "QC results, first-pass yield and rework", icon: FlaskConical },
+  process: { label: "Production Process", title: "Production Process", sub: "From raw material intake to dispatch, stage by stage", icon: Workflow },
+  quality: { label: "Batches & Quality", title: "Batches & Quality", sub: "QC results, first-pass yield and rework", icon: FlaskConical },
   equipment: { label: "Equipment", title: "Equipment", sub: "Asset health, downtime and maintenance", icon: Cog },
   maintenance: { label: "Maintenance", title: "Maintenance", sub: "Work orders, predicted service and spare parts", icon: Wrench },
-  utilities: { label: "Utilities & energy", title: "Utilities & energy", sub: "Power, water, air, steam and emissions", icon: Zap },
-  logistics: { label: "Inventory & logistics", title: "Inventory & logistics", sub: "Raw materials, warehouse and dispatch", icon: Truck },
+  utilities: { label: "Utilities & Energy", title: "Utilities & Energy", sub: "Power, water, air, steam and emissions", icon: Zap },
+  logistics: { label: "Inventory & Logistics", title: "Inventory & Logistics", sub: "Raw materials, warehouse and dispatch", icon: Truck },
   alerts: { label: "Alerts", title: "Alerts", sub: "Production, quality, equipment, utilities and safety events", icon: BellRing },
 };
 const GROUPS: { label: string; ids: TabId[] }[] = [
@@ -105,6 +105,13 @@ export default function App() {
             })}
           </div>
         ))}
+        <div className="powered">
+          <span className="powered-cap">Powered By</span>
+          <div className="powered-logos">
+            <img className="pw-schneider" src="/logos/schneider-logo-transparent.png" alt="Schneider Electric" />
+            <span className="pw-aveva"><img src="/logos/aveva-logo-white.png" alt="AVEVA" /></span>
+          </div>
+        </div>
         <div className="side-actions">
           <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle light and dark theme" title="Theme">
             {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}

@@ -94,7 +94,13 @@ button { cursor: pointer; background: none; border: 0; }
 .nav-badge { margin-left: auto; font-family: var(--mono); font-size: 11px; background: var(--red); color: #fff; padding: 1px 7px; border-radius: 20px; }
 .side-foot { margin-top: auto; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); font-size: 12px; color: var(--muted); }
 .side-foot b { color: var(--text); font-weight: 600; display: block; margin-bottom: 2px; }
-.side-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 12px; }
+.powered { margin-top: auto; padding: 14px 8px 0; display: grid; gap: 8px; }
+.powered-cap { font-size: 10.5px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--dim); }
+.powered-logos { display: flex; align-items: center; gap: 12px; }
+.pw-schneider { height: 34px; width: auto; display: block; }
+.pw-aveva { background: #3f1a5e; border-radius: 6px; padding: 7px 10px; display: grid; place-items: center; }
+.pw-aveva img { height: 16px; width: auto; display: block; }
+.side-actions { display: flex; gap: 8px; padding-top: 12px; }
 .icon-btn {
   width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
   background: var(--panel); border: 1px solid var(--line); color: var(--muted); transition: .15s;

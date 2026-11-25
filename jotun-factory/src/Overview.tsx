@@ -54,7 +54,7 @@ export default function Overview({ f, go, done, setStatus }: { f: Filters; go: G
         <div className="hero-inner">
           <div>
             <div className="hero-tag"><MapPin size={13} /> Simulated plant · 6 lines</div>
-            <h2>Jotun <em>Smart Factory</em></h2>
+            <h2>JOTUN <em>Smart Factory</em></h2>
             <p>Live view of production, quality, utilities and dispatch across the plant. {rangeLabel(f.range)} · {f.line.toLowerCase()} · {f.shift.toLowerCase()}.</p>
           </div>
           <div className="hero-stats">

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Building2, Car, Droplets, Gauge, Lamp, Trash2 } from "lucide-react";
-import { CITY, SHARE, ZONES, type LayerId } from "./data";
+import { CITY, LAYERS, SHARE, ZONES, type LayerId } from "./data";
 import { shareOf, useFilters } from "./state";
 import CityMap from "./CityMap";
 import { LayerChips } from "./Overview";
@@ -8,8 +8,9 @@ import { Kpi, KpiRow, Panel, Stat, fmt } from "./ui";
 
 export default function MasterPlan() {
   const { zone, setZone } = useFilters();
-  const [layers, setLayers] = useState<LayerId[]>(["poles", "water", "waste", "bus", "parking", "signage"]);
-  const toggle = (id: LayerId) => setLayers((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+  const [layers, setLayers] = useState<LayerId[]>([]);
+  // one layer at a time keeps the map calm; "All" is still there for a full picture
+  const toggle = (id: LayerId) => setLayers((p) => (p.length === 1 && p[0] === id ? [] : [id]));
   const cur = ZONES.find((z) => z.id === zone);
   const n = (t: number, k: keyof typeof SHARE) => Math.round(t * shareOf(k, zone));
   return (
@@ -23,8 +24,8 @@ export default function MasterPlan() {
         <Kpi n={5} label="IBMS points" value={n(CITY.ibmsPoints, "ibms")} icon={Building2} tone="bad" />
       </KpiRow>
       <div className="grid" style={{ gridTemplateColumns: "minmax(0,2.3fr) minmax(0,1fr)" }}>
-        <Panel i={0} title="" className="planmap" aside={<LayerChips layers={layers} toggle={toggle} />}>
-          <CityMap layers={layers} />
+        <Panel i={0} title="" className="planmap" aside={<div className="chips"><button className={`chip ${layers.length === LAYERS.length ? "on" : ""}`} onClick={() => setLayers(layers.length === LAYERS.length ? [] : LAYERS.map((l) => l.id))} style={{ ["--c" as string]: "var(--accent)" }}><i />All layers</button><LayerChips layers={layers} toggle={toggle} /></div>}>
+          <CityMap layers={layers} dotScale={0.9} zoneInfo />
         </Panel>
         <div className="col" style={{ gridTemplateRows: "auto minmax(0,1fr)" }}>
           <Panel i={1} title={cur ? cur.name : "Whole city"} aside={cur && <button className="link" onClick={() => setZone("all")}>Show all</button>}>

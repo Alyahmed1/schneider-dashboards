@@ -404,3 +404,6 @@ select, .search input, input.price, .composer input { border-color: var(--field)
   .planmap .panel-b { padding: 0; }
   .planmap .mapwrap { border-radius: 0; background: transparent; }
 }
+
+.zinfo rect { fill: rgba(6, 22, 32, .8); } .zinfo text { font: 600 14px var(--body); fill: #fff; }
+.dot { stroke-width: 1; }

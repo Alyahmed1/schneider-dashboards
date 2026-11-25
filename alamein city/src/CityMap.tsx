@@ -1,10 +1,10 @@
 import { memo, useMemo, useState } from "react";
-import { LAYERS, MAP_H, MAP_W, SHARE, ZONES, type LayerId, type Zone } from "./data";
+import { CITY, LAYERS, MAP_H, MAP_W, SHARE, ZONES, type LayerId, type Zone } from "./data";
 import { rng, useTick } from "./live";
 import { useFilters, type ZoneFilter } from "./state";
 
 /** how many dots stand for the devices of each layer: bus stations are drawn one by one, the others are sampled */
-const DOTS: Record<LayerId, number> = { poles: 150, water: 110, waste: 90, bus: 50, parking: 80, signage: 90 };
+const DOTS: Record<LayerId, number> = { poles: 70, water: 55, waste: 45, bus: 50, parking: 40, signage: 45 };
 
 const inside = (x: number, y: number, p: [number, number][]) => {
   let c = false;
@@ -43,7 +43,7 @@ const DOT_CACHE: Record<LayerId, Dot[]> = (() => {
 
 const pts = (z: Zone) => z.poly.map((p) => p.join(",")).join(" ");
 
-function CityMapBase({ layers, onPick, labels = true, dotScale = 1 }: { layers: LayerId[]; onPick?: (z: ZoneFilter) => void; labels?: boolean; dotScale?: number }) {
+function CityMapBase({ layers, onPick, labels = true, dotScale = 1, zoneInfo = false }: { layers: LayerId[]; onPick?: (z: ZoneFilter) => void; labels?: boolean; dotScale?: number; zoneInfo?: boolean }) {
   const { zone, setZone } = useFilters();
   const tick = useTick();
   const [hover, setHover] = useState<Zone["id"] | null>(null);
@@ -79,7 +79,7 @@ function CityMapBase({ layers, onPick, labels = true, dotScale = 1 }: { layers: 
               {DOT_CACHE[id].map((d) => {
                 const s = status.get(`${id}${d.k}`) ?? "ok";
                 const faded = zone !== "all" && zone !== d.zone;
-                return <circle key={d.k} cx={d.x} cy={d.y} r={(s === "ok" ? 5.2 : 6.6) * dotScale} fill={s === "bad" ? "var(--bad)" : s === "warn" ? "var(--warn)" : color} className={`dot ${s} ${faded ? "faded" : ""}`} />;
+                return <circle key={d.k} cx={d.x} cy={d.y} r={(s === "ok" ? 4 : 5.4) * dotScale} fill={s === "bad" ? "var(--bad)" : s === "warn" ? "var(--warn)" : color} className={`dot ${s} ${faded ? "faded" : ""}`} />;
               })}
             </g>
           );
@@ -87,6 +87,17 @@ function CityMapBase({ layers, onPick, labels = true, dotScale = 1 }: { layers: 
         {labels && ZONES.map((z) => (
           <text key={z.id} className={`zlabel ${zone !== "all" && zone !== z.id ? "dim" : ""}`} x={z.label[0]} y={z.label[1]} textAnchor="middle" pointerEvents="none">{z.name}</text>
         ))}
+        {zoneInfo && zone !== "all" && (() => {
+          const zi = ZONES.findIndex((z) => z.id === zone), z = ZONES[zi];
+          const txt = `${Math.round(CITY.meters * SHARE.meters[zi]).toLocaleString("en-US")} meters · ${Math.round(CITY.poles * SHARE.poles[zi])} poles · ${Math.round(CITY.parking * SHARE.parking[zi])} parking`;
+          const w = txt.length * 8.4 + 28;
+          return (
+            <g pointerEvents="none" className="zinfo">
+              <rect x={z.label[0] - w / 2} y={z.label[1] + 16} width={w} height={30} rx={15} />
+              <text x={z.label[0]} y={z.label[1] + 36} textAnchor="middle">{txt}</text>
+            </g>
+          );
+        })()}
       </svg>
       {hz && <div className="maptip"><b>{hz.name}</b><span>{hz.kind}</span></div>}
     </div>

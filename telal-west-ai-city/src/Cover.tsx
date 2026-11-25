@@ -27,11 +27,7 @@ export default function Cover({ onEnter, onStory, theme, setTheme }: { onEnter: 
       </div>
 
       <div className="cover-top">
-        <div className="cover-logos">
-          <img className="cover-logo" src="/pre-logo-white.png" alt="PRE Group" />
-          <img className="cover-logo schneider" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
-          <img className="cover-logo aveva" src="/aveva-logo-white.png" alt="AVEVA" />
-        </div>
+        <img className="cover-logo" src="/pre-logo-white.png" alt="PRE Group" />
         <button className="icon-btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
           {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
         </button>

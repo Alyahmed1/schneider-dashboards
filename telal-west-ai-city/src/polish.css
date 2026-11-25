@@ -61,10 +61,7 @@ html[data-theme="dark"] .story-ctl .go { color: #0f1d17; }
   .dock { bottom: calc(6px + env(safe-area-inset-bottom)); padding: 3px; }
   .dock button { padding: 6px 11px; }
   .cover-top { padding-top: 10px; padding-bottom: 6px; }
-  .cover-logos { gap: 12px; }
-  .cover-logo { height: 24px; }
-  .cover-logo.schneider { height: 28px; }
-  .cover-logo.aveva { height: 16px; }
+  .cover-logo { height: 28px; }
   .cover-body { bottom: 34px; left: max(28px, env(safe-area-inset-left)); }
   .cover h1 { font-size: 50px; margin: 2px 0 4px; }
   .cover-eyebrow { font-size: 11px; }

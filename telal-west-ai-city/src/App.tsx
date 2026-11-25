@@ -66,7 +66,10 @@ export default function App() {
         <motion.div className="chrome" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}>
           <header className="topbar">
             <button className="brand" onClick={() => { setStory(false); setEntered(false); }} title="Back to the start screen" aria-label="Telal West, back to the start screen">
-              <img className="brand-logo" src="/pre-logo.png" alt="PRE Group" />
+              <img className="brand-logo pre" src="/pre-logo.png" alt="PRE Group" />
+              <img className="brand-logo schneider" src="/schneider-logo-transparent.png" alt="Schneider Electric" />
+              <img className="brand-logo aveva aveva-light" src="/aveva-logo-transparent.png" alt="AVEVA" />
+              <img className="brand-logo aveva aveva-dark" src="/aveva-logo-white.png" alt="" aria-hidden />
               <span><b>Telal West</b><i>AI City</i></span>
             </button>
             <div className="top-actions">

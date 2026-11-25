@@ -109,7 +109,8 @@ export default function App() {
           <span className="powered-cap">Powered By</span>
           <div className="powered-logos">
             <img className="pw-schneider" src="/logos/schneider-logo-transparent.png" alt="Schneider Electric" />
-            <span className="pw-aveva"><img src="/logos/aveva-logo-white.png" alt="AVEVA" /></span>
+            <img className="pw-aveva pw-aveva-light" src="/logos/aveva-logo-purple.png" alt="AVEVA" />
+            <img className="pw-aveva pw-aveva-dark" src="/logos/aveva-logo-white.png" alt="AVEVA" />
           </div>
         </div>
         <div className="side-actions">

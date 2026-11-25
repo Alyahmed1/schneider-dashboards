@@ -25,7 +25,7 @@ export default function MasterPlan() {
       </KpiRow>
       <div className="grid" style={{ gridTemplateColumns: "minmax(0,2.3fr) minmax(0,1fr)" }}>
         <Panel i={0} title="" className="planmap" aside={<div className="chips"><button className={`chip ${layers.length === LAYERS.length ? "on" : ""}`} onClick={() => setLayers(layers.length === LAYERS.length ? [] : LAYERS.map((l) => l.id))} style={{ ["--c" as string]: "var(--accent)" }}><i />All layers</button><LayerChips layers={layers} toggle={toggle} /></div>}>
-          <CityMap layers={layers} dotScale={0.9} zoneInfo />
+          <CityMap layers={layers} dotScale={0.9} zoneInfo ambient />
         </Panel>
         <div className="col" style={{ gridTemplateRows: "auto minmax(0,1fr)" }}>
           <Panel i={1} title={cur ? cur.name : "Whole city"} aside={cur && <button className="link" onClick={() => setZone("all")}>Show all</button>}>

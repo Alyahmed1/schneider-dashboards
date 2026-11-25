@@ -41,9 +41,13 @@ const DOT_CACHE: Record<LayerId, Dot[]> = (() => {
   return out;
 })();
 
+/** a few dots in every zone (3 each: a pole, a water sensor, a bus stop) so the map is never empty */
+const AMBIENT: { x: number; y: number; zone: Zone["id"]; layer: LayerId; k: number }[] = ZONES.flatMap((z) =>
+  (["poles", "water", "bus"] as LayerId[]).flatMap((layer) => { const d = DOT_CACHE[layer].find((x) => x.zone === z.id); return d ? [{ x: d.x, y: d.y, zone: z.id, layer, k: d.k }] : []; }));
+
 const pts = (z: Zone) => z.poly.map((p) => p.join(",")).join(" ");
 
-function CityMapBase({ layers, onPick, labels = true, dotScale = 1, zoneInfo = false }: { layers: LayerId[]; onPick?: (z: ZoneFilter) => void; labels?: boolean; dotScale?: number; zoneInfo?: boolean }) {
+function CityMapBase({ layers, onPick, labels = true, dotScale = 1, zoneInfo = false, ambient = false }: { layers: LayerId[]; onPick?: (z: ZoneFilter) => void; labels?: boolean; dotScale?: number; zoneInfo?: boolean; ambient?: boolean }) {
   const { zone, setZone } = useFilters();
   const tick = useTick();
   const [hover, setHover] = useState<Zone["id"] | null>(null);
@@ -84,6 +88,11 @@ function CityMapBase({ layers, onPick, labels = true, dotScale = 1, zoneInfo = f
             </g>
           );
         })}
+        {ambient && layers.length === 0 && (
+          <g className="dots" pointerEvents="none">
+            {AMBIENT.map((d) => <circle key={`${d.layer}${d.k}`} cx={d.x} cy={d.y} r={7 * dotScale} fill={LAYERS.find((l) => l.id === d.layer)!.color} className={`dot ${zone !== "all" && zone !== d.zone ? "faded" : ""}`} />)}
+          </g>
+        )}
         {labels && ZONES.map((z) => (
           <text key={z.id} className={`zlabel ${zone !== "all" && zone !== z.id ? "dim" : ""}`} x={z.label[0]} y={z.label[1]} textAnchor="middle" pointerEvents="none">{z.name}</text>
         ))}

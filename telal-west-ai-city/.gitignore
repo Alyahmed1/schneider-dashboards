@@ -5,3 +5,4 @@ dev.log
 .playwright-mcp
 .DS_Store
 reference/
+.vercel

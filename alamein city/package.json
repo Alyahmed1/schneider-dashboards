@@ -9,11 +9,13 @@
     "preview": "vite preview --port 4750 --strictPort"
   },
   "dependencies": {
+    "@types/three": "^0.187.0",
     "framer-motion": "^12.23.22",
     "lucide-react": "^0.468.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "recharts": "^2.15.4"
+    "recharts": "^2.15.4",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.13",

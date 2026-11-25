@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { BOQ, SHARE, ZONES, type Domain, type LayerId, type ZoneId } from "./data";
+import { SHARE, ZONES, type Domain, type LayerId, type ZoneId } from "./data";
 import { rng, useTick } from "./live";
 
 /* ---------------- global filters: zone + time range ---------------- */
@@ -24,26 +24,6 @@ export function shareOf(kind: keyof typeof SHARE, zone: ZoneFilter) {
 export const scaled = (total: number, kind: keyof typeof SHARE, zone: ZoneFilter) => Math.round(total * shareOf(kind, zone));
 export const zoneName = (z: ZoneFilter) => (z === "all" ? "All city" : ZONES.find((x) => x.id === z)?.name ?? "All city");
 export const layerShareOf = (id: LayerId, zone: ZoneFilter) => shareOf(id, zone);
-
-/* ---------------- editable prices (the Excel price column is empty) ---------------- */
-interface Prices { prices: Record<number, number>; set: (id: number, v: number | null) => void; clear: () => void; total: number; filled: number }
-const PCtx = createContext<Prices>({ prices: {}, set: () => {}, clear: () => {}, total: 0, filled: 0 });
-export const usePrices = () => useContext(PCtx);
-const PKEY = "alamein-coc-prices";
-
-export function PriceProvider({ children }: { children: ReactNode }) {
-  const [prices, setPrices] = useState<Record<number, number>>(() => {
-    try { return JSON.parse(localStorage.getItem(PKEY) ?? "{}") as Record<number, number>; } catch { return {}; }
-  });
-  useEffect(() => { try { localStorage.setItem(PKEY, JSON.stringify(prices)); } catch { /* prices just are not remembered */ } }, [prices]);
-  const set = useCallback((id: number, v: number | null) => setPrices((p) => { const n = { ...p }; if (v === null || !Number.isFinite(v)) delete n[id]; else n[id] = v; return n; }), []);
-  const clear = useCallback(() => setPrices({}), []);
-  const total = Object.values(prices).reduce((a, b) => a + b, 0);
-  const v = useMemo(() => ({ prices, set, clear, total, filled: Object.keys(prices).length }), [prices, set, clear, total]);
-  return <PCtx.Provider value={v}>{children}</PCtx.Provider>;
-}
-
-export const priceByDomain = (prices: Record<number, number>, d: Domain) => BOQ.filter((b) => b.domain === d).reduce((a, b) => a + (prices[b.id] ?? 0), 0);
 
 /* ---------------- alert feed (sample): a new alert arrives on every live refresh ---------------- */
 export type Sev = "critical" | "warning" | "info";

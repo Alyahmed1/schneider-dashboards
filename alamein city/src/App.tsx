@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, Building2, Car, FileSpreadsheet, Gauge, Map as MapIcon, Moon, Recycle, ShieldCheck, Sun, Users, Zap, type LucideIcon } from "lucide-react";
+import { Bot, Building2, Car, Gauge, Map as MapIcon, Moon, Radar, Recycle, ShieldCheck, Sun, Users, Zap, type LucideIcon } from "lucide-react";
 import { TAB_LABEL, ZONES, type TabId } from "./data";
 import { useFilters, type Range, type ZoneFilter } from "./state";
 import Cover from "./Cover";
@@ -14,16 +14,16 @@ const Mobility = lazy(() => import("./Mobility"));
 const Environment = lazy(() => import("./Environment"));
 const Citizens = lazy(() => import("./Citizens"));
 const Security = lazy(() => import("./Security"));
-const Scope = lazy(() => import("./Scope"));
+const Surveillance = lazy(() => import("./Surveillance"));
 const Assistant = lazy(() => import("./Assistant"));
-const preload = () => [import("./MasterPlan"), import("./Utilities"), import("./Mobility"), import("./Environment"), import("./Citizens"), import("./Security"), import("./Scope"), import("./Assistant")];
+const preload = () => [import("./MasterPlan"), import("./Utilities"), import("./Mobility"), import("./Environment"), import("./Citizens"), import("./Security"), import("./Surveillance"), import("./Assistant")];
 
 export type Theme = "light" | "dark";
 const readTheme = (): Theme => { try { return localStorage.getItem("alamein-theme") === "dark" ? "dark" : "light"; } catch { return "light"; } };
 
 const TABS: { id: TabId; icon: LucideIcon }[] = [
   { id: "overview", icon: Gauge }, { id: "plan", icon: MapIcon }, { id: "utilities", icon: Zap }, { id: "mobility", icon: Car }, { id: "environment", icon: Recycle },
-  { id: "citizens", icon: Users }, { id: "security", icon: ShieldCheck }, { id: "scope", icon: FileSpreadsheet }, { id: "assistant", icon: Bot },
+  { id: "citizens", icon: Users }, { id: "security", icon: ShieldCheck }, { id: "surveillance", icon: Radar }, { id: "assistant", icon: Bot },
 ];
 const RANGES: { id: Range; label: string }[] = [{ id: "24h", label: "24 h" }, { id: "7d", label: "7 days" }, { id: "30d", label: "30 days" }];
 
@@ -42,7 +42,7 @@ export default function App() {
   useEffect(() => { const id = window.setTimeout(() => setReady(entered), entered ? 380 : 500); return () => window.clearTimeout(id); }, [entered]);
   useEffect(() => { if (ready) { const id = window.setTimeout(() => { void preload(); }, 500); return () => window.clearTimeout(id); } }, [ready]);
   useEffect(() => { document.title = entered ? `${TAB_LABEL[tab]} · New Alamein City COC` : "New Alamein City COC"; }, [tab, entered]);
-  // a link ending in ?tab=scope opens straight on that tab, skipping the cover (handy for screenshots)
+  // a link ending in ?tab=surveillance opens straight on that tab, skipping the cover (handy for screenshots)
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("tab");
     if (t && t in TAB_LABEL) { setTab(t as TabId); setEntered(true); }
@@ -91,7 +91,7 @@ export default function App() {
               <ErrorBoundary key={tab}>
                 <Suspense fallback={<div className="loading" aria-busy="true">Loading…</div>}>
                   {tab === "overview" ? <Overview go={setTab} /> : tab === "plan" ? <MasterPlan /> : tab === "utilities" ? <Utilities /> : tab === "mobility" ? <Mobility /> : tab === "environment" ? <Environment />
-                    : tab === "citizens" ? <Citizens /> : tab === "security" ? <Security /> : tab === "scope" ? <Scope /> : <Assistant go={setTab} />}
+                    : tab === "citizens" ? <Citizens /> : tab === "security" ? <Security /> : tab === "surveillance" ? <Surveillance /> : <Assistant go={setTab} />}
                 </Suspense>
               </ErrorBoundary>
             </motion.div>

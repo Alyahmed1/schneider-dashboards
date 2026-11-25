@@ -17,7 +17,7 @@ const inside = (x: number, y: number, p: [number, number][]) => {
 
 interface Dot { x: number; y: number; zone: Zone["id"]; k: number }
 /** dots are placed once, inside the zone shapes, in proportion to each zone's share (illustrative placement, not surveyed) */
-const DOT_CACHE: Record<LayerId, Dot[]> = (() => {
+export const DOT_CACHE: Record<LayerId, Dot[]> = (() => {
   const out = {} as Record<LayerId, Dot[]>;
   LAYERS.forEach((l, li) => {
     const r = rng(900 + li * 37);

@@ -4,7 +4,7 @@
    SAMPLE (invented, always labelled "sample" on screen): zone shares, live readings, alerts, roadmap dates.
    ===================================================================== */
 
-export type TabId = "overview" | "plan" | "utilities" | "mobility" | "environment" | "citizens" | "security" | "scope" | "assistant";
+export type TabId = "overview" | "plan" | "utilities" | "mobility" | "environment" | "citizens" | "security" | "surveillance" | "assistant";
 
 /** sizing numbers printed in row 4 of the Excel */
 export const CITY = {
@@ -119,18 +119,7 @@ export const LAYERS: { id: LayerId; label: string; total: number; color: string 
   { id: "signage", label: "Signage", total: CITY.signage, color: "#d4463f" },
 ];
 
-/* ---------------- roadmap (sample timeline, labelled illustrative) ---------------- */
-export const ROADMAP: { name: string; from: number; to: number; domain: Domain; progress: number }[] = [
-  { name: "Design, STRA & procurement", from: 0, to: 0.7, domain: "Cybersecurity", progress: 100 },
-  { name: "COC, GIS & network core", from: 0.4, to: 1.4, domain: "Core platform", progress: 78 },
-  { name: "Utilities: SCADA, ADMS, AMI", from: 0.8, to: 2.4, domain: "Utilities & energy", progress: 52 },
-  { name: "Mobility, waste & signage", from: 1.2, to: 2.8, domain: "Mobility", progress: 34 },
-  { name: "IBMS & citizen services", from: 1.6, to: 3.2, domain: "Citizens & commerce", progress: 18 },
-  { name: "Acceptance & training", from: 2.8, to: 3.4, domain: "Services", progress: 5 },
-  { name: "Operate, support & upgrade", from: 3.0, to: 5, domain: "Services", progress: 0 },
-];
-
 export const TAB_LABEL: Record<TabId, string> = {
   overview: "Overview", plan: "Master Plan", utilities: "Utilities", mobility: "Mobility", environment: "Environment",
-  citizens: "Citizens", security: "Security", scope: "Scope", assistant: "Assistant",
+  citizens: "Citizens", security: "Security", surveillance: "Surveillance", assistant: "Assistant",
 };

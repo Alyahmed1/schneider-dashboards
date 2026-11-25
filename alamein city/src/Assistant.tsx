@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Bot, Send, User } from "lucide-react";
 import { answer, SUGGESTIONS, type Reply } from "./engine";
 import { useCity } from "./model";
-import { useAlerts, useFilters, usePrices, zoneName } from "./state";
+import { useAlerts, useFilters, zoneName } from "./state";
+import { useRoad } from "./road";
 import type { TabId } from "./data";
 import { Panel } from "./ui";
 
@@ -12,8 +13,8 @@ export default function Assistant({ go }: { go: (t: TabId) => void }) {
   const m = useCity();
   const { alerts } = useAlerts();
   const { zone } = useFilters();
-  const { total, filled } = usePrices();
-  const [msgs, setMsgs] = useState<Msg[]>([{ from: "bot", text: "Hello, I am the New Alamein COC assistant. Ask me about the scope, the city numbers or the live status. I work from the Excel quantities and the dashboard's sample readings." }]);
+  const road = useRoad();
+  const [msgs, setMsgs] = useState<Msg[]>([{ from: "bot", text: "Hello, I am the New Alamein COC assistant. Ask me about the BoQ, the city numbers, the North Coast road or the live status. I work from the Excel quantities and the dashboard's sample readings." }]);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const end = useRef<HTMLDivElement>(null);
@@ -25,7 +26,7 @@ export default function Assistant({ go }: { go: (t: TabId) => void }) {
     setMsgs((p) => [...p, { from: "me", text: t }]);
     setText(""); setBusy(true);
     window.setTimeout(() => {
-      const r = answer(t, { m, alerts, zoneLabel: zoneName(zone), prices: { total, filled } });
+      const r = answer(t, { m, alerts, zoneLabel: zoneName(zone), road });
       setMsgs((p) => [...p, { from: "bot", ...r }]);
       setBusy(false);
     }, 450);
@@ -48,7 +49,7 @@ export default function Assistant({ go }: { go: (t: TabId) => void }) {
             <div ref={end} />
           </div>
           <form className="composer" onSubmit={(e) => { e.preventDefault(); ask(text); }}>
-            <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Ask about poles, meters, alerts, cybersecurity, the price..." aria-label="Ask the assistant" />
+            <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Ask about poles, meters, alerts, the North Coast road..." aria-label="Ask the assistant" />
             <button className="send" type="submit" aria-label="Send" disabled={!text.trim() || busy}><Send size={16} /></button>
           </form>
         </Panel>
